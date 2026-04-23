@@ -6,6 +6,7 @@
 
 Template:
 12 CM3060 Natural Language Programming
+
 12.1 Project Idea 1: Identifying research methodologies that are used
 in research in the computing disciplines.
 
@@ -14,12 +15,9 @@ Automatically extract methodology from papers
 
 <!--
 Hello.
-
 I base my project on the template
 “Identifying research methodologies in computing research.”
-
 This is from the CM3060 Natural Language Programming course.
-
 My project is to **automatically extract methodology from research papers.**
 -->
 
@@ -37,15 +35,11 @@ But methodology is difficult
 
 <!--
 Today, topic classification is easy with large language models.
-
 But methodology is still difficult.
-
 This is because:
-
 - it is not clearly written
 - it depends on writing style
 - labels are ambiguous
-
 So, methodology is important, but hard to use.
 -->
 
@@ -68,15 +62,11 @@ Previous work:
 
 <!--
 Methodology shows how research is done.
-
 There are three types of previous work.
-
 First, models, such as Oates in 2005 and Pilkington in 2015.
 They define methodology clearly, but they do not support extraction.
-
 Second, ontology systems, like the ACM Computing Classification System and the Computer Science Ontology.
 They give structured classification, but they are weak for methodology.
-
 Third, LLM and NLP approaches.
 They are scalable, but the results are often unstable.
 -->
@@ -97,12 +87,9 @@ But:
 
 <!--
 So, there is a clear gap.
-
 We have good definitions from models and ontology.
 We also have strong extraction tools like LLMs.
-
 But there is no connection between them.
-
 And there is no structured way to extract methodology.
 -->
 ---
@@ -111,29 +98,24 @@ And there is no structured way to extract methodology.
 
 Represent methodology as:
 
-Design (1)  
-Method (1–2)
+- Design (1)  
+- Method (1–2)
 
 Example:
-Design: Experiment  
-Method: dataset evaluation  
+- Design: Experiment  
+- Method: dataset evaluation  
 
 LLM extracts from abstract
 
 <!--
 My idea is to represent methodology as a simple structure.
-
 It has two parts:
-
 one Design
 one or two Methods
-
 For example:
 Design can be “Experiment”
 Method can be “dataset evaluation”
-
 I use an LLM to extract this structure from a paper abstract.
-
 So the output is structured, not just a label.
 -->
 
@@ -147,25 +129,20 @@ Evaluation:
 - small human check  
 
 Contribution:
-connect definition and extraction
+- connect definition and extraction
 
 Goal:
-structure methodology and extract it with LLM
+- structure methodology and extract it with LLM
 
 <!--
 I evaluate the system in three ways.
-
 First, accuracy, to check correctness.
 Second, consistency, to check stability.
 Third, a small human check.
-
 Consistency is especially important, because LLM results can change.
-
 The contribution of this project is to connect
 definition and extraction.
-
 The goal is to structure methodology and extract it with LLM.
-
 Thank you.
 -->
 ---
