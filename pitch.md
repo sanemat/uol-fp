@@ -12,6 +12,17 @@ in research in the computing disciplines.
 My project:
 Automatically extract methodology from papers
 
+<!--
+Hello.
+
+I base my project on the template
+“Identifying research methodologies in computing research.”
+
+This is from the CM3060 Natural Language Programming course.
+
+My project is to **automatically extract methodology from research papers.**
+-->
+
 ---
 
 # Problem
@@ -24,25 +35,51 @@ But methodology is difficult
 - depends on writing style
 - labels are ambiguous
 
+<!--
+Today, topic classification is easy with large language models.
+
+But methodology is still difficult.
+
+This is because:
+
+- it is not clearly written
+- it depends on writing style
+- labels are ambiguous
+
+So, methodology is important, but hard to use.
+-->
+
 ---
 
 # Why + Previous Work
 
-Methodology shows how research is done
+Methodology shows how research is done.
 
 Previous work:
+- Models (Oates(2005), Pilkington(2015))
+  - define methodology
+  - no extraction
+- Ontology (ACM Computing Classification System, Computer Science Ontology, Osborne(2015))
+  - structured
+  - weak for methodology
+- LLM / NLP
+  - scalable
+  - unstable
 
-Models (Oates(2005), Pilkington(2015))
-- define methodology
-- no extraction
+<!--
+Methodology shows how research is done.
 
-Ontology (ACM Computing Classification System, Computer Science Ontology, Osborne(2015))
-- structured
-- weak for methodology
+There are three types of previous work.
 
-LLM / NLP
-- scalable
-- unstable
+First, models, such as Oates in 2005 and Pilkington in 2015.
+They define methodology clearly, but they do not support extraction.
+
+Second, ontology systems, like the ACM Computing Classification System and the Computer Science Ontology.
+They give structured classification, but they are weak for methodology.
+
+Third, LLM and NLP approaches.
+They are scalable, but the results are often unstable.
+-->
 
 ---
 
@@ -58,6 +95,16 @@ But:
 - no connection
 - no structured extraction
 
+<!--
+So, there is a clear gap.
+
+We have good definitions from models and ontology.
+We also have strong extraction tools like LLMs.
+
+But there is no connection between them.
+
+And there is no structured way to extract methodology.
+-->
 ---
 
 # Idea + Approach
@@ -72,6 +119,23 @@ Design: Experiment
 Method: dataset evaluation  
 
 LLM extracts from abstract
+
+<!--
+My idea is to represent methodology as a simple structure.
+
+It has two parts:
+
+one Design
+one or two Methods
+
+For example:
+Design can be “Experiment”
+Method can be “dataset evaluation”
+
+I use an LLM to extract this structure from a paper abstract.
+
+So the output is structured, not just a label.
+-->
 
 ---
 
@@ -88,6 +152,23 @@ connect definition and extraction
 Goal:
 structure methodology and extract it with LLM
 
+<!--
+I evaluate the system in three ways.
+
+First, accuracy, to check correctness.
+Second, consistency, to check stability.
+Third, a small human check.
+
+Consistency is especially important, because LLM results can change.
+
+The contribution of this project is to connect
+definition and extraction.
+
+The goal is to structure methodology and extract it with LLM.
+
+Thank you.
+-->
+---
 
 # References
 
