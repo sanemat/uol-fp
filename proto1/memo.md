@@ -54,8 +54,9 @@ We build a **simple working prototype**.
 
 ### Step 2: Sentence Representation
 
-* Use SciBERT to convert sentences into vectors on google colab
+* Use SciBERT to convert sentences into vectors
 * This helps understand sentence meaning
+* Run it on google colab, not on local
 
 ---
 
