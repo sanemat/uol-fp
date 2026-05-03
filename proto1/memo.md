@@ -33,10 +33,12 @@ These parts are usually **explicitly written** in papers.
 
 Build a simple pipeline that:
 
-1. reads a research paper (text input)
-2. extracts key elements (method, data, evaluation)
-3. detects research design
-4. outputs a structured result
+1. reads a research paper text
+2. extracts methodology candidates
+3. classifies each candidate into a role
+4. detects research design
+5. outputs a structured result
+6. validates consistency
 
 ---
 
@@ -46,61 +48,49 @@ We do not need a perfect model.
 
 We build a **simple working prototype**.
 
-### Step 1: Sentence Processing
+### Step 1: Candidate Extraction
 
-* Split text into sentences
-
----
-
-### Step 2: Sentence Representation
-
-* Use SciBERT to convert sentences into vectors
-* This helps understand sentence meaning
-* Run it on google colab, not on local
+* Use SciBERT to extract methodology-related phrases
+* Targets: model names, algorithm names, dataset names, metric names
 
 ---
 
-### Step 3: Sentence Grouping
+### Step 2: Role Classification
 
-* Use k-means clustering
-* Group similar sentences (e.g. training vs evaluation)
-
----
-
-### Step 4: Entity Extraction (Simple)
-
-* Use rule-based keyword matching
-* Extract:
-
-  * Method (BERT, CNN, Adam)
-  * Data (MNIST, dataset)
-  * Evaluation (accuracy, F1)
-
-(No need for full NER model at this stage)
+* Use an LLM to assign each candidate to a role:
+  * Method, Data, Evaluation, or Other
 
 ---
 
-### Step 5: Design Detection
+### Step 3: Design Detection
 
-* Use simple rules:
-
-  * if "experiment" or "evaluate" → experiment
-  * if "theoretical" → theoretical
+* Use rules + LLM to classify the research design:
+  * experiment, survey, case study, theoretical, algorithm development
 
 ---
 
-### Step 6: Build Output
+### Step 4: Build Output
 
 Output format:
 
-```json id="k2m91a"
+```json
 {
-  "Design": "...",
-  "Method": [...],
-  "Data": [...],
-  "Evaluation": [...]
+  "Design": "experiment",
+  "Method": ["BERT"],
+  "Data": ["MNIST"],
+  "Evaluation": ["accuracy"]
 }
 ```
+
+---
+
+### Step 5: Consistency Checking
+
+Apply simple validation rules:
+
+* experimental paper → should have Data and Evaluation
+* theoretical paper → may not need a dataset
+* Method + Evaluation without Data → may be incomplete
 
 ---
 
@@ -113,20 +103,11 @@ Output format:
 
 ---
 
-## Future Extension (Optional)
+## Next Steps
 
-* Replace rules with trained NER model
-* Use LLM for classification
-* Add consistency checking
-
----
-
-## Summary
-
-Build a simple pipeline that:
-
-* extracts explicit elements
-* groups sentences
-* outputs structured methodology
-
-This is the first step toward full methodology understanding.
+1. Build candidate extraction step (SciBERT or rule-based)
+2. Annotate a small gold dataset (10–20 papers, Design / Method / Data / Evaluation labels)
+3. Evaluate at three levels:
+   * Candidate extraction quality
+   * Role classification accuracy
+   * Full structure quality
