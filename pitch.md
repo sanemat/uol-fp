@@ -138,7 +138,7 @@ The final output is a structured profile for each paper.
 
 - Build candidate extraction step
 - Annotate a small gold dataset
-  - 10–20 abstracts
+  - 10–20 papers
   - Design / Method / Data / Evaluation labels
 - Evaluate at three levels:
   1. Candidate extraction quality
@@ -148,7 +148,7 @@ The final output is a structured profile for each paper.
 <!--
 The next steps are three.
 First, build the candidate extraction step using SciBERT.
-Second, annotate a small gold dataset of ten to twenty abstracts with Design, Method, Data, and Evaluation labels.
+Second, annotate a small gold dataset of ten to twenty papers with Design, Method, Data, and Evaluation labels.
 Third, evaluate the system at three levels: extraction, role classification, and full structure.
 -->
 
