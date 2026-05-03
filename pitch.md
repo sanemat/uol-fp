@@ -16,12 +16,15 @@ But methodology is difficult
 - depends on writing style
 - labels are ambiguous
 
+Methodology matters: it helps compare papers and find research trends.
+
 <!--
 Today, topic classification is easy with large language models.
 But methodology is still difficult.
 It is not clearly written in most papers.
 It depends on writing style.
 And the labels are often ambiguous.
+If we can extract methodology automatically, it helps literature review, paper comparison, and trend analysis.
 -->
 
 ---
@@ -72,25 +75,27 @@ But none of them build a full structured methodology profile for a paper.
 
 # Gap
 
-Definitions exist. Extraction exists.
+Methodology definitions exist.
+Extraction methods also exist.
 
-But they are not connected.
+But they are still separate.
 
-No work builds a **structured methodology profile** from text.
+No previous work builds a **paper-level structured methodology profile**
+from research paper text.
 
 <!--
 So the gap is clear.
 We have good definitions.
 We have extraction tools.
-But there is no work that connects them.
-No one builds a structured methodology profile automatically.
+But they are still separate.
+No previous work builds a paper-level structured methodology profile from text automatically.
 -->
 
 ---
 
 # My Approach
 
-In this project, methodology = four extractable parts:
+**Operational definition for this project**
 
 | Part | Example |
 |---|---|
@@ -125,7 +130,9 @@ The final output is a structured profile for each paper.
 # Next Steps
 
 - Build candidate extraction step
-- Annotate small gold dataset (10–20 abstracts)
+- Annotate a small gold dataset
+  - 10–20 abstracts
+  - Design / Method / Data / Evaluation labels
 - Evaluate at three levels:
   1. Candidate extraction quality
   2. Role classification accuracy
@@ -134,7 +141,7 @@ The final output is a structured profile for each paper.
 <!--
 The next steps are three.
 First, build the candidate extraction step using SciBERT.
-Second, annotate a small gold dataset of ten to twenty abstracts.
+Second, annotate a small gold dataset of ten to twenty abstracts with Design, Method, Data, and Evaluation labels.
 Third, evaluate the system at three levels: extraction, role classification, and full structure.
 -->
 
