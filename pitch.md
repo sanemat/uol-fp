@@ -95,9 +95,9 @@ No previous work builds a paper-level structured methodology profile from text a
 
 ---
 
-# My Approach
+# My Approach — Structure
 
-**Operational definition for this project**
+Operational definition for this project:
 
 | Part | Example |
 |---|---|
@@ -106,7 +106,15 @@ No previous work builds a paper-level structured methodology profile from text a
 | Data | MNIST, SQuAD |
 | Evaluation | accuracy, F1 |
 
-Pipeline:
+<!--
+My approach defines methodology as four parts.
+Design, Method, Data, and Evaluation.
+This is an operational definition — scoped for this project, not a full methodology model.
+-->
+
+---
+
+# My Approach — Pipeline
 
 1. Extract candidates — SciBERT
 2. Classify roles — LLM
@@ -115,9 +123,6 @@ Pipeline:
 5. Check consistency
 
 <!--
-My approach defines methodology as four parts for this project.
-Design, Method, Data, and Evaluation.
-This is an operational definition — scoped for this project, not a full methodology model.
 The pipeline has five steps.
 First, extract candidates using SciBERT.
 Second, classify each candidate into a role.
