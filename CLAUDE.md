@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a UoL (University of London) final project for CM3060 Natural Language Programming.
 
-**Goal:** Automatically extract research methodology from academic paper abstracts using LLMs.
+**Goal:** Automatically extract research methodology from computing research papers using LLMs.
 
 **Methodology structure (4 parts):**
 - **Design** — type of research (experiment, theoretical)
@@ -19,7 +19,9 @@ This is a UoL (University of London) final project for CM3060 Natural Language P
 - `pitch.md` — project pitch slides (presentation source)
 - `week*.md` — weekly course notes
 - `proto1/` — Python prototype (pipeline implementation)
-  - `src/` — source code (currently empty, to be built)
+  - `pipeline.ipynb` — **main notebook, runs on Google Colab**
+  - `src/uol_fp/` — shared library (models, design detector, consistency checker)
+  - `tests/` — unit tests for the shared library
   - `pyproject.toml` — Pyright + Ruff config
   - `.tool-versions` — Python 3.14.1 (managed by asdf)
 
@@ -50,14 +52,16 @@ python -m pytest tests/test_<name>.py
 
 ## Pipeline Architecture (proto1/)
 
-The planned pipeline (from `memo.md`):
+All pipeline steps run in `pipeline.ipynb` on Google Colab.
 
-1. **Sentence splitting** — split abstract text into sentences
-2. **Sentence embedding** — SciBERT vectors (run on Google Colab, not local)
-3. **Clustering** — k-means to group similar sentences
-4. **Entity extraction** — rule-based keyword matching for Method/Data/Evaluation
-5. **Design detection** — simple rules (e.g. "experiment" → Experiment)
-6. **Structured output** — JSON with Design, Method, Data, Evaluation fields
+1. **Candidate extraction** — SciBERT (`allenai/scibert_scivocab_uncased`) + regex
+2. **Role classification** — rule-based (Method / Data / Evaluation / Other)
+3. **Design detection** — rule pattern matching (experiment, survey, case study, etc.)
+4. **Structured output** — JSON with Design, Method, Data, Evaluation fields
+5. **Consistency checking** — validation rules (e.g. experiment → needs Data + Evaluation)
+
+The `src/uol_fp/` library contains the shared Python models and rule logic.
+Local commands (pyright, ruff, pytest) are for the library only — not for running the pipeline.
 
 Focus is on a **working prototype**, not perfect accuracy. Avoid complex model training.
 

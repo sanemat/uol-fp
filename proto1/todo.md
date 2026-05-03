@@ -2,18 +2,18 @@
 
 ## Setup
 
-- [ ] Set up Python environment (`proto1/`)
-- [ ] Install dependencies (local: rule-based, JSON output, etc.)
-- [ ] Set up Google Colab notebook (SciBERT runs on Colab, not local)
+- [x] Set up Python environment (`proto1/`) — for local type check / tests only
+- [x] Install dependencies (local: pyright, ruff, pytest)
+- [ ] Set up Google Colab notebook — open `proto1/pipeline.ipynb` in Colab
 - [ ] Collect sample papers for testing
 
-## Pipeline
+## Pipeline (all steps run on Google Colab — `pipeline.ipynb`)
 
-- [ ] Step 1: Candidate extraction (SciBERT — run on Google Colab)
-- [ ] Step 2: Role classification (LLM — Method / Data / Evaluation / Other)
-- [ ] Step 3: Design detection (rules + LLM)
-- [ ] Step 4: Build JSON output
-- [ ] Step 5: Consistency checking rules
+- [x] Step 1: Candidate extraction (SciBERT)
+- [x] Step 2: Role classification (rule-based — Method / Data / Evaluation / Other)
+- [x] Step 3: Design detection (rules)
+- [x] Step 4: Build JSON output
+- [x] Step 5: Consistency checking rules
 
 ## Evaluation
 
