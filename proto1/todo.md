@@ -10,14 +10,14 @@
 ## Pipeline (all steps run on Google Colab — `pipeline.ipynb`)
 
 - [x] Step 1: Candidate extraction (SciBERT)
-- [x] Step 2: Role classification (rule-based — Method / Data / Evaluation / Other)
+- [x] Step 2: Role classification (rule-based — Method / Task / Data / Evaluation / Other)
 - [x] Step 3: Design detection (rules)
 - [x] Step 4: Build JSON output
 - [x] Step 5: Consistency checking rules
 
 ## Evaluation
 
-- [ ] Annotate gold dataset (10–20 papers, Design / Method / Data / Evaluation labels)
+- [ ] Annotate gold dataset (10–20 papers, Design / Method / Task labels; Data / Evaluation optional)
 - [ ] Evaluate candidate extraction quality
 - [ ] Evaluate role classification accuracy
 - [ ] Evaluate full structure quality

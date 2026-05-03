@@ -18,11 +18,15 @@ We do NOT try to find the perfect definition.
 
 Instead, we define a **simple and practical structure** that can be extracted from text.
 
-Methodology = 4 parts:
+Methodology = 3 main parts + optional details:
 
-* **Design** → type of research (experiment, theoretical)
-* **Method** → model or algorithm (e.g. BERT)
-* **Data** → dataset or source
+* **Design** → overall research design (experiment, survey, case study)
+* **Method** → model, algorithm, or technique (e.g. BERT, CNN)
+* **Task** → research task or problem (e.g. question answering, image classification)
+
+Optional:
+
+* **Data** → dataset or source (e.g. MNIST, SQuAD)
 * **Evaluation** → metrics (accuracy, F1)
 
 These parts are usually **explicitly written** in papers.
@@ -58,7 +62,7 @@ We build a **simple working prototype**.
 ### Step 2: Role Classification
 
 * Use an LLM to assign each candidate to a role:
-  * Method, Data, Evaluation, or Other
+  * Method, Task, Data, Evaluation, or Other
 
 ---
 
@@ -77,8 +81,11 @@ Output format:
 {
   "Design": "experiment",
   "Method": ["BERT"],
-  "Data": ["MNIST"],
-  "Evaluation": ["accuracy"]
+  "Task": ["question answering"],
+  "Optional": {
+    "Data": ["SQuAD"],
+    "Evaluation": ["F1"]
+  }
 }
 ```
 
@@ -88,9 +95,10 @@ Output format:
 
 Apply simple validation rules:
 
-* experimental paper → should have Data and Evaluation
-* theoretical paper → may not need a dataset
-* Method + Evaluation without Data → may be incomplete
+* Experiment without Task → weak
+* Experiment without Method → weak
+* Method without Task → incomplete
+* Theoretical design with benchmark-style Evaluation → possible mismatch
 
 ---
 
@@ -106,7 +114,7 @@ Apply simple validation rules:
 ## Next Steps
 
 1. Build candidate extraction step (SciBERT or rule-based)
-2. Annotate a small gold dataset (10–20 papers, Design / Method / Data / Evaluation labels)
+2. Annotate a small gold dataset (10–20 papers, Design / Method / Task labels; Data / Evaluation optional)
 3. Evaluate at three levels:
    * Candidate extraction quality
    * Role classification accuracy
