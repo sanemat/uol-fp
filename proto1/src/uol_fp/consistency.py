@@ -13,16 +13,15 @@ def check_consistency(profile: MethodologyProfile) -> ConsistencyResult:
     warnings: list[str] = []
 
     if profile.design == DesignType.EXPERIMENT:
-        if not profile.data:
-            warnings.append("Experimental paper should have Data.")
-        if not profile.evaluation:
-            warnings.append("Experimental paper should have Evaluation.")
+        if not profile.task:
+            warnings.append("Experimental paper without Task is weak.")
+        if not profile.method:
+            warnings.append("Experimental paper without Method is weak.")
 
-    if profile.design == DesignType.SURVEY:
-        if not profile.data:
-            warnings.append("Survey paper should have Data.")
+    if profile.method and not profile.task:
+        warnings.append("Method without Task may be incomplete.")
 
-    if profile.method and profile.evaluation and not profile.data:
-        warnings.append("Method + Evaluation without Data may be incomplete.")
+    if profile.design == DesignType.THEORETICAL and profile.evaluation:
+        warnings.append("Theoretical design with Evaluation may be a mismatch.")
 
     return ConsistencyResult(is_valid=len(warnings) == 0, warnings=warnings)
