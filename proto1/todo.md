@@ -3,12 +3,13 @@
 ## Setup
 
 - [ ] Set up Python environment (`proto1/`)
-- [ ] Install dependencies (transformers, scikit-learn, etc.)
+- [ ] Install dependencies (local: rule-based, JSON output, etc.)
+- [ ] Set up Google Colab notebook (SciBERT runs on Colab, not local)
 - [ ] Collect sample papers for testing
 
 ## Pipeline
 
-- [ ] Step 1: Candidate extraction (SciBERT)
+- [ ] Step 1: Candidate extraction (SciBERT — run on Google Colab)
 - [ ] Step 2: Role classification (LLM — Method / Data / Evaluation / Other)
 - [ ] Step 3: Design detection (rules + LLM)
 - [ ] Step 4: Build JSON output
