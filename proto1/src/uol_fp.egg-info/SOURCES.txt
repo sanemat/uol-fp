@@ -1,6 +1,0 @@
-pyproject.toml
-src/uol_fp.egg-info/PKG-INFO
-src/uol_fp.egg-info/SOURCES.txt
-src/uol_fp.egg-info/dependency_links.txt
-src/uol_fp.egg-info/requires.txt
-src/uol_fp.egg-info/top_level.txt

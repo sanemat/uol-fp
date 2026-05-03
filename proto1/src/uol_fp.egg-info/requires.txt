@@ -1,5 +1,0 @@
-
-[dev]
-pyright
-ruff
-pytest
