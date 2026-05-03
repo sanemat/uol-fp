@@ -10,109 +10,63 @@ Hello. My project is about extracting structured methodology from computing rese
 
 # Problem
 
-LLMs can classify paper topics quite well.
+LLMs can classify paper topics well.
 
 But methodology is harder.
 
-* it is often not written clearly
-* it depends on writing style
-* labels can be unclear
+- not always written clearly
+- writing style changes between papers
+- labels are not clear
 
-Methodology is important. It helps us compare papers and find research trends.
+Methodology is useful. It helps us compare papers and find research trends.
 
 <!--
 Today, large language models can classify paper topics quite well.
 But methodology is harder.
-It is often not written clearly.
-It depends on the writing style of each paper.
-Also, the labels can be unclear.
-If we can extract methodology automatically, it can help literature review, paper comparison, and trend analysis.
+It is not always written clearly.
+Writing style changes between papers.
+And the labels are often not clear.
+If we can extract methodology, it helps literature review, paper comparison, and trend analysis.
 -->
 
 ---
 
-# Previous Work — Definitions
+# Previous Work
 
-Good definitions exist, but they do not extract methodology automatically.
+Definitions:
 
-* **Oates (2005)** — framework for research methodology in computing
+- **Oates (2005)** — five research strategies: experiment, survey, case study, ...
+- **Osborne & Motta (2015)** — Computer Science Ontology
 
-  * five strategies: survey, design and creation, experiment, case study, action research
-* **Pilkington & Pretorius (2015)** — conceptual model of the methodology domain
+Extraction:
 
-  * includes worldview, design, method, sampling, and analysis
-* **Osborne & Motta (2015) — Klink-2** — Computer Science Ontology
+- **Ghosh et al. (2023)** — extracts method names from AI papers
+- **SciBERT (Beltagy et al., 2019)** — BERT trained on scientific text
 
-  * structured, but weak for methodology terms
+These give two ideas: methodology has structure, and papers contain extractable terms.
 
 <!--
 Some previous work defines methodology well.
 Oates gives five research strategies for computing.
-Pilkington and Pretorius give a more detailed conceptual model.
-Osborne and Motta build a Computer Science Ontology from web sources.
-However, these works do not extract methodology automatically from paper text.
--->
-
----
-
-# Previous Work — Extraction
-
-Extraction exists, but the results are not structured as methodology.
-
-* **Ghosh et al. (2023)** — extracts methodology component names from AI papers
-
-  * factored sequence labelling
-  * chronological evaluation: train on old papers, test on newer names
-* **SciBERT (Beltagy et al., 2019)** — BERT pretrained on scientific papers
-
-  * useful for scientific term extraction
-* **Ma et al. (2023)** — procedural scientific information
-
-  * Operation / Effect / Direction
-  * useful for understanding how a method changes results
-
-<!--
-Other previous work extracts methodology-related information from text.
-Ghosh et al. extract methodology component names, such as model names and algorithm names.
-SciBERT is a useful base model for scientific text.
-Ma et al. propose a schema with Operation, Effect, and Direction.
-However, these works do not build one paper-level methodology structure with design, method, and task together.
--->
-
----
-
-# From Labels to Structure
-
-Previous work gives two useful ideas.
-
-1. Methodology is not one simple label.
-
-   * it includes research design and research methods
-2. Scientific papers contain extractable entities.
-
-   * method, task, dataset, metric
-
-So this project represents methodology as a small structure.
-
-<!--
-Previous work does not give exactly my structure.
-But it gives two useful ideas.
-First, methodology is not just one label. It has structure, such as design and methods.
-Second, scientific information extraction already studies entities such as methods, tasks, datasets, and metrics.
-My project combines these ideas into one practical structure for computing papers.
+Osborne and Motta build a Computer Science Ontology.
+Other work extracts information from paper text.
+Ghosh et al. extract method names from AI papers.
+SciBERT is a useful model for scientific text.
+These give us two useful ideas.
+First, methodology has structure — it is not just one label.
+Second, papers contain terms we can extract automatically.
 -->
 
 ---
 
 # Gap
 
-Methodology definitions exist.
-Extraction methods also exist.
+Good definitions exist.
+Good extraction tools exist.
 
 But they are still separate.
 
-No previous work builds a **paper-level structured methodology profile**
-from research paper text.
+No previous work builds a **paper-level structured methodology profile** from text.
 
 <!--
 So the gap is clear.
@@ -120,6 +74,7 @@ We have good definitions.
 We also have extraction tools.
 But they are still separate.
 No previous work builds a paper-level structured methodology profile from text automatically.
+This is what my project tries to do.
 -->
 
 ---
@@ -134,40 +89,19 @@ Operational definition for this project:
 | Method | model, algorithm, or technique | BERT, CNN, k-means                       |
 | Task   | research task or problem       | question answering, image classification |
 
-Optional details:
-
-* Data: MNIST, SQuAD
-* Evaluation: accuracy, F1
-
-<!--
-My approach defines methodology as three main parts for the first version.
-They are Design, Method, and Task.
-This is an operational definition. It is for this project, not a full definition of methodology.
-Data and Evaluation are also useful, but I treat them as optional details at this stage.
-This keeps the project smaller and closer to previous work.
--->
-
----
-
-# Example Output
+Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
 
 ```json
-{
-  "Design": "experiment",
-  "Method": ["BERT"],
-  "Task": ["question answering"],
-  "Optional": {
-    "Data": ["SQuAD"],
-    "Evaluation": ["F1"]
-  }
-}
+{"Design": "experiment", "Method": ["BERT"], "Task": ["question answering"]}
 ```
 
 <!--
-This is an example of the final output.
-The main methodology profile has Design, Method, and Task.
-Data and Evaluation can be added when the information is available.
-This is more structured than a flat list of extracted terms.
+My approach defines methodology as three main parts.
+Design is the overall research type, such as experiment or survey.
+Method is the model or algorithm, such as BERT or CNN.
+Task is the research problem, such as question answering.
+Data and Evaluation are optional details.
+This is an operational definition. It is for this project, not a full definition of methodology.
 -->
 
 ---
@@ -175,53 +109,31 @@ This is more structured than a flat list of extracted terms.
 # My Approach — Pipeline
 
 1. Extract candidates — SciBERT
-2. Classify roles — LLM
-3. Detect design — rules + LLM
+2. Classify roles — rules (Method / Task / Data / Evaluation)
+3. Detect design — rules
 4. Build JSON output
-5. Check consistency
+5. Check consistency (e.g. experiment without Task → weak)
 
 <!--
 The pipeline has five steps.
-First, extract candidates using SciBERT.
-Second, classify each candidate into a role.
-Third, detect the research design.
+First, extract candidate terms using SciBERT.
+Second, classify each term into a role: Method, Task, Data, or Evaluation.
+Third, detect the research design using rules.
 Fourth, build a JSON output.
-Fifth, apply consistency rules.
-The final output is a structured profile for each paper.
--->
-
----
-
-# Consistency Checks
-
-Simple rules can find weak or inconsistent structures.
-
-* Experiment without Task → weak
-* Experiment without Method → weak
-* Method without Task → incomplete
-* Theoretical design with benchmark-style Evaluation → possible mismatch
-
-<!--
-After building the structure, I can check simple consistency rules.
-For example, an experiment usually needs a task and a method.
-A method without a task may be incomplete.
-A theoretical paper with benchmark-style evaluation may need checking.
-These rules do not prove that the output is correct.
-But they help find weak outputs and useful error cases.
+Fifth, apply simple consistency checks.
+For example, an experiment paper without a Task is weak.
 -->
 
 ---
 
 # Next Steps
 
-* Build the candidate extraction step
-* Annotate a small gold dataset
-
-  * 10–20 papers
-  * Design / Method / Task labels
-  * optional Data / Evaluation labels
-* Evaluate at three levels:
-
+- Build candidate extraction step
+- Annotate a small gold dataset
+  - 10–20 papers
+  - Design / Method / Task labels
+  - optional Data / Evaluation labels
+- Evaluate at three levels:
   1. Candidate extraction quality
   2. Role classification accuracy
   3. Full structure quality
@@ -229,23 +141,24 @@ But they help find weak outputs and useful error cases.
 <!--
 The next steps are three.
 First, build the candidate extraction step using SciBERT.
-Second, annotate a small gold dataset of ten to twenty papers with Design, Method, and Task labels.
-Data and Evaluation can be annotated as optional details.
-Third, evaluate the system at three levels: extraction, role classification, and full structure.
+Second, annotate a small gold dataset of ten to twenty papers.
+The main labels are Design, Method, and Task.
+Data and Evaluation are optional.
+Third, evaluate the system at three levels: extraction, classification, and full structure.
 -->
 
 ---
 
 # References
 
-**Beltagy, I., Lo, K. and Cohan, A. (2019)** ‘SciBERT: A pretrained language model for scientific text’, in Inui, K., Jiang, J., Ng, V. and Wan, X. (eds.) *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing*. Hong Kong, China: Association for Computational Linguistics, pp. 3615–3620. doi: 10.18653/v1/D19-1371.
+**Beltagy, I., Lo, K. and Cohan, A. (2019)** 'SciBERT: A pretrained language model for scientific text', in Inui, K., Jiang, J., Ng, V. and Wan, X. (eds.) *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing*. Hong Kong, China: Association for Computational Linguistics, pp. 3615–3620. doi: 10.18653/v1/D19-1371.
 
 **Ghosh, M., Ganguly, D., Basuchowdhuri, P. and Naskar, S.K. (2023)** *Enhancing AI research paper analysis: methodology component extraction using factored transformer-based sequence modeling*. arXiv:2311.03401. Available at: [https://arxiv.org/abs/2311.03401](https://arxiv.org/abs/2311.03401).
 
-**Ma, Y., Liu, J., Lu, W. and Cheng, Q. (2023)** ‘From “what” to “how”: Extracting the procedural scientific information toward the metric-optimization in AI’, *Information Processing & Management*, 60(3), article 103315. doi: 10.1016/j.ipm.2023.103315.
+**Ma, Y., Liu, J., Lu, W. and Cheng, Q. (2023)** 'From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI', *Information Processing & Management*, 60(3), article 103315. doi: 10.1016/j.ipm.2023.103315.
 
 **Oates, B.J. (2005)** *Researching information systems and computing*. London: SAGE Publications.
 
-**Osborne, F. and Motta, E. (2015)** ‘Klink-2: integrating multiple web sources to generate semantic topic networks’, in Gandon, F., Sabou, M., Sack, H., d’Amato, C., Cudré-Mauroux, P. and Zimmermann, A. (eds.) *The Semantic Web – ISWC 2015*. Cham: Springer International Publishing, pp. 408–424. doi: 10.1007/978-3-319-25007-6_24.
+**Osborne, F. and Motta, E. (2015)** 'Klink-2: integrating multiple web sources to generate semantic topic networks', in Gandon, F., Sabou, M., Sack, H., d'Amato, C., Cudré-Mauroux, P. and Zimmermann, A. (eds.) *The Semantic Web – ISWC 2015*. Cham: Springer International Publishing, pp. 408–424. doi: 10.1007/978-3-319-25007-6_24.
 
-**Pilkington, C. and Pretorius, L. (2015)** ‘A conceptual model of the research methodology domain’, in *Proceedings of the International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015)*. Setúbal: SCITEPRESS – Science and Technology Publications, pp. 96–107. doi: 10.5220/0005613100960107.
+**Pilkington, C. and Pretorius, L. (2015)** 'A conceptual model of the research methodology domain', in *Proceedings of the International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015)*. Setúbal: SCITEPRESS – Science and Technology Publications, pp. 96–107. doi: 10.5220/0005613100960107.
