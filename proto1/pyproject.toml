@@ -30,6 +30,7 @@ reportUnknownVariableType = false
 
 [tool.ruff]
 src = ["src"]
+extend-include = ["*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
