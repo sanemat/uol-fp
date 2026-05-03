@@ -25,6 +25,28 @@ This is a UoL (University of London) final project for CM3060 Natural Language P
   - `pyproject.toml` — Pyright + Ruff config
   - `.tool-versions` — Python 3.14.1 (managed by asdf)
 
+## Colab Sync Workflow
+
+The notebook syncs via GitHub — no manual upload needed.
+
+**Open in Colab:**
+```
+https://colab.research.google.com/github/sanemat/uol-fp/blob/main/proto1/pipeline.ipynb
+```
+Or click the badge inside the notebook.
+
+**Save changes back from Colab:**
+File → Save a copy in GitHub → commit to `main`
+
+**Pull locally after Colab save:**
+```bash
+git pull origin main
+```
+
+Cell outputs are stripped automatically on commit (`nbstripout` git filter).
+
+---
+
 ## Development Setup (proto1/)
 
 ```bash
