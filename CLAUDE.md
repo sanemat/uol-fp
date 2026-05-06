@@ -1,10 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This is a UoL (University of London) final project for CM3060 Natural Language Programming.
+UoL (University of London) final project for CM3060 Natural Language Programming.
 
 **Goal:** Automatically extract research methodology from computing research papers using LLMs.
 
@@ -16,9 +14,9 @@ This is a UoL (University of London) final project for CM3060 Natural Language P
 
 ## Repository Layout
 
-- `pitch.md` — project pitch slides (presentation source)
+- `pitch.md` — project pitch slides
 - `week*.md` — weekly course notes
-- `proto1/` — Python prototype (pipeline implementation)
+- `proto1/` — Python prototype
   - `pipeline.ipynb` — **main notebook, runs on Google Colab**
   - `src/uol_fp/` — shared library (models, design detector, consistency checker)
   - `tests/` — unit tests for the shared library
@@ -27,25 +25,13 @@ This is a UoL (University of London) final project for CM3060 Natural Language P
 
 ## Colab Sync Workflow
 
-The notebook syncs via GitHub — no manual upload needed.
+Notebook syncs via GitHub — no manual upload needed.
 
-**Open in Colab:**
-```
-https://colab.research.google.com/github/sanemat/uol-fp/blob/main/proto1/pipeline.ipynb
-```
-Or click the badge inside the notebook.
-
-**Save changes back from Colab:**
-File → Save a copy in GitHub → commit to `main`
-
-**Pull locally after Colab save:**
-```bash
-git pull origin main
-```
+1. **Open in Colab:** click the badge inside `pipeline.ipynb`, or use the Colab URL in the file.
+2. **Save back from Colab:** File → Save a copy in GitHub → commit to `main`
+3. **Pull locally:** `git pull origin main`
 
 Cell outputs are stripped automatically on commit (`nbstripout` git filter).
-
----
 
 ## Development Setup (proto1/)
 
@@ -59,18 +45,13 @@ pip install -e .
 ## Commands (proto1/)
 
 ```bash
-# Type check
-pyright
-
-# Lint
-ruff check src/
-
-# Format
-ruff format src/
-
-# Run a single test (once tests exist)
-python -m pytest tests/test_<name>.py
+pyright                          # type check
+ruff check src/                  # lint
+ruff format src/                 # format
+python -m pytest tests/test_<name>.py  # run a single test
 ```
+
+These commands apply to `src/uol_fp/` only — not for running the Colab pipeline.
 
 ## Pipeline Architecture (proto1/)
 
@@ -82,10 +63,11 @@ All pipeline steps run in `pipeline.ipynb` on Google Colab.
 4. **Structured output** — JSON with Design, Method, Data, Evaluation fields
 5. **Consistency checking** — validation rules (e.g. experiment → needs Data + Evaluation)
 
-The `src/uol_fp/` library contains the shared Python models and rule logic.
-Local commands (pyright, ruff, pytest) are for the library only — not for running the pipeline.
+## Constraints
 
-Focus is on a **working prototype**, not perfect accuracy. Avoid complex model training.
+- Focus on a **working prototype**, not perfect accuracy.
+- Do not introduce complex model training or fine-tuning.
+- Do not modify cell outputs in the notebook — `nbstripout` handles this on commit.
 
 ## Tool Management
 
