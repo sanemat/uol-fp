@@ -105,12 +105,71 @@ Apply simple validation rules:
 
 ---
 
+## Pipeline Architecture (revised)
+
+PDF parsing is preprocessing, not part of the research pipeline.
+
+```
+Local:
+  PDF → GROBID (Docker) → TEI XML
+
+Colab:
+  upload TEI XML
+  → parse sections (abstract, body divs, skip references)
+  → sentence splitting
+  → candidate extraction
+  → role classification
+  → design detection
+  → output JSON
+```
+
+GROBID provides section structure for free:
+- abstract
+- section heading + body text
+- references separated (not included in body)
+
+TEI XML is kept as-is (not converted to JSON). Colab reads the XML directly using ElementTree.
+
+---
+
+## TEI XML Format (GROBID output)
+
+GROBID version: **0.8.1** (`lfoppiano/grobid:0.8.1` Docker image)
+
+Namespace: `http://www.tei-c.org/ns/1.0` (always needed for ElementTree queries)
+
+Key paths used for parsing:
+
+| Content | XPath |
+|---------|-------|
+| Title | `.//tei:titleStmt/tei:title` |
+| Abstract | `.//tei:abstract` (use `itertext()` to get full text) |
+| Body sections | `.//tei:body//tei:div` |
+| Section heading | `div/tei:head` |
+| Section paragraphs | `div/tei:p` (use `itertext()` — `p.text` misses inline elements like `<ref>`, `<formula>`) |
+
+`itertext()` pattern (required — `element.text` alone is wrong):
+
+```python
+NS = {"tei": "http://www.tei-c.org/ns/1.0"}
+
+def _text(element) -> str:
+    return " ".join(element.itertext()).strip()
+```
+
+GROBID automatically:
+- Separates references into `<listBibl>` (not in body)
+- Assigns section headings from paper structure
+- Handles multi-column layouts
+
+---
+
 ## Input Length Constraints
 
 Both BERT-based models and LLMs have input length limits.
 Full paper text cannot be processed at once.
 
-Solution: sentence-level splitting.
+Solution: sentence-level splitting within each section.
 
 * SciBERT processes each sentence with `max_length=128` (or 256 — compare in experiments)
 * LLM receives only the candidate list (or candidate + sentence + section), not the full paper
@@ -176,13 +235,4 @@ error analysis shows role classification is wrong.
 * Avoid complex training
 * This is a prototype for later improvement
 
----
-
-## Next Steps
-
-1. Add `CandidateWithContext` dataclass (`candidate`, `sentence`, `section`, `source_paper`)
-2. Update candidate extraction to return `CandidateWithContext` list
-3. Add logging cell to pipeline: print full context + role as JSON
-4. Annotate a small gold dataset (10–20 papers)
-5. Run error analysis — classify failures into missing / noisy / wrong role
-6. Improve based on analysis results
+See `todo.md` for task tracking.
