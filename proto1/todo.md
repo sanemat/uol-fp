@@ -114,6 +114,29 @@ Papers:
 
 ---
 
+### T13 — Reduce candidate extraction noise (precision improvement)
+
+Related: [issue #31](https://github.com/sanemat/uol-fp/issues/31)
+
+Run pipeline on all 6 papers. Classify failures into:
+- **Noisy** — extracted but not methodology-related → tighten regex, add stopwords, add section filter
+- **Missing** — term not extracted → fix regex or expand patterns
+- **Wrong role** — extracted but wrong role → fix classifier rules
+
+**Done when (Transformer paper):**
+
+Must contain:
+- Method: `Transformer`, `self-attention`
+- Evaluation: `BLEU`
+- Task: `translation`
+
+Must NOT contain (in any list):
+- `and`, `but`, `solely`, `being`, `while`, `two`, `more`, `less`
+
+Method list ≤ 30 items.
+
+---
+
 ## Later (not this branch)
 
 - Annotate a small gold dataset (10–20 papers)
