@@ -130,6 +130,40 @@ GROBID provides section structure for free:
 
 TEI XML is kept as-is (not converted to JSON). Colab reads the XML directly using ElementTree.
 
+---
+
+## TEI XML Format (GROBID output)
+
+GROBID version: **0.8.1** (`lfoppiano/grobid:0.8.1` Docker image)
+
+Namespace: `http://www.tei-c.org/ns/1.0` (always needed for ElementTree queries)
+
+Key paths used for parsing:
+
+| Content | XPath |
+|---------|-------|
+| Title | `.//tei:titleStmt/tei:title` |
+| Abstract | `.//tei:abstract` (use `itertext()` to get full text) |
+| Body sections | `.//tei:body//tei:div` |
+| Section heading | `div/tei:head` |
+| Section paragraphs | `div/tei:p` (use `itertext()` — `p.text` misses inline elements like `<ref>`, `<formula>`) |
+
+`itertext()` pattern (required — `element.text` alone is wrong):
+
+```python
+NS = {"tei": "http://www.tei-c.org/ns/1.0"}
+
+def _text(element) -> str:
+    return " ".join(element.itertext()).strip()
+```
+
+GROBID automatically:
+- Separates references into `<listBibl>` (not in body)
+- Assigns section headings from paper structure
+- Handles multi-column layouts
+
+---
+
 ## Input Length Constraints
 
 Both BERT-based models and LLMs have input length limits.
@@ -201,114 +235,4 @@ error analysis shows role classification is wrong.
 * Avoid complex training
 * This is a prototype for later improvement
 
----
-
-## TODO
-
-### ✅ T1 — Text quality check cell
-
-Confirmed: 407 words > 25 chars on Transformer paper. pdfplumber breaks word spacing throughout the entire PDF. Root cause identified.
-
----
-
-### ✅ T2 — Section filter cell
-
-Implemented: cuts off References section, removes figure/table caption lines. Produces `filtered_text`.
-
----
-
-### ✅ T3 — CandidateWithContext dataclass
-
-Implemented: `candidate`, `sentence`, `section`, `source_paper`.
-
----
-
-### ✅ T4 — Update extract_candidates
-
-Implemented: returns `list[CandidateWithContext]`, min=3, max=40, expanded stop words.
-
----
-
-### ✅ T5 — Update Step 2 to use CandidateWithContext
-
-Implemented: iterates over `CandidateWithContext`, passes `cwc.sentence` as context.
-
----
-
-### ✅ T6 — Logging cell
-
-Implemented: prints each candidate with role + source sentence as JSON.
-
----
-
-### ✅ T8 — Compare PDF extraction: PyMuPDF vs GROBID
-
-PyMuPDF: 39497 chars, 1 long word — spaces correct.
-GROBID HuggingFace public server: failed (cold start issue).
-GROBID tested locally via Docker: works correctly. Returns structured TEI XML with 24 sections, references excluded.
-
-**Decision: use GROBID locally. TEI XML is the hand-off format to Colab.**
-
----
-
-### T9 — Local GROBID script: PDF → TEI XML
-
-Write `proto1/pdf_to_xml.py` — CLI script that sends a PDF to local GROBID and saves TEI XML.
-
-```
-docker run -d --rm -p 8070:8070 lfoppiano/grobid:0.8.1
-python pdf_to_xml.py paper.pdf          # saves paper.xml
-python pdf_to_xml.py paper.pdf --out out.xml
-```
-
-The script:
-- POSTs PDF to `http://localhost:8070/api/processFulltextDocument`
-- Saves raw TEI XML response to file
-- Prints summary: title, abstract length, section count
-
-**Done when:** Running on Transformer paper PDF produces a `.xml` file. Title, abstract, and section headings are visible in the summary output.
-
----
-
-### T10 — Update Colab pipeline to read TEI XML
-
-Replace the PDF upload cell with a TEI XML upload cell.
-
-New cell:
-- Uploads `.xml` file from local
-- Parses with ElementTree
-- Extracts abstract + body sections (heading + paragraph text)
-- Skips References / Acknowledgements divs
-- Produces `sections: list[dict]` with `heading` and `text`
-- `CandidateWithContext.section` is populated from actual GROBID section headings
-
-Remove from pipeline:
-- pdfplumber cell
-- PyMuPDF comparison cells
-- `filter_paper_text()` (GROBID already excludes References)
-- Text Quality Check cell (no longer needed)
-
-**Done when:** Uploading the Transformer paper XML produces candidate log with readable sentences and correct section names (e.g. `"Model Architecture"`, `"Training"`).
-
----
-
-### T11 — End-to-end test on "Attention is All You Need"
-
-Run full pipeline with GROBID TEI XML as input.
-
-Check:
-- No tokens longer than 40 chars in candidate output
-- Method list contains `Transformer`, `attention`
-- Evaluation list contains `BLEU`
-- Task list contains `translation`
-- Candidate log shows readable source sentences with correct section names
-
-**Done when:** Output JSON is clean and candidate log shows readable sentences with section names.
-
----
-
-### Later (not this branch)
-
-- Annotate a small gold dataset (10–20 papers)
-- Run error analysis — classify failures into missing / noisy / wrong role
-- Improve based on analysis results
+See `todo.md` for task tracking.
