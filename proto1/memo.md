@@ -20,8 +20,8 @@ Instead, we define a **simple and practical structure** that can be extracted fr
 
 Methodology = 3 main parts + optional details:
 
-* **Design** → overall research design (experiment, survey, case study)
-* **Method** → model, algorithm, or technique (e.g. BERT, CNN)
+* **ResearchDesign** → hierarchical research design grounded in Oates (2006) and Pilkington & Pretorius. Fields: `family` (empirical / non_empirical / mixed), `primary_type` (survey / experiment / case_study / action_research / ethnography / design_and_creation / model_or_theory_building), `subtype` (algorithm_development / system_development / model_building / theory_building), `secondary_types`
+* **TechnicalMethod** → model, algorithm, or technique (e.g. BERT, CNN). Separated from Oates/Pilkington "Research Method" (interviews, observations, questionnaires).
 * **Task** → research task or problem (e.g. question answering, image classification)
 
 Optional:
@@ -82,12 +82,17 @@ Output format:
 
 ```json
 {
-  "Design": "experiment",
-  "Method": ["BERT"],
-  "Task": ["question answering"],
+  "ResearchDesign": {
+    "family": "mixed",
+    "primary_type": "design_and_creation",
+    "subtype": "algorithm_development",
+    "secondary_types": ["experiment"]
+  },
+  "TechnicalMethod": ["Transformer", "self-attention"],
+  "Task": ["machine translation"],
   "Optional": {
-    "Data": ["SQuAD"],
-    "Evaluation": ["F1"]
+    "Data": ["WMT 2014 English-German"],
+    "Evaluation": ["BLEU"]
   }
 }
 ```
@@ -98,10 +103,9 @@ Output format:
 
 Apply simple validation rules:
 
-* Experiment without Task → weak
-* Experiment without Method → weak
-* Method without Task → incomplete
-* Theoretical design with benchmark-style Evaluation → possible mismatch
+* Experiment or DesignAndCreation without Task → weak
+* Experiment or DesignAndCreation without TechnicalMethod → weak
+* TechnicalMethod without Task → incomplete
 
 ---
 

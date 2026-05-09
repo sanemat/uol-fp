@@ -81,6 +81,18 @@ Removed: pdfplumber cell, PyMuPDF comparison cells, `filter_paper_text()`, Text 
 
 ---
 
+### T — ResearchDesign hierarchy + TechnicalMethod rename
+
+Grounded in Oates (2006) and Pilkington & Pretorius.
+
+- Replaced flat `DesignType` with `DesignFamily` / `PrimaryDesignType` / `DesignSubtype`
+- Added `ResearchDesign` dataclass with `family`, `primary_type`, `subtype`, `secondary_types`
+- `detect_design()` returns MIXED family when non-empirical primary + experiment both detected
+- Renamed `method` → `technical_method` to separate from Oates/Pilkington "Research Method"
+- Output key: `"Design"` → `"ResearchDesign"`, `"Method"` → `"TechnicalMethod"`
+
+---
+
 ## 🔲 Next
 
 ### T11 — End-to-end test on "Attention is All You Need"
@@ -89,7 +101,7 @@ Run full pipeline with GROBID TEI XML as input.
 
 Check:
 - No tokens longer than 40 chars in candidate output
-- Method list contains `Transformer`, `attention`
+- TechnicalMethod list contains `Transformer`, `attention`
 - Evaluation list contains `BLEU`
 - Task list contains `translation`
 - Candidate log shows readable source sentences with correct section names
@@ -126,14 +138,14 @@ Run pipeline on all 6 papers. Classify failures into:
 **Done when (Transformer paper):**
 
 Must contain:
-- Method: `Transformer`, `self-attention`
+- TechnicalMethod: `Transformer`, `self-attention`
 - Evaluation: `BLEU`
 - Task: `translation`
 
 Must NOT contain (in any list):
 - `and`, `but`, `solely`, `being`, `while`, `two`, `more`, `less`
 
-Method list ≤ 30 items.
+TechnicalMethod list ≤ 30 items.
 
 ---
 
