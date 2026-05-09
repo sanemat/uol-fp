@@ -178,11 +178,110 @@ error analysis shows role classification is wrong.
 
 ---
 
-## Next Steps
+## TODO
 
-1. Add `CandidateWithContext` dataclass (`candidate`, `sentence`, `section`, `source_paper`)
-2. Update candidate extraction to return `CandidateWithContext` list
-3. Add logging cell to pipeline: print full context + role as JSON
-4. Annotate a small gold dataset (10–20 papers)
-5. Run error analysis — classify failures into missing / noisy / wrong role
-6. Improve based on analysis results
+### T1 — Text quality check cell
+
+Add a debug cell immediately after the PDF extraction cell.
+
+Print:
+- First 1000 chars of `paper_text`
+- Count of words longer than 25 chars (indicates broken PDF spacing)
+- First 10 such words
+
+**Done when:** Running the cell shows the raw text sample and flags concatenated words.
+
+---
+
+### T2 — Section filter cell
+
+Add a `filter_paper_text(text)` function and a cell that runs it before Step 1.
+
+Rules:
+- Cut off everything from `References` / `Bibliography` heading onward (regex on line start)
+- Remove figure/table caption lines (`Figure N`, `Fig. N`, `Table N`)
+
+Store result in `filtered_text`. All later cells use `filtered_text` instead of `paper_text`.
+
+**Done when:** `filtered_text` is shorter than `paper_text` on a real paper (References removed), and caption lines are gone.
+
+---
+
+### T3 — CandidateWithContext dataclass
+
+Add to the models cell (alongside `MethodologyProfile`):
+
+```python
+@dataclass
+class CandidateWithContext:
+    candidate: str
+    sentence: str
+    section: str = "unknown"
+    source_paper: str = ""
+```
+
+**Done when:** Dataclass is defined and importable in later cells.
+
+---
+
+### T4 — Update extract_candidates
+
+Change signature: `extract_candidates(text: str) -> list[CandidateWithContext]`
+
+Changes:
+- For each regex match, record which sentence it came from
+- Min length: 3 (was 2)
+- Max length: 40 (reject broken PDF concatenations)
+- Expand stop word list (add: At, By, As, Of, Be, Are, Was, Has, Have, From, With, That, Which, These, Those, Also, Such, Both, Each)
+
+**Done when:** No candidate in the output is longer than 40 chars or in the stop word list.
+
+---
+
+### T5 — Update Step 2 to use CandidateWithContext
+
+Change Step 2 to iterate over `list[CandidateWithContext]` and pass `cwc.sentence` as context to `classify_role`.
+
+**Done when:** `classified` dict is populated from `CandidateWithContext` list.
+
+---
+
+### T6 — Logging cell
+
+Add a cell after Step 2 that prints each candidate with role + source sentence as JSON:
+
+```json
+[
+  {
+    "candidate": "BERT",
+    "role": "Method",
+    "sentence": "We fine-tune BERT on the SST-2 dataset.",
+    "section": "unknown"
+  }
+]
+```
+
+**Done when:** Running the cell outputs valid JSON with `candidate`, `role`, `sentence`, `section` for every candidate.
+
+---
+
+### T7 — End-to-end test on a real paper
+
+Run the full pipeline on a known paper (e.g., "Attention is All You Need").
+
+Check:
+- Candidate count is lower than before
+- No tokens longer than 40 chars in output
+- Method list contains `Transformer`, `attention`, `BLEU`
+- Task list contains `translation`
+- Logging cell shows source sentences
+
+**Done when:** Output JSON looks clean and logging cell shows readable sentences.
+
+---
+
+### Later (not this branch)
+
+- Annotate a small gold dataset (10–20 papers)
+- Run error analysis — classify failures into missing / noisy / wrong role
+- Improve based on analysis results
