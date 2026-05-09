@@ -67,29 +67,21 @@ All 6 dataset papers converted:
 
 ---
 
-## 🔲 Next
-
 ### T10 — Update Colab pipeline to read TEI XML
 
-Replace the PDF upload cell with a TEI XML upload cell.
-
-New cell:
+Replaced PDF upload cell with TEI XML upload cell. Pipeline now:
 - Uploads `.xml` file from local
 - Parses with ElementTree
 - Extracts abstract + body sections (heading + paragraph text)
 - Skips References / Acknowledgements divs
 - Produces `sections: list[dict]` with `heading` and `text`
-- `CandidateWithContext.section` is populated from actual GROBID section headings
+- `CandidateWithContext.section` populated from actual GROBID section headings
 
-Remove from pipeline:
-- pdfplumber cell
-- PyMuPDF comparison cells
-- `filter_paper_text()` (GROBID already excludes References)
-- Text Quality Check cell (no longer needed)
-
-**Done when:** Uploading the Transformer paper XML produces candidate log with readable sentences and correct section names (e.g. `"Model Architecture"`, `"Training"`).
+Removed: pdfplumber cell, PyMuPDF comparison cells, `filter_paper_text()`, Text Quality Check cell.
 
 ---
+
+## 🔲 Next
 
 ### T11 — End-to-end test on "Attention is All You Need"
 

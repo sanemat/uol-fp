@@ -36,6 +36,8 @@ Notebook syncs via GitHub — no manual upload needed.
 
 Cell outputs are stripped automatically on commit (`nbstripout` git filter).
 
+**Colab branch name restriction:** Colab cannot open notebooks from branches with `/` in the name (e.g. `feat/t11` fails). Use `-` instead (e.g. `t11-e2e-test`).
+
 ## Development Setup (proto1/)
 
 ```bash
