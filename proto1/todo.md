@@ -119,3 +119,4 @@ Papers:
 - Annotate a small gold dataset (10–20 papers)
 - Run error analysis — classify failures into missing / noisy / wrong role
 - Improve based on analysis results
+- Fix Cell 8 heading: says "SciBERT NER" but implementation is regex-based
