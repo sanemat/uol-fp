@@ -232,6 +232,66 @@ error analysis shows role classification is wrong.
 
 ---
 
+## Theoretical Basis
+
+### What comes from Oates (2006)
+
+Oates defines six **research strategies** for IS and computing:
+survey, design and creation, experiment, case study, action research, ethnography.
+
+These map directly to our `PrimaryDesignType` enum values.
+
+Oates also defines **data generation methods** (interviews, observations, questionnaires,
+documents) and **data analysis methods**. These are what Oates calls "Research Methods" —
+**not** models or algorithms.
+
+### What comes from Pilkington & Pretorius (2015)
+
+Pilkington & Pretorius propose a research methodology domain model for computing fields.
+Their **research scheme** separates three layers: philosophical world view, research design,
+and research methods.
+
+They list computing-specific research designs including: case studies, surveys,
+**algorithm development**, **model or theory building**, and system development.
+
+This justifies adding `DESIGN_AND_CREATION` and `MODEL_OR_THEORY_BUILDING` to `PrimaryDesignType`
+alongside the Oates strategies.
+
+### What is this project's own operational schema
+
+The following are **not** direct Oates or Pilkington terms — they are defined by this project
+for the purpose of automatic extraction:
+
+- **`DesignFamily`** (empirical / non_empirical / mixed) — a practical grouping added to make
+  automated classification easier. Not explicitly stated as a central structure in either source.
+- **`DesignSubtype`** (algorithm_development, system_development, model_building, theory_building)
+  — finer-grained classification within `design_and_creation`, derived from Pilkington's list.
+- **`TechnicalMethod`** — models, algorithms, and architectures (e.g. BERT, Transformer, dropout).
+  This is the project's own term. It is explicitly separated from Oates/Pilkington's "Research
+  Method" to avoid naming confusion.
+- **`Data`**, **`Evaluation`**, **`Task`** — operational elements for extracting structured
+  information from NLP/ML papers. Not part of Oates or Pilkington's classification.
+
+In the report, this should be framed as:
+
+> Oates (2006) and Pilkington & Pretorius (2015) are used as the theoretical basis for the
+> ResearchDesign schema. The project then defines a simplified operational schema —
+> TechnicalMethod, Data, Evaluation, Task — suited to automatic extraction from computing
+> research papers.
+
+### What to avoid
+
+- **Do not call BERT or Transformer a "Method"** in the Oates/Pilkington sense. In both works,
+  "method" refers to data collection or analysis procedures (interviews, questionnaires, etc.).
+  Use `TechnicalMethod` instead.
+- **Do not claim `DesignFamily` is directly from Pilkington.** It is a practical grouping added
+  by this project. Pilkington's central structure is the three-layer research scheme, not an
+  empirical/non-empirical dichotomy.
+- **Do not present `PrimaryDesignType` as a verbatim copy of Oates.** It combines Oates strategies
+  with Pilkington's computing-specific designs into one flat enum for simplicity.
+
+---
+
 ## Important Notes
 
 * Focus on **working system**, not perfect accuracy
