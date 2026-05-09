@@ -420,6 +420,61 @@ This schema is not a direct copy of either framework. It is an operational schem
 
 ---
 
+## Prior Work
+
+### Directly Related: Methodology Component Extraction
+
+**Ghosh et al. — "Extracting Methodology Components from AI Research Papers: A Data-driven Factored Sequence Labeling Approach"**
+
+Extracts Method, Task, and Dataset from AI papers using SciBERT with BIO tagging and factored sequence labeling. Data: PapersWithCode — 34,560 papers, 2,099 method names in knowledge base. Covers 7 domain categories: General, CV, Seq2Seq, RL, NLP, Audio/Speech, Graph.
+
+Key finding: factored models (data-driven k-means clustering on SciBERT embeddings) outperform non-factored models, especially for out-of-domain data.
+
+**Limitation for this project:** does not extract ResearchDesign (experiment, case study, etc.). Adding ResearchDesign extraction is the main contribution of this project.
+
+**Ghosh et al. — "Enhancing AI Research Paper Analysis: Methodology Component Extraction using Factored Transformer-based Sequence Modeling"**
+
+Extended version of the above. Same target components, same SciBERT-based approach.
+
+---
+
+### Automated Methodology Classification
+
+**"Automated Research Methodology Classification Using Machine Learning"**
+
+Classifies papers as quantitative vs. qualitative using XGBoost. Achieves 90–95% accuracy across three domains (tourism: 229 papers, medical science: 557 papers, information systems: 787 papers).
+
+Shows that automated methodology classification is feasible at high accuracy.
+
+**Limitation:** binary classification only — does not distinguish experiment vs. case study vs. design-and-creation etc. This project aims for finer-grained ResearchDesign labels.
+
+---
+
+### Related Information Extraction Work
+
+**"From 'what' to 'how': Extracting the Procedural Scientific Information Toward the Metric-optimization in AI"**
+
+Defines a "metric-driven mechanism" schema and extracts Mechanism (≈ TechnicalMethod), Metric (≈ Evaluation), and Task from NLP papers. Approach: BERT-based mechanism detection + query-guided Seq2seq extraction. Close to this project's schema but focused on NLP papers only.
+
+---
+
+### Theoretical Basis Confirmation (Oates Chapters)
+
+The Oates (2006) textbook chapters in previouswork confirm the ResearchDesign taxonomy already used in this project:
+
+| Chapter | Topic |
+|---------|-------|
+| ch8 | Design and Creation — prototyping, artefact development, iterative evaluation |
+| ch9 | Experiment — hypotheses, variables, controls, internal/external validity |
+| ch10 | Case Study — types, selection, theory relationship |
+| ch11 | Action Research — participation, diagnosis–planning–intervention–evaluation cycle |
+| ch17 | Quantitative data analysis — statistics, correlation, t-test, chi-square |
+| ch18 | Qualitative data analysis — theme analysis, grounded theory |
+
+These confirm the `primary_type` labels in this project's ResearchDesign schema.
+
+---
+
 ## Important Notes
 
 * Focus on **working system**, not perfect accuracy
