@@ -180,103 +180,99 @@ error analysis shows role classification is wrong.
 
 ## TODO
 
-### T1 — Text quality check cell
+### ✅ T1 — Text quality check cell
 
-Add a debug cell immediately after the PDF extraction cell.
-
-Print:
-- First 1000 chars of `paper_text`
-- Count of words longer than 25 chars (indicates broken PDF spacing)
-- First 10 such words
-
-**Done when:** Running the cell shows the raw text sample and flags concatenated words.
+Confirmed: 407 words > 25 chars on Transformer paper. pdfplumber breaks word spacing throughout the entire PDF. Root cause identified.
 
 ---
 
-### T2 — Section filter cell
+### ✅ T2 — Section filter cell
 
-Add a `filter_paper_text(text)` function and a cell that runs it before Step 1.
-
-Rules:
-- Cut off everything from `References` / `Bibliography` heading onward (regex on line start)
-- Remove figure/table caption lines (`Figure N`, `Fig. N`, `Table N`)
-
-Store result in `filtered_text`. All later cells use `filtered_text` instead of `paper_text`.
-
-**Done when:** `filtered_text` is shorter than `paper_text` on a real paper (References removed), and caption lines are gone.
+Implemented: cuts off References section, removes figure/table caption lines. Produces `filtered_text`.
 
 ---
 
-### T3 — CandidateWithContext dataclass
+### ✅ T3 — CandidateWithContext dataclass
 
-Add to the models cell (alongside `MethodologyProfile`):
+Implemented: `candidate`, `sentence`, `section`, `source_paper`.
 
+---
+
+### ✅ T4 — Update extract_candidates
+
+Implemented: returns `list[CandidateWithContext]`, min=3, max=40, expanded stop words.
+
+---
+
+### ✅ T5 — Update Step 2 to use CandidateWithContext
+
+Implemented: iterates over `CandidateWithContext`, passes `cwc.sentence` as context.
+
+---
+
+### ✅ T6 — Logging cell
+
+Implemented: prints each candidate with role + source sentence as JSON.
+
+---
+
+### T8 — Compare PDF extraction: PyMuPDF vs GROBID
+
+**Background:** T1 confirmed that pdfplumber breaks word spacing on academic PDFs. The real fix is scholarly document parsing, not text filtering.
+
+Priority order:
+1. GROBID — academic paper specialist, outputs TEI XML with section names, body, references separated
+2. PyMuPDF blocks — quicker to try, better than pdfplumber, uses `get_text("blocks", sort=True)`
+
+Add a comparison cell to the notebook:
+
+**Approach A — PyMuPDF:**
 ```python
-@dataclass
-class CandidateWithContext:
-    candidate: str
-    sentence: str
-    section: str = "unknown"
-    source_paper: str = ""
+import fitz  # pip install pymupdf
+blocks = page.get_text("blocks", sort=True)  # type 0 = text block
 ```
 
-**Done when:** Dataclass is defined and importable in later cells.
-
----
-
-### T4 — Update extract_candidates
-
-Change signature: `extract_candidates(text: str) -> list[CandidateWithContext]`
-
-Changes:
-- For each regex match, record which sentence it came from
-- Min length: 3 (was 2)
-- Max length: 40 (reject broken PDF concatenations)
-- Expand stop word list (add: At, By, As, Of, Be, Are, Was, Has, Have, From, With, That, Which, These, Those, Also, Such, Both, Each)
-
-**Done when:** No candidate in the output is longer than 40 chars or in the stop word list.
-
----
-
-### T5 — Update Step 2 to use CandidateWithContext
-
-Change Step 2 to iterate over `list[CandidateWithContext]` and pass `cwc.sentence` as context to `classify_role`.
-
-**Done when:** `classified` dict is populated from `CandidateWithContext` list.
-
----
-
-### T6 — Logging cell
-
-Add a cell after Step 2 that prints each candidate with role + source sentence as JSON:
-
-```json
-[
-  {
-    "candidate": "BERT",
-    "role": "Method",
-    "sentence": "We fine-tune BERT on the SST-2 dataset.",
-    "section": "unknown"
-  }
-]
+**Approach B — GROBID (public HuggingFace server, no Docker needed):**
+```python
+# POST PDF to https://kermitt2-grobid.hf.space/api/processFulltextDocument
+# Parse TEI XML: abstract, body sections, references (already separated)
 ```
 
-**Done when:** Running the cell outputs valid JSON with `candidate`, `role`, `sentence`, `section` for every candidate.
+Check both outputs on the Transformer paper. Evaluate:
+- Spaces correct?
+- Sentence order natural?
+- References removed?
+- Section names available?
+- Tables separated from body?
+
+**Done when:** First 20 sentences of both outputs are printed and checked against the 5 criteria above.
 
 ---
 
-### T7 — End-to-end test on a real paper
+### T9 — Replace pdfplumber with the winning approach
 
-Run the full pipeline on a known paper (e.g., "Attention is All You Need").
+Based on T8 comparison, update the PDF extraction cell (`id=7f1f6cbb`) to use the chosen approach.
+
+If GROBID: remove `filter_paper_text()` — References separation is built-in. Update Step 1 to use section-aware text.
+
+If PyMuPDF: keep `filter_paper_text()` as-is. Update extraction to use `get_text("blocks", sort=True)`.
+
+**Done when:** `paper_text` (or structured equivalent) has no words > 25 chars and no References content.
+
+---
+
+### T10 — End-to-end test on a real paper
+
+Run the full pipeline on "Attention is All You Need" with the new extraction.
 
 Check:
-- Candidate count is lower than before
-- No tokens longer than 40 chars in output
-- Method list contains `Transformer`, `attention`, `BLEU`
+- No tokens longer than 40 chars in candidate output
+- Method list contains `Transformer`, `attention`
+- Evaluation list contains `BLEU`
 - Task list contains `translation`
-- Logging cell shows source sentences
+- Candidate log shows readable source sentences
 
-**Done when:** Output JSON looks clean and logging cell shows readable sentences.
+**Done when:** Output JSON is clean and candidate log sentences are readable English.
 
 ---
 
