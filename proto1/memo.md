@@ -234,61 +234,189 @@ error analysis shows role classification is wrong.
 
 ## Theoretical Basis
 
-### What comes from Oates (2006)
+This project is based on two main sources: Oates (2006) and Pilkington and Pretorius (2015). Both works discuss research methodology in computing and information systems. They are useful because this project also focuses on computing research papers.
 
-Oates defines six **research strategies** for IS and computing:
-survey, design and creation, experiment, case study, action research, ethnography.
+### Oates' Research Strategies
 
-These map directly to our `PrimaryDesignType` enum values.
+Oates (2006) explains several research strategies used in information systems and computing research. These include survey, experiment, case study, action research, ethnography, and design and creation.
 
-Oates also defines **data generation methods** (interviews, observations, questionnaires,
-documents) and **data analysis methods**. These are what Oates calls "Research Methods" —
-**not** models or algorithms.
+In this project, Oates is used as the main basis for the **Research Design** labels. For example, a paper may use an experiment, a case study, or design and creation. In computing research, design and creation is especially important because many papers propose a new artefact, such as an algorithm, model, architecture, system, or framework.
 
-### What comes from Pilkington & Pretorius (2015)
+For example, a paper that proposes a new neural network architecture can be treated as a form of **design and creation**. If the paper also evaluates the architecture on benchmark datasets, it may also include an **experimental** element.
 
-Pilkington & Pretorius propose a research methodology domain model for computing fields.
-Their **research scheme** separates three layers: philosophical world view, research design,
-and research methods.
+### Pilkington and Pretorius' Research Methodology Domain Model
 
-They list computing-specific research designs including: case studies, surveys,
-**algorithm development**, **model or theory building**, and system development.
+Pilkington and Pretorius (2015) propose a conceptual model of the research methodology domain for computing fields. Their model is useful because it separates different parts of research methodology, such as research design and research methods.
 
-This justifies adding `DESIGN_AND_CREATION` and `MODEL_OR_THEORY_BUILDING` to `PrimaryDesignType`
-alongside the Oates strategies.
+This distinction is important for this project. In many methodology extraction tasks, words such as "method", "model", "algorithm", and "evaluation" can easily be mixed together. Pilkington and Pretorius help clarify that research design is different from the concrete methods or procedures used inside a study.
 
-### What is this project's own operational schema
+Therefore, this project uses their work as a structural basis. The system does not only extract a flat list of terms. Instead, it tries to organize extracted information into different roles.
 
-The following are **not** direct Oates or Pilkington terms — they are defined by this project
-for the purpose of automatic extraction:
+### Operational Schema Used in This Project
 
-- **`DesignFamily`** (empirical / non_empirical / mixed) — a practical grouping added to make
-  automated classification easier. Not explicitly stated as a central structure in either source.
-- **`DesignSubtype`** (algorithm_development, system_development, model_building, theory_building)
-  — finer-grained classification within `design_and_creation`, derived from Pilkington's list.
-- **`TechnicalMethod`** — models, algorithms, and architectures (e.g. BERT, Transformer, dropout).
-  This is the project's own term. It is explicitly separated from Oates/Pilkington's "Research
-  Method" to avoid naming confusion.
-- **`Data`**, **`Evaluation`**, **`Task`** — operational elements for extracting structured
-  information from NLP/ML papers. Not part of Oates or Pilkington's classification.
+This project adapts the ideas from Oates and Pilkington and Pretorius into a simplified schema for automatic extraction.
 
-In the report, this should be framed as:
+The schema is:
 
-> Oates (2006) and Pilkington & Pretorius (2015) are used as the theoretical basis for the
-> ResearchDesign schema. The project then defines a simplified operational schema —
-> TechnicalMethod, Data, Evaluation, Task — suited to automatic extraction from computing
-> research papers.
+```json
+{
+  "ResearchDesign": {
+    "family": "empirical | non_empirical | mixed | unknown",
+    "primary_type": "survey | experiment | case_study | action_research | ethnography | design_and_creation | model_or_theory_building | unknown",
+    "subtype": "algorithm_development | system_development | model_building | theory_building | none",
+    "secondary_types": []
+  },
+  "TechnicalMethod": [],
+  "Data": [],
+  "Evaluation": [],
+  "Task": []
+}
+```
 
-### What to avoid
+### ResearchDesign
 
-- **Do not call BERT or Transformer a "Method"** in the Oates/Pilkington sense. In both works,
-  "method" refers to data collection or analysis procedures (interviews, questionnaires, etc.).
-  Use `TechnicalMethod` instead.
-- **Do not claim `DesignFamily` is directly from Pilkington.** It is a practical grouping added
-  by this project. Pilkington's central structure is the three-layer research scheme, not an
-  empirical/non-empirical dichotomy.
-- **Do not present `PrimaryDesignType` as a verbatim copy of Oates.** It combines Oates strategies
-  with Pilkington's computing-specific designs into one flat enum for simplicity.
+`ResearchDesign` describes the overall design or strategy of the paper. This part is mainly based on Oates' research strategies, with support from Pilkington and Pretorius' distinction between research design and research methods.
+
+Examples include:
+
+```text
+survey
+experiment
+case_study
+action_research
+ethnography
+design_and_creation
+model_or_theory_building
+```
+
+For computing papers, `design_and_creation` is especially important. It can include the development of algorithms, models, systems, architectures, or frameworks.
+
+### TechnicalMethod
+
+`TechnicalMethod` is used for computational methods and technical components.
+
+Examples include:
+
+```text
+BERT
+Transformer
+self-attention
+multi-head attention
+CNN
+SVM
+Adam
+dropout
+```
+
+This label is intentionally called `TechnicalMethod`, not simply `Method`. This is because in Oates and Pilkington and Pretorius, "research method" often refers to data collection or analysis methods, such as interviews, observations, questionnaires, measurements, or argumentation. In this project, the target is different: it is the extraction of technical methods from computing papers.
+
+### Data
+
+`Data` refers to datasets, corpora, benchmarks, or other data sources used in the paper.
+
+Examples include:
+
+```text
+SST-2
+MNIST
+ImageNet
+WMT 2014 English-German
+Penn Treebank
+Papers with Code metadata
+```
+
+### Evaluation
+
+`Evaluation` refers to evaluation metrics, benchmarks, or evaluation procedures.
+
+Examples include:
+
+```text
+accuracy
+F1 score
+BLEU
+perplexity
+precision
+recall
+human evaluation
+cross-validation
+```
+
+### Task
+
+`Task` refers to the research task or application area.
+
+Examples include:
+
+```text
+machine translation
+sentiment classification
+named entity recognition
+question answering
+constituency parsing
+image classification
+```
+
+This category is useful because task names are often confused with data or evaluation terms. For example, "machine translation" is a task, while "WMT 2014 English-German" is data and "BLEU" is an evaluation metric.
+
+### Example
+
+For the paper *Attention Is All You Need*, the structured output may look like this:
+
+```json
+{
+  "ResearchDesign": {
+    "family": "mixed",
+    "primary_type": "design_and_creation",
+    "subtype": "algorithm_development",
+    "secondary_types": ["experiment"]
+  },
+  "TechnicalMethod": [
+    "Transformer",
+    "self-attention",
+    "multi-head attention",
+    "positional encoding",
+    "feed-forward network",
+    "residual connection",
+    "layer normalization",
+    "dropout",
+    "label smoothing",
+    "Adam"
+  ],
+  "Data": [
+    "WMT 2014 English-German",
+    "WMT 2014 English-French",
+    "Wall Street Journal Penn Treebank"
+  ],
+  "Evaluation": [
+    "BLEU",
+    "perplexity",
+    "F1"
+  ],
+  "Task": [
+    "machine translation",
+    "constituency parsing"
+  ]
+}
+```
+
+### Summary
+
+Oates (2006) provides the main basis for classifying research design, especially through research strategies such as experiment, case study, survey, and design and creation.
+
+Pilkington and Pretorius (2015) provide a useful structural distinction between research design and research methods. This helps the project avoid mixing the overall research design with specific technical components.
+
+Based on these two works, this project defines a practical extraction schema with five parts:
+
+```text
+ResearchDesign
+TechnicalMethod
+Data
+Evaluation
+Task
+```
+
+This schema is not a direct copy of either framework. It is an operational schema for automatic methodology extraction from computing research papers.
 
 ---
 
