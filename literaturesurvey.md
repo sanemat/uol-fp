@@ -40,9 +40,9 @@ This literature survey examines work in three areas relevant to this project:
 (2) computational methods for extracting methodology information from paper text,
 and (3) enabling technologies — scientific language models and knowledge organisation systems.
 
-The central research question is: can a structured methodology profile — covering research design, technical method, task, data, and evaluation — be automatically extracted from a computing research paper? No single prior work answers this question in full. This survey shows why, and positions this project in relation to existing work.
+The central research question is: can a structured methodology profile — covering research design, technical method, task, data, and evaluation — be automatically extracted from a computing research paper? The selected literature addresses parts of this question, but not the full profile proposed in this project. This survey shows why, and positions this project in relation to existing work.
 
-In this project, "methodology" is used in a broader computational sense than in Oates or Pilkington and Pretorius. It refers to a structured profile containing both the research strategy of a paper (ResearchDesign) and the technical components used in the work (TechnicalMethod, Task, Data, Evaluation). This broader scope is necessary because the extraction target is paper text, not a researcher's design choices.
+In this project, "methodology" is used in a broader computational sense than in Oates or Pilkington and Pretorius. It refers to a structured profile containing both the research strategy of a paper (ResearchDesign) and the technical components used in the work (TechnicalMethod, Task, Data, Evaluation). This broader scope is necessary because the project aims to extract an observable profile from paper text, rather than reconstruct the author's full methodological reasoning.
 
 Papers were selected by relevance to the project schema and pipeline. Where a paper has known limitations for this project, these are stated explicitly.
 
@@ -170,7 +170,7 @@ Kosztyán and Király (2025) address a different aspect of methodology identific
 
 The paper argues that classic ML methods (XGBoost) are preferable to transformer-based models for this task because methodology classification does not require full contextual understanding of the paper, only identification of relevant vocabulary across sections. This contrasts with Ghosh et al., who use SciBERT because context is necessary for boundary detection of technical term names.
 
-**Limitation for this project.** The binary quantitative/qualitative distinction is too coarse for the goals of this project. A quantitative study could be an experiment, a survey, or a design-and-creation paper with benchmarking — these have different research designs that matter for paper comparison. The coarse binary label loses this information. However, this paper provides important evidence that automated research methodology classification is feasible at scale and can achieve high accuracy with simple features, which supports the hypothesis that methodology information can be extracted automatically without large language models.
+**Limitation for this project.** The binary quantitative/qualitative distinction is too coarse for the goals of this project. A quantitative study could be an experiment, a survey, or a design-and-creation paper with benchmarking — these have different research designs that matter for paper comparison. The coarse binary label loses this information. However, this paper provides useful evidence that some methodology-related signals can be detected from full paper text using non-generative models — consistent with the general feasibility of automated methodology classification, though not specific to this project's regex-based approach.
 
 ---
 
@@ -208,7 +208,7 @@ GROBID is relevant to extraction quality because parsing errors propagate downst
 
 ### 5.1 Three separate streams
 
-The reviewed literature divides into three streams that have not yet been connected:
+For the purposes of this project, the reviewed literature can be organised into three streams that are rarely connected explicitly:
 
 **Stream 1 — Conceptual frameworks** (Oates, 2005; Pilkington and Pretorius, 2015): define what research methodology is in computing. They are theoretical and provide no computational operationalisation.
 
@@ -256,6 +256,8 @@ A comparison of the three extraction papers is shown in Table 1.
 
 *Table 1: Comparison of methodology extraction schemas.*
 
+In this schema, ResearchDesign and Evaluation are distinct levels of description. ResearchDesign captures the paper-level strategy — for example, whether the paper uses experimental evaluation — while Evaluation captures the concrete metrics, benchmarks, and criteria applied within that strategy.
+
 ### 5.3 Design choices and their justification
 
 This project uses a rule-based approach for role classification and ResearchDesign detection. The rule-based component is not presented as a final extractor but as an interpretable baseline for testing whether the proposed schema is operationalisable from paper text. At the prototype stage, interpretable rules allow direct error analysis: a missed entity can be traced to a missing regex pattern or keyword, whereas a neural model's error is harder to diagnose without a gold-standard dataset.
@@ -266,7 +268,7 @@ Kosztyán and Király (2025) suggest that some methodology signals are recoverab
 
 **Evaluation framework.** Ghosh et al. evaluate extraction using standard NER metrics (precision, recall, F1) on individual entity types. For a complete methodology profile with five components, this project requires evaluation at two levels. First, component-level evaluation: precision, recall, and F1 for TechnicalMethod, Task, Data, and Evaluation, measured against a manually annotated gold-standard set. Second, profile-level evaluation: human judgement of whether the extracted ResearchDesign field correctly identifies the paper's research strategy. How to weight these two levels and how to handle partial overlap in TechnicalMethod lists are open questions to be resolved in the evaluation phase.
 
-**Silver vs. gold standard.** Ghosh et al. use PapersWithCode labels (silver standard). This project has no annotated dataset at this stage. Evaluation will depend on manual annotation of a small gold-standard set (10–20 papers planned). Inter-annotator agreement has not yet been tested.
+**Silver vs. gold standard.** Ghosh et al. use PapersWithCode labels (silver standard). This project has no annotated dataset at this stage. Evaluation will depend on manual annotation of a small gold-standard set (10–20 papers planned). Inter-annotator agreement has not yet been tested. Because the gold-standard set is small, the evaluation will be exploratory rather than statistically conclusive.
 
 **Cross-domain generalisation.** All extraction work reviewed was developed on a specific domain. This project was tested only on "Attention Is All You Need" (a deep learning paper). Whether the pipeline generalises to IS, software engineering, or HCI papers is unknown.
 
