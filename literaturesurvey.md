@@ -42,6 +42,8 @@ and (3) enabling technologies — scientific language models and knowledge organ
 
 The central research question is: can a structured methodology profile — covering research design, technical method, task, data, and evaluation — be automatically extracted from a computing research paper? No single prior work answers this question in full. This survey shows why, and positions this project in relation to existing work.
 
+In this project, "methodology" is used in a broader computational sense than in Oates or Pilkington and Pretorius. It refers to a structured profile containing both the research strategy of a paper (ResearchDesign) and the technical components used in the work (TechnicalMethod, Task, Data, Evaluation). This broader scope is necessary because the extraction target is paper text, not a researcher's design choices.
+
 Papers were selected by relevance to the project schema and pipeline. Where a paper has known limitations for this project, these are stated explicitly.
 
 ```mermaid
@@ -70,7 +72,7 @@ For computing and AI papers, the design and creation strategy is central. Oates 
 
 This project uses Oates' strategies directly as primary_type labels in the ResearchDesign schema (experiment, case_study, design_and_creation, survey, action_research, ethnography). The hierarchical design (family → primary_type → subtype) is not present in Oates but is added in this project to represent mixed-strategy papers, which are common in computing research.
 
-One limitation of Oates (2005) for this project is temporal: the book predates the deep learning era. Modern AI papers often combine design and creation (proposing a model) with experiment (benchmarking it) in a single paper. Oates does not provide guidance on how to handle such combinations. This is an annotation challenge. Oates also focuses on the IS discipline, and some strategies (e.g. action research, ethnography) appear rarely in AI/NLP papers. The labeling system therefore requires adaptation, not direct application.
+One limitation of Oates (2005) for this project is temporal: the book predates the deep learning era. Modern AI papers often combine design and creation (proposing a model) with experiment (benchmarking it) in a single paper. Oates does not provide guidance on how to handle such combinations. This is an annotation challenge. Oates also focuses on the IS discipline, and some strategies (e.g. action research, ethnography) appear rarely in AI/NLP papers. For AI and NLP papers in particular, Oates' categories may be too coarse when used as mutually exclusive single labels: most such papers combine design and creation with an experimental evaluation. This project therefore treats ResearchDesign as a multi-label hierarchical field (primary_type + secondary_types) rather than a single exclusive class.
 
 ```mermaid
 graph TD
@@ -115,7 +117,7 @@ graph TD
 
 *Figure 3: Three uses of 'method' in computing papers. Pilkington and Pretorius (2015) separate sense (a) from the others. This project uses distinct schema fields for each sense.*
 
-Their conceptual model was validated by a focus group of ten senior computing researchers, which adds empirical credibility. However, the model was designed for ontology engineering and student support tools, not for automatic extraction from text. It provides no operationalisation guidance — no rules for identifying research design from abstract text, no lists of indicative vocabulary. This gap is partly addressed in this project through regex-based design detection, but the rules are heuristic and require further validation.
+Their model was validated by a focus group of ten senior computing researchers, adding empirical credibility. However, it was designed for ontology engineering and student support tools, not for automatic extraction from text. It provides no operationalisation guidance — no rules for identifying research design from abstract text, no indicative vocabulary lists. This gap is partly addressed in this project through regex-based design detection, but the rules are heuristic and require further validation.
 
 **Comparison.** Oates and Pilkington and Pretorius address complementary aspects. Oates is more operational and applied, providing a named list of strategies that can be used directly as labels. Pilkington and Pretorius provide a formal ontological structure that separates research design from research methods. Together they justify the distinction between ResearchDesign and TechnicalMethod in this project's schema, which is not made explicit in any prior extraction work reviewed below.
 
@@ -148,9 +150,9 @@ A central challenge they identify is the size and growth rate of the methodology
 
 Evaluation uses a chronological train-test split: papers published up to 2017 form the training set, papers after 2017 form the test set. This is more realistic than random splitting because it simulates deployment where a model must identify newly emerging methods.
 
-**Limitation for this project.** Ghosh et al. do not extract ResearchDesign. Their work does not distinguish whether a paper runs an experiment, proposes a system, or describes a case study. A paper using BERT for sentiment analysis in an experimental study and a paper describing a deployed BERT-based system as a case study would produce identical output in Ghosh et al.'s framework, but different output in this project. Ghosh et al. also restrict their work to AI domain papers. Generalisation to IS, software engineering, or computing education papers is not validated. The silver-standard labels from PapersWithCode may also underrepresent rare methodology types.
+**Limitation for this project.** Ghosh et al. do not extract ResearchDesign. A paper using BERT for sentiment analysis in an experiment and a paper describing a deployed BERT-based system as a case study would produce identical output in their framework, but different output in this project. Their work is also restricted to AI domain papers; generalisation to IS or software engineering papers is not validated. Silver-standard labels from PapersWithCode may underrepresent rare methodology types.
 
-This project inherits the intuition from Ghosh et al. — that methodology extraction can be treated as a sequence labeling problem — and uses SciBERT as the backbone for candidate extraction. The key added dimension is ResearchDesign, which is entirely absent from Ghosh et al.'s work.
+This project inherits the sequence labeling intuition from Ghosh et al. and uses SciBERT for candidate extraction. The key added dimension is ResearchDesign, which is entirely absent from Ghosh et al.'s work.
 
 ### 3.2 Query-guided Extraction: Ma et al. (2023)
 
@@ -184,19 +186,21 @@ This project uses SciBERT for Step 1 of the pipeline — candidate extraction vi
 
 **Limitation.** The specific NER checkpoint used in this project is a general scientific NER model, not specifically trained for methodology extraction. The exact recall and precision on methodology terms are not known before running error analysis. Furthermore, SciBERT's token limit of 512 tokens means full paper text cannot be processed as a single input; this project processes sentence by sentence with max_length = 128, which prevents the model from using cross-sentence context for entity detection. This is an acknowledged limitation of the prototype.
 
-**[Needs further investigation]** The specific fine-tuned SciBERT NER checkpoint used in the prototype should be cited with evaluation results on a relevant benchmark. This is not yet done.
+A more fundamental limitation is that NER-style extraction suits TechnicalMethod, Task, Data, and Evaluation — named entities with identifiable text spans — but not ResearchDesign, which is a document-level inference. Identifying that a paper is an experiment rather than a case study requires understanding the overall structure and purpose of the paper, not spotting a named entity. This project addresses this through a separate regex-based design detection step applied to the abstract and section headings.
 
 ### 4.2 Knowledge Organisation: CSO and Klink-2
 
-Osborne and Motta (2015) describe the Klink-2 algorithm for generating semantic topic networks from scholarly data. Klink-2 integrates multiple web sources — paper co-authorship, citation networks, ACM CCS taxonomy, and Wikipedia — to infer three types of semantic relationships between research topics: hierarchical (broaderGeneric), contributory (contributesTo), and equivalence (relatedEquivalent). The algorithm also disambiguates polysemous keywords (e.g. "java" as a programming language vs. a coffee brand, or "ontology" in philosophy vs. computer science).
-
-The result is the Computer Science Ontology (CSO), described in Salatino et al. (2020), which contains approximately 14,000 research topics and 162,000 semantic relationships, generated from 16 million scientific articles. CSO is significantly larger and more current than the ACM Computing Classification System (CCS), which contains approximately 2,000 topics and was last revised in 2012.
+Osborne and Motta (2015) describe the Klink-2 algorithm for generating semantic topic networks from scholarly data. Klink-2 integrates multiple web sources — co-authorship, citation networks, ACM CCS, and Wikipedia — to infer hierarchical, contributory, and equivalence relationships between research topics, and disambiguates polysemous terms (e.g. "java" as a programming language vs. coffee). The result is the Computer Science Ontology (CSO, described in Salatino et al., 2020), which contains approximately 14,000 research topics and 162,000 semantic relationships derived from 16 million articles.
 
 **Relevance for this project.** CSO is relevant as a background vocabulary for TechnicalMethod and Task labels. Research topics in CSO include model names such as BERT and ResNet, and task names such as machine translation and object detection — overlapping with this project's TechnicalMethod and Task components. In principle, CSO could serve as a controlled vocabulary to reduce labeling noise.
 
 **Limitation.** CSO organises research topics, not research methodology in the Oates/Pilkington sense. It does not distinguish between a research design label and a technical method name. Therefore, CSO cannot be used directly as the label set for this project; it can only serve as a background reference for vocabulary coverage.
 
-**[Needs further investigation]** GROBID, the PDF-to-TEI-XML conversion tool used in this project, is widely used in scientific NLP research but no academic paper is included in this survey's reviewed corpus. A formal citation is needed and is flagged as a gap.
+### 4.3 PDF Structure Extraction: GROBID
+
+GROBID (GeneRation Of BIbliographic Data) is a machine learning library for parsing scholarly PDFs into structured TEI XML (Lopez, 2009). It identifies document structure — title, abstract, section headings, body paragraphs, and references — and separates them cleanly. This project uses GROBID version 0.8.1 via Docker as the preprocessing step that converts PDF papers into TEI XML before the extraction pipeline runs.
+
+GROBID is relevant to extraction quality because parsing errors propagate downstream. A misidentified section boundary or failed heading detection produces candidates with wrong section labels, which can mislead both role classification and ResearchDesign detection. Using TEI XML also provides reference separation for free: GROBID places bibliography entries in a `<listBibl>` element outside the body, preventing reference list terms from appearing as false positive methodology candidates.
 
 ---
 
@@ -233,11 +237,11 @@ flowchart TD
     S3 -->|NER backbone and vocabulary| TP
 ```
 
-*Figure 5: The three literature streams and their contribution to this project. No prior work connects all three.*
+*Figure 5: The three literature streams and their contribution to this project. Among the reviewed works, none connects all three.*
 
 ### 5.2 The core gap
 
-No previous work builds a complete structured methodology profile that includes both ResearchDesign (at the strategy level of Oates) and TechnicalMethod/Task/Data/Evaluation (at the component level of Ghosh et al. and Ma et al.) for a single paper. This is the gap this project attempts to fill.
+Among the works reviewed here, none builds a complete structured methodology profile that includes both ResearchDesign (at the strategy level of Oates) and TechnicalMethod/Task/Data/Evaluation (at the component level of Ghosh et al. and Ma et al.) for a single paper. This is the gap this project attempts to fill.
 
 The specific contribution is to ground the TechnicalMethod/Task schema (from Ghosh and Ma) in the ResearchDesign taxonomy from Oates and Pilkington and Pretorius. The result is a five-part schema — ResearchDesign, TechnicalMethod, Task, Data, Evaluation — that captures both the research strategy and the technical components of a paper.
 
@@ -254,11 +258,13 @@ A comparison of the three extraction papers is shown in Table 1.
 
 ### 5.3 Design choices and their justification
 
-This project uses a rule-based approach for role classification and ResearchDesign detection, unlike the learned models in Ghosh et al. and Ma et al. The justification is twofold. First, as Kosztyán and Király (2025) show, simpler models can achieve high accuracy for methodology classification when relevant sections are identified and vocabulary is carefully selected. Second, for a prototype without a gold-standard annotated dataset, rule-based methods are more interpretable and easier to debug — a prerequisite for error analysis.
+This project uses a rule-based approach for role classification and ResearchDesign detection. The rule-based component is not presented as a final extractor but as an interpretable baseline for testing whether the proposed schema is operationalisable from paper text. At the prototype stage, interpretable rules allow direct error analysis: a missed entity can be traced to a missing regex pattern or keyword, whereas a neural model's error is harder to diagnose without a gold-standard dataset.
+
+Kosztyán and Király (2025) suggest that some methodology signals are recoverable using non-generative models, though their binary label set is not directly equivalent to this project's five-part schema. Their result supports the feasibility of automatic methodology classification in general, not the accuracy of regex extraction in particular.
 
 ### 5.4 Open problems
 
-**Evaluation framework.** Ghosh et al. evaluate extraction using standard NER metrics (precision, recall, F1) on individual entity types. For a complete methodology profile with five components, a different evaluation framework is needed. How to score partial overlap of TechnicalMethod lists, or how to weight ResearchDesign detection against missed TechnicalMethod items, is an open question that must be addressed before the project's evaluation phase.
+**Evaluation framework.** Ghosh et al. evaluate extraction using standard NER metrics (precision, recall, F1) on individual entity types. For a complete methodology profile with five components, this project requires evaluation at two levels. First, component-level evaluation: precision, recall, and F1 for TechnicalMethod, Task, Data, and Evaluation, measured against a manually annotated gold-standard set. Second, profile-level evaluation: human judgement of whether the extracted ResearchDesign field correctly identifies the paper's research strategy. How to weight these two levels and how to handle partial overlap in TechnicalMethod lists are open questions to be resolved in the evaluation phase.
 
 **Silver vs. gold standard.** Ghosh et al. use PapersWithCode labels (silver standard). This project has no annotated dataset at this stage. Evaluation will depend on manual annotation of a small gold-standard set (10–20 papers planned). Inter-annotator agreement has not yet been tested.
 
@@ -276,6 +282,8 @@ Ghosh, M., Ganguly, D. and Naskar, S.K. (2023b) 'Extracting methodology componen
 
 Kosztyán, Z.T. and Király, T. (2025) 'Automated research methodology classification using machine learning', *Engineering Applications of Artificial Intelligence*, article 111039. doi: 10.1016/j.engappai.2025.111039.
 
+Lopez, P. (2009) 'GROBID: Combining automatic bibliographic data recognition and term extraction for scholarship publications', in *Research and Advanced Technology for Digital Libraries: 13th European Conference, ECDL 2009*, Lecture Notes in Computer Science, 5714. Corfu, Greece: Springer, pp. 473–474.
+
 Ma, Y., Liu, J., Lu, W. and Cheng, Q. (2023) 'From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI', *Information Processing & Management*, 60(3), article 103315. doi: 10.1016/j.ipm.2023.103315.
 
 Oates, B.J. (2005) *Researching information systems and computing*. London: SAGE Publications.
@@ -285,5 +293,3 @@ Osborne, F. and Motta, E. (2015) 'Klink-2: integrating multiple web sources to g
 Pilkington, C. and Pretorius, L. (2015) 'A conceptual model of the research methodology domain', in *Proceedings of the International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015)*. Setúbal: SCITEPRESS – Science and Technology Publications, pp. 96–107. doi: 10.5220/0005613100960107.
 
 Salatino, A.A., Thanapalasingam, T., Mannocci, A., Osborne, F. and Motta, E. (2020) 'The computer science ontology: a comprehensive automatically-generated taxonomy of research areas', *Data Intelligence*, 2(3), pp. 1–20. doi: 10.1162/dint_a_00055.
-
-[GROBID citation needed — to be added before final submission]
