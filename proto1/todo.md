@@ -67,27 +67,29 @@ All 6 dataset papers converted:
 
 ---
 
-## 🔲 Next
-
 ### T10 — Update Colab pipeline to read TEI XML
 
-Replace the PDF upload cell with a TEI XML upload cell.
-
-New cell:
+Replaced PDF upload cell with TEI XML upload cell. Pipeline now:
 - Uploads `.xml` file from local
 - Parses with ElementTree
 - Extracts abstract + body sections (heading + paragraph text)
 - Skips References / Acknowledgements divs
 - Produces `sections: list[dict]` with `heading` and `text`
-- `CandidateWithContext.section` is populated from actual GROBID section headings
+- `CandidateWithContext.section` populated from actual GROBID section headings
 
-Remove from pipeline:
-- pdfplumber cell
-- PyMuPDF comparison cells
-- `filter_paper_text()` (GROBID already excludes References)
-- Text Quality Check cell (no longer needed)
+Removed: pdfplumber cell, PyMuPDF comparison cells, `filter_paper_text()`, Text Quality Check cell.
 
-**Done when:** Uploading the Transformer paper XML produces candidate log with readable sentences and correct section names (e.g. `"Model Architecture"`, `"Training"`).
+---
+
+### T — ResearchDesign hierarchy + TechnicalMethod rename
+
+Grounded in Oates (2006) and Pilkington & Pretorius.
+
+- Replaced flat `DesignType` with `DesignFamily` / `PrimaryDesignType` / `DesignSubtype`
+- Added `ResearchDesign` dataclass with `family`, `primary_type`, `subtype`, `secondary_types`
+- `detect_design()` returns MIXED family when non-empirical primary + experiment both detected
+- Renamed `method` → `technical_method` to separate from Oates/Pilkington "Research Method"
+- Output key: `"Design"` → `"ResearchDesign"`, `"Method"` → `"TechnicalMethod"`
 
 ---
 
@@ -95,16 +97,17 @@ Remove from pipeline:
 
 Run full pipeline with GROBID TEI XML as input.
 
-Check:
-- No tokens longer than 40 chars in candidate output
-- Method list contains `Transformer`, `attention`
-- Evaluation list contains `BLEU`
-- Task list contains `translation`
-- Candidate log shows readable source sentences with correct section names
-
-**Done when:** Output JSON is clean and candidate log shows readable sentences with section names.
+All 6 conditions met:
+- No tokens longer than 40 chars in candidate output (longest: "English-to-German", 17 chars)
+- TechnicalMethod list contains `Transformer`, `attention` ✅
+- Evaluation list contains `BLEU` ✅
+- Task list contains `translation` ✅
+- Candidate log shows readable source sentences with correct section names ✅
+- ResearchDesign: `family=mixed`, `primary_type=design_and_creation`, `secondary_types=[experiment]` ✅
 
 ---
+
+## 🔲 Next
 
 ### T12 — Run pipeline on all 6 dataset papers
 
@@ -122,8 +125,32 @@ Papers:
 
 ---
 
+### T13 — Reduce candidate extraction noise (precision improvement)
+
+Related: [issue #31](https://github.com/sanemat/uol-fp/issues/31)
+
+Run pipeline on all 6 papers. Classify failures into:
+- **Noisy** — extracted but not methodology-related → tighten regex, add stopwords, add section filter
+- **Missing** — term not extracted → fix regex or expand patterns
+- **Wrong role** — extracted but wrong role → fix classifier rules
+
+**Done when (Transformer paper):**
+
+Must contain:
+- TechnicalMethod: `Transformer`, `self-attention`
+- Evaluation: `BLEU`
+- Task: `translation`
+
+Must NOT contain (in any list):
+- `and`, `but`, `solely`, `being`, `while`, `two`, `more`, `less`
+
+TechnicalMethod list ≤ 30 items.
+
+---
+
 ## Later (not this branch)
 
 - Annotate a small gold dataset (10–20 papers)
 - Run error analysis — classify failures into missing / noisy / wrong role
 - Improve based on analysis results
+- Fix Cell 8 heading: says "SciBERT NER" but implementation is regex-based
