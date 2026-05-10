@@ -107,6 +107,12 @@ All 6 conditions met:
 
 ---
 
+### Fix Cell 8 heading
+
+Changed heading from "SciBERT NER" to "Regex" to match the actual regex-based implementation.
+
+---
+
 ## 🔲 Next
 
 ### T12 — Run pipeline on all 6 dataset papers
@@ -153,4 +159,3 @@ TechnicalMethod list ≤ 30 items.
 - Annotate a small gold dataset (10–20 papers)
 - Run error analysis — classify failures into missing / noisy / wrong role
 - Improve based on analysis results
-- Fix Cell 8 heading: says "SciBERT NER" but implementation is regex-based
