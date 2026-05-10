@@ -44,6 +44,20 @@ The central research question is: can a structured methodology profile — cover
 
 Papers were selected by relevance to the project schema and pipeline. Where a paper has known limitations for this project, these are stated explicitly.
 
+```mermaid
+timeline
+    2005 : Oates — Research Strategies for IS/Computing
+    2015 : Pilkington & Pretorius — Methodology Ontology
+         : Osborne & Motta — Klink-2 / CSO
+    2019 : Beltagy et al. — SciBERT
+    2023 : Ghosh et al. — Method/Task/Dataset extraction
+         : Ma et al. — Mechanism/Task/Metric extraction
+    2025 : Kosztyán & Király — quant/qual classification
+         : This project
+```
+
+*Figure 1: Timeline of key related work. The gap between theoretical frameworks (2005–2015) and automated extraction work (2023–) is notable.*
+
 ---
 
 ## 2. Conceptual Foundations: Defining Research Methodology
@@ -58,11 +72,48 @@ This project uses Oates' strategies directly as primary_type labels in the Resea
 
 One limitation of Oates (2005) for this project is temporal: the book predates the deep learning era. Modern AI papers often combine design and creation (proposing a model) with experiment (benchmarking it) in a single paper. Oates does not provide guidance on how to handle such combinations. This is an annotation challenge. Oates also focuses on the IS discipline, and some strategies (e.g. action research, ethnography) appear rarely in AI/NLP papers. The labeling system therefore requires adaptation, not direct application.
 
+```mermaid
+graph TD
+    RD[ResearchDesign]
+    RD --> fam[family]
+    fam --> emp[empirical]
+    fam --> non[non_empirical]
+    fam --> mix[mixed]
+    RD --> pt[primary_type]
+    pt --> exp[experiment]
+    pt --> cs[case_study]
+    pt --> dc[design_and_creation]
+    pt --> sv[survey]
+    pt --> ar[action_research]
+    pt --> eth[ethnography]
+    pt --> mtb[model_or_theory_building]
+    dc --> st[subtype]
+    st --> ad[algorithm_development]
+    st --> sd[system_development]
+    st --> mb[model_building]
+    st --> tb[theory_building]
+```
+
+*Figure 2: ResearchDesign hierarchy used in this project. Primary_type labels are from Oates (2005). The subtype field (under design_and_creation) is an addition not present in Oates.*
+
 ### 2.2 Pilkington and Pretorius (2015)
 
 Pilkington and Pretorius (2015) develop a conceptual ontology of the research methodology domain specifically for computing fields. Their model has three levels: philosophical worldview (positivism, interpretivism, pragmatism), research design (empirical: experiment, case study, survey; or non-empirical: theoretical), and research methods (qualitative, quantitative, or theoretical methods such as argumentation).
 
 The key contribution for this project is the explicit distinction between research design and research method. In computing papers, the word "method" is ambiguous. Authors use it to mean: (a) a research method such as questionnaires or observation, (b) a technical method such as a neural network model, or (c) a solution method such as an algorithm. Pilkington and Pretorius separate level (a) from the others, and their distinction justifies the decision in this project to use the label TechnicalMethod for neural network models and algorithms — keeping it separate from ResearchDesign, which refers to the overall research strategy.
+
+```mermaid
+graph TD
+    W["'method' in computing papers"]
+    W --> A["(a) Research method\nsurvey · interview · observation"]
+    W --> B["(b) Technical method\nBERT · CNN · k-means"]
+    W --> C["(c) Solution method\nalgorithm · procedure"]
+    A --> RD["→ ResearchDesign\nvia Oates strategies"]
+    B --> TM["→ TechnicalMethod"]
+    C --> TM
+```
+
+*Figure 3: Three uses of 'method' in computing papers. Pilkington and Pretorius (2015) separate sense (a) from the others. This project uses distinct schema fields for each sense.*
 
 Their conceptual model was validated by a focus group of ten senior computing researchers, which adds empirical credibility. However, the model was designed for ontology engineering and student support tools, not for automatic extraction from text. It provides no operationalisation guidance — no rules for identifying research design from abstract text, no lists of indicative vocabulary. This gap is partly addressed in this project through regex-based design detection, but the rules are heuristic and require further validation.
 
@@ -71,6 +122,21 @@ Their conceptual model was validated by a focus group of ten senior computing re
 ---
 
 ## 3. Computational Approaches to Methodology Extraction
+
+```mermaid
+flowchart LR
+    subgraph G["Ghosh et al. (2023)"]
+        g1[Paper text] --> g2[SciBERT\nBIO tagging] --> g3[Method\nTask\nDataset]
+    end
+    subgraph M["Ma et al. (2023)"]
+        m1[Paper text] --> m2[BERT\nquery-guided] --> m3[Mechanism\nTask\nMetric]
+    end
+    subgraph P["This project"]
+        p1[TEI XML] --> p2[SciBERT NER\n+ rules] --> p3[ResearchDesign\nTechnicalMethod\nTask · Data · Evaluation]
+    end
+```
+
+*Figure 4: Extraction pipeline comparison. All three convert paper text to structured methodology components, but differ in input format, model type, and output schema.*
 
 ### 3.1 Sequence Labeling: Ghosh et al. (2023)
 
@@ -145,6 +211,29 @@ The reviewed literature divides into three streams that have not yet been connec
 **Stream 2 — Automated extraction** (Ghosh et al., 2023a, 2023b; Ma et al., 2023; Kosztyán and Király, 2025): extract or classify methodology from paper text. They do not ground their labels in the theoretical frameworks from Stream 1. Ghosh et al. and Ma et al. extract TechnicalMethod and Task but not ResearchDesign. Kosztyán and Király classify ResearchDesign but only at a coarse binary level, and do not extract TechnicalMethod or Task.
 
 **Stream 3 — Technical tools** (Beltagy et al., 2019; Osborne and Motta, 2015): provide infrastructure for scientific text processing and knowledge organisation, but are not designed specifically for methodology extraction.
+
+```mermaid
+flowchart TD
+    subgraph S1["Stream 1: Conceptual Frameworks"]
+        O[Oates 2005]
+        PP[Pilkington & Pretorius 2015]
+    end
+    subgraph S2["Stream 2: Automated Extraction"]
+        G[Ghosh et al. 2023]
+        M[Ma et al. 2023]
+        K[Kosztyán & Király 2025]
+    end
+    subgraph S3["Stream 3: Technical Tools"]
+        SB[SciBERT — Beltagy 2019]
+        CSO[CSO — Osborne & Motta 2015]
+    end
+    TP[This Project]
+    S1 -->|ResearchDesign taxonomy| TP
+    S2 -->|component extraction schema| TP
+    S3 -->|NER backbone and vocabulary| TP
+```
+
+*Figure 5: The three literature streams and their contribution to this project. No prior work connects all three.*
 
 ### 5.2 The core gap
 
