@@ -115,9 +115,15 @@ Changed heading from "SciBERT NER" to "Regex" to match the actual regex-based im
 
 ## 🔲 Next
 
-### T12 — Run pipeline on all 6 dataset papers
+Two parallel tracks. Pipeline track first; literature track can run alongside.
 
-After T10 and T11 pass, run the full pipeline on all 6 XML files.
+---
+
+### Pipeline track (T12 → T13, in order)
+
+#### T12 — Run pipeline on all 6 dataset papers
+
+Run the full pipeline on all 6 XML files. This is a smoke test — no quality bar yet.
 
 Papers:
 - Attention Is All You Need (Transformer)
@@ -131,7 +137,9 @@ Papers:
 
 ---
 
-### T13 — Reduce candidate extraction noise (precision improvement)
+#### T13 — Reduce candidate extraction noise (precision improvement)
+
+*Requires T12 done first.*
 
 Related: [issue #31](https://github.com/sanemat/uol-fp/issues/31)
 
@@ -154,10 +162,14 @@ TechnicalMethod list ≤ 30 items.
 
 ---
 
-### T14 — Create notes.md for must-have papers
+### Literature track (T14 → T15 → T16, independent of pipeline)
+
+#### T14 — Create notes.md for must-have papers
+
+*Start here. Highest value: forces careful reading of the closest prior work.*
 
 Write a `notes.md` next to each TEI XML in `previouswork/` for the must-have papers.
-Use the template in `memo.md` → "notes.md Template" section.
+Use the template in `memo.md` → "notes.md Template" section (8 headings).
 
 Papers:
 - Ghosh 2023a (Extracting Methodology Components...)
@@ -170,17 +182,21 @@ Papers:
 
 ---
 
-### T15 — Acquire SciBERT TEI XML
+#### T15 — Acquire SciBERT TEI XML
 
-Obtain the TEI XML for Beltagy et al. 2019 (arXiv:1903.10676) via GROBID.
-Add PDF + XML to `previouswork/`.
+*After T14.*
+
+Obtain PDF and TEI XML for Beltagy et al. 2019 (arXiv:1903.10676) via GROBID.
+Add both files to `previouswork/`. Write `notes.md` using the template.
 
 ---
 
-### T16 — Acquire GROBID paper TEI XML
+#### T16 — Acquire GROBID paper TEI XML
 
-Obtain the TEI XML for Lopez 2009 (ECDL 2009) via GROBID.
-Add PDF + XML to `previouswork/`.
+*After T15.*
+
+Obtain PDF and TEI XML for Lopez 2009 (ECDL 2009) via GROBID.
+Add both files to `previouswork/`. Write `notes.md` using the template.
 
 ---
 
