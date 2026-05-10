@@ -154,8 +154,40 @@ TechnicalMethod list ≤ 30 items.
 
 ---
 
+### T14 — Create notes.md for must-have papers
+
+Write a `notes.md` next to each TEI XML in `previouswork/` for the must-have papers.
+Use the template in `memo.md` → "notes.md Template" section.
+
+Papers:
+- Ghosh 2023a (Extracting Methodology Components...)
+- Ghosh 2023b (Enhancing AI Research Paper Analysis...)
+- Ma 2023 (From "what" to "how"...)
+- Oates 2005 (one shared notes.md for ch8, ch9, ch10)
+- Pilkington & Pretorius 2015
+
+**Done when:** Each of the 5 files above has a `notes.md` with all 8 headings filled.
+
+---
+
+### T15 — Acquire SciBERT TEI XML
+
+Obtain the TEI XML for Beltagy et al. 2019 (arXiv:1903.10676) via GROBID.
+Add PDF + XML to `previouswork/`.
+
+---
+
+### T16 — Acquire GROBID paper TEI XML
+
+Obtain the TEI XML for Lopez 2009 (ECDL 2009) via GROBID.
+Add PDF + XML to `previouswork/`.
+
+---
+
 ## Later (not this branch)
 
 - Annotate a small gold dataset (10–20 papers)
 - Run error analysis — classify failures into missing / noisy / wrong role
 - Improve based on analysis results
+- Create `previouswork/project/annotation-guideline.md` — annotation rules for the gold set (inter-annotator agreement, boundary cases)
+- Create `previouswork/project/evaluation-policy.md` — scoring rules for partial matches in ResearchDesign profiles
