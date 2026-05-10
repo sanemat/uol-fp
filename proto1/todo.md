@@ -207,3 +207,4 @@ Add both files to `previouswork/`. Write `notes.md` using the template.
 - Improve based on analysis results
 - Create `previouswork/project/annotation-guideline.md` — annotation rules for the gold set (inter-annotator agreement, boundary cases)
 - Create `previouswork/project/evaluation-policy.md` — scoring rules for partial matches in ResearchDesign profiles
+- Trim `literaturesurvey.md` to ~2,500 words before final submission (currently ~3,287)
