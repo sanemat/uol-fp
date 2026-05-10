@@ -35,7 +35,7 @@ If we can extract methodology, it helps literature review, paper comparison, and
 
 Definitions:
 
-- **Oates (2005)** — five research strategies: experiment, survey, case study, ...
+- **Oates (2005)** — six research strategies: experiment, survey, case study, ...
 - **Osborne & Motta (2015)** — Computer Science Ontology
 
 Extraction:
@@ -47,7 +47,7 @@ These give two ideas: methodology has structure, and papers contain extractable 
 
 <!--
 Some previous work defines methodology well.
-Oates gives five research strategies for computing.
+Oates gives six research strategies for computing.
 Osborne and Motta build a Computer Science Ontology.
 Other work extracts information from paper text.
 Ghosh et al. extract method names from AI papers.
