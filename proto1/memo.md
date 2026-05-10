@@ -490,6 +490,96 @@ These confirm the `primary_type` labels in this project's ResearchDesign schema.
 
 ---
 
+## Previous Work Corpus
+
+### Priority
+
+| Priority | Paper | Schema fields supported |
+|----------|-------|------------------------|
+| Must | Ghosh 2023a/b | TechnicalMethod, Task, Data |
+| Must | Ma 2023 | TechnicalMethod, Task, Evaluation |
+| Must | Oates 2005 (ch3, 8, 9, 10, 11) | ResearchDesign (primary_type, secondary_types) |
+| Must | Pilkington & Pretorius 2015 | ResearchDesign vs TechnicalMethod separation |
+| Should | SciBERT — Beltagy 2019 | Candidate extraction tool; NER suits TechnicalMethod/Task/Data/Evaluation, NOT ResearchDesign |
+| Should | GROBID — Lopez 2009 | Section-aware PDF parsing; prevents reference-list noise |
+| Optional | Kosztyán & Király 2025 | Background: methodology signals detectable from full text |
+| Optional | CSO / Klink-2 | Vocabulary reference for TechnicalMethod and Task labels |
+
+### Already in previouswork/ (PDF + TEI XML)
+
+- Ghosh 2023a — "Extracting Methodology Components from AI Research Papers..."
+- Ghosh 2023b — "Enhancing AI Research Paper Analysis Methodology Component..."
+- Ma 2023 — "From 'what' to 'how' Extracting the Procedural Scientific Information..."
+- Pilkington 2015 — "A Conceptual Model of the Research Methodology Domain"
+- Oates chapters: 3, 8, 9, 10, 11, 17, 18
+- Kosztyán 2025 — "Automated research methodology classification using machine learning"
+- Klink-2 — "Klink-2 Integrating Multiple Web Sources..."
+- CSO — "The Computer Science Ontology A Comprehensive..."
+
+### Missing from previouswork/
+
+- SciBERT — Beltagy et al. 2019 (arXiv:1903.10676)
+- GROBID — Lopez 2009 (ECDL 2009)
+
+---
+
+## notes.md Template
+
+Use this template when writing a `notes.md` next to each TEI XML in `previouswork/`.
+
+```markdown
+# Why this paper matters
+
+# What it contributes to my project
+
+# Which schema fields it supports
+
+# What it does not cover
+
+# Useful definitions
+
+# Useful evaluation method
+
+# Important quotes or sections
+
+# Risk of misusing this paper
+```
+
+### Example — Ghosh 2023a/b
+
+```markdown
+# Why this paper matters
+Closest prior work to my component extraction task.
+
+# What it contributes to my project
+Shows SciBERT BIO tagging extracts Method/Task/Dataset from AI papers at F1 ~0.40.
+Factored models (k-means clustering on SciBERT embeddings) outperform non-factored.
+
+# Which schema fields it supports
+TechnicalMethod, Task, Data
+
+# What it does not cover
+ResearchDesign (experiment vs case study etc.) — outside scope of Ghosh.
+
+# Useful definitions
+Methodology component = named entity for Method, Task, or Dataset extracted from paper text.
+Annotation unit = token span labeled with BIO tags.
+
+# Useful evaluation method
+Chronological train-test split (≤2017 train, post-2017 test).
+Evaluated on emerging names not seen in training.
+
+# Important quotes or sections
+- Dataset: PapersWithCode, 34,560 papers, 2,099 method names in knowledge base
+- 7 domain categories: General, CV, Seq2Seq, RL, NLP, Audio/Speech, Graph
+
+# Risk of misusing this paper
+Do not claim Ghosh solves full methodology extraction.
+It only extracts component names (Method/Task/Dataset) from AI papers — not ResearchDesign.
+```
+
+---
+
 ## References
 
 **Beltagy, I., Lo, K. and Cohan, A. (2019)** 'SciBERT: A pretrained language model for scientific text', in Inui, K., Jiang, J., Ng, V. and Wan, X. (eds.) *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing*. Hong Kong, China: Association for Computational Linguistics, pp. 3615–3620. doi: 10.18653/v1/D19-1371.

@@ -115,9 +115,15 @@ Changed heading from "SciBERT NER" to "Regex" to match the actual regex-based im
 
 ## 🔲 Next
 
-### T12 — Run pipeline on all 6 dataset papers
+Two parallel tracks. Pipeline track first; literature track can run alongside.
 
-After T10 and T11 pass, run the full pipeline on all 6 XML files.
+---
+
+### Pipeline track (T12 → T13, in order)
+
+#### T12 — Run pipeline on all 6 dataset papers
+
+Run the full pipeline on all 6 XML files. This is a smoke test — no quality bar yet.
 
 Papers:
 - Attention Is All You Need (Transformer)
@@ -131,7 +137,9 @@ Papers:
 
 ---
 
-### T13 — Reduce candidate extraction noise (precision improvement)
+#### T13 — Reduce candidate extraction noise (precision improvement)
+
+*Requires T12 done first.*
 
 Related: [issue #31](https://github.com/sanemat/uol-fp/issues/31)
 
@@ -154,8 +162,48 @@ TechnicalMethod list ≤ 30 items.
 
 ---
 
+### Literature track (T14 → T15 → T16, independent of pipeline)
+
+#### T14 — Create notes.md for must-have papers
+
+*Start here. Highest value: forces careful reading of the closest prior work.*
+
+Write a `notes.md` next to each TEI XML in `previouswork/` for the must-have papers.
+Use the template in `memo.md` → "notes.md Template" section (8 headings).
+
+Papers:
+- Ghosh 2023a (Extracting Methodology Components...)
+- Ghosh 2023b (Enhancing AI Research Paper Analysis...)
+- Ma 2023 (From "what" to "how"...)
+- Oates 2005 (one shared notes.md for ch8, ch9, ch10)
+- Pilkington & Pretorius 2015
+
+**Done when:** Each of the 5 files above has a `notes.md` with all 8 headings filled.
+
+---
+
+#### T15 — Acquire SciBERT TEI XML
+
+*After T14.*
+
+Obtain PDF and TEI XML for Beltagy et al. 2019 (arXiv:1903.10676) via GROBID.
+Add both files to `previouswork/`. Write `notes.md` using the template.
+
+---
+
+#### T16 — Acquire GROBID paper TEI XML
+
+*After T15.*
+
+Obtain PDF and TEI XML for Lopez 2009 (ECDL 2009) via GROBID.
+Add both files to `previouswork/`. Write `notes.md` using the template.
+
+---
+
 ## Later (not this branch)
 
 - Annotate a small gold dataset (10–20 papers)
 - Run error analysis — classify failures into missing / noisy / wrong role
 - Improve based on analysis results
+- Create `previouswork/project/annotation-guideline.md` — annotation rules for the gold set (inter-annotator agreement, boundary cases)
+- Create `previouswork/project/evaluation-policy.md` — scoring rules for partial matches in ResearchDesign profiles
