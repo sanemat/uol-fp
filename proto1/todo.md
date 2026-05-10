@@ -93,22 +93,21 @@ Grounded in Oates (2006) and Pilkington & Pretorius.
 
 ---
 
-## 🔲 Next
-
 ### T11 — End-to-end test on "Attention is All You Need"
 
 Run full pipeline with GROBID TEI XML as input.
 
-Check:
-- No tokens longer than 40 chars in candidate output
-- TechnicalMethod list contains `Transformer`, `attention`
-- Evaluation list contains `BLEU`
-- Task list contains `translation`
-- Candidate log shows readable source sentences with correct section names
-
-**Done when:** Output JSON is clean and candidate log shows readable sentences with section names.
+All 6 conditions met:
+- No tokens longer than 40 chars in candidate output (longest: "English-to-German", 17 chars)
+- TechnicalMethod list contains `Transformer`, `attention` ✅
+- Evaluation list contains `BLEU` ✅
+- Task list contains `translation` ✅
+- Candidate log shows readable source sentences with correct section names ✅
+- ResearchDesign: `family=mixed`, `primary_type=design_and_creation`, `secondary_types=[experiment]` ✅
 
 ---
+
+## 🔲 Next
 
 ### T12 — Run pipeline on all 6 dataset papers
 
