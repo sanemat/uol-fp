@@ -35,7 +35,7 @@ If we can extract methodology, it helps literature review, paper comparison, and
 
 Definitions:
 
-- **Oates (2005)** — five research strategies: experiment, survey, case study, ...
+- **Oates (2005)** — six research strategies: experiment, survey, case study, ...
 - **Osborne & Motta (2015)** — Computer Science Ontology
 
 Extraction:
@@ -47,7 +47,7 @@ These give two ideas: methodology has structure, and papers contain extractable 
 
 <!--
 Some previous work defines methodology well.
-Oates gives five research strategies for computing.
+Oates gives six research strategies for computing.
 Osborne and Motta build a Computer Science Ontology.
 Other work extracts information from paper text.
 Ghosh et al. extract method names from AI papers.
@@ -83,22 +83,26 @@ This is what my project tries to do.
 
 Operational definition for this project:
 
-| Part   | Meaning                        | Example                                  |
-| ------ | ------------------------------ | ---------------------------------------- |
-| Design | overall research design        | experiment, survey, case study           |
-| Method | model, algorithm, or technique | BERT, CNN, k-means                       |
-| Task   | research task or problem       | question answering, image classification |
+| Part             | Meaning                          | Example                                  |
+| ---------------- | -------------------------------- | ---------------------------------------- |
+| ResearchDesign   | research strategy (hierarchical) | experiment, design_and_creation          |
+| TechnicalMethod  | model, algorithm, or technique   | BERT, CNN, k-means                       |
+| Task             | research task or problem         | question answering, image classification |
 
 Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
 
 ```json
-{"Design": "experiment", "Method": ["BERT"], "Task": ["question answering"]}
+{
+  "ResearchDesign": {"primary_type": "design_and_creation", "secondary_types": ["experiment"]},
+  "TechnicalMethod": ["Transformer"],
+  "Task": ["machine translation"]
+}
 ```
 
 <!--
 My approach defines methodology as three main parts.
-Design is the overall research type, such as experiment or survey.
-Method is the model or algorithm, such as BERT or CNN.
+ResearchDesign is the overall research strategy, such as experiment or design_and_creation.
+TechnicalMethod is the model or algorithm, such as BERT or CNN.
 Task is the research problem, such as question answering.
 Data and Evaluation are optional details.
 This is an operational definition. It is for this project, not a full definition of methodology.
@@ -109,7 +113,7 @@ This is an operational definition. It is for this project, not a full definition
 # My Approach — Pipeline
 
 1. Extract candidates — SciBERT
-2. Classify roles — rules (Method / Task / Data / Evaluation)
+2. Classify roles — rules (TechnicalMethod / Task / Data / Evaluation)
 3. Detect design — rules
 4. Build JSON output
 5. Check consistency (e.g. experiment without Task → weak)
@@ -117,7 +121,7 @@ This is an operational definition. It is for this project, not a full definition
 <!--
 The pipeline has five steps.
 First, extract candidate terms using SciBERT.
-Second, classify each term into a role: Method, Task, Data, or Evaluation.
+Second, classify each term into a role: TechnicalMethod, Task, Data, or Evaluation.
 Third, detect the research design using rules.
 Fourth, build a JSON output.
 Fifth, apply simple consistency checks.
@@ -128,23 +132,18 @@ For example, an experiment paper without a Task is weak.
 
 # Next Steps
 
-- Build candidate extraction step
-- Annotate a small gold dataset
-  - 10–20 papers
-  - Design / Method / Task labels
-  - optional Data / Evaluation labels
-- Evaluate at three levels:
-  1. Candidate extraction quality
-  2. Role classification accuracy
-  3. Full structure quality
+- Prototype complete — end-to-end test passed
+- Run pipeline on 6 dataset papers
+- Annotate a small gold dataset (10–20 papers)
+- Evaluate: extraction quality / role accuracy / full structure
 
 <!--
-The next steps are three.
-First, build the candidate extraction step using SciBERT.
-Second, annotate a small gold dataset of ten to twenty papers.
-The main labels are Design, Method, and Task.
+The prototype is complete and the end-to-end test has passed.
+Next, run the pipeline on all six dataset papers.
+Then annotate a small gold dataset of ten to twenty papers.
+The main labels are ResearchDesign, TechnicalMethod, and Task.
 Data and Evaluation are optional.
-Third, evaluate the system at three levels: extraction, classification, and full structure.
+Finally, evaluate the system at three levels: extraction quality, role accuracy, and full structure.
 -->
 
 ---

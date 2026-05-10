@@ -20,7 +20,7 @@ Instead, we define a **simple and practical structure** that can be extracted fr
 
 Methodology = 3 main parts + optional details:
 
-* **ResearchDesign** → hierarchical research design grounded in Oates (2006) and Pilkington & Pretorius. Fields: `family` (empirical / non_empirical / mixed), `primary_type` (survey / experiment / case_study / action_research / ethnography / design_and_creation / model_or_theory_building), `subtype` (algorithm_development / system_development / model_building / theory_building), `secondary_types`
+* **ResearchDesign** → hierarchical research design grounded in Oates (2005) and Pilkington & Pretorius. Fields: `family` (empirical / non_empirical / mixed), `primary_type` (survey / experiment / case_study / action_research / ethnography / design_and_creation / model_or_theory_building), `subtype` (algorithm_development / system_development / model_building / theory_building), `secondary_types`
 * **TechnicalMethod** → model, algorithm, or technique (e.g. BERT, CNN). Separated from Oates/Pilkington "Research Method" (interviews, observations, questionnaires).
 * **Task** → research task or problem (e.g. question answering, image classification)
 
@@ -234,11 +234,11 @@ error analysis shows role classification is wrong.
 
 ## Theoretical Basis
 
-This project is based on two main sources: Oates (2006) and Pilkington and Pretorius (2015). Both works discuss research methodology in computing and information systems. They are useful because this project also focuses on computing research papers.
+This project is based on two main sources: Oates (2005) and Pilkington and Pretorius (2015). Both works discuss research methodology in computing and information systems. They are useful because this project also focuses on computing research papers.
 
 ### Oates' Research Strategies
 
-Oates (2006) explains several research strategies used in information systems and computing research. These include survey, experiment, case study, action research, ethnography, and design and creation.
+Oates (2005) explains several research strategies used in information systems and computing research. These include survey, experiment, case study, action research, ethnography, and design and creation.
 
 In this project, Oates is used as the main basis for the **Research Design** labels. For example, a paper may use an experiment, a case study, or design and creation. In computing research, design and creation is especially important because many papers propose a new artefact, such as an algorithm, model, architecture, system, or framework.
 
@@ -402,7 +402,7 @@ For the paper *Attention Is All You Need*, the structured output may look like t
 
 ### Summary
 
-Oates (2006) provides the main basis for classifying research design, especially through research strategies such as experiment, case study, survey, and design and creation.
+Oates (2005) provides the main basis for classifying research design, especially through research strategies such as experiment, case study, survey, and design and creation.
 
 Pilkington and Pretorius (2015) provide a useful structural distinction between research design and research methods. This helps the project avoid mixing the overall research design with specific technical components.
 
@@ -421,6 +421,8 @@ This schema is not a direct copy of either framework. It is an operational schem
 ---
 
 ## Prior Work
+
+> All papers below have TEI XML in `proto1/previouswork/` (gitignored). Reference the XML when checking details.
 
 ### Directly Related: Methodology Component Extraction
 
@@ -458,9 +460,21 @@ Defines a "metric-driven mechanism" schema and extracts Mechanism (≈ Technical
 
 ---
 
+### Knowledge Organization
+
+**Osborne & Motta — "Klink-2: Integrating Multiple Web Sources to Generate Semantic Topic Networks"**
+
+Builds the Computer Science Ontology (CSO) by integrating multiple web sources (ACM CCS, Wikipedia, etc.) using a knowledge linking algorithm (Klink-2). Produces a large-scale topic network for computer science.
+
+Useful as background for how computing topics are structured. CSO could serve as a reference vocabulary for TechnicalMethod and Task labels in this project.
+
+**Limitation for this project:** CSO covers topics broadly, not methodology structure. Does not distinguish Research Design from Technical Method.
+
+---
+
 ### Theoretical Basis Confirmation (Oates Chapters)
 
-The Oates (2006) textbook chapters in previouswork confirm the ResearchDesign taxonomy already used in this project:
+The Oates (2005) textbook chapters in previouswork confirm the ResearchDesign taxonomy already used in this project:
 
 | Chapter | Topic |
 |---------|-------|
