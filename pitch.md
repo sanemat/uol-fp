@@ -50,7 +50,7 @@ Some previous work defines methodology well.
 Oates gives six research strategies for computing.
 Osborne and Motta build a Computer Science Ontology.
 Other work extracts information from paper text.
-Ghosh et al. extract method names from AI papers.
+Ghosh's group extracts method names from AI papers.
 SciBERT is a useful model for scientific text.
 These give us two useful ideas.
 First, methodology has structure — it is not just one label.
@@ -85,8 +85,8 @@ Operational definition for this project:
 
 | Part             | Meaning                          | Example                                  |
 | ---------------- | -------------------------------- | ---------------------------------------- |
-| ResearchDesign   | research strategy (hierarchical) | experiment, design_and_creation          |
-| TechnicalMethod  | model, algorithm, or technique   | BERT, CNN, k-means                       |
+| Research Design   | research strategy (hierarchical) | experiment, design_and_creation          |
+| Technical Method  | model, algorithm, or technique   | BERT, CNN, k-means                       |
 | Task             | research task or problem         | question answering, image classification |
 
 Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
@@ -101,8 +101,8 @@ Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
 
 <!--
 My approach defines methodology as three main parts.
-ResearchDesign is the overall research strategy, such as experiment or design_and_creation.
-TechnicalMethod is the model or algorithm, such as BERT or CNN.
+Research Design is the overall research strategy, such as experiment or design_and_creation.
+Technical Method is the model or algorithm, such as BERT or CNN.
 Task is the research problem, such as question answering.
 Data and Evaluation are optional details.
 This is an operational definition. It is for this project, not a full definition of methodology.
@@ -113,7 +113,7 @@ This is an operational definition. It is for this project, not a full definition
 # My Approach — Pipeline
 
 1. Extract candidates — SciBERT
-2. Classify roles — rules (TechnicalMethod / Task / Data / Evaluation)
+2. Classify roles — rules (Technical Method / Task / Data / Evaluation)
 3. Detect design — rules
 4. Build JSON output
 5. Check consistency (e.g. experiment without Task → weak)
@@ -121,7 +121,7 @@ This is an operational definition. It is for this project, not a full definition
 <!--
 The pipeline has five steps.
 First, extract candidate terms using SciBERT.
-Second, classify each term into a role: TechnicalMethod, Task, Data, or Evaluation.
+Second, classify each term into a role: Technical Method, Task, Data, or Evaluation.
 Third, detect the research design using rules.
 Fourth, build a JSON output.
 Fifth, apply simple consistency checks.
@@ -141,7 +141,7 @@ For example, an experiment paper without a Task is weak.
 The prototype is complete and the end-to-end test has passed.
 Next, run the pipeline on all six dataset papers.
 Then annotate a small gold dataset of ten to twenty papers.
-The main labels are ResearchDesign, TechnicalMethod, and Task.
+The main labels are Research Design, Technical Method, and Task.
 Data and Evaluation are optional.
 Finally, evaluate the system at three levels: extraction quality, role accuracy, and full structure.
 -->
