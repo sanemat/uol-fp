@@ -46,20 +46,6 @@ In this project, "methodology" is used in a broader computational sense than in 
 
 Papers were selected by relevance to the project schema and pipeline. Where a paper has known limitations for this project, these are stated explicitly.
 
-```mermaid
-timeline
-    2005 : Oates — Research Strategies for IS/Computing
-    2015 : Pilkington & Pretorius — Methodology Ontology
-         : Osborne & Motta — Klink-2 / CSO
-    2019 : Beltagy et al. — SciBERT
-    2023 : Ghosh et al. — Method/Task/Dataset extraction
-         : Ma et al. — Mechanism/Task/Metric extraction
-    2025 : Kosztyán & Király — quant/qual classification
-         : This project
-```
-
-*Figure 1: Timeline of key related work. The gap between theoretical frameworks (2005–2015) and automated extraction work (2023–) is notable.*
-
 ---
 
 ## 2. Conceptual Foundations: Defining Research Methodology
@@ -70,7 +56,7 @@ Oates (2005) provides the primary theoretical framework for this project's Resea
 
 For computing and AI papers, the design and creation strategy is central. Oates defines it as research that produces a new IT artefact — which may be a model, algorithm, system architecture, framework, or prototype — and also evaluates it. This matches a large proportion of modern machine learning papers, which propose a new architecture or method and evaluate it on benchmarks.
 
-This project uses Oates' strategies directly as primary_type labels in the ResearchDesign schema (experiment, case_study, design_and_creation, survey, action_research, ethnography). The hierarchical design (family → primary_type → subtype) is not present in Oates but is added in this project to represent mixed-strategy papers, which are common in computing research.
+This project adapts Oates' strategies as primary_type labels in the ResearchDesign schema (experiment, case_study, design_and_creation, survey, action_research, ethnography). The hierarchical design (family → primary_type → subtype) is not present in Oates but is added in this project to represent mixed-strategy papers, which are common in computing research.
 
 One limitation of Oates (2005) for this project is temporal: the book predates the deep learning era. Modern AI papers often combine design and creation (proposing a model) with experiment (benchmarking it) in a single paper. Oates does not provide guidance on how to handle such combinations. This is an annotation challenge. Oates also focuses on the IS discipline, and some strategies (e.g. action research, ethnography) appear rarely in AI/NLP papers. For AI and NLP papers in particular, Oates' categories may be too coarse when used as mutually exclusive single labels: most such papers combine design and creation with an experimental evaluation. This project therefore treats ResearchDesign as a multi-label hierarchical field (primary_type + secondary_types) rather than a single exclusive class.
 
@@ -96,7 +82,7 @@ graph TD
     st --> tb[theory_building]
 ```
 
-*Figure 2: ResearchDesign hierarchy used in this project. Primary_type labels are from Oates (2005). The subtype field (under design_and_creation) is an addition not present in Oates.*
+*Figure 1: ResearchDesign hierarchy used in this project. Primary_type labels are from Oates (2005). The subtype field (under design_and_creation) is an addition not present in Oates.*
 
 ### 2.2 Pilkington and Pretorius (2015)
 
@@ -115,7 +101,7 @@ graph TD
     C --> TM
 ```
 
-*Figure 3: Three uses of 'method' in computing papers. Pilkington and Pretorius (2015) separate sense (a) from the others. This project uses distinct schema fields for each sense.*
+*Figure 2: Three uses of 'method' in computing papers. Pilkington and Pretorius (2015) separate sense (a) from the others. This project uses distinct schema fields for each sense.*
 
 Their model was validated by a focus group of ten senior computing researchers, adding empirical credibility. However, it was designed for ontology engineering and student support tools, not for automatic extraction from text. It provides no operationalisation guidance — no rules for identifying research design from abstract text, no indicative vocabulary lists. This gap is partly addressed in this project through regex-based design detection, but the rules are heuristic and require further validation.
 
@@ -138,7 +124,7 @@ flowchart LR
     end
 ```
 
-*Figure 4: Extraction pipeline comparison. All three convert paper text to structured methodology components, but differ in input format, model type, and output schema.*
+*Figure 3: Extraction pipeline comparison. All three convert paper text to structured methodology components, but differ in input format, model type, and output schema.*
 
 ### 3.1 Sequence Labeling: Ghosh et al. (2023)
 
@@ -152,7 +138,7 @@ Evaluation uses a chronological train-test split: papers published up to 2017 fo
 
 **Limitation for this project.** Ghosh et al. do not extract ResearchDesign. A paper using BERT for sentiment analysis in an experiment and a paper describing a deployed BERT-based system as a case study would produce identical output in their framework, but different output in this project. Their work is also restricted to AI domain papers; generalisation to IS or software engineering papers is not validated. Silver-standard labels from PapersWithCode may underrepresent rare methodology types.
 
-This project inherits the sequence labeling intuition from Ghosh et al. and uses SciBERT for candidate extraction. The key added dimension is ResearchDesign, which is entirely absent from Ghosh et al.'s work.
+This project inherits the sequence labeling intuition from Ghosh et al. and uses SciBERT for candidate extraction. The key added dimension is ResearchDesign, which is outside the scope of Ghosh et al.'s work.
 
 ### 3.2 Query-guided Extraction: Ma et al. (2023)
 
@@ -190,11 +176,7 @@ A more fundamental limitation is that NER-style extraction suits TechnicalMethod
 
 ### 4.2 Knowledge Organisation: CSO and Klink-2
 
-Osborne and Motta (2015) describe the Klink-2 algorithm for generating semantic topic networks from scholarly data. Klink-2 integrates multiple web sources — co-authorship, citation networks, ACM CCS, and Wikipedia — to infer hierarchical, contributory, and equivalence relationships between research topics, and disambiguates polysemous terms (e.g. "java" as a programming language vs. coffee). The result is the Computer Science Ontology (CSO, described in Salatino et al., 2020), which contains approximately 14,000 research topics and 162,000 semantic relationships derived from 16 million articles.
-
-**Relevance for this project.** CSO is relevant as a background vocabulary for TechnicalMethod and Task labels. Research topics in CSO include model names such as BERT and ResNet, and task names such as machine translation and object detection — overlapping with this project's TechnicalMethod and Task components. In principle, CSO could serve as a controlled vocabulary to reduce labeling noise.
-
-**Limitation.** CSO organises research topics, not research methodology in the Oates/Pilkington sense. It does not distinguish between a research design label and a technical method name. Therefore, CSO cannot be used directly as the label set for this project; it can only serve as a background reference for vocabulary coverage.
+Osborne and Motta (2015) describe the Klink-2 algorithm and the Computer Science Ontology (CSO), a large-scale knowledge organisation system of approximately 14,000 computer science topics (Salatino et al., 2020). CSO is relevant because some TechnicalMethod and Task labels in this project overlap with CSO topics, such as BERT, ResNet, machine translation, and object detection. However, CSO organises research topics rather than research methodology — it cannot distinguish ResearchDesign from TechnicalMethod — so it can only serve as a background reference for vocabulary coverage, not as the project's label schema.
 
 ### 4.3 PDF Structure Extraction: GROBID
 
@@ -237,7 +219,7 @@ flowchart TD
     S3 -->|NER backbone and vocabulary| TP
 ```
 
-*Figure 5: The three literature streams and their contribution to this project. Among the reviewed works, none connects all three.*
+*Figure 4: The three literature streams and their contribution to this project. Among the reviewed works, none connects all three.*
 
 ### 5.2 The core gap
 
