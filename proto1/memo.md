@@ -422,6 +422,8 @@ This schema is not a direct copy of either framework. It is an operational schem
 
 ## Prior Work
 
+> All papers below have TEI XML in `proto1/previouswork/` (gitignored). Reference the XML when checking details.
+
 ### Directly Related: Methodology Component Extraction
 
 **Ghosh et al. — "Extracting Methodology Components from AI Research Papers: A Data-driven Factored Sequence Labeling Approach"**
@@ -455,6 +457,18 @@ Shows that automated methodology classification is feasible at high accuracy.
 **"From 'what' to 'how': Extracting the Procedural Scientific Information Toward the Metric-optimization in AI"**
 
 Defines a "metric-driven mechanism" schema and extracts Mechanism (≈ TechnicalMethod), Metric (≈ Evaluation), and Task from NLP papers. Approach: BERT-based mechanism detection + query-guided Seq2seq extraction. Close to this project's schema but focused on NLP papers only.
+
+---
+
+### Knowledge Organization
+
+**Osborne & Motta — "Klink-2: Integrating Multiple Web Sources to Generate Semantic Topic Networks"**
+
+Builds the Computer Science Ontology (CSO) by integrating multiple web sources (ACM CCS, Wikipedia, etc.) using a knowledge linking algorithm (Klink-2). Produces a large-scale topic network for computer science.
+
+Useful as background for how computing topics are structured. CSO could serve as a reference vocabulary for TechnicalMethod and Task labels in this project.
+
+**Limitation for this project:** CSO covers topics broadly, not methodology structure. Does not distinguish Research Design from Technical Method.
 
 ---
 
