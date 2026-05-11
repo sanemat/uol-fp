@@ -71,12 +71,12 @@ Previous work gives two pieces:
 But these two pieces are usually separate.
 
 <!--
-Oates (2005) defines six research strategies for computing: experiment, survey, case study, action research, ethnography, and design and creation.
-Pilkington and Pretorius (2015) separate research design from technical method.
-Ghosh et al. (2023) extract method names from AI papers using SciBERT.
-SciBERT (Beltagy et al., 2019) is a language model trained on scientific text.
+Oates, in 2005, defines six research strategies for computing: experiment, survey, case study, action research, ethnography, and design and creation.
+Pilkington and Pretorius, in 2015, separate research design from technical method.
+Ghosh and colleagues, in 2023, extract method names from AI papers using SciBERT.
+SciBERT, from Beltagy and colleagues in 2019, is a language model trained on scientific text.
 These give us two useful ideas.
-First, methodology has structure — it is not just one label.
+First, methodology has structure, and it is not just one label.
 Second, papers contain terms we can extract automatically.
 -->
 
@@ -124,7 +124,7 @@ Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
 
 <!--
 My approach defines methodology as three main parts.
-Research Design is the overall research strategy, such as experiment or design_and_creation.
+Research Design is the overall research strategy, such as experiment or design and creation.
 Technical Method is the model or algorithm, such as BERT or CNN.
 Task is the research problem, such as question answering.
 Data and Evaluation are optional details.
