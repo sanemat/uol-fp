@@ -12,11 +12,18 @@ UoL (University of London) final project for CM3060 Natural Language Programming
 - **Data** — dataset or source (e.g. MNIST)
 - **Evaluation** — metrics (e.g. accuracy, F1)
 
+## Course Constraint
+
+AI assistance is **not allowed** for CM3060 submissions.
+
+- `proto1/` files marked as AI drafts are **reference only** — do not copy into submissions
+- `proto2/` is the workspace for work written from scratch by the user
+- Code in `proto1/` may be used as a base, but must be understood and rewritten by the user
+
 ## Repository Layout
 
-- `pitch.md` — project pitch slides
 - `week*.md` — weekly course notes
-- `proto1/` — Python prototype
+- `proto1/` — original prototype (AI-assisted; kept as reference)
   - `pipeline.ipynb` — **main notebook, runs on Google Colab**
   - `pdf_to_xml.py` — CLI: converts PDF → TEI XML via local GROBID (`python pdf_to_xml.py paper.pdf`)
   - `dataset/` — input PDFs and generated TEI XML files (gitignored)
@@ -25,6 +32,16 @@ UoL (University of London) final project for CM3060 Natural Language Programming
   - `tests/` — unit tests for the shared library
   - `pyproject.toml` — Pyright + Ruff config
   - `.tool-versions` — Python 3.14.1 (managed by asdf)
+  - `pitch.md` — pitch slides (AI draft, reference only)
+  - `literaturesurvey.md` — literature survey (AI draft, reference only)
+  - `notes/` — paper notes (AI drafts, reference only)
+  - `previouswork/` — TEI XML files for prior-work papers
+  - `memo.md` — project memo
+  - `todo.md` — task list
+- `proto2/` — fresh workspace (user writes from scratch)
+  - `Makefile` — GROBID Docker commands (copied from proto1)
+  - `pyproject.toml` — Pyright + Ruff config (copied from proto1)
+  - `todo.md` — task list (epics #43, #44)
 
 ## Colab Sync Workflow
 
