@@ -109,7 +109,7 @@ I define a methodology profile with five parts.
 
 | Part | Meaning | Example |
 |---|---|---|
-| Research Design | paper-level research strategy | new model + experiment |
+| Research Design | paper-level research strategy | design_and_creation + experiment |
 | Technical Method | model, algorithm, or technique | Transformer |
 | Task | research task or problem | machine translation |
 | Data | dataset or data source | WMT |
@@ -159,10 +159,10 @@ For example, an experiment paper without a Task is weak.
 
 # Next Steps
 
-- Prototype complete — end-to-end test passed
-- Run pipeline on 6 dataset papers
-- Annotate a small gold dataset (10–20 papers)
-- Evaluate: extraction quality / role accuracy / full structure
+- prototype complete — end-to-end test passed
+- run pipeline on 6 dataset papers
+- annotate a small gold dataset (10–20 papers)
+- evaluate: extraction quality / role accuracy / full structure
 
 <!--
 The prototype is complete and the end-to-end test has passed.
@@ -189,4 +189,4 @@ Finally, evaluate the system at three levels: extraction quality, role accuracy,
 
 **Pilkington, C. and Pretorius, L. (2015)** 'A conceptual model of the research methodology domain', in *Proceedings of the International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015)*. Setúbal: SCITEPRESS – Science and Technology Publications, pp. 96–107. doi: 10.5220/0005613100960107.
 
-**Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. (2017)** 'Attention is all you need', in *Advances in Neural Information Processing Systems*, 30, pp. 5998–6008. Available at: https://arxiv.org/abs/1706.03762.
+**Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. (2017)** 'Attention is all you need', in *Advances in Neural Information Processing Systems*, 30, pp. 5998–6008. Available at: [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762).
