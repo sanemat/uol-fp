@@ -38,23 +38,24 @@ This project tries to extract all five parts automatically and represent them as
 
 # Problem
 
-LLMs can classify paper topics well.
+It is easier to identify a paper's topic than to extract how the research was done.
 
-But methodology is harder.
+Methodology is harder because:
 
-- not always written clearly
+- important information is spread across the paper
 - writing style changes between papers
-- labels are not clear
+- one paper may use more than one research strategy
+- labels are not always clear
 
-Methodology is useful. It helps us compare papers and find research trends.
+This matters for literature review, paper comparison, and trend analysis.
 
 <!--
-Today, large language models can classify paper topics quite well.
-But methodology is harder.
-It is not always written clearly.
-Writing style changes between papers.
-And the labels are often not clear.
-If we can extract methodology, it helps literature review, paper comparison, and trend analysis.
+Current systems, including large language models, can often classify a paper's topic.
+But extracting methodology is harder.
+The important information is spread across the paper.
+Different authors write it differently.
+One paper may also use more than one research strategy.
+This matters for literature review, paper comparison, and trend analysis.
 -->
 
 ---
@@ -84,19 +85,18 @@ Second, papers contain terms we can extract automatically.
 
 # Gap
 
-Good definitions exist.
+Good methodology definitions exist.
 Good extraction tools exist.
 
-But they are still separate.
+But in the work I reviewed, these two pieces are not yet connected into one paper-level profile.
 
-No previous work builds a **paper-level structured methodology profile** from text.
+This project tries to connect them.
 
 <!--
 So the gap is clear.
 We have good definitions.
-We also have extraction tools.
-But they are still separate.
-No previous work builds a paper-level structured methodology profile from text automatically.
+We also have good extraction tools.
+But in the work I reviewed, these two pieces are not yet connected into one paper-level methodology profile.
 This is what my project tries to do.
 -->
 
@@ -104,31 +104,34 @@ This is what my project tries to do.
 
 # My Approach — Structure
 
-Operational definition for this project:
+I define a methodology profile with five parts.
 
-| Part             | Meaning                          | Example                                  |
-| ---------------- | -------------------------------- | ---------------------------------------- |
-| Research Design   | research strategy (hierarchical) | experiment, design_and_creation          |
-| Technical Method  | model, algorithm, or technique   | BERT, CNN, k-means                       |
-| Task             | research task or problem         | question answering, image classification |
-
-Optional: Data (e.g. SQuAD), Evaluation (e.g. F1)
+| Part | Meaning | Example |
+|---|---|---|
+| Research Design | paper-level research strategy | new model + experiment |
+| Technical Method | model, algorithm, or technique | Transformer |
+| Task | research task or problem | machine translation |
+| Data | dataset or data source | WMT |
+| Evaluation | metric or benchmark | BLEU |
 
 ```json
 {
-  "ResearchDesign": {"primary_type": "design_and_creation", "secondary_types": ["experiment"]},
+  "ResearchDesign": "design_and_creation + experiment",
   "TechnicalMethod": ["Transformer"],
-  "Task": ["machine translation"]
+  "Task": ["machine translation"],
+  "Data": ["WMT"],
+  "Evaluation": ["BLEU"]
 }
 ```
 
 <!--
-My approach defines methodology as three main parts.
-Research Design is the overall research strategy, such as experiment or design and creation.
-Technical Method is the model or algorithm, such as BERT or convolutional neural network, or CNN.
-Task is the research problem, such as question answering.
-Data and Evaluation are optional details.
-This is an operational definition. It is for this project, not a full definition of methodology.
+My approach defines a methodology profile with five parts.
+Research Design is the paper-level research strategy, such as design and creation combined with experiment.
+Technical Method is the model or algorithm, such as the Transformer or BERT.
+Task is the research problem, such as machine translation.
+Data is the dataset or data source, such as WMT.
+Evaluation is the metric or benchmark, such as BLEU.
+In the prototype, the first three parts are the main focus. Data and Evaluation are defined but secondary.
 -->
 
 ---
@@ -184,3 +187,5 @@ Finally, evaluate the system at three levels: extraction quality, role accuracy,
 **Osborne, F. and Motta, E. (2015)** 'Klink-2: integrating multiple web sources to generate semantic topic networks', in Gandon, F., Sabou, M., Sack, H., d'Amato, C., Cudré-Mauroux, P. and Zimmermann, A. (eds.) *The Semantic Web – ISWC 2015*. Cham: Springer International Publishing, pp. 408–424. doi: 10.1007/978-3-319-25007-6_24.
 
 **Pilkington, C. and Pretorius, L. (2015)** 'A conceptual model of the research methodology domain', in *Proceedings of the International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015)*. Setúbal: SCITEPRESS – Science and Technology Publications, pp. 96–107. doi: 10.5220/0005613100960107.
+
+**Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. (2017)** 'Attention is all you need', in *Advances in Neural Information Processing Systems*, 30, pp. 5998–6008. Available at: https://arxiv.org/abs/1706.03762.
