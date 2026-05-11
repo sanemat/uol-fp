@@ -75,6 +75,7 @@ But these two pieces are usually separate.
 Oates, in 2005, defines six research strategies for computing: experiment, survey, case study, action research, ethnography, and design and creation.
 Pilkington and Pretorius, in 2015, separate research design from technical method.
 Ghosh and colleagues, in 2023, extract method names from AI papers using Scientific BERT, or SciBERT.
+Ma and colleagues, also in 2023, extract mechanisms, tasks, and metrics from AI papers.
 SciBERT, from Beltagy and colleagues in 2019, is a language model trained on scientific text.
 These give us two useful ideas.
 First, methodology has structure, and it is not just one label.
@@ -167,8 +168,8 @@ For example, an experiment paper without a Task is weak.
 The prototype is complete and the end-to-end test has passed.
 Next, run the pipeline on all six dataset papers.
 Then annotate a small gold dataset of ten to twenty papers.
-The main labels are Research Design, Technical Method, and Task.
-Data and Evaluation are optional.
+The first three labels are the main focus of the prototype: Research Design, Technical Method, and Task.
+Data and Evaluation are included, but they are treated as secondary targets.
 Finally, evaluate the system at three levels: extraction quality, role accuracy, and full structure.
 -->
 
