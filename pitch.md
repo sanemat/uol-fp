@@ -73,9 +73,9 @@ But these two pieces are usually separate.
 
 <!--
 Oates, in 2005, defines six research strategies for computing: experiment, survey, case study, action research, ethnography, and design and creation.
-Pilkington and Pretorius, in 2015, separate research design from technical method.
+Pilkington and Pretorius, in 2015, separate research design from research methods.
 Ghosh and colleagues, in 2023, extract method names from AI papers using Scientific BERT, or SciBERT.
-Ma and colleagues, also in 2023, extract mechanisms, tasks, and metrics from AI papers.
+Ma and colleagues, also in 2023, extract metric-driven mechanisms and tasks from AI papers.
 SciBERT, from Beltagy and colleagues in 2019, is a language model trained on scientific text.
 These give us two useful ideas.
 First, methodology has structure, and it is not just one label.
