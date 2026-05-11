@@ -24,7 +24,7 @@ Mixed-method studies combining multiple designs — minimal guidance on how to c
 
 # Useful definitions
 Research strategy = overall approach determining what data is collected, from where, and how analysed.
-IT artifact = construct, technique, model, algorithm, process model, method, or implementation (ch8).
+IT artifact = construct, technique, model, algorithm, process model, diagramming notation, or development method (ch8).
 Normal design vs. research design = industry design follows proven paths; research design tackles uncertain areas producing new knowledge (ch8).
 Hypothesis = testable, falsifiable statement about cause-effect relationship (ch9).
 Independent variable (IV) = factor manipulated to cause change; Dependent variable (DV) = measured outcome (ch9).

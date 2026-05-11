@@ -10,7 +10,7 @@ Zero-shot analysis: for SEQ and RL categories, >75% of test entities were unseen
 Chronological evaluation framework is the right way to measure methodology extraction quality.
 
 # Which schema fields it supports
-Method (TechnicalMethod), Task, Data (Dataset)
+Method (TechnicalMethod) only
 
 # What it does not cover
 ResearchDesign — still outside scope.

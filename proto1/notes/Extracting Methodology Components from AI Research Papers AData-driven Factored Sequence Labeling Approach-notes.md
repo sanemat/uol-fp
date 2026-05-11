@@ -1,6 +1,6 @@
 # Why this paper matters
 Closest prior work to my component extraction task.
-SciBERT BIO tagging extracts Method/Task/Dataset names from AI papers.
+SciBERT BIO tagging extracts method component names (TechnicalMethod) from AI papers.
 Proposes factored labeling to handle large, evolving domain-specific vocabularies.
 
 # What it contributes to my project
@@ -10,14 +10,14 @@ Introduces DocAIMER document representation (Abstract + Introduction + Methodolo
 Demonstrates that chronological train/test split reveals true generalization difficulty.
 
 # Which schema fields it supports
-Method (TechnicalMethod), Task, Data (Dataset)
+Method (TechnicalMethod) only
 
 # What it does not cover
 ResearchDesign (experiment vs. case study etc.) — outside scope of Ghosh.
 Evaluation metrics extraction — does not extract metric names or values.
 
 # Useful definitions
-Methodology component = named entity for Method, Task, or Dataset extracted from paper text.
+Methodology component = named entity for a technical method name (e.g. "Transformer", "BERT", "ResNet") extracted from paper text.
 Annotation unit = token span labeled with BIO tags (Beginning-Inside-Outside).
 DocAIMER = document representation: concatenation of Abstract, Introduction, Methodology, Experiments, Results.
 Factored model = variant that assigns category-specific BIO labels rather than shared BIO labels.
@@ -35,5 +35,5 @@ Compares in-domain (90:10 split within ≤2017) vs. out-of-domain (cross-year) p
 
 # Risk of misusing this paper
 Do not claim Ghosh 2023a solves full methodology extraction.
-It only extracts component names (Method/Task/Dataset) — not ResearchDesign or Evaluation.
+It only extracts method component names (TechnicalMethod) — not ResearchDesign, Task, Data, or Evaluation.
 In-domain F1 ~0.98 is misleading; realistic out-of-domain F1 ~0.40 is the relevant figure.
