@@ -8,6 +8,34 @@ Hello. My project is about extracting structured methodology from computing rese
 
 ---
 
+# Simple Example
+
+A computing paper is not only about its topic.
+
+For "Attention Is All You Need" (Vaswani et al., 2017):
+
+| Question | Answer |
+|---|---|
+| What kind of research? | new model + experiment |
+| What method? | Transformer |
+| What task? | machine translation |
+| What data? | WMT dataset |
+| How evaluated? | BLEU score |
+
+This project extracts this structured profile automatically.
+
+<!--
+For example, consider the paper "Attention Is All You Need".
+The topic is machine translation.
+But there is more.
+The authors propose a new method, the Transformer.
+They test it on machine translation using a public dataset.
+They report BLEU scores.
+This project tries to extract all five parts automatically and represent them as a structured profile.
+-->
+
+---
+
 # Problem
 
 LLMs can classify paper topics well.
@@ -33,25 +61,20 @@ If we can extract methodology, it helps literature review, paper comparison, and
 
 # Previous Work
 
-Definitions:
+Previous work gives two pieces:
 
-- **Oates (2005)** — six research strategies: experiment, survey, case study, ...
-- **Osborne & Motta (2015)** — Computer Science Ontology
+| Area | What it gives |
+|---|---|
+| Methodology theory | labels for research strategies |
+| NLP extraction | ways to extract terms from paper text |
 
-Extraction:
-
-- **Ghosh et al. (2023)** — extracts method names from AI papers
-- **SciBERT (Beltagy et al., 2019)** — BERT trained on scientific text
-
-These give two ideas: methodology has structure, and papers contain extractable terms.
+But these two pieces are usually separate.
 
 <!--
-Some previous work defines methodology well.
-Oates gives six research strategies for computing.
-Osborne and Motta build a Computer Science Ontology.
-Other work extracts information from paper text.
-Ghosh's group extracts method names from AI papers.
-SciBERT is a useful model for scientific text.
+Oates (2005) defines six research strategies for computing: experiment, survey, case study, action research, ethnography, and design and creation.
+Pilkington and Pretorius (2015) separate research design from technical method.
+Ghosh et al. (2023) extract method names from AI papers using SciBERT.
+SciBERT (Beltagy et al., 2019) is a language model trained on scientific text.
 These give us two useful ideas.
 First, methodology has structure — it is not just one label.
 Second, papers contain terms we can extract automatically.
