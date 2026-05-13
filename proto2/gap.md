@@ -1,0 +1,5 @@
+- Do Oates and Pilkington explain methodology, but not automatic extraction from paper text?
+- Does CSO help with field and topic mapping, but not methodology components?
+- Do these works connect topic candidates, methodology components, and evidence text in one intermediate profile?
+- What connection is missing?
+- How does my project address this missing connection?
