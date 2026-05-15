@@ -14,7 +14,9 @@ Output:
         - Machine Learning
 
     Methodology:
-        Design: experimental research
-        Method: Transformer architecture based on self-attention
+        Design or strategy: design and creation + experiment
+        Data generation method: Documents
+        Technical method: Transformer
+        Task: machine translation
         Data: WMT machine translation datasets
-        Evaluation: BLEU score and comparison with previous models
+        Evaluation: BLEU score
