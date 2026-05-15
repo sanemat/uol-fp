@@ -24,7 +24,7 @@ Documents (Chapter 16)
 
 "Some data generation methods are commonly associated with particular research strategies."
 
-"one research strategy can use more than one data generation method."
+"One research strategy can use more than one data generation method."
 
 "method triangulation"
 "The use of more than one data generation method to corroborate findings and enhance their validity."
@@ -33,7 +33,7 @@ Documents (Chapter 16)
 
 The 6Ps of research:
 - The purpose of research (the reasons people do research)
-- The products of research (outcomes from research project)
+- The products of research (outcomes from a research project)
 - The process of research (the sequence of activities you need to perform)
 - The participants of research (who or what is involved?)
 - The paradigm of research (what view of knowledge guides the research?)
