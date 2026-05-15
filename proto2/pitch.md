@@ -16,9 +16,9 @@ For "Attention Is All You Need" (Vaswani et al., 2017):
 
 | Question | Answer |
 |---|---|
-| What discipline? | Computre Science |
+| What kind of discipline? | Computre Science |
 | What field? | Natural Language Processing + Machine Learning |
-| What kind of research? | new model + experiment |
+| What research? | new model + experiment |
 | What method? | Transformer |
 | What task? | machine translation |
 | What data? | WMT dataset |
@@ -32,3 +32,5 @@ The decipline is computer science. But there is more. The fields are Natural Lan
 
 This project tries to extract all seven parts automatically and represent them as a structured profile.
 -->
+
+---
