@@ -16,7 +16,7 @@ For "Attention Is All You Need" (Vaswani et al., 2017):
 
 | Question | Answer |
 |---|---|
-| What kind of discipline? | Computre Science |
+| What kind of discipline? | Computer Science |
 | What field? | Natural Language Processing + Machine Learning |
 | What design or strategy? | new model + experiment |
 | What data generation method? | Documents |
@@ -29,7 +29,7 @@ This project extracts this structured profile automatically.
 
 <!--
 For example, consider the paper "Attention Is All You Need".
-The decipline is computer science. But there is more. The fields are Natural Language Processing and Machine Learning. The topic is machine translation. The authors propose a new method, the Transformer. The data generation method is documents. They test it on machine translation using a public dataset. They report BLEU scores.
+The discipline is computer science. But there is more. The fields are Natural Language Processing and Machine Learning. The topic is machine translation. The authors propose a new method, the Transformer. The data generation method is documents. They test it on machine translation using a public dataset. They report BLEU scores.
 
 This project tries to extract all eight parts automatically and represent them as a structured profile.
 -->
