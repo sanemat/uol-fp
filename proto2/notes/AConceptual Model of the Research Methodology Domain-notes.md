@@ -1,14 +1,56 @@
-研究方法論のオントロジー
-研究方法論領域の概念モデルの作成
+an ontology of research methodology domain
 
-意味論とは、明示的に表現されたデータの意味を指し、この意味はデータとともに伝達される
-個々の事実やデータは情報ネットワークの中で結びつけられている
+"A research scheme that is made up of a philosophical world view, a research design, and research methods ..."
 
-形式オントロジー
-オントロジーはドメインの共有された形式的かつ明示的な概念モデルを提供することでデータに構造を与え、特定のドメインの概念を厳密に定義し、それらの間の関係を定義する統制された限定的な語彙を提供することで、データの共通理解を可能にする
+a philosophical world view, a research design, and research methods
 
-研究方法論オントロジー
-ミドルアウトアプローチ
+The research question:
+What are the main concepts and relations that make up a research methodology that will guide and support students in their undestanding of the domain?
+
+section 2
+A review of the field of ontologies and ontology engineering.
+section 3
+The research methodology domain and its conceptualisation will then be described.
+section 4
+conclusions will be drawn and pointer s to future work outlined.
+
+1. "Semantic" refers to the meaning of the data that is explicitly represented, and this meaning is transferred along with the data.
+2. The individual facts or peces of data are linked in a network of information.
+
+Ontologies in Education
+
+the way to resource disocovery, a primary purpose of the Dublin Core standard.
+
+An ontology provides structure to data by providing a shared, formal, and explicit conceptual model of a domain and allows a common understanding of data by providing a controlled and limited vocabulary that defines the concepts of a particular domain rigorously as we ll as defining the relationships among them.
+
+"An ontology provides structure to data by providing a shared, formal, and explicit cenceptual model of a domain ..."
+
+An Ontology Enginnering Approach
+
+Specification
+
+The purpose of the ontology is to be a content- and communication-oriented ontology that decribes the research methodology field/domain
+
+Cenceptualisation
+Implementation
+
+Figure 1: An ontology development process map
+Ontology development process
+- Specification
+  - Identify stakeholders
+  - Define purpse, goals, and requirements
+  - Outline knowledge sources
+  - Delimit scope and granularity
+  - Plan quality assurance
+  - Propse competence test
+- Conceptualisation
+  - Generate vocabulary
+  - Formulate concepts
+  - Define properties, relations, axioms
+- Impelmentation
+
+Research methodology / research scheme
+
 
 実装
 概念モデルを一階述語論理や記述論理などの形式表記法に変換することは、オントロジーエンジニアリングプロセスの形式的な部分として含まれる場合があり
@@ -26,9 +68,57 @@ Sage Research Methods Online (SRMO) http://srmo.sagepub.com
 研究方法論に含まれる概念を記述する構造であり、提案された全体的な方法論のニーズを満たすための特定のアプローチや方法(方法論とは対照的に)の選択を網羅するもの
 したがって、研究計画は研究の基盤となる哲学的世界観、研究の構造を提供する研究設計、及び設計で使用される研究方法から構成されます。
 
+"A research scheme ... is a structure that describes the concepts that are included in a research methodology ..."
+
 単一の哲学的世界観
 一つ以上の研究デザイン
 研究方法
+
+Paper
+  has Discipline
+  has Field
+  has MethodologyProfile
+
+MethodologyProfile
+  has ResearchDesign
+  has DataGenerationMethod
+  has TechnicalMethod
+  has Task
+  has Data
+  has Evaluation
+
+---
+Input:
+  Attention Is All You Need
+
+Output:
+  Discipline:
+    - Computer Science
+
+  Field:
+    - Natural Language Processing
+    - Machine Learning
+
+  MethodologyProfile:
+    has ResearchDesign:
+      - design and creation
+      - experiment
+
+    has DataGenerationMethod:
+      - documents
+
+    has TechnicalMethod:
+      - Transformer
+
+    has Task:
+      - machine translation
+
+    has Data:
+      - WMT 2014 English-German dataset
+      - WMT 2014 English-French dataset
+
+    has Evaluation:
+      - BLEU score
 
 1. What is it about?
 2. What part of my project does it support?
