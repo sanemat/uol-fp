@@ -5,7 +5,7 @@ ResearchScheme
 
 ## Section 1: Introduction
 
-an ontology of research methodology domain
+an ontology of the research methodology domain
 
 "A research scheme that is made up of a philosophical world view, a research design, and research methods ..."
 
@@ -66,7 +66,7 @@ Ontology development process
 
 Research methodology / research scheme
 
-A UML conceptual model directly to OWL
+A UML conceptual model can be transferred directly to OWL
 
 ## Section 3: A Conceptual model of the research methodology domain
 
@@ -74,7 +74,7 @@ Sage Research Methods Online (SRMO) http://srmo.sagepub.com
 
 the Ontology of Clinical Research (OCRe)
 
-Conceptual models for human before making ontology.
+Conceptual models for humans before making an ontology.
 
 Research methodology has been used in various ways in the literature, from being a synonym for a research design, to being the research process, to being the specific implementation of the methods. Here it is taken to mean the overall justification, rationale, or logic for undertaking the research in terms of locating it within the larger body of scientific enquiry, explaining which, how, and why particular research designs should be applied in the research, and deciding and describing which appropriate methods will be employed.
 
