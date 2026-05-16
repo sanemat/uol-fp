@@ -16,7 +16,7 @@ A research scheme consists of:
 - Research methods
 
 The research question:
-What are the main concepts and relations that make up a research methodology that will guide and support students in their undestanding of the domain?
+What are the main concepts and relations that make up a research methodology that will guide and support students in their understanding of the domain?
 
 "What are the main concepts and relations that make up a research methodology ... ?"
 
@@ -25,44 +25,44 @@ A review of the field of ontologies and ontology engineering.
 section 3
 The research methodology domain and its conceptualisation will then be described.
 section 4
-conclusions will be drawn and pointer s to future work outlined.
+conclusions will be drawn and pointers to future work outlined.
 
 ## Section 2: Ontologies and ontology engineering
 
 1. "Semantic" refers to the meaning of the data that is explicitly represented, and this meaning is transferred along with the data.
-2. The individual facts or peces of data are linked in a network of information.
+2. The individual facts or pieces of data are linked in a network of information.
 
 Ontologies in Education
 
-the way to resource disocovery, a primary purpose of the Dublin Core standard.
+the way to resource discovery, a primary purpose of the Dublin Core standard.
 
-An ontology provides structure to data by providing a shared, formal, and explicit conceptual model of a domain and allows a common understanding of data by providing a controlled and limited vocabulary that defines the concepts of a particular domain rigorously as we ll as defining the relationships among them.
+An ontology provides structure to data by providing a shared, formal, and explicit conceptual model of a domain and allows a common understanding of data by providing a controlled and limited vocabulary that defines the concepts of a particular domain rigorously as well as defining the relationships among them.
 
-"An ontology provides structure to data by providing a shared, formal, and explicit cenceptual model of a domain ..."
+"An ontology provides structure to data by providing a shared, formal, and explicit conceptual model of a domain ..."
 
-An Ontology Enginnering Approach
+An Ontology Engineering Approach
 
 ### Specification
 
-The purpose of the ontology is to be a content- and communication-oriented ontology that decribes the research methodology field/domain
+The purpose of the ontology is to be a content- and communication-oriented ontology that describes the research methodology field/domain
 
-### Cenceptualisation
+### Conceptualisation
 ### Implementation
 
 Figure 1: An ontology development process map
 Ontology development process
 - Specification
   - Identify stakeholders
-  - Define purpse, goals, and requirements
+  - Define purpose, goals, and requirements
   - Outline knowledge sources
   - Delimit scope and granularity
   - Plan quality assurance
-  - Propse competence test
+  - Propose competence test
 - Conceptualisation
   - Generate vocabulary
   - Formulate concepts
   - Define properties, relations, axioms
-- Impelmentation
+- Implementation
 
 Research methodology / research scheme
 
@@ -72,19 +72,19 @@ A UML conceptual model directly to OWL
 
 Sage Research Methods Online (SRMO) http://srmo.sagepub.com
 
-the Ontology of Clinical Rsearch (OCRe)
+the Ontology of Clinical Research (OCRe)
 
 Conceptual models for human before making ontology.
 
-Research methodology has been used in various ways in the literature, from being a synonym for a research design, to being the research process, to being the specific implementation of the methods. Here it is taken to mean the overall justification, rationale, or logic for undertaking the research in terms of locationg it within the larger body of scientific enquiry, explaining wihchi, how, and why particular reserach designs showd be applied in the reserach, and deciding and describing which appropriate methods will be employed.
+Research methodology has been used in various ways in the literature, from being a synonym for a research design, to being the research process, to being the specific implementation of the methods. Here it is taken to mean the overall justification, rationale, or logic for undertaking the research in terms of locating it within the larger body of scientific enquiry, explaining which, how, and why particular research designs should be applied in the research, and deciding and describing which appropriate methods will be employed.
 
-A research scheme ... is a structure that describes the concepts that are included in a research methodology, and covers the choice of particular approaches and methods to meet the needs of the prompsed overall methodology.
-A research scheme is thus made up of a philosophical world view which underpins the research, a research design which provides the structure of the reserach, and reserach methods that are used in a design.
+A research scheme ... is a structure that describes the concepts that are included in a research methodology, and covers the choice of particular approaches and methods to meet the needs of the proposed overall methodology.
+A research scheme is thus made up of a philosophical world view which underpins the research, a research design which provides the structure of the research, and research methods that are used in a design.
 
 "A research scheme ... is a structure that describes the concepts that are included in a research methodology ..."
 
 The ResearchScheme is
-- underpinned by a single PhilosophilWorldview
+- underpinned by a single PhilosophicalWorldview
 - has one or more ResearchDesigns
 
 Paper
