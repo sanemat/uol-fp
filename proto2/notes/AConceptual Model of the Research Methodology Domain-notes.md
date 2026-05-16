@@ -1,11 +1,24 @@
+ResearchScheme
+  has PhilosophicalWorldview
+  has ResearchDesign
+  has ResearchMethod
+
+## Section 1: Abstract, introduction
+
 an ontology of research methodology domain
 
 "A research scheme that is made up of a philosophical world view, a research design, and research methods ..."
 
-a philosophical world view, a research design, and research methods
+A research scheme consists of:
+
+- Philosophical worldview
+- Research design
+- Research methods
 
 The research question:
 What are the main concepts and relations that make up a research methodology that will guide and support students in their undestanding of the domain?
+
+"What are the main concepts and relations that make up a research methodology ... ?"
 
 section 2
 A review of the field of ontologies and ontology engineering.
@@ -13,6 +26,8 @@ section 3
 The research methodology domain and its conceptualisation will then be described.
 section 4
 conclusions will be drawn and pointer s to future work outlined.
+
+## Section 2: Ontologies and ontology engineering
 
 1. "Semantic" refers to the meaning of the data that is explicitly represented, and this meaning is transferred along with the data.
 2. The individual facts or peces of data are linked in a network of information.
@@ -27,12 +42,12 @@ An ontology provides structure to data by providing a shared, formal, and explic
 
 An Ontology Enginnering Approach
 
-Specification
+### Specification
 
 The purpose of the ontology is to be a content- and communication-oriented ontology that decribes the research methodology field/domain
 
-Cenceptualisation
-Implementation
+### Cenceptualisation
+### Implementation
 
 Figure 1: An ontology development process map
 Ontology development process
@@ -50,11 +65,6 @@ Ontology development process
 - Impelmentation
 
 Research methodology / research scheme
-
-
-実装
-概念モデルを一階述語論理や記述論理などの形式表記法に変換することは、オントロジーエンジニアリングプロセスの形式的な部分として含まれる場合があり
-オントロジーを更に記述論理、そして最終的にはOWLへと発展させる作業においてもここで採用されます。
 
 Sage Research Methods Online (SRMO) http://srmo.sagepub.com
 
