@@ -3,6 +3,9 @@ ResearchScheme
   has ResearchDesign
   has ResearchMethod
 
+A research methodology as a structured domain.
+There model uses ResearchScheme as the central concept.
+
 ## Section 1: Introduction
 
 an ontology of the research methodology domain
