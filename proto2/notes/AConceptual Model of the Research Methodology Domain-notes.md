@@ -4,7 +4,7 @@ ResearchScheme
   has ResearchMethod
 
 A research methodology as a structured domain.
-There model uses ResearchScheme as the central concept.
+Their model uses ResearchScheme as the central concept.
 
 ## Section 1: Introduction
 
@@ -86,12 +86,12 @@ A research scheme is thus made up of a philosophical world view which underpins 
 
 "A research scheme ... is a structure that describes the concepts that are included in a research methodology ..."
 
-The ResearchScheme is
-- underpinned by a single PhilosophicalWorldview
+The ResearchScheme
+- is underpinned by a single PhilosophicalWorldview
 - has one or more ResearchDesigns
 
-Common examples of philosophical world views include post-positivism, constructivisum, transformative/critical theory, pnterpretivism, and pragmatism.
-There is also reference to qualitative and quantative paradigms in the literature on reserach methodologies.
+Common examples of philosophical world views include post-positivism, constructivism, transformative/critical theory, interpretivism, and pragmatism.
+There is also reference to qualitative and quantitative paradigms in the literature on research methodologies.
 
 Paper
   has Discipline
