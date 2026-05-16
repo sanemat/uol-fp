@@ -76,19 +76,16 @@ the Ontology of Clinical Rsearch (OCRe)
 
 Conceptual models for human before making ontology.
 
-「研究方法論」という用語と「研究計画」という用語の意味
+Research methodology has been used in various ways in the literature, from being a synonym for a research design, to being the research process, to being the specific implementation of the methods. Here it is taken to mean the overall justification, rationale, or logic for undertaking the research in terms of locationg it within the larger body of scientific enquiry, explaining wihchi, how, and why particular reserach designs showd be applied in the reserach, and deciding and describing which appropriate methods will be employed.
 
-研究をより大きな科学的探求の体型の中に位置づけ、特定の研究デザインを研究に適用すべき理由、方法、理由を説明し、適切な方法を採用することを決定し記述するという観点から、研究を実施する全体的な正当性、こんきょ、論理を意味するものと解釈される
-
-研究計画
-研究方法論に含まれる概念を記述する構造であり、提案された全体的な方法論のニーズを満たすための特定のアプローチや方法(方法論とは対照的に)の選択を網羅するもの
-したがって、研究計画は研究の基盤となる哲学的世界観、研究の構造を提供する研究設計、及び設計で使用される研究方法から構成されます。
+A research scheme ... is a structure that describes the concepts that are included in a research methodology, and covers the choice of particular approaches and methods to meet the needs of the prompsed overall methodology.
+A research scheme is thus made up of a philosophical world view which underpins the research, a research design which provides the structure of the reserach, and reserach methods that are used in a design.
 
 "A research scheme ... is a structure that describes the concepts that are included in a research methodology ..."
 
-単一の哲学的世界観
-一つ以上の研究デザイン
-研究方法
+The ResearchScheme is
+- underpinned by a single PhilosophilWorldview
+- has one or more ResearchDesigns
 
 Paper
   has Discipline
