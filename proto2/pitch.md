@@ -22,7 +22,7 @@ For "Attention Is All You Need" (Vaswani et al., 2017):
 | What data generation method? | Documents |
 | What technical method? | Transformer |
 | What task? | machine translation |
-| What data? | WMT dataset |
+| What dataset? | WMT dataset |
 | How evaluated? | BLEU score |
 
 This project extracts this structured profile automatically.

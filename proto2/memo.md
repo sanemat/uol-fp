@@ -18,5 +18,5 @@ Output:
         Data generation method: Documents
         Technical method: Transformer
         Task: machine translation
-        Data: WMT machine translation datasets
-        Evaluation: BLEU score
+        Dataset: WMT machine translation datasets
+        EvaluationMetric: BLEU score

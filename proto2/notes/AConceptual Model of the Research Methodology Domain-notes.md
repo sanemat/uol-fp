@@ -100,8 +100,8 @@ MethodologyProfile
   has DataGenerationMethod
   has TechnicalMethod
   has Task
-  has Data
-  has Evaluation
+  has Dataset
+  has EvaluationMetric
 
 ---
 Input:
@@ -129,11 +129,11 @@ Output:
     has Task:
       - machine translation
 
-    has Data:
+    has Dataset:
       - WMT 2014 English-German dataset
       - WMT 2014 English-French dataset
 
-    has Evaluation:
+    has EvaluationMetric:
       - BLEU score
 
 1. What is it about?
