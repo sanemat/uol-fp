@@ -87,6 +87,9 @@ The ResearchScheme is
 - underpinned by a single PhilosophicalWorldview
 - has one or more ResearchDesigns
 
+Common examples of philosophical world views include post-positivism, constructivisum, transformative/critical theory, pnterpretivism, and pragmatism.
+There is also reference to qualitative and quantative paradigms in the literature on reserach methodologies.
+
 Paper
   has Discipline
   has Field
