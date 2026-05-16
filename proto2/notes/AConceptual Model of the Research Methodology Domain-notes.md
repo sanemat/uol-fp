@@ -3,7 +3,7 @@ ResearchScheme
   has ResearchDesign
   has ResearchMethod
 
-## Section 1: Abstract, introduction
+## Section 1: Introduction
 
 an ontology of research methodology domain
 
@@ -66,9 +66,15 @@ Ontology development process
 
 Research methodology / research scheme
 
+A UML conceptual model directly to OWL
+
+## Section 3: A Conceptual model of the research methodology domain
+
 Sage Research Methods Online (SRMO) http://srmo.sagepub.com
 
-概念モデルのモデリング文法としてUMLを使用する
+the Ontology of Clinical Rsearch (OCRe)
+
+Conceptual models for human before making ontology.
 
 「研究方法論」という用語と「研究計画」という用語の意味
 
