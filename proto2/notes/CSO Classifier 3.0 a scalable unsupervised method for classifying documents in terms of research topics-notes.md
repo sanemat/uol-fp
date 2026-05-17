@@ -42,6 +42,16 @@ section 7 show how to apply the classifier to other fields of Science
 section 8 provide an overview of applications developed by early adopters of the CSO Classifier
 section 9 summarise the main contributions and outline future directions of research
 
+## 9 Conclusions
+
+plan to test BERT, SciBERT, similar modern embeddigns, to try and enhance the semantic and post-processing modules.
+
+## 2 Literature review
+
+## 4 CSO classifier
+
+## 7 Employing the CSO Classifier in other domains of Science
+
 トピックモデリング
 教師あり機械学習アプローチ
 引用ネットワークに基づくアプローチ
