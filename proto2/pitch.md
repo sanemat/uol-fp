@@ -10,10 +10,13 @@ Hello. My project is about extracting structured methodology from computing rese
 
 # Simple Example
 
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+<div>
 A computing paper is not only about its topic.
 
 For "Attention Is All You Need" (Vaswani et al., 2017):
-
+</div>
+<div>
 | Question | Answer |
 |---|---|
 | What kind of discipline? | Computer Science |
@@ -24,8 +27,12 @@ For "Attention Is All You Need" (Vaswani et al., 2017):
 | What task? | machine translation |
 | What dataset? | WMT dataset |
 | How evaluated? | BLEU score |
+</div>
 
+<div>
 This project extracts this structured profile automatically.
+</div>
+</div>
 
 <!--
 For example, consider the paper "Attention Is All You Need".
