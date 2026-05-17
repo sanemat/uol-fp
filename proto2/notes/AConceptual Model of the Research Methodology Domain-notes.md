@@ -99,8 +99,6 @@ Paper
   has MethodologyProfile
 
 MethodologyProfile
-  has ResearchDesign
-  has DataGenerationMethod
   has TechnicalMethod
   has Task
   has Dataset
@@ -119,13 +117,6 @@ Output:
     - Machine Learning
 
   MethodologyProfile:
-    has ResearchDesign:
-      - design and creation
-      - experiment
-
-    has DataGenerationMethod:
-      - documents
-
     has TechnicalMethod:
       - Transformer
 

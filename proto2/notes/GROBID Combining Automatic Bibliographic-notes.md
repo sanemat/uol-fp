@@ -1,7 +1,7 @@
 GROBID
 GeneRation Of BIbliographic Data
 
-GROBID is useful as a preprocessing tool for scholarly documents. It extracts bibliographic metadata, references, citation contexts, and terms from research papers. In my project, GROBID can be used to convert PDFs into structured text or TEI XML before methodology extraction. However, GROBID does not itself identify methodology components such as ResearchDesign, TechnicalMethod, Dataset, or EvaluationMetric.
+GROBID is useful as a preprocessing tool for scholarly documents. It extracts bibliographic metadata, references, citation contexts, and terms from research papers. In my project, GROBID can be used to convert PDFs into structured text or TEI XML before methodology extraction. However, GROBID does not itself identify methodology components such as TechnicalMethod, Dataset, or EvaluationMetric.
 
 GROBID performs reliable bibliographic data extractions from scholar articles combined with multi-level term extractions.
 
