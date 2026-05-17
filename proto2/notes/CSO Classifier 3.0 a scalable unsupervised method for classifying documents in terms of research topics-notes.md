@@ -48,6 +48,25 @@ plan to test BERT, SciBERT, similar modern embeddigns, to try and enhance the se
 
 ## 2 Literature review
 
+(i) topic modelling
+(ii) supervised machine learning approaches
+(iii) approaches base on citation networks
+(iv) approaches base on nutural language processing
+
+### 2.1 Topic modelling
+
+the latent Dirichlet analysis, LDA
+
+Topic modelling approaches such as LDA can discover latent topics without a strong prior categorisation or training data.
+However, the resuting topics often need manual verification by domain experts, because the model produces word distributions rather than meaning full labels. It also introduces noise.
+
+few topics:
+less noise, but too broad
+many topics:
+more detailed, but noisy
+
+### 2.2 Supervised machine learning approaches
+
 ## 4 CSO classifier
 
 ## 7 Employing the CSO Classifier in other domains of Science
