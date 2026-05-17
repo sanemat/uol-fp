@@ -1,18 +1,46 @@
 CSO Classfier v3.0
 
 input
-タイトル、要約、キーワード
+the textual components of a research paper (usually title, abstract, and keywords)
 output
-CSOから抽出した研究トピックの選択肢
+a selection of research topics drawn from the CSO.
 
-入力テキストに明示的に記載されているオントロジー内のすべてのトピックを検索
-品詞タグ付けとワールド埋め込みを利用して、意味的に関連するトピックをさらに特定
-外れ値を除去し、CSO分類法を活用して上位領域を含めることで、このトピックセットを充実させる
+## 1 Introduction
+
+(i) enhancing semantically the metadata of scientific publications
+(ii) categorising proceeding s in digital libraries.
+(iii) producing smart analytics
+(iv) generating recommendations
+(v) detecting research trends
+
+in a topdown fassion:
+the advantege of relying on a set of formally defined researcdh topics associated wit hhuman readable labels.
+it requires such a controlled vocabulary to be available
+
+bottom-up approaches
+do not require a predefined vocabulary
+to produce noisier and less interpretable results
+
+the Compu Scientce Ontology (CSO)
+
+three steps.
+First, it find s all topics in the ontology that are explicitly mentioned in the input text.
+Then, it identfies further semantically related topics by utilising part-of-speech tagging and world embeddings.
+Finally, it discards ontliers and enriches this set of topics by taking advantage of the CSO taxonomy to include their superareas.
 
 pip install cso-classifier
 
 https://github.com/angelosalatino/cso-classifier
 http://w3id.org/cso/cso-classifier
+
+section 2 review the literature
+section 3 discuss the Computer Science Ontology
+section 4 descrivbe the CSO Classifier and its modules
+section 5 evaluate the CSO Classifer against alternative approacheds, focusing on the performance of the new method for detecting outliers.
+section 6 discuss their new solution for improving the scalability of the CSO Classifier
+section 7 how to apply the classifier to other fieleds of Science
+section 8 an overview of applications developed by early adopters of the CSO Classifier
+section 9 summarise the main contributions and outline future directions of research
 
 トピックモデリング
 教師あり機械学習アプローチ
