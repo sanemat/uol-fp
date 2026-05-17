@@ -26,33 +26,54 @@ I will start with a simple example.
 
 "Attention Is All You Need" introduced the Transformer model.
 
-A topic label may say: this paper is about machine translation.
-But I also want to know how the paper works.
+A topic label may say that this paper is about machine translation.
+But this table shows something different: how the paper works.
 
-Here, the proposed method is Transformer.
-The task is machine translation.
-The dataset is WMT.
-The metric is BLEU.
+It shows the method, the task, the dataset, and the metric.
 
-My project extracts this kind of short profile from computing papers.
+My project tries to extract this kind of short profile from computing papers.
 -->
 
-
 ---
-# Building Role-Based Methodology Profiles from Computing Research Papers
 
-## 12.1 Identifying research methodologies that are used in research in the computing disciplines.
+<!-- {"layout": "Title slide"} -->
+# Role-Based Methodology Profiles
+
+## Template 12.1: Identifying research methodologies used in computing research
 
 <!--
-I am choosing Template 12.1.
+I am using Template 12.1.
 
 The template asks us to identify research methodologies used in computing research.
 
-I focus on four visible parts:
+The full template is broad, so I focus on four parts that are usually visible in papers:
 method, task, dataset, and metric.
-
-This is a smaller version of the full idea, but it still answers how the research was done.
 -->
+
+---
+
+# Why This Matters
+
+Topic labels help readers find papers.
+
+Role-based profiles help readers compare papers.
+
+| Topic view | Role view |
+|---|---|
+| What is this paper about? | How does this paper work? |
+| NLP, machine translation | method, task, dataset, metric |
+
+<!--
+The motivation is simple.
+
+But when readers compare papers, they need more detail.
+
+Two papers may have the same topic, but use different methods, datasets, or metrics.
+
+So the profile is not meant to replace reading.
+It is a quick guide before reading deeply.
+-->
+
 
 ---
 
@@ -71,15 +92,17 @@ Oates gives the methodology background for computing research.
 
 Pilkington and Pretorius show that methodology can be treated as a structure.
 
-The CSO Classifier classifies papers by topic, but it does not show how the paper works.
+The CSO Classifier classifies papers by topic.
 
-Ghosh and colleagues is the closest technical work. They extract methodology component names from AI papers.
+Ghosh and colleagues extract methodology component names from AI papers.
 
-The gap is a short, readable profile of the roles inside the paper.
+My project sits between these ideas.
+It uses the idea of structured methodology, but the output is small and reader-friendly.
 -->
 
 ---
 
+<!-- {"layout": "Title and two columns"} -->
 # Prototype
 
 Input:
@@ -88,9 +111,11 @@ Input:
 - abstract
 - selected paper sections
 
+- - -
+
 Output:
 
-**Paper → Role-based MethodologyProfile**
+**Paper → Role-based Methodology Profile**
 
 The prototype will extract:
 
@@ -102,10 +127,23 @@ The prototype will extract:
 <!--
 The prototype takes paper text as input.
 
-The output is a short profile with four roles:
-proposed method, task, dataset, and metric.
+It has three steps.
 
-I will compare the output with a small human-reviewed set of examples.
+First, extract candidate phrases.
+Second, classify their roles.
+Third, combine the results into one short profile.
+
+For evaluation, I will use a small human-reviewed set.
+
+I will check two things:
+whether the system finds the right terms,
+and whether it assigns the right roles.
+
+A correct term with the wrong role is still not useful.
+
+I do not try to extract the full research design in this prototype.  
+That would be harder and more subjective.  
+I treat it as a possible extension after the four visible roles.
 -->
 
 ---
