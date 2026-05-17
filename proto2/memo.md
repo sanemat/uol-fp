@@ -20,3 +20,5 @@ Output:
         Task: machine translation
         Dataset: WMT machine translation datasets
         EvaluationMetric: BLEU score
+
+Only include used entities in the final MethodologyProfile.

@@ -1,3 +1,7 @@
+---
+presentationID: 1iG1XWNQtfXCZao_cMtL7VfiTclxLfKWr1cnGdzr3Ysk
+title: Structured Methodology Extraction from Computing Research Papers
+---
 # Structured Methodology Extraction from Computing Research Papers
 
 ## 12.1 Identifying research methodologies that are used in research in the computing disciplines.
@@ -8,31 +12,27 @@ Hello. My project is about extracting structured methodology from computing rese
 
 ---
 
+<!-- {"layout": "Title and two columns"} -->
 # Simple Example
 
-<div style="display: flex; flex-direction: column; gap: 1rem;">
-<div>
 A computing paper is not only about its topic.
 
 For "Attention Is All You Need" (Vaswani et al., 2017):
-</div>
-<div>
+
+- - -
+
 | Question | Answer |
 |---|---|
 | What kind of discipline? | Computer Science |
-| What field? | Natural Language Processing + Machine Learning |
+| What field? | NLP + Machine Learning |
 | What design or strategy? | new model + experiment |
 | What data generation method? | Documents |
 | What technical method? | Transformer |
 | What task? | machine translation |
 | What dataset? | WMT dataset |
 | How evaluated? | BLEU score |
-</div>
 
-<div>
 This project extracts this structured profile automatically.
-</div>
-</div>
 
 <!--
 For example, consider the paper "Attention Is All You Need".
