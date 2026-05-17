@@ -67,26 +67,23 @@ more detailed, but noisy
 
 ### 2.2 Supervised machine learning approaches
 
+It depends on gold standard.
+
+### 2.3 Approaches based on citation networks
+
+The paper says that citation-based approaches assign each document to only one topic. I should treat this carefully. This is probably true for many hard-clustering citation-network approaches, but it is not an inherent limitation of citation data itself. A citation network could also be used with soft clustering or multi-label scoring.
+
+### 2.4 Approaches base on natural launguage processing
+
+Many unsupervised topic discovery approaches generate topics from scratch.
+
+My note:
+The authors seem to associate unsupervised NLP-based approaches with generating topics from scratch. This is partly true for clustering or topic modelling methods, but it is not inherent to unsupervised learning. An unsupervised method can still use a controlled vocabulary or ontology, for example by matching document representations to predefined topic representations. Therefore, the key issue is whether the method uses domain knowledge, not only whether it is supervised.
+
 ## 4 CSO classifier
 
 ## 7 Employing the CSO Classifier in other domains of Science
 
-トピックモデリング
-教師あり機械学習アプローチ
-引用ネットワークに基づくアプローチ
-自然言語処理に基づくアプローチ
-
-トピックモデリング
-潜在ディリクレ分析
-
-各文書をトピックの混合としてモデル化
-
-教師あり機械学習アプローチ
-
-引用ネットワークに基づくアプローチ
-共引用分析によって科学文書をクラスタリングする原理
-
-自然言語処理に基づくアプローチ
 
 generate the topics from scratch
 vs
