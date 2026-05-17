@@ -12,14 +12,14 @@ title: Building Role-Based Methodology Profiles from Computing Research Papers
 
 | Methodology role | Extracted component |
 |---|---|
-| Proposed method | Transformer |
+| Technical method | Transformer |
 | Research task | machine translation |
 | Evaluation dataset | WMT dataset |
 | Evaluation metric | BLEU score |
 
 A paper is not only about its topic.
 
-It also has a method, data, and evaluation.
+It also has methodology roles: method, task, data, and evaluation.
 
 <!--
 I will start with a simple example.
@@ -84,7 +84,7 @@ It is a quick guide before reading deeply.
 | Oates | Explains research strategies in computing | Not an NLP system |
 | Pilkington & Pretorius | Models methodology as a structure | Does not extract from papers |
 | CSO Classifier | Classifies papers by topic | Does not show methodology roles |
-| Ghosh et al. | Extracts methodology component names | Does not produce a reader-friendly profile |
+| Ghosh et al. | Extracts methodology component names | Does not assign methodology roles to extracted names |
 
 
 <!--
@@ -95,9 +95,10 @@ Pilkington and Pretorius show that methodology can be treated as a structure.
 The CSO Classifier classifies papers by topic.
 
 Ghosh and colleagues extract methodology component names from AI papers.
+But extracted names alone do not show how each component functions in the paper.
 
-My project sits between these ideas.
-It uses the idea of structured methodology, but the output is small and reader-friendly.
+My project adds role labels to extracted names: technical method, task, dataset, evaluation metric.
+This turns a list of names into a small MethodologyProfile.
 -->
 
 ---
@@ -119,7 +120,7 @@ Output:
 
 The prototype will extract:
 
-- proposed method
+- technical method
 - research task
 - evaluation dataset
 - evaluation metric

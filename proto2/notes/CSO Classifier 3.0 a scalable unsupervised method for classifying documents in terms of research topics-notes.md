@@ -7,7 +7,7 @@ a selection of research topics drawn from the CSO.
 
 The CSO Classifier maps research paper metadata to topics from the Computer Science Ontology. It combines explicit concept matching, embedding-based semantic inference, and post-processing. This is useful as a design pattern for my project because methodology extraction also requires mapping research paper text to structured categories.
 
-However, CSO focuses on research topics, not research methodology. Therefore, my project does not use CSO as the main methodology schema. Instead, it adapts the idea of ontology-guided classification into a smaller MethodologyProfile schema with components such as ResearchDesign, TechnicalMethod, Task, Dataset, and EvaluationMetric.
+However, CSO focuses on research topics, not research methodology. Therefore, my project does not use CSO as the main methodology schema. Instead, it adapts the idea of ontology-guided classification into a smaller MethodologyProfile schema with components such as TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
 ## 1 Introduction
 
@@ -118,7 +118,7 @@ extract components using a predefined MethodologyProfile schema
 
 A fixed ontology or controlled vocabulary improves interpretability, but it may fail to cover new terms and emerging methods.
 
-For my project, I should not use a fully closed vocabulary. Instead, I can use a controlled schema with open values. The component types are predefined, such as ResearchDesign, TechnicalMethod, Dataset, Task, and EvaluationMetric. However, the actual extracted values can include new models, datasets, tasks, or metrics.
+For my project, I should not use a fully closed vocabulary. Instead, I can use a controlled schema with open values. The component types are predefined, such as TechnicalMethod, Dataset, Task, and EvaluationMetric. However, the actual extracted values can include new models, datasets, tasks, or metrics.
 
 This gives a hybrid approach: ontology-guided structure with open candidate discovery.
 
