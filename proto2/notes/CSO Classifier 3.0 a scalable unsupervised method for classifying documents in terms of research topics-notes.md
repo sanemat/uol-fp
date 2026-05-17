@@ -104,9 +104,6 @@ The post-processing module combines the results of these two modules, discards o
 - a post-processing module, which combines and refines the results.
 
 
-## 7 Employing the CSO Classifier in other domains of Science
-
-
 generate the topics from scratch
 vs
 exploit a domain vocabulary or ontology
