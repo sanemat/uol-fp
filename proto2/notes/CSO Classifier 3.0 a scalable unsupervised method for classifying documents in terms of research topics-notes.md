@@ -44,21 +44,21 @@ section 9 summarise the main contributions and outline future directions of rese
 
 ## 9 Conclusions
 
-plan to test BERT, SciBERT, similar modern embeddigns, to try and enhance the semantic and post-processing modules.
+plan to test BERT, SciBERT, and similar modern embeddings, to try and enhance the semantic and post-processing modules.
 
 ## 2 Literature review
 
 (i) topic modelling
 (ii) supervised machine learning approaches
-(iii) approaches base on citation networks
-(iv) approaches base on nutural language processing
+(iii) approaches based on citation networks
+(iv) approaches based on natural language processing
 
 ### 2.1 Topic modelling
 
 the latent Dirichlet analysis, LDA
 
 Topic modelling approaches such as LDA can discover latent topics without a strong prior categorisation or training data.
-However, the resuting topics often need manual verification by domain experts, because the model produces word distributions rather than meaning full labels. It also introduces noise.
+However, the resulting topics often need manual verification by domain experts, because the model produces word distributions rather than meaningful labels. It also introduces noise.
 
 few topics:
 less noise, but too broad
@@ -67,13 +67,13 @@ more detailed, but noisy
 
 ### 2.2 Supervised machine learning approaches
 
-It depends on gold standard.
+It depends on a gold standard.
 
 ### 2.3 Approaches based on citation networks
 
 The paper says that citation-based approaches assign each document to only one topic. I should treat this carefully. This is probably true for many hard-clustering citation-network approaches, but it is not an inherent limitation of citation data itself. A citation network could also be used with soft clustering or multi-label scoring.
 
-### 2.4 Approaches base on natural launguage processing
+### 2.4 Approaches based on natural language processing
 
 Many unsupervised topic discovery approaches generate topics from scratch.
 
