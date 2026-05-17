@@ -57,8 +57,8 @@ plan to test BERT, SciBERT, and similar modern embeddings, to try and enhance th
 
 the latent Dirichlet analysis, LDA
 
-Topic modelling approaches such as LDA can discover latent topics without a strong prior categorisation or training data.
-However, the resulting topics often need manual verification by domain experts, because the model produces word distributions rather than meaningful labels. It also introduces noise.
+Topic modelling approaches such as LDA can discover latent topics without strong prior categorisation or training data.
+However, the resulting topics often need manual verification by domain experts, because the model produces word distributions rather than meaningful labels. The approach also introduces noise.
 
 few topics:
 less noise, but too broad
@@ -82,14 +82,14 @@ The authors seem to associate unsupervised NLP-based approaches with generating 
 
 ## 4 CSO classifier
 
-input the textual components of a research papar (usually title, abstract, and keywords)
+input the textual components of a research paper (usually title, abstract, and keywords)
 output the relevant topics drawn from CSO.
 
-The syntactic module parses the input documents nad identifies CSO concepts that are ex plicitly reffered in the document.
+The syntactic module parses the input documents and identifies CSO concepts that are explicitly referred in the document.
 
-The semantic module uses part-of-speech tagging to identify promising terms and then pxploits word embeddings to infer semantically related topics.
+The semantic module uses part-of-speech tagging to identify promising terms and then exploits word embeddings to infer semantically related topics.
 
-The post-processing module combines the result of these two modules, discards outliers, and enhances the topic set by including relevant super-areas.
+The post-processing module combines the results of these two modules, discards outliers, and enhances the topic set by including relevant super-areas.
 
 ### 4.1 Syntactic module
 
