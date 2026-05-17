@@ -141,8 +141,8 @@ and whether it assigns the right roles.
 
 A correct term with the wrong role is still not useful.
 
-I do not try to extract the full research design in this prototype.  
-That would be harder and more subjective.  
+I do not try to extract the full research design in this prototype.
+That would be harder and more subjective.
 I treat it as a possible extension after the four visible roles.
 -->
 
