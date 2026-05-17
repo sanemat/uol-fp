@@ -82,6 +82,28 @@ The authors seem to associate unsupervised NLP-based approaches with generating 
 
 ## 4 CSO classifier
 
+input the textual components of a research papar (usually title, abstract, and keywords)
+output the relevant topics drawn from CSO.
+
+The syntactic module parses the input documents nad identifies CSO concepts that are ex plicitly reffered in the document.
+
+The semantic module uses part-of-speech tagging to identify promising terms and then pxploits word embeddings to infer semantically related topics.
+
+The post-processing module combines the result of these two modules, discards outliers, and enhances the topic set by including relevant super-areas.
+
+### 4.1 Syntactic module
+
+- a syntactic module, which finds explicitly mentioned CSO concepts;
+
+### 4.2 Semantic module
+
+- a semantic module, which uses word embeddings to infer related topics;
+
+### 4.3 Post-processing module
+
+- a post-processing module, which combines and refines the results.
+
+
 ## 7 Employing the CSO Classifier in other domains of Science
 
 
