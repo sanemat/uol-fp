@@ -1,4 +1,4 @@
-Identifying UMethods and Datasets in Scientific Publications
+Identifying Used Methods and Datasets in Scientific Publications
 
 This paper supports:
   method and dataset extraction from scientific publications
@@ -9,7 +9,7 @@ This paper does not solve:
   evaluation metric extraction
   methodology ontology design
 
-Färber et al. focus on identifying methods and datasets that are actually used in scientific publications. Their approach first recognises method and dataset mentions using domain-specific named entity recognition, and then classifies the mentions as used or non-used based on textual context. This is closely related to my project because TechnicalMethod and Dataset are key components of the proposed MethodologyProfile. However, their work does not aim to extract a full methodology structure, such as ResearchDesign, Task, and EvaluationMetric.
+Färber et al. focus on identifying methods and datasets that are actually used in scientific publications. Their approach first recognizes method and dataset mentions using domain-specific named entity recognition, and then classifies the mentions as used or non-used based on textual context. This is closely related to my project because TechnicalMethod and Dataset are key components of the proposed MethodologyProfile. However, their work does not aim to extract a full methodology structure, such as ResearchDesign, Task, and EvaluationMetric.
 
 ## Introduction
 
