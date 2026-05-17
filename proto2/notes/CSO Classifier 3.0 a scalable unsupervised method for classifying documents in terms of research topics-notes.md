@@ -7,7 +7,7 @@ a selection of research topics drawn from the CSO.
 
 ## 1 Introduction
 
-(i) enhancing semantically the metadata of scientific publications
+(i) semantically enhancing the metadata of scientific publications
 (ii) categorising proceedings in digital libraries.
 (iii) producing smart analytics
 (iv) generating recommendations
@@ -38,8 +38,8 @@ section 3 discuss the Computer Science Ontology
 section 4 describe the CSO Classifier and its modules
 section 5 evaluate the CSO Classifier against alternative approaches, focusing on the performance of the new method for detecting outliers.
 section 6 discuss their new solution for improving the scalability of the CSO Classifier
-section 7 how to apply the classifier to other fields of Science
-section 8 an overview of applications developed by early adopters of the CSO Classifier
+section 7 show how to apply the classifier to other fields of Science
+section 8 provide an overview of applications developed by early adopters of the CSO Classifier
 section 9 summarise the main contributions and outline future directions of research
 
 トピックモデリング
