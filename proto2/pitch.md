@@ -26,7 +26,7 @@ It also has methodology roles: method, task, data, and evaluation.
 
 The table does. Each row assigns a role: the method is Transformer, the task is machine translation, the dataset is WMT, the metric is BLEU. Together, they answer: how does this paper work?
 
-The topic label says what. The role-based profile says how. My project is built on this difference.
+This role vocabulary — method, task, dataset, metric — comes from the methodology research literature. My project applies it to automatic extraction from papers.
 -->
 
 ---
@@ -73,11 +73,11 @@ It is not a replacement for reading. It is a fast way to compare papers before r
 
 
 <!--
-Oates and Pilkington & Pretorius give theoretical background but do not extract from papers automatically. The CSO Classifier classifies by topic — it answers "what", not "how."
+Pilkington & Pretorius define the role vocabulary — method, task, dataset, metric — as a conceptual model of research methodology. Oates gives the broader theoretical background. But neither extracts from papers automatically. The CSO Classifier classifies by topic — it answers "what", not "how."
 
 Ghosh and colleagues extract methodology component names from AI papers. That is the closest prior work. But a name without a role does not explain how it is used. "BERT" could be a method, a baseline, or a comparison point.
 
-My project assigns roles to extracted names. That turns a list of names into a profile that answers how.
+My project assigns roles to extracted names. It connects Pilkington's conceptual model to Ghosh's extraction approach.
 -->
 
 ---
