@@ -75,7 +75,7 @@ It is not a replacement for reading. It is a fast way to compare papers before r
 <!--
 Pilkington & Pretorius define the role vocabulary — method, task, dataset, metric — as a conceptual model of research methodology. Oates gives the broader theoretical background. But neither extracts from papers automatically. The CSO Classifier classifies by topic — it answers "what", not "how."
 
-Ghosh and colleagues extract methodology component names from AI papers. That is the closest prior work. But a name without a role does not explain how it is used. "BERT" could be a method, a baseline, or a comparison point.
+Ghosh and colleagues extract methodology component names from AI papers. That is the closest prior work. But a name without a role does not show its function. Is "classification" the method used, or the task being solved? The role makes the difference.
 
 My project assigns roles to extracted names. It connects Pilkington's conceptual model to Ghosh's extraction approach.
 -->
