@@ -22,16 +22,11 @@ A paper is not only about its topic.
 It also has methodology roles: method, task, data, and evaluation.
 
 <!--
-I will start with a simple example.
+"Attention Is All You Need" is a very famous AI paper. But the title does not tell us how it works.
 
-"Attention Is All You Need" introduced the Transformer model.
+The table does. Each row assigns a role: the method is Transformer, the task is machine translation, the dataset is WMT, the metric is BLEU. Together, they answer: how does this paper work?
 
-A topic label may say that this paper is about machine translation.
-But this table shows something different: how the paper works.
-
-It shows the method, the task, the dataset, and the metric.
-
-My project tries to extract this kind of short profile from computing papers.
+The topic label says what. The role-based profile says how. My project is built on this difference.
 -->
 
 ---
@@ -42,12 +37,7 @@ My project tries to extract this kind of short profile from computing papers.
 ## Template 12.1: Identifying research methodologies used in computing research
 
 <!--
-I am using Template 12.1.
-
-The template asks us to identify research methodologies used in computing research.
-
-The full template is broad, so I focus on four parts that are usually visible in papers:
-method, task, dataset, and metric.
+Template 12.1 asks us to identify research methodologies in computing research. Roles are my structure for answering that question.
 -->
 
 ---
@@ -64,14 +54,9 @@ Role-based profiles help readers compare papers.
 | NLP, machine translation | method, task, dataset, metric |
 
 <!--
-The motivation is simple.
+Two papers on the same topic can use different methods, datasets, and metrics. The topic label does not show this. The role-based profile does.
 
-But when readers compare papers, they need more detail.
-
-Two papers may have the same topic, but use different methods, datasets, or metrics.
-
-So the profile is not meant to replace reading.
-It is a quick guide before reading deeply.
+It is not a replacement for reading. It is a fast way to compare papers before reading deeply.
 -->
 
 
@@ -88,17 +73,11 @@ It is a quick guide before reading deeply.
 
 
 <!--
-Oates gives the methodology background for computing research.
+Oates and Pilkington & Pretorius give theoretical background but do not extract from papers automatically. The CSO Classifier classifies by topic — it answers "what", not "how."
 
-Pilkington and Pretorius show that methodology can be treated as a structure.
+Ghosh and colleagues extract methodology component names from AI papers. That is the closest prior work. But a name without a role does not explain how it is used. "BERT" could be a method, a baseline, or a comparison point.
 
-The CSO Classifier classifies papers by topic.
-
-Ghosh and colleagues extract methodology component names from AI papers.
-But extracted names alone do not show how each component functions in the paper.
-
-My project adds role labels to extracted names: technical method, task, dataset, evaluation metric.
-This turns a list of names into a small MethodologyProfile.
+My project assigns roles to extracted names. That turns a list of names into a profile that answers how.
 -->
 
 ---
@@ -126,25 +105,11 @@ The prototype will extract:
 - evaluation metric
 
 <!--
-The prototype takes paper text as input.
+Three steps: extract candidate phrases, classify each by role, combine into a short profile.
 
-It has three steps.
+Evaluation checks two things: whether the system finds the right terms, and whether it assigns the right roles. A correct term with the wrong role is still wrong.
 
-First, extract candidate phrases.
-Second, classify their roles.
-Third, combine the results into one short profile.
-
-For evaluation, I will use a small human-reviewed set.
-
-I will check two things:
-whether the system finds the right terms,
-and whether it assigns the right roles.
-
-A correct term with the wrong role is still not useful.
-
-I do not try to extract the full research design in this prototype.
-That would be harder and more subjective.
-I treat it as a possible extension after the four visible roles.
+Research design is not included. It is harder to extract and more subjective. The four roles are the starting point. Design is a possible next step.
 -->
 
 ---
