@@ -10,6 +10,7 @@ dev = [
     "ruff",
     "pytest",
     "nbstripout",
+    "jupyter",
 ]
 
 [build-system]
