@@ -14,10 +14,10 @@ grobid-wait:
 	@echo "GROBID ready at http://localhost:$(GROBID_PORT)"
 
 lint:
-	ruff check src/ pipeline.ipynb
+	ruff check src/ 2pipeline.ipynb
 
 format:
-	ruff format src/ pipeline.ipynb
+	ruff format src/ 2pipeline.ipynb
 
 test:
 	python -m pytest tests/
