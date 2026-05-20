@@ -6,11 +6,13 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
+    "jupyterlab",
+    "jupyterlab-lsp",
+    "python-lsp-server[all]",
     "pyright",
     "ruff",
     "pytest",
     "nbstripout",
-    "jupyter",
 ]
 
 [build-system]

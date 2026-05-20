@@ -23,4 +23,4 @@ test:
 	python -m pytest tests/
 
 notebook:
-	.venv/bin/jupyter lab 2pipeline.ipynb
+	.venv/bin/python -m jupyter lab 2pipeline.ipynb
