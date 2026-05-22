@@ -9,7 +9,6 @@ dev = [
     "pyright",
     "ruff",
     "pytest",
-    "nbstripout",
 ]
 
 [build-system]
