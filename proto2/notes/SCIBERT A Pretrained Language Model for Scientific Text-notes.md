@@ -7,16 +7,27 @@
 5. Useful terms / concepts:
 6. One or two key quotes or page references:
 
+a pretrained language model based on BERT.
+
+Beltagy, Lo and Cohan (2019) construct SCIVOCAB from a scientific corpus and report that "the resulting token overlap between BASEVOCAB and SCIVOCAB is 42%", showing a substantial vocabulary difference between scientific and general-domain text.
+
+Scientific text is different from general text.
+SciBERT improves scientific NLP compared with BERT.
+But SciBERT does not solve my methodology-role classification.
+So it is a useful comparison point, not the central method.
+
 ## Points
 
 1. **What problem does SciBERT solve?**
-   Check why normal BERT may not be enough for scientific papers.
+   Scientific text is different from general text.
 
 2. **Why is scientific text different?**
-   Look for examples such as special terms, technical phrases, dataset names, model names, and metric names.
+   "the resulting token overlap between BASEVOCAB and SCIVOCAB is 42%"
 
 3. **What is SciBERT trained on?**
-   Check that it uses a large corpus of scientific papers, including computer science and biomedical papers.
+   "This corpus consists of 18% papers
+from the computer science domain and 82% from
+the broad biomedical domain.""
 
 4. **What does “pretraining” mean here?**
    SciBERT learns scientific language patterns before it is used for a specific task.
