@@ -9,11 +9,7 @@
 #   - all
 registries:
 - type: standard
-  ref: v4.496.0 # renovate: depName=aquaproj/aqua-registry
-- type: local
-  name: local
-  path: local-registry.yaml
+  ref: v4.518.0 # renovate: depName=aquaproj/aqua-registry
 packages:
 - name: k1LoW/deck@v1.23.1
 - name: felixgwilliams/nbwipers@v0.6.2
-  registry: local
