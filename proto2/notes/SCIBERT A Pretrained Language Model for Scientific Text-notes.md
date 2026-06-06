@@ -1,4 +1,4 @@
-> ScispaCy を使用して文を分割しました
+> Split sentences using ScispaCy
 
 1. What is it about?
 2. What part of my project does it support?
@@ -68,4 +68,4 @@ the broad biomedical domain.""
     Do not say SciBERT extracts methodology.
     Say SciBERT could support a supervised version of this project.
 
-sentence split に ScispaCy
+sentence split by ScispaCy
