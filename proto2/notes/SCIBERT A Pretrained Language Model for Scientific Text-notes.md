@@ -69,3 +69,51 @@ the broad biomedical domain.""
     Say SciBERT could support a supervised version of this project.
 
 sentence split by ScispaCy
+
+---
+  Q1: The problem
+
+  BERT was already a strong model. Why did the authors create a new model, SciBERT?
+
+  What is missing in the original BERT?
+
+  ---
+  Q2: The training data
+
+  SciBERT was trained on 1.14 million papers from Semantic Scholar.
+
+  - What two fields are included?
+  - What percentage is each field?
+  - Did they use only abstracts, or the full paper?
+
+  ---
+  Q3: SCIVOCAB vs BASEVOCAB
+
+  SciBERT uses a new vocabulary called SCIVOCAB.
+
+  - How much do SCIVOCAB and BASEVOCAB overlap?
+  - What does this tell us about scientific language?
+
+  ---
+  Q4: Two ways to use BERT
+
+  The paper tests two ways to use BERT for a task:
+
+  1. Finetuning — update all BERT weights
+  2. Frozen embeddings — keep BERT weights fixed, train only a small model on top
+
+  Which one works better? Why do you think that is?
+
+  ---
+  Q5: Results
+
+  SciBERT beats BERT-Base on scientific tasks. By how much on average (with finetuning)?
+
+  Also, what is the main reason for the improvement — the new vocabulary, or the scientific corpus?
+
+  ---
+  Q6: Connection to your project
+
+  Your project uses SciBERT (via SCIREX and other models) to process scientific papers.
+
+  Why is SciBERT a better choice than the original BERT for your task?
