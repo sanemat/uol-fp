@@ -117,6 +117,22 @@ This helps answer:
 - Is the threshold right?
 - What is being missed?
 
+## Future: Better Sentence Splitting
+
+Current: spaCy `en_core_web_sm`.
+
+Problems:
+- Inline citations (e.g., `[13]`, `[4, 27, 28, 22] .`) become standalone "sentences".
+- Bullet characters (`•`) and single words (`"The"`) pass through.
+- GROBID sometimes places footnote and author contribution text inside the abstract element.
+
+Possible improvements:
+- **Min length filter** — drop sentences shorter than ~30 chars. Simple and effective for fragments.
+- **Merge short fragments** — if a sentence is just a citation, merge it with the previous sentence.
+- **Pre-clean TEI text** — strip inline citation markers before sentence splitting.
+
+Min length filter is the easiest first step.
+
 ## Future: Better Hypothesis Templates
 
 Currently using short label names as hypotheses (e.g., "technical method").
