@@ -146,3 +146,11 @@ Better hypotheses may improve NLI accuracy. For example:
 - "task" → "This sentence describes the research task or problem being solved."
 
 Do this after verifying the basic pipeline works.
+
+## Future: Sentence Window (n-gram style)
+
+Instead of classifying one sentence at a time, try classifying overlapping windows of 3 sentences:
+(1,2,3), (2,3,4), (3,4,5), ...
+
+Hypothesis: context from neighbouring sentences may help the NLI model classify correctly.
+Not sure if it helps — just want to see what happens.
