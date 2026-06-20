@@ -150,16 +150,28 @@ Kept `en_core_web_sm`; splitter choice doesn't matter after pre-cleaning.
 
 Tried SciSpacy (`en_core_sci_sm`) — dropped: causes numpy binary incompatibility in Colab.
 
-## Future: Better Hypothesis Templates
+## Better Hypothesis Templates (done)
 
-Currently using short label names as hypotheses (e.g., "technical method").
-Better hypotheses may improve NLI accuracy. For example:
-- "technical method" → "This sentence describes a method or algorithm used in the research."
-- "dataset" → "This sentence describes a dataset or data source used in the research."
-- "evaluation metric" → "This sentence describes a metric used to measure performance."
-- "task" → "This sentence describes the research task or problem being solved."
+Switched from short label strings to descriptive hypothesis sentences.
+Added `hypothesis_template="{}"` so the sentence is passed directly as the NLI hypothesis.
 
-Do this after verifying the basic pipeline works.
+```python
+LABELS_VERBOSE = [
+    "This sentence describes a technique, algorithm, system, or architecture used or proposed in the research.",
+    "This sentence describes data, a dataset, or corpus used in the research.",
+    "This sentence describes a metric, measure, or criterion used to evaluate results or performance.",
+    "This sentence describes the problem, task, or objective that the research addresses.",
+]
+```
+
+Design notes:
+- "benchmark" omitted intentionally — it means both dataset and metric depending on context.
+- Sentences written for general computing papers (not only ML): covers systems, HCI, algorithms.
+- Short label version (`LABELS_SHORT`) kept in the notebook for comparison.
+
+Added Step 2b (comparison cell): re-runs NLI with `LABELS_SHORT`, prints sentences where
+the assigned role changed. Score comparison is not meaningful (softmax is normalized per run);
+only role assignment changes are shown for qualitative review.
 
 ## Future: Semantic noise filtering via NLI label
 
