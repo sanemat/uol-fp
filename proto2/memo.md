@@ -56,10 +56,31 @@ GROBID outputs flat `<div>` elements. Subsections are siblings, not children.
 The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsistent across papers.
 
 Earlier approach: keyword match on heading text (`"experiment"`, `"result"`, `"performance"`).
-Current approach: use all sections, skip only References and Acknowledgements.
+Intermediate approach: use all sections, skip only References and Acknowledgements.
+Current approach: use all sections, skip References, Acknowledgements, and Related Work.
 
 Switching to all sections improved Dataset recall significantly.
 Example: `Training Data` section in Transformer paper was missed before; now captured with 0.85–0.92 score.
+
+### Related Work exclusion
+
+Added `SKIP_KEYWORDS = {"related work", "related works"}` with substring + case-insensitive match.
+Also tracks the `n` attribute (e.g. `"2"`) to skip subsections (e.g. `"2.1"`, `"2.2"`) automatically.
+This removes noise from BERT (3 subsections under Related Work), ResNet, MapReduce, and Google Search.
+
+Tested on BERT with before/after comparison (single Colab run, `is_related_work` flag):
+- TechnicalMethod: 67 → 62 (-5). Task / Dataset / EvaluationMetric: no change.
+- Effect is small (7.5%) because most Related Work sentences already scored below threshold 0.5.
+- Remaining noise source: Introduction still contains other papers' method descriptions
+  (e.g. "The feature-based approach, such as ELMo" scored 0.87 as TechnicalMethod).
+- Related Work exclusion is correct but Introduction noise is the bigger problem.
+
+Tested Introduction exclusion on BERT (same single-run comparison):
+- TechnicalMethod: 62 → 54 (-8), Task: 23 → 17 (-6). Bigger effect than Related Work.
+- But Introduction contains both noise AND signal:
+  - Noise: "The feature-based approach, such as ELMo..." / "The fine-tuning approach, such as OpenAI GPT..."
+  - Signal: "In this paper, we improve... by proposing BERT" / "BERT is the first finetuning based..."
+- Conclusion: excluding Introduction wholesale is too aggressive. Sentence-level filtering needed.
 
 ## Observations from Testing
 
@@ -93,7 +114,8 @@ Several noise types observed:
 - **Introduction / Related Work** — other papers' methods are classified as TechnicalMethod of this paper.
 
 A minimum sentence length filter (e.g., 30 chars) would remove most short fragments.
-Introduction / Related Work noise is harder to fix without section-level filtering.
+Introduction noise is harder to fix without section-level filtering.
+Related Work is now excluded via `SKIP_KEYWORDS` (see Section Filtering).
 
 ### EvaluationMetric
 
@@ -138,3 +160,22 @@ Better hypotheses may improve NLI accuracy. For example:
 - "task" → "This sentence describes the research task or problem being solved."
 
 Do this after verifying the basic pipeline works.
+
+## Future: Semantic noise filtering via NLI label
+
+Instead of excluding sections by keyword, add `"other papers' work"` as a 5th candidate label:
+
+```python
+LABELS = ["technical method", "dataset", "evaluation metric", "task", "other papers' work"]
+```
+
+Sentences where `top_label == "other papers' work"` are noise regardless of which section they appear in.
+This would catch Introduction noise without needing keyword-based section filtering.
+
+## Future: Sentence Window (n-gram style)
+
+Instead of classifying one sentence at a time, try classifying overlapping windows of 3 sentences:
+(1,2,3), (2,3,4), (3,4,5), ...
+
+Hypothesis: context from neighbouring sentences may help the NLI model classify correctly.
+Not sure if it helps — just want to see what happens.
