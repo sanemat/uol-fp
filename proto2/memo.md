@@ -75,6 +75,13 @@ Tested on BERT with before/after comparison (single Colab run, `is_related_work`
   (e.g. "The feature-based approach, such as ELMo" scored 0.87 as TechnicalMethod).
 - Related Work exclusion is correct but Introduction noise is the bigger problem.
 
+Tested Introduction exclusion on BERT (same single-run comparison):
+- TechnicalMethod: 62 → 54 (-8), Task: 23 → 17 (-6). Bigger effect than Related Work.
+- But Introduction contains both noise AND signal:
+  - Noise: "The feature-based approach, such as ELMo..." / "The fine-tuning approach, such as OpenAI GPT..."
+  - Signal: "In this paper, we improve... by proposing BERT" / "BERT is the first finetuning based..."
+- Conclusion: excluding Introduction wholesale is too aggressive. Sentence-level filtering needed.
+
 ## Observations from Testing
 
 Tested on: Attention Is All You Need, BERT, AlexNet, ResNet, MapReduce, Google Search.
@@ -153,6 +160,17 @@ Better hypotheses may improve NLI accuracy. For example:
 - "task" → "This sentence describes the research task or problem being solved."
 
 Do this after verifying the basic pipeline works.
+
+## Future: Semantic noise filtering via NLI label
+
+Instead of excluding sections by keyword, add `"other papers' work"` as a 5th candidate label:
+
+```python
+LABELS = ["technical method", "dataset", "evaluation metric", "task", "other papers' work"]
+```
+
+Sentences where `top_label == "other papers' work"` are noise regardless of which section they appear in.
+This would catch Introduction noise without needing keyword-based section filtering.
 
 ## Future: Sentence Window (n-gram style)
 
