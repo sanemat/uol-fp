@@ -173,6 +173,24 @@ Added Step 2b (comparison cell): re-runs NLI with `LABELS_SHORT`, prints sentenc
 the assigned role changed. Score comparison is not meaningful (softmax is normalized per run);
 only role assignment changes are shown for qualitative review.
 
+## Hypothesis Set Comparison Results (BERT paper, 258 sentences)
+
+Tested four sets. Probe: 4 known-answer sentences (one per role).
+
+| set | probe (4) | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|---|
+| short | **3/4** | 124 | 70 | 33 | 31 |
+| verbose_v1 | 2/4 | 11 | 0 | 3 | 244 |
+| verbose_v2 | 2/4 | 63 | 11 | 19 | 165 |
+| verbose_v3 | 2/4 | 131 | 56 | 60 | 11 |
+
+Findings:
+- `verbose_v1` and `verbose_v2`: strong EvaluationMetric bias. The EM hypothesis is too broad and matches most sentences.
+- `verbose_v3`: strong TechnicalMethod bias. The EM hypothesis (with specific ML terms) is too narrow — even a sentence with "BLEU score" was misclassified.
+- `short`: best probe score (3/4), most balanced distribution.
+
+**Conclusion: verbose hypotheses do not improve accuracy for this model. `short` labels are better.**
+
 ## Known Risks for Submission
 
 - **No evaluation against gold labels** — precision, recall, and F1 have not been measured. There is no hand-annotated dataset to compare against.
@@ -244,3 +262,55 @@ Instead of classifying one sentence at a time, try classifying overlapping windo
 
 Hypothesis: context from neighbouring sentences may help the NLI model classify correctly.
 Not sure if it helps — just want to see what happens.
+
+## Preliminary Submission Gaps
+
+Based on `preliminary-instruction.md` marking criteria.
+
+### Evaluation gap (criteria #9, #13) — highest priority
+
+No gold labels exist. No precision, recall, or F1 has been measured.
+For an NLP prototype, some form of ground truth comparison is expected.
+
+#### Gold labels (manual)
+
+Pipeline output is full sentences; gold labels are short terms.
+Matching rule: a role is correct if any output sentence contains the gold term (substring match).
+
+| paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|
+| Transformer | Transformer | machine translation | WMT | BLEU |
+| BERT | BERT | GLUE / SQuAD | BooksCorpus / Wikipedia | accuracy / F1 |
+| AlexNet | AlexNet | image classification | ImageNet | top-1 / top-5 error |
+
+Transformer gold label confirmed against the example at the top of this file.
+BERT and AlexNet to be verified manually.
+
+#### Evaluation method
+
+For each paper × role: does any accepted sentence contain the gold term? → ○ / ×
+Result: 4 roles × 3 papers = 12 data points.
+Report as a table; discuss roles or papers where output is wrong.
+
+### Demonstration video (criteria #12) — not started
+
+Required: 3–5 minute MP4 showing the prototype running.
+Content: pick one paper, walk through upload → section parse → classification output.
+Show both a case that works and a case that fails.
+
+### Feature Prototype chapter content (criteria #13)
+
+The "how you would improve it" section maps directly to proto3 design:
+- First-person filter (reduces prior-work noise before NLI)
+- Top-N selection by score × section_weight (primary elements, not all mentions)
+- LLM term extraction (sentence → short term like "Transformer")
+
+Hypothesis set comparison experiment (verbose_v1/v2/v3 vs short) is strong material
+for showing iteration and analysis.
+
+### Technical challenge argument (criteria #11)
+
+Zero-shot NLI on academic text is sufficient. Key points to make in the report:
+- No training data required (zero-shot)
+- Hypothesis engineering is non-trivial (show the 4 iterations and why each failed)
+- Domain mismatch: NLI models trained on general text, applied to scientific writing
