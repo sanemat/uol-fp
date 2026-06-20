@@ -61,6 +61,19 @@ The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsis
 So we match by heading text instead: keywords `"experiment"`, `"result"`, `"performance"`.
 This covers most papers. Subsections with unrelated names (e.g., "GLUE") are not captured — acceptable for the prototype.
 
+## Observations from Testing
+
+Tested on: Attention Is All You Need, BERT, AlexNet.
+
+Where information tends to appear:
+- TechnicalMethod → Architecture / Model sections
+- Dataset → dedicated "Dataset" or "Data" section
+- Task → implicit, or in Abstract
+- EvaluationMetric / Task results → Experiments / Results sections
+
+Abstract + Experiments alone misses Dataset and TechnicalMethod for many papers.
+May need to include more section types, or reconsider the input scope.
+
 ## Future: Better Hypothesis Templates
 
 Currently using short label names as hypotheses (e.g., "technical method").
