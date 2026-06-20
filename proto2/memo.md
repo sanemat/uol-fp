@@ -63,7 +63,7 @@ This covers most papers. Subsections with unrelated names (e.g., "GLUE") are not
 
 ## Observations from Testing
 
-Tested on: Attention Is All You Need, BERT, AlexNet.
+Tested on: Attention Is All You Need, BERT, AlexNet, ResNet, MapReduce, Google Search.
 
 Where information tends to appear:
 - TechnicalMethod → Architecture / Model sections
@@ -73,6 +73,27 @@ Where information tends to appear:
 
 Abstract + Experiments alone misses Dataset and TechnicalMethod for many papers.
 May need to include more section types, or reconsider the input scope.
+
+### Systems papers (MapReduce, Google Search)
+
+These papers do not follow the ML benchmark structure.
+- No standard dataset → Dataset is empty or wrong (e.g., system size described as dataset)
+- No clear evaluation metric → EvaluationMetric is empty
+- Task is implicit or missing
+
+The 4-role structure fits ML papers better than systems papers.
+
+### Noise
+
+Quoted text or example sentences inside a paper get classified as Task.
+Example from Google Search paper: `"you looked at a lot of pages from my Web site."` was classified as Task.
+The model has no context to know a sentence is a quote, not a claim.
+
+### EvaluationMetric
+
+Hardest role to capture across all papers.
+Often empty, or only an intro sentence is picked up (e.g., "we measure performance on...").
+Specific numbers and metric names tend to appear in subsections not captured by keyword filtering.
 
 ## Better Output for Iteration
 
