@@ -117,21 +117,16 @@ This helps answer:
 - Is the threshold right?
 - What is being missed?
 
-## Future: Better Sentence Splitting
+## Sentence Splitting + Noise Filter (done)
 
-Current: spaCy `en_core_web_sm`.
+Added to Step 0c:
+- `pre_clean()` — strips inline citation markers (`[13]`, `[4, 27]` etc.) before splitting.
+- `is_valid()` — drops sentences shorter than 30 chars or without real words.
 
-Problems:
-- Inline citations (e.g., `[13]`, `[4, 27, 28, 22] .`) become standalone "sentences".
-- Bullet characters (`•`) and single words (`"The"`) pass through.
-- GROBID sometimes places footnote and author contribution text inside the abstract element.
+Compared `en_core_web_sm` vs `pySBD` — counts nearly identical (e.g. 185 vs 181 on Transformer).
+Kept `en_core_web_sm`; splitter choice doesn't matter after pre-cleaning.
 
-Possible improvements:
-- **Min length filter** — drop sentences shorter than ~30 chars. Simple and effective for fragments.
-- **Merge short fragments** — if a sentence is just a citation, merge it with the previous sentence.
-- **Pre-clean TEI text** — strip inline citation markers before sentence splitting.
-
-Min length filter is the easiest first step.
+Tried SciSpacy (`en_core_sci_sm`) — dropped: causes numpy binary incompatibility in Colab.
 
 ## Future: Better Hypothesis Templates
 
