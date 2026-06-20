@@ -150,16 +150,99 @@ Kept `en_core_web_sm`; splitter choice doesn't matter after pre-cleaning.
 
 Tried SciSpacy (`en_core_sci_sm`) — dropped: causes numpy binary incompatibility in Colab.
 
-## Future: Better Hypothesis Templates
+## Better Hypothesis Templates (done)
 
-Currently using short label names as hypotheses (e.g., "technical method").
-Better hypotheses may improve NLI accuracy. For example:
-- "technical method" → "This sentence describes a method or algorithm used in the research."
-- "dataset" → "This sentence describes a dataset or data source used in the research."
-- "evaluation metric" → "This sentence describes a metric used to measure performance."
-- "task" → "This sentence describes the research task or problem being solved."
+Switched from short label strings to descriptive hypothesis sentences.
+Added `hypothesis_template="{}"` so the sentence is passed directly as the NLI hypothesis.
 
-Do this after verifying the basic pipeline works.
+```python
+LABELS_VERBOSE = [
+    "This sentence describes a technique, algorithm, system, or architecture used or proposed in the research.",
+    "This sentence describes data, a dataset, or corpus used in the research.",
+    "This sentence describes a metric, measure, or criterion used to evaluate results or performance.",
+    "This sentence describes the problem, task, or objective that the research addresses.",
+]
+```
+
+Design notes:
+- "benchmark" omitted intentionally — it means both dataset and metric depending on context.
+- Sentences written for general computing papers (not only ML): covers systems, HCI, algorithms.
+- Short label version (`LABELS_SHORT`) kept in the notebook for comparison.
+
+Added Step 2b (comparison cell): re-runs NLI with `LABELS_SHORT`, prints sentences where
+the assigned role changed. Score comparison is not meaningful (softmax is normalized per run);
+only role assignment changes are shown for qualitative review.
+
+## Hypothesis Set Comparison Results (BERT paper, 258 sentences)
+
+Tested four sets. Probe: 4 known-answer sentences (one per role).
+
+| set | probe (4) | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|---|
+| short | **3/4** | 124 | 70 | 33 | 31 |
+| verbose_v1 | 2/4 | 11 | 0 | 3 | 244 |
+| verbose_v2 | 2/4 | 63 | 11 | 19 | 165 |
+| verbose_v3 | 2/4 | 131 | 56 | 60 | 11 |
+
+Findings:
+- `verbose_v1` and `verbose_v2`: strong EvaluationMetric bias. The EM hypothesis is too broad and matches most sentences.
+- `verbose_v3`: strong TechnicalMethod bias. The EM hypothesis (with specific ML terms) is too narrow — even a sentence with "BLEU score" was misclassified.
+- `short`: best probe score (3/4), most balanced distribution.
+
+**Conclusion: verbose hypotheses do not improve accuracy for this model. `short` labels are better.**
+
+## Known Risks for Submission
+
+- **No evaluation against gold labels** — precision, recall, and F1 have not been measured. There is no hand-annotated dataset to compare against.
+- **Output is full sentences, not short terms** — the pitch shows short terms like "Transformer" or "BLEU", but the current output is the full classified sentence. Accepted as a prototype limitation, but may be a risk depending on the marking criteria.
+
+## Future: Term/Phrase Extraction from Classified Sentences
+
+Current output: full sentences classified by role.
+Pitch target output: short terms like "Transformer", "BLEU", "machine translation".
+
+The gap: sentence-level classification assigns a role, but does not extract the specific entity.
+Example:
+- Current: "We propose the Transformer, a model architecture..." → TechnicalMethod ✓
+- Missing: extract "Transformer" from that sentence.
+
+Options:
+- NER (named entity recognition) on classified sentences — e.g. SpaCy or SciBERT
+- Regex patterns on classified sentences (e.g. noun phrases, quoted terms)
+- Prompt an LLM to extract the key term from a classified sentence
+
+Not yet attempted. This is the gap between sentence-level classification and the pitch output.
+
+## Future: Top-N selection per role
+
+Current output collects all accepted sentences (score >= threshold), which can be hundreds.
+Better: keep only the top N sentences per role, sorted by score.
+
+```python
+TOP_N = 3
+candidates[role].append((score, sentence))
+# after loop:
+profile.technical_method = [s for _, s in sorted(candidates[Role.TECHNICAL_METHOD], reverse=True)[:TOP_N]]
+```
+
+Can combine with threshold: top N among those with score >= 0.5.
+TOP_N value may vary by paper — expose as a constant.
+
+## Future: Sentence Importance (Saliency)
+
+NLI scores how well a sentence matches a role hypothesis — not how important the sentence is to the paper.
+A passing mention ("X has been used in prior work") and a key claim ("We propose X") can both score high.
+This is a saliency problem, not a classification problem.
+
+Practical signals for importance:
+
+- **First-person active verbs** — "we propose / introduce / present / use / train" signals the paper's own work. Third-person or passive mentions are usually references to other work.
+- **Section priority** — Abstract and Methods sections describe primary contributions; Introduction describes prior work. Weight sentences by section.
+- **TextRank / sentence centrality** — sentences similar to many others in the paper are likely central. No labels needed; graph-based ranking.
+- **TF-IDF** — terms frequent in key sections but rare globally may indicate the paper's main contribution.
+- **Salience classifiers** — some works train a binary classifier: "is this sentence a core claim?" Requires labeled data.
+
+Simplest starting point: first-person filter + section weight, applied after role classification.
 
 ## Future: Semantic noise filtering via NLI label
 
@@ -179,3 +262,55 @@ Instead of classifying one sentence at a time, try classifying overlapping windo
 
 Hypothesis: context from neighbouring sentences may help the NLI model classify correctly.
 Not sure if it helps — just want to see what happens.
+
+## Preliminary Submission Gaps
+
+Based on `preliminary-instruction.md` marking criteria.
+
+### Evaluation gap (criteria #9, #13) — highest priority
+
+No gold labels exist. No precision, recall, or F1 has been measured.
+For an NLP prototype, some form of ground truth comparison is expected.
+
+#### Gold labels (manual)
+
+Pipeline output is full sentences; gold labels are short terms.
+Matching rule: a role is correct if any output sentence contains the gold term (substring match).
+
+| paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|
+| Transformer | Transformer | machine translation | WMT | BLEU |
+| BERT | BERT | GLUE / SQuAD | BooksCorpus / Wikipedia | accuracy / F1 |
+| AlexNet | AlexNet | image classification | ImageNet | top-1 / top-5 error |
+
+Transformer gold label confirmed against the example at the top of this file.
+BERT and AlexNet to be verified manually.
+
+#### Evaluation method
+
+For each paper × role: does any accepted sentence contain the gold term? → ○ / ×
+Result: 4 roles × 3 papers = 12 data points.
+Report as a table; discuss roles or papers where output is wrong.
+
+### Demonstration video (criteria #12) — not started
+
+Required: 3–5 minute MP4 showing the prototype running.
+Content: pick one paper, walk through upload → section parse → classification output.
+Show both a case that works and a case that fails.
+
+### Feature Prototype chapter content (criteria #13)
+
+The "how you would improve it" section maps directly to proto3 design:
+- First-person filter (reduces prior-work noise before NLI)
+- Top-N selection by score × section_weight (primary elements, not all mentions)
+- LLM term extraction (sentence → short term like "Transformer")
+
+Hypothesis set comparison experiment (verbose_v1/v2/v3 vs short) is strong material
+for showing iteration and analysis.
+
+### Technical challenge argument (criteria #11)
+
+Zero-shot NLI on academic text is sufficient. Key points to make in the report:
+- No training data required (zero-shot)
+- Hypothesis engineering is non-trivial (show the 4 iterations and why each failed)
+- Domain mismatch: NLI models trained on general text, applied to scientific writing
