@@ -53,6 +53,14 @@ If this holds, sentence-level classification is sufficient.
 
 Next step: test on one paper (e.g., "Attention Is All You Need") and check the results manually.
 
+## Section Filtering
+
+GROBID outputs flat `<div>` elements. Subsections are siblings, not children.
+The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsistent across papers (some use trailing dots, some have empty `n`).
+
+So we match by heading text instead: keywords `"experiment"`, `"result"`, `"performance"`.
+This covers most papers. Subsections with unrelated names (e.g., "GLUE") are not captured — acceptable for the prototype.
+
 ## Future: Better Hypothesis Templates
 
 Currently using short label names as hypotheses (e.g., "technical method").
