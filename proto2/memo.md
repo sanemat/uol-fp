@@ -38,28 +38,28 @@ These are harder and more subjective. They are out of scope for the prototype.
 
 ## Input Decision
 
-Use abstract + experiments section.
-- Abstract alone is not enough (dataset and metric are often missing).
-- Full paper is too complex.
-- Abstract + experiments section is a realistic balance.
+Use all body sections.
+- Abstract + Experiments alone missed Dataset and TechnicalMethod for many papers.
+- Full paper adds noise (Introduction, Related Work describe other work), but recall improves.
+- References and Acknowledgements are skipped via `SKIP_HEADINGS`.
 
 ## Approach
 
 Classify each sentence by role using an NLI model (zero-shot classification).
 
-Hypothesis to verify:
-In real papers, sentences in the abstract and experiments section tend to focus on one role at a time.
+Hypothesis: sentences in a paper tend to focus on one role at a time.
 If this holds, sentence-level classification is sufficient.
-
-Next step: test on one paper (e.g., "Attention Is All You Need") and check the results manually.
 
 ## Section Filtering
 
 GROBID outputs flat `<div>` elements. Subsections are siblings, not children.
-The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsistent across papers (some use trailing dots, some have empty `n`).
+The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsistent across papers.
 
-So we match by heading text instead: keywords `"experiment"`, `"result"`, `"performance"`.
-This covers most papers. Subsections with unrelated names (e.g., "GLUE") are not captured — acceptable for the prototype.
+Earlier approach: keyword match on heading text (`"experiment"`, `"result"`, `"performance"`).
+Current approach: use all sections, skip only References and Acknowledgements.
+
+Switching to all sections improved Dataset recall significantly.
+Example: `Training Data` section in Transformer paper was missed before; now captured with 0.85–0.92 score.
 
 ## Observations from Testing
 
@@ -71,8 +71,8 @@ Where information tends to appear:
 - Task → implicit, or in Abstract
 - EvaluationMetric / Task results → Experiments / Results sections
 
-Abstract + Experiments alone misses Dataset and TechnicalMethod for many papers.
-May need to include more section types, or reconsider the input scope.
+Switched to all body sections. Dataset recall improved.
+New noise sources appeared (see below).
 
 ### Systems papers (MapReduce, Google Search)
 
@@ -85,15 +85,21 @@ The 4-role structure fits ML papers better than systems papers.
 
 ### Noise
 
-Quoted text or example sentences inside a paper get classified as Task.
-Example from Google Search paper: `"you looked at a lot of pages from my Web site."` was classified as Task.
-The model has no context to know a sentence is a quote, not a claim.
+Several noise types observed:
+
+- **Quoted / example text** — e.g. Google Search: `"you looked at a lot of pages from my Web site."` classified as Task.
+- **Short fragments** — `"•"`, `"The"`, `"[4, 27, 28, 22] ."`, citation stubs pass the threshold.
+- **Author contributions** — GROBID includes author contribution text in the abstract. These get classified as TechnicalMethod.
+- **Introduction / Related Work** — other papers' methods are classified as TechnicalMethod of this paper.
+
+A minimum sentence length filter (e.g., 30 chars) would remove most short fragments.
+Introduction / Related Work noise is harder to fix without section-level filtering.
 
 ### EvaluationMetric
 
 Hardest role to capture across all papers.
 Often empty, or only an intro sentence is picked up (e.g., "we measure performance on...").
-Specific numbers and metric names tend to appear in subsections not captured by keyword filtering.
+Better hypothesis templates may help.
 
 ## Better Output for Iteration
 
