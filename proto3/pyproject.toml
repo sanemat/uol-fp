@@ -1,0 +1,39 @@
+[project]
+name = "uol-fp"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "jupyterlab",
+    "jupyterlab-lsp",
+    "python-lsp-server[all]",
+    "pyright",
+    "ruff",
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+
+[tool.ruff]
+src = ["src"]
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "double"

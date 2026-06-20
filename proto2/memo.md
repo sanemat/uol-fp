@@ -195,6 +195,37 @@ Options:
 
 Not yet attempted. This is the gap between sentence-level classification and the pitch output.
 
+## Future: Top-N selection per role
+
+Current output collects all accepted sentences (score >= threshold), which can be hundreds.
+Better: keep only the top N sentences per role, sorted by score.
+
+```python
+TOP_N = 3
+candidates[role].append((score, sentence))
+# after loop:
+profile.technical_method = [s for _, s in sorted(candidates[Role.TECHNICAL_METHOD], reverse=True)[:TOP_N]]
+```
+
+Can combine with threshold: top N among those with score >= 0.5.
+TOP_N value may vary by paper — expose as a constant.
+
+## Future: Sentence Importance (Saliency)
+
+NLI scores how well a sentence matches a role hypothesis — not how important the sentence is to the paper.
+A passing mention ("X has been used in prior work") and a key claim ("We propose X") can both score high.
+This is a saliency problem, not a classification problem.
+
+Practical signals for importance:
+
+- **First-person active verbs** — "we propose / introduce / present / use / train" signals the paper's own work. Third-person or passive mentions are usually references to other work.
+- **Section priority** — Abstract and Methods sections describe primary contributions; Introduction describes prior work. Weight sentences by section.
+- **TextRank / sentence centrality** — sentences similar to many others in the paper are likely central. No labels needed; graph-based ranking.
+- **TF-IDF** — terms frequent in key sections but rare globally may indicate the paper's main contribution.
+- **Salience classifiers** — some works train a binary classifier: "is this sentence a core claim?" Requires labeled data.
+
+Simplest starting point: first-person filter + section weight, applied after role classification.
+
 ## Future: Semantic noise filtering via NLI label
 
 Instead of excluding sections by keyword, add `"other papers' work"` as a 5th candidate label:
