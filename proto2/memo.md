@@ -74,6 +74,22 @@ Where information tends to appear:
 Abstract + Experiments alone misses Dataset and TechnicalMethod for many papers.
 May need to include more section types, or reconsider the input scope.
 
+## Better Output for Iteration
+
+Current output (dict of sentence lists) is hard to use for tuning.
+
+Better: show all sentences with label and score, including rejected ones.
+Example format:
+```
+[Abstract] The dominant sequence transduction...  technical_method  0.72 ✓
+[Abstract] Listing order is random.               dataset           0.48 ✗
+```
+
+This helps answer:
+- Is the label correct?
+- Is the threshold right?
+- What is being missed?
+
 ## Future: Better Hypothesis Templates
 
 Currently using short label names as hypotheses (e.g., "technical method").
