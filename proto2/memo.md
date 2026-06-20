@@ -173,6 +173,28 @@ Added Step 2b (comparison cell): re-runs NLI with `LABELS_SHORT`, prints sentenc
 the assigned role changed. Score comparison is not meaningful (softmax is normalized per run);
 only role assignment changes are shown for qualitative review.
 
+## Known Risks for Submission
+
+- **No evaluation against gold labels** — precision, recall, and F1 have not been measured. There is no hand-annotated dataset to compare against.
+- **Output is full sentences, not short terms** — the pitch shows short terms like "Transformer" or "BLEU", but the current output is the full classified sentence. Accepted as a prototype limitation, but may be a risk depending on the marking criteria.
+
+## Future: Term/Phrase Extraction from Classified Sentences
+
+Current output: full sentences classified by role.
+Pitch target output: short terms like "Transformer", "BLEU", "machine translation".
+
+The gap: sentence-level classification assigns a role, but does not extract the specific entity.
+Example:
+- Current: "We propose the Transformer, a model architecture..." → TechnicalMethod ✓
+- Missing: extract "Transformer" from that sentence.
+
+Options:
+- NER (named entity recognition) on classified sentences — e.g. SpaCy or SciBERT
+- Regex patterns on classified sentences (e.g. noun phrases, quoted terms)
+- Prompt an LLM to extract the key term from a classified sentence
+
+Not yet attempted. This is the gap between sentence-level classification and the pitch output.
+
 ## Future: Semantic noise filtering via NLI label
 
 Instead of excluding sections by keyword, add `"other papers' work"` as a 5th candidate label:
