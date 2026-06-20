@@ -56,10 +56,17 @@ GROBID outputs flat `<div>` elements. Subsections are siblings, not children.
 The `n` attribute (e.g., `"4"`, `"4.1"`) shows hierarchy, but format is inconsistent across papers.
 
 Earlier approach: keyword match on heading text (`"experiment"`, `"result"`, `"performance"`).
-Current approach: use all sections, skip only References and Acknowledgements.
+Intermediate approach: use all sections, skip only References and Acknowledgements.
+Current approach: use all sections, skip References, Acknowledgements, and Related Work.
 
 Switching to all sections improved Dataset recall significantly.
 Example: `Training Data` section in Transformer paper was missed before; now captured with 0.85–0.92 score.
+
+### Related Work exclusion
+
+Added `SKIP_KEYWORDS = {"related work", "related works"}` with substring + case-insensitive match.
+Also tracks the `n` attribute (e.g. `"2"`) to skip subsections (e.g. `"2.1"`, `"2.2"`) automatically.
+This removes noise from BERT (3 subsections under Related Work), ResNet, MapReduce, and Google Search.
 
 ## Observations from Testing
 
@@ -93,7 +100,8 @@ Several noise types observed:
 - **Introduction / Related Work** — other papers' methods are classified as TechnicalMethod of this paper.
 
 A minimum sentence length filter (e.g., 30 chars) would remove most short fragments.
-Introduction / Related Work noise is harder to fix without section-level filtering.
+Introduction noise is harder to fix without section-level filtering.
+Related Work is now excluded via `SKIP_KEYWORDS` (see Section Filtering).
 
 ### EvaluationMetric
 
