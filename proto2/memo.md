@@ -68,6 +68,13 @@ Added `SKIP_KEYWORDS = {"related work", "related works"}` with substring + case-
 Also tracks the `n` attribute (e.g. `"2"`) to skip subsections (e.g. `"2.1"`, `"2.2"`) automatically.
 This removes noise from BERT (3 subsections under Related Work), ResNet, MapReduce, and Google Search.
 
+Tested on BERT with before/after comparison (single Colab run, `is_related_work` flag):
+- TechnicalMethod: 67 → 62 (-5). Task / Dataset / EvaluationMetric: no change.
+- Effect is small (7.5%) because most Related Work sentences already scored below threshold 0.5.
+- Remaining noise source: Introduction still contains other papers' method descriptions
+  (e.g. "The feature-based approach, such as ELMo" scored 0.87 as TechnicalMethod).
+- Related Work exclusion is correct but Introduction noise is the bigger problem.
+
 ## Observations from Testing
 
 Tested on: Attention Is All You Need, BERT, AlexNet, ResNet, MapReduce, Google Search.
