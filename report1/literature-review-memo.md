@@ -136,18 +136,19 @@ A: The NLI scores and label counts are a form of quantitative analysis as Oates 
 Q2 (Gap): Oates defines six research strategies for human researchers choosing how to conduct a study.
 Your project is an NLP system that reads papers, not a researcher choosing a strategy.
 Write one sentence that shows why Oates is still relevant, despite this difference.
-A:
+A:  The book defines the vocabulary that researchers use to describe their methodology in papers, so the system needs those concept names to identify what to extract.
 
 Q2 (Justify): Oates' six strategies include "experiment", "design and creation", "survey", "case study", "action research", "ethnography."
 His four data generation methods include "interviews", "observations", "questionnaires", "documents."
 Which of these terms or ideas map to your four roles (TechnicalMethod, Task, Dataset, EvaluationMetric)?
 Which do NOT map, and why?
-A:
+A: "Documents" maps to Dataset, computing papars use existing publications as their data source. "Experiment" maps to how this project tests its pipeline. However, TechincalMethod has no equivalent in Oates, his book defines reasearch strategies, not what algorithm a system uses. Interviews, observations, and questionnaires do not map at all. these are human-subject methods that do not appear in computing papers.
 
-Q3 (Critical): Oates was published in 2006. A reviewer might ask why you cite it for a 2024 NLP project.
+Q3 (Critical): Oates was published in 2006. A reviewer might ask why you cite it for a 2026 NLP project.
 Your answer should explain what has NOT changed since 2006 that makes it still useful.
 Write two sentences.
-A:
+A: The six research strategies Oates defines, experiment, design and creation, survey, case study, action reseaerch, and ethnography, still describe how computing researchers condut their work in 2026.
+The vocabulary researchres use when writing about their methodology has not changed, so Oates remains the standard reference for identifying what those therms mean.
 
 ---
 
