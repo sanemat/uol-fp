@@ -84,7 +84,26 @@ Paper: Yin et al. [8]
 Claim: Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
 - Yin et al. [8] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
-- This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus.
+- Include Table 4 (reproduced from Yin et al. [8]) to illustrate the hypothesis templates:
+
+| aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
+|---|---|---|---|---|
+| topic | sports etc. | this text is about ? | "?"= sports | "?" = an active diversion requiring physical exertion and competition |
+| emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
+| situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
+
+*Table 4 (reproduced from Yin et al. [8]): example hypotheses for three task types.*
+
+- This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
+
+| role | hypothesis (this project, short label) |
+|---|---|
+| TechnicalMethod | technical_method |
+| Task | task |
+| Dataset | dataset |
+| EvaluationMetric | evaluation_metric |
+
+*Table X: hypothesis set used in this project (short label format, selected by hypothesis set comparison in proto2/memo.md).*
 - Domain mismatch risk: Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports. Their NLI model is trained on MNLI (news, fiction, telephone speech). None of these are scientific papers, which use dense technical vocabulary, passive constructions, and section-based structure.
 - This project accepts the risk and tests it: the hypothesis set comparison (short vs verbose_v1/v2/v3 in proto2/memo.md) directly investigates how label wording affects classification on scientific text.
 - Transition: Zero-shot NLI removes the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
