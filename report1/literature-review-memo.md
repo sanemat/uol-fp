@@ -119,17 +119,17 @@ Write your answers in the A fields.
 **Step 1 — Understand**
 
 Q1a (Chapter 3): Read Chapter 3. List the six research strategies and the four data generation methods Oates defines.
-A:
+A: The six research designs (Survey, Design and creation, Experiment, Case study, Action research, Ethnography) and the four data generation methods (Interview, Observations, Questionnaire, andDocuments).
 
 Q1b (Chapter 8 + Chapter 9): This project builds a prototype and tests it on real papers.
 Read the opening pages of Chapter 8 (design and creation) and Chapter 9 (experiment).
 Which of these two strategies fits your project — or does it use both? Write one sentence per strategy explaining why.
-A:
+A: Design and creation: This project builds a working pipeline that parses papers and classifis sentences into methodology roles.
 
 Q1c (Chapter 17): Chapter 17 covers quantitative data analysis.
 proto2/memo.md shows NLI classifier scores (0.85, 0.72, etc.).
 Is this the kind of quantitative analysis Oates describes? What does this suggest about how to describe your evaluation?
-A:
+A: The NLI scores and label counts are a form of quantitative analysis as Oates describes. This means the evaluation should be described in numerical terms.
 
 **Step 2 — Connect to your project**
 
