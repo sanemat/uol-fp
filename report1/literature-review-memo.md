@@ -241,18 +241,18 @@ Q2 (Gap): Yin et al. test on Yahoo News (topics), emotion tweets, and crisis sit
 Their NLI model is trained on MNLI (news articles, fiction, telephone speech), GLUE RTE, and FEVER.
 None of these are scientific papers.
 Name two specific ways scientific paper text differs from these training/test domains.
-A:
+A: Scentific papars use specialized technical vocabulary. They also use a formal research structure.
 
 Q2 (Justify): Yin et al. propose hypothesis templates like "this text is about [label]."
 proto2/memo.md tested short labels vs verbose_v1/v2/v3 hypothesis sentences.
 The short labels won (best probe score 3/4, most balanced distribution).
 How does this experimental result connect to what Yin et al. say about how labels should be expressed?
-A:
+A: Yin et al. argue that labels should be expressed as natural-language hypotheses, not specific label indexed. In my experiences, short labels perform better than the more verbose hypothesis templates. However, the result only shows that the short labels worked best among the tested templates, not that they are universally optimal.
 
 Q3 (Critical): proto2/memo.md says "Known Risks: No evaluation against gold labels — precision, recall, and F1 have not been measured."
 Yin et al. measure their approach against ground truth on all three task types.
 What does the absence of gold labels mean for how strongly you can argue that Yin et al.'s approach transfers to your domain?
-A:
+A: The absenced of gold labels means that I cannot make a strong quantitative claim that Yin et al.'s approach transfers to scientific papers. My result should therefore be treated as preliminary evidence, not a confirmed evaluation. To make a stronger claim, I need mannually annotated gold labels for my domain.
 
 ---
 
@@ -296,4 +296,4 @@ Your project applies the same NLI approach to scientific paper text (dense vocab
 You have experimental evidence from proto2/memo.md (hypothesis set comparison, section filtering results).
 Does your experimental evidence support or contradict the claim that Yin et al.'s approach transfers to scientific text?
 Write two sentences: one for "what the evidence shows", one for "what is still uncertain."
-A:
+A: The experimental evidence gives preliminary support for the claim that Yin et al.'s NLI-based approach transfers to scientific text, since the hypothesis comparison and section filtering produced interpretable and useful results. However, it is still uncertain, we will use gold labels.
