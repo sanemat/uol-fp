@@ -1,4 +1,21 @@
-## Introduction
+## Introduction (117 words)
+
+"Attention Is All You Need" is a very famous AI paper. But the title does not tell us how it works.
+
+<pre>
+Methodology:
+    Design or strategy: design and creation + experiment
+    Data generation method: documents
+    Technical method: Transformer
+    Task: machine translation
+    Dataset: WMT machine translation datasets
+    EvaluationMetric: BLEU score
+</pre>
+
+Figure 1: Research Methodology from "Attention Is All You Need".
+
+Extracting research methodology from computing papers automatically is useful, but it remains challenging. When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
+This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
 ## Defining Research Methodology
 
