@@ -222,19 +222,18 @@ A:
 
 ### Yin et al. [8]
 
-Available in proto1/previouswork: Benchmarking Zero-shot Text Classification Datasets, Evaluation and Entailment Approach.pdf
 Sections: Introduction — Related Work — Benchmark the dataset (Section 3) — Benchmark the evaluation (Section 4) — An entailment model for 0SHOT-TC (Section 5) — Experiments (Section 6) — Summary
 
 **Step 1 — Understand**
 
 Q1a (Introduction): Yin et al. define zero-shot text classification as aiming "to associate an appropriate label with a piece of text, irrespective of the text domain and the aspect described by the label." Write this definition in your own words in one sentence.
-A:
+A: Zero-shot text classification is a method that tries to assign the label without the model being trained in specific area.
 
 Q1b (Section 5): The entailment model converts a label into a hypothesis. The paper uses "this text is about ?" for topic classification. Write the hypothesis your project would use for the label "TechnicalMethod."
-A:
+A: This text describes a technique, algorithm, system, or architecture used or proposed in the research.
 
 Q1c (Section 3 + Section 6): Three task types are tested. Name them and give one example label for each. (Find them in Section 3 or the experiment tables.)
-A:
+A:topic detection, emotion detection, and situation detection. sports, anger, shelter.
 
 **Step 2 — Connect to your project**
 
