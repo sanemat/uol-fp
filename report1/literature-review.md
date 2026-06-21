@@ -1,4 +1,31 @@
+## Introduction
 
+## Defining Research Methodology
+
+## Closest Prior Work
+
+## Zero-shot Classification
+
+| aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
+|---|---|---|---|---|
+| topic | sports etc. | this text is about ? | "?"= sports | "?" = an active diversion requiring physical exertion and competition |
+| emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
+| situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
+
+*Table 1 (reproduced from Yin et al. [4]): example hypotheses for three task types.*
+
+- This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
+
+| role | hypothesis (this project, short label) |
+|---|---|
+| TechnicalMethod | technical_method |
+| Task | task |
+| Dataset | dataset |
+| EvaluationMetric | evaluation_metric |
+
+*Table 2: hypothesis set used in this project (short label format, selected by hypothesis set).*
+
+## Synthesis
 
 ## References
 
