@@ -28,26 +28,25 @@ Only include used entities in the final MethodologyProfile.
 
 ## Outline
 
-This is the structure for the literature review.
+Papers: Oates [3], Pilkington & Pretorius [4], SciREX [5], Yin et al. [8]
 Total word limit: 2500 words.
-Write each section in order.
 
 ---
 
 ### Section 1: Introduction (~150 words)
 
 State the topic: extracting research methodology from computing papers automatically.
-State what you will review: frameworks that define methodology, systems that extract information from papers, and NLP tools that make this possible.
+State what you will review: frameworks that define methodology structure, and systems that extract it from papers.
 State the gap you expect to find at the end of the review.
 
 ---
 
-### Section 2: Defining Research Methodology (~500 words)
+### Section 2: Defining Research Methodology (~650 words)
 
-Papers: Oates [3], Pilkington & Pretorius [4]
+Book: Oates [3] (chapters 3, 7–9, 13–16), Paper: Pilkington & Pretorius [4]
 
 - What is research methodology in computing? How is it structured?
-- Oates gives informal, textbook definitions of six research strategies.
+- Oates gives informal, textbook definitions of six research strategies and four data generation methods.
 - Pilkington & Pretorius give a formal ontology: ResearchScheme = PhilosophicalWorldview + ResearchDesign + ResearchMethod.
 - Contrast the two: level of formality, purpose, audience.
 - Show how both support the four-component schema used in this project: TechnicalMethod, Task, Dataset, EvaluationMetric.
@@ -57,50 +56,33 @@ Papers: Oates [3], Pilkington & Pretorius [4]
 
 ### Section 3: Extracting Information from Scientific Papers (~600 words)
 
-Papers: SciREX [5], Färber et al. [6], Ghosh et al.
+Paper: SciREX [5]
 
-- These papers show existing approaches to entity extraction from research papers.
-- SciREX: extracts four entity types (Method, Task, Dataset, Metric) at the document level.
-- Färber et al.: extract Method and Dataset; add a used / not-used distinction.
-- Ghosh et al.: extract methodology component names using sequence labeling.
-- Compare what each covers and what each misses.
-- Key shared limitation: all require labeled training data.
-- This is the main gap that motivates using zero-shot methods.
+- SciREX extracts four entity types (Method, Task, Dataset, Metric) at the document level from scientific papers.
+- The four entity types match the four roles in this project directly.
+- Key limitation: requires labeled training data (human annotation).
+- Explain why this is a problem for this project.
 
 ---
 
-### Section 4: Classification without Training Data (~500 words)
+### Section 4: Zero-shot Classification (~550 words)
 
-Papers: Yin et al. [8], CSO Classifier [1]
+Paper: Yin et al. [8]
 
-- This project has no labeled methodology data. What are the options?
+- This project has no labeled methodology data. Zero-shot NLI is the solution.
 - Yin et al.: zero-shot NLI turns a label into a natural language hypothesis. No task-specific training is needed.
-- CSO Classifier: uses a fixed ontology and word embeddings to assign research topics without labeled data.
-- Contrast the two: CSO uses a closed vocabulary; Yin et al. work with any label.
-- CSO is for topics, not methodology components. Its fixed vocabulary is a limitation here.
-- Show how Yin et al. directly supports the method used in this project.
+- Explain the entailment approach in simple terms.
+- Discuss the limit: NLI models are trained on general text, not scientific text. There may be a domain mismatch.
+- Show how this paper directly supports the method used in this project.
 
 ---
 
-### Section 5: Scientific NLP Infrastructure (~400 words)
-
-Papers: GROBID [7], SciBERT [2]
-
-- These are tools that support NLP on scientific papers.
-- GROBID: converts PDF to structured TEI XML. Enables section-level parsing of papers.
-- SciBERT: shows that scientific text is significantly different from general text. The vocabulary overlap between SCIVOCAB and BASEVOCAB is only 42%.
-- SciBERT improves results on scientific NLP tasks, but requires labeled data for fine-tuning.
-- GROBID is used directly in this project. SciBERT points to a risk: a general NLI model may not work well on scientific text.
-
----
-
-### Section 6: Synthesis / Gap (~350 words)
+### Section 5: Synthesis / Gap (~350 words)
 
 - Section 2 provides the structure: what methodology should look like (four components).
-- Section 3 shows extraction systems exist but need training data.
+- Section 3 shows an extraction system exists but needs labeled training data.
 - Section 4 shows zero-shot NLI can classify without training data.
-- Section 5 provides the NLP infrastructure: GROBID for parsing, SciBERT as a warning about domain mismatch.
-- The gap: no existing work combines a methodology schema with zero-shot NLI applied to structured scientific paper sections.
+- The gap: no existing work combines a methodology schema with zero-shot NLI on scientific papers.
 - This is what this project addresses.
 
 ---
@@ -111,12 +93,12 @@ Write your answers in the A fields. These questions help you write each section.
 
 ---
 
-### Oates [3]
+### Oates [3] — book chapters
 
-Q1: What are the six research strategies that Oates defines for computing?
+Q1: What are the six research strategies that Oates defines for computing? (Chapter 3)
 A:
 
-Q2: How does Oates define "data generation methods"? Give two examples.
+Q2: What are the four data generation methods? Give two examples and explain one briefly. (Chapters 13–16)
 A:
 
 Q3: Which parts of the Oates framework match the four roles in this project (TechnicalMethod, Task, Dataset, EvaluationMetric)?
@@ -162,35 +144,6 @@ A:
 
 ---
 
-### Färber et al. [6]
-
-Q1: What two entity types do Färber et al. extract? How is this different from this project?
-A:
-
-Q2: What is the "used vs. not-used" distinction? Why is this useful?
-A:
-
-Q3: What does their approach require that this project does not have?
-A:
-
-Q4: How does their work support the motivation for this project? What does it prove is possible? What does it leave out?
-A:
-
----
-
-### Ghosh et al.
-
-Q1: What does "factored sequence labeling" mean in simple terms?
-A:
-
-Q2: Which role in this project is most similar to what Ghosh et al. extract?
-A:
-
-Q3: What is the main technical challenge they address? Does this project face the same challenge?
-A:
-
----
-
 ### Yin et al. [8]
 
 Q1: What is zero-shot text classification? Why does it not need training data for the target labels?
@@ -207,62 +160,17 @@ A:
 
 ---
 
-### CSO Classifier [1]
-
-Q1: What is the input and output of the CSO Classifier?
-A:
-
-Q2: How does it classify research topics without labeled training data?
-A:
-
-Q3: CSO uses a closed vocabulary (a fixed ontology). Why is this a problem for methodology extraction in this project?
-A:
-
-Q4: How is the approach in this project different from CSO? What is similar?
-A:
-
----
-
-### GROBID [7]
-
-Q1: What does GROBID do? What is its output format?
-A:
-
-Q2: How is GROBID used in this project? At which stage of the pipeline?
-A:
-
-Q3: What does GROBID NOT do? What must happen after GROBID runs?
-A:
-
----
-
-### SciBERT [2]
-
-Q1: Why did Beltagy et al. create SciBERT instead of using the original BERT?
-A:
-
-Q2: What is the vocabulary overlap between SCIVOCAB and BASEVOCAB? What does this number show?
-A:
-
-Q3: To use SciBERT for role classification, what would you need that this project does not have?
-A:
-
-Q4: How does SciBERT support the argument that domain-aware NLP matters for scientific text?
-A:
-
----
-
 ## Cross-paper Synthesis Questions
 
-These questions are for Section 6. They ask you to connect ideas across papers.
+These questions are for Section 5 (Synthesis). They ask you to connect ideas across papers.
 
-Q1: SciREX [5], Färber et al. [6], and Ghosh et al. all extract entities from research papers. What do they all have in common that this project cannot use?
+Q1: Oates [3] and Pilkington & Pretorius [4] define methodology structure. SciREX [5] annotates the same four entity types. Do these two groups connect in the existing literature? What is missing between them?
 A:
 
-Q2: Oates [3] and Pilkington & Pretorius [4] define methodology structure. SciREX [5] annotates the same four entity types. Do these two groups connect in the existing literature? What is missing between them?
+Q2: SciREX [5] and Yin et al. [8] both work with the same four categories (Method, Task, Dataset, Metric). What is the key difference in what they require to run?
 A:
 
-Q3: This project uses zero-shot NLI (from Yin et al. [8]) on scientific papers (preprocessed by GROBID [7]). What risk does SciBERT [2] point to for using a general NLI model on scientific text?
+Q3: Yin et al. [8] test zero-shot NLI on general text (news, emotions). This project applies it to scientific papers. What is the risk, and why does this project accept that risk?
 A:
 
 Q4: What is the one thing that no paper in this review does, which this project tries to do?
