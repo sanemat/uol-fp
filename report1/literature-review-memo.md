@@ -212,31 +212,35 @@ Sections: Introduction — Related Work — Document-Level IE (Section 3) — Mo
 **Step 1 — Understand**
 
 Q1a (Introduction): SciREX defines four entity types. List them. Write one example for each from a paper you know (e.g. "Attention Is All You Need").
-A:
+A: Dataset, Metric, Task, Method.
+Dataset: WMT machine translation datasets
+Metric: BLEU score
+Task: machine translation
+Method: Transformer
 
 Q1b (Introduction — first paragraph): The paper says sentence-level IE is not enough. Find their reason and write it in your own words. (Key quote: "information ... usually span beyond sentences or even sections.")
-A:
+A: a lot of information about methodology cannot be extracted from a single sentence, becuase the relationship between method, task, datase, and metric is often spread across multiple sections of the paper..
 
 Q1c (Section 3): Papers with Code is described as "1,170 articles published in ML conferences." What does this tell you about which kind of computing papers SciREX covers? What is NOT covered?
-A:
+A: SciRex covers only ML benchmark papars, not systems nor algorithm.
 
 **Step 2 — Connect to your project**
 
 Q2 (Gap): SciREX extracts the same four types as your project (Method, Task, Dataset, Metric).
 A reviewer might ask: "If SciREX already does this, what is new about your project?"
 Write your answer. Focus on what SciREX requires that your project does not have.
-A:
+A: SciREX uses anotated data. I will use zero-shot text classification.
 
 Q2 (Justify): SciREX required 438 annotated papers, 4 expert PhD annotators, and reached Cohen-κ 95%.
 Its corpus is from Papers with Code, which covers only ML benchmark papers.
 Your project targets general computing papers (systems, HCI, algorithms).
 Write two sentences: (a) why SciREX's annotation scale is a problem for this project, (b) why the ML-only corpus is a further problem.
-A:
+A: (a) This project has no annotated computing papers. (b) SciREX covers only ML, I will use my system for not only ML, but also system, which use different vocabulary.
 
 Q3 (Critical): SciREX argues that relations span multiple sections — sentence-level IE is not enough.
 proto2's pipeline classifies individual sentences. Does this mean proto2 has the same weakness SciREX identifies?
 What does proto2/memo.md say about this? (Check: where was Dataset found — sentence or section?)
-A:
+A: proto2 classifies individual sentences, which has the same weakness SciREX identifies. This is a limit of proto2.
 
 ---
 
