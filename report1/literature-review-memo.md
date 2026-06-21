@@ -116,7 +116,24 @@ Write your answers in the A fields.
 
 ### Oates [3] — book chapters
 
-Q1 (Gap): Oates defines six research strategies for human researchers choosing how to conduct a study.
+**Step 1 — Understand**
+
+Q1a (Chapter 3): Read Chapter 3. List the six research strategies and the four data generation methods Oates defines.
+A:
+
+Q1b (Chapter 8 + Chapter 9): This project builds a prototype and tests it on real papers.
+Read the opening pages of Chapter 8 (design and creation) and Chapter 9 (experiment).
+Which of these two strategies fits your project — or does it use both? Write one sentence per strategy explaining why.
+A:
+
+Q1c (Chapter 17): Chapter 17 covers quantitative data analysis.
+proto2/memo.md shows NLI classifier scores (0.85, 0.72, etc.).
+Is this the kind of quantitative analysis Oates describes? What does this suggest about how to describe your evaluation?
+A:
+
+**Step 2 — Connect to your project**
+
+Q2 (Gap): Oates defines six research strategies for human researchers choosing how to conduct a study.
 Your project is an NLP system that reads papers, not a researcher choosing a strategy.
 Write one sentence that shows why Oates is still relevant, despite this difference.
 A:
@@ -136,7 +153,22 @@ A:
 
 ### Pilkington & Pretorius [4]
 
-Q1 (Gap): Pilkington & Pretorius say their goal is "providing clear and unambiguous semantics" for the methodology domain.
+Sections: Introduction — Ontologies and Ontology Engineering — A Conceptual Model (Section 3) — Concluding Remarks
+
+**Step 1 — Understand**
+
+Q1a (Section 3.2 + Figure 2): Look at Figure 2 in the paper. What are the three boxes in the UML diagram? Write what connects them.
+A:
+
+Q1b (Section 2): Section 2 explains what an ontology is. How is an ontology different from a textbook chapter? Write one sentence.
+A:
+
+Q1c (Introduction): The paper says it was written to support postgraduate students and supervisors. What specific problem were they trying to solve for students? Write one sentence.
+A:
+
+**Step 2 — Connect to your project**
+
+Q2 (Gap): Pilkington & Pretorius say their goal is "providing clear and unambiguous semantics" for the methodology domain.
 They use UML and ontology engineering to build a formal structure.
 Does formalizing the structure solve the extraction problem? What is still missing?
 A:
@@ -155,7 +187,22 @@ A:
 
 ### SciREX [5]
 
-Q1 (Gap): SciREX extracts the same four types as your project (Method, Task, Dataset, Metric).
+Sections: Introduction — Related Work — Document-Level IE (Section 3) — Model (Section 4) — Evaluation — Conclusion
+
+**Step 1 — Understand**
+
+Q1a (Introduction): SciREX defines four entity types. List them. Write one example for each from a paper you know (e.g. "Attention Is All You Need").
+A:
+
+Q1b (Introduction — first paragraph): The paper says sentence-level IE is not enough. Find their reason and write it in your own words. (Key quote: "information ... usually span beyond sentences or even sections.")
+A:
+
+Q1c (Section 3): Papers with Code is described as "1,170 articles published in ML conferences." What does this tell you about which kind of computing papers SciREX covers? What is NOT covered?
+A:
+
+**Step 2 — Connect to your project**
+
+Q2 (Gap): SciREX extracts the same four types as your project (Method, Task, Dataset, Metric).
 A reviewer might ask: "If SciREX already does this, what is new about your project?"
 Write your answer. Focus on what SciREX requires that your project does not have.
 A:
@@ -175,7 +222,23 @@ A:
 
 ### Yin et al. [8]
 
-Q1 (Gap): Yin et al. test on Yahoo News (topics), emotion tweets, and crisis situation reports.
+Available in proto1/previouswork: Benchmarking Zero-shot Text Classification Datasets, Evaluation and Entailment Approach.pdf
+Sections: Introduction — Related Work — Benchmark the dataset (Section 3) — Benchmark the evaluation (Section 4) — An entailment model for 0SHOT-TC (Section 5) — Experiments (Section 6) — Summary
+
+**Step 1 — Understand**
+
+Q1a (Introduction): Yin et al. define zero-shot text classification as aiming "to associate an appropriate label with a piece of text, irrespective of the text domain and the aspect described by the label." Write this definition in your own words in one sentence.
+A:
+
+Q1b (Section 5): The entailment model converts a label into a hypothesis. The paper uses "this text is about ?" for topic classification. Write the hypothesis your project would use for the label "TechnicalMethod."
+A:
+
+Q1c (Section 3 + Section 6): Three task types are tested. Name them and give one example label for each. (Find them in Section 3 or the experiment tables.)
+A:
+
+**Step 2 — Connect to your project**
+
+Q2 (Gap): Yin et al. test on Yahoo News (topics), emotion tweets, and crisis situation reports.
 Their NLI model is trained on MNLI (news articles, fiction, telephone speech), GLUE RTE, and FEVER.
 None of these are scientific papers.
 Name two specific ways scientific paper text differs from these training/test domains.
@@ -198,18 +261,19 @@ A:
 
 These questions are for Section 5 (Synthesis).
 
-Q1: Each of the 4 papers contributes one thing to the argument, and leaves one thing open.
-Fill in the table in your own words:
-
-| Paper | What it contributes | What it leaves open |
-|---|---|---|
-| Oates [3] | | |
-| Pilkington [4] | | |
-| SciREX [5] | | |
-| Yin et al. [8] | | |
-
-Hint: use the Transition sentences from Sections 2–4 of the Outline as a starting point.
+Q1a: What does Oates contribute to the argument? What does it leave open?
 A:
+
+Q1b: What does Pilkington & Pretorius contribute? What does it leave open?
+A:
+
+Q1c: What does SciREX contribute? What does it leave open?
+A:
+
+Q1d: What does Yin et al. contribute? What does it leave open?
+A:
+
+Hint: the Transition sentences in the Outline (end of each section) are good starting points.
 
 Q2: The Outline says the argumentative arc is:
   Section 2 → Methodology has structure, but no one extracts it.
