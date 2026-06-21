@@ -178,30 +178,30 @@ Sections: Introduction — Ontologies and Ontology Engineering — A Conceptual 
 **Step 1 — Understand**
 
 Q1a (Section 3.2 + Figure 2): Look at Figure 2 in the paper. What are the three boxes in the UML diagram? Write what connects them.
-A:
+A: The three boxes are ResearchScheme, PhilosophicalWorldview, and ResarchDesign. ResearchScheme belongs to a one PhilosophicalWorldview and has one ore more ResearchDesigns.
 
 Q1b (Section 2): Section 2 explains what an ontology is. How is an ontology different from a textbook chapter? Write one sentence.
-A:
+A: An ontology defines formal, cpmputable relationships between concepts, while a textbook chapter explainse them in natural language for a fuman reader.
 
 Q1c (Introduction): The paper says it was written to support postgraduate students and supervisors. What specific problem were they trying to solve for students? Write one sentence.
-A:
+A: Students and supoervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
 **Step 2 — Connect to your project**
 
 Q2 (Gap): Pilkington & Pretorius say their goal is "providing clear and unambiguous semantics" for the methodology domain.
 They use UML and ontology engineering to build a formal structure.
 Does formalizing the structure solve the extraction problem? What is still missing?
-A:
+A: Formalizing the structure does not solve the extraction problem. Pilkington defines what methodology components are and how they relate, but does not provide a method for finding them automatically in paper text.
 
 Q2 (Justify): The Outline says: "Oates gives concept names; Pilkington gives formal relationships between them."
 In your own words: what specific thing does Pilkington add that Oates does NOT give you?
 Why do you need BOTH papers to justify your four-component schema?
-A:
+A: Pilkington adds formal relationships between components with UML that Oates does not define. I need both: Oates names the concept this project uses (experiment, design and creation), and Pilkington shows that theose concepts from a structured schema with defined part.
 
 Q3 (Critical): Their paper was written to support postgraduate students and supervisors in understanding methodology.
 Your project reads papers written by researchers, not students.
 Is the Pilkington ontology actually the right schema for your input? What might be missing?
-A:
+A: Pilikington's ontology was designed for planning research, not for reading completed papaers. A philosophical worldview is important, but it rarely appear directly in a paper text.
 
 ---
 
