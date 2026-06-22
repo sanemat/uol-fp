@@ -21,6 +21,14 @@ This review covers three areas: how methodology is defined, how information is e
 
 Research methodology in computer paper has a well-defined structure, but defining it is not the same as extracting it.
 
+Oates [1] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnograpy) and four data generation methods (interviews, ovservations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project need these concept names to identify what to extract. His book was publshed in 2006, but still describe how researchers conduct their work now, it includes computing researchers.
+
+Pilkington & Pretorius [2] formalizes structure using UML. Key concept are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to a one PhilosophicalWorldview and has one ore more ResearchDesigns, and has one ore more ResearchMethod. The paper tries to solve the problem that students and supoervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
+
+Oates [1] gives concept names. Pilkington & Pretorius [2] gives formal relationships between those concepts. My project use vocabulary from Oates, formal structure from Pilkington & Pretorius.
+
+Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. The next step is whether any system can extract it.
+
 ## Closest Prior Work
 
 ## Zero-shot Classification
