@@ -244,7 +244,7 @@ A: proto2 classifies individual sentences, which has the same weakness Jain et a
 
 ---
 
-### Yin et al. [8]
+### Yin et al. [4]
 
 Sections: Introduction — Related Work — Benchmark the dataset (Section 3) — Benchmark the evaluation (Section 4) — An entailment model for 0SHOT-TC (Section 5) — Experiments (Section 6) — Summary
 

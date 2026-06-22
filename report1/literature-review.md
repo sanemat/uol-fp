@@ -55,6 +55,12 @@ The right entity types are identified, but building a supervised system requires
 
 ## Zero-shot Classification
 
+Zero-shot NLI can assign roles to text without task-specific traning data, but applying it to scientific papars introduces a domain mismatch risk.
+
+Yin et al. [4] defines Zero-shot text classification is a method that tries to assign the label without the model being trained in specific area.
+
+Yin et al. [4] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" [4] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
 | topic | sports etc. | this text is about ? | "?"= sports | "?" = an active diversion requiring physical exertion and competition |
@@ -63,7 +69,7 @@ The right entity types are identified, but building a supervised system requires
 
 *Table 1 (reproduced from Yin et al. [4]): example hypotheses for three task types.*
 
-- This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
+This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
 | role | hypothesis (this project, short label) |
 |---|---|
@@ -73,6 +79,9 @@ The right entity types are identified, but building a supervised system requires
 | EvaluationMetric | evaluation_metric |
 
 *Table 2: hypothesis set used in this project (short label format, selected by hypothesis set).*
+
+Or longer version is:
+This text describes a technique, algorithm, system, or architecture used or proposed in the research.
 
 ## Synthesis
 
