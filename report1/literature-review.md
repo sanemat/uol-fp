@@ -19,22 +19,22 @@ This review covers three areas: how methodology is defined, how information is e
 
 ## Defining Research Methodology (264 words)
 
-Research methodology in computing papers has a well-defined structure, but defining it is not the same as extracting it.
+Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
-Oates [1] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still describes how researchers conduct their work now, including computing researchers.
+Oates [1] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work.
 
 Pilkington & Pretorius [2] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [2] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
-A philosophical worldview is one of the important parts of Pilkington & Pretorius [2], but it rarely appears directly in paper text, so my project skips it.
+A philosophical worldview is one of the important parts of Pilkington & Pretorius [2], but it may not appear directly in paper text, so my project skips it.
 
 Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
-Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. A structured definition exists and can be formalized. The question is whether any system can extract it.
+Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.
 
 
 ## Closest Prior Work (170 words)
 
-Systems that extract methodology-like entities from papers exist, but all require labeled training data that this project does not have.
+Systems that extract methodology-like entities from papers exist, but the closest supervised approaches require labeled training data that this project does not have.
 
 Jain et al. [3] extract four entity types: Dataset, Metric, Task, and Method.
 
@@ -45,13 +45,13 @@ Method: Transformer
 
 Figure 2: Entity types from "Attention Is All You Need".
 
-It matches the four roles in this project exactly. This shows the problem is real and solvable in principle.
+These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.
 
-Jain et al. [3] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [3] — relations span sections, not just sentences.
+Jain et al. [3] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [3] — relations may span sections, not just sentences.
 
-But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
+But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [3] approach is difficult to adopt directly.
 
-The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
+The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
 ## Zero-shot Classification (262 words)
 
@@ -59,7 +59,7 @@ Zero-shot NLI can assign roles to text without task-specific training data, but 
 
 Yin et al. [4] define zero-shot text classification as assigning a label to text without any task-specific training examples.
 
-Yin et al. [4] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" [4] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+Yin et al. [4] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [4] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
@@ -69,7 +69,7 @@ Yin et al. [4] show that NLI can classify text into any label by turning the lab
 
 *Table 1 (reproduced from Yin et al. [4]): example hypotheses for three task types.*
 
-This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
+This provides a possible way to support the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
 | role | hypothesis (this project, short label) |
 |---|---|
@@ -86,7 +86,7 @@ However, a domain mismatch risk exists. Yin et al. test on Yahoo News articles, 
 
 This project accepts the risk and tests it: the hypothesis set comparison (short vs verbose hypotheses) directly investigates how label wording affects classification on scientific text.
 
-Zero-shot NLI removes the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
+Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
 ## Synthesis
 
@@ -98,7 +98,7 @@ Section 3 showed that extraction of the same four types is possible. Jain et al.
 
 Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [4] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
-Combining all three remains an open challenge: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
+Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
 
 ## References
 
