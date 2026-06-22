@@ -53,7 +53,7 @@ But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotat
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
 
-## Zero-shot Classification
+## Zero-shot Classification (262 words)
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
