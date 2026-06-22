@@ -19,15 +19,16 @@ This review covers three areas: how methodology is defined, how information is e
 
 ## Defining Research Methodology
 
-Research methodology in computer paper has a well-defined structure, but defining it is not the same as extracting it.
+Research methodology in computing papers has a well-defined structure, but defining it is not the same as extracting it.
 
-Oates [1] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnograpy) and four data generation methods (interviews, ovservations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project need these concept names to identify what to extract. His book was publshed in 2006, but still describe how researchers conduct their work now, it includes computing researchers.
+Oates [1] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still describes how researchers conduct their work now, including computing researchers.
 
-Pilkington & Pretorius [2] formalizes structure using UML. Key concept are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to a one PhilosophicalWorldview and has one ore more ResearchDesigns, and has one ore more ResearchMethod. The paper tries to solve the problem that students and supoervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
+Pilkington & Pretorius [2] formalize the structure using UML. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
-Oates [1] gives concept names. Pilkington & Pretorius [2] gives formal relationships between those concepts. My project use vocabulary from Oates, formal structure from Pilkington & Pretorius.
+Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
-Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. The next step is whether any system can extract it.
+Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. The next step is whether any system can extract them.
+
 
 ## Closest Prior Work
 
