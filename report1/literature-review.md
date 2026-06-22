@@ -25,12 +25,16 @@ Oates [1] provides six research strategies (experiment, design and creation, sur
 
 Pilkington & Pretorius [2] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [2] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
+A philosophical worldview is one of the important part in Pilkington & Pretorius [2], but it rarely appear directly in paper text, so my project skips it.
+
 Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. A structured definition exists and can be formalized. The question is whether any system can extract it.
 
 
 ## Closest Prior Work
+
+Systems that extract methodology-like entities from papers exist, but all requre labeled training data that this project does not have.
 
 ## Zero-shot Classification
 
