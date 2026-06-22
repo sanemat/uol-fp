@@ -55,9 +55,9 @@ The right entity types are identified, but building a supervised system requires
 
 ## Zero-shot Classification
 
-Zero-shot NLI can assign roles to text without task-specific traning data, but applying it to scientific papars introduces a domain mismatch risk.
+Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
-Yin et al. [4] defines Zero-shot text classification is a method that tries to assign the label without the model being trained in specific area.
+Yin et al. [4] define zero-shot text classification as assigning a label to text without any task-specific training examples.
 
 Yin et al. [4] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" [4] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
 
@@ -80,8 +80,11 @@ This directly enables the core step in this project: classifying sentences into 
 
 *Table 2: hypothesis set used in this project (short label format, selected by hypothesis set).*
 
-Or longer version is:
-This text describes a technique, algorithm, system, or architecture used or proposed in the research.
+Domain mismatch risk: Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports. Their NLI model is trained on MNLI (news, fiction, telephone speech). None of these are scientific papers, which use dense technical vocabulary, passive constructions, and section-based structure.
+
+This project accepts the risk and tests it: the hypothesis set comparison (short vs verbose hypotheses) directly investigates how label wording affects classification on scientific text.
+
+Zero-shot NLI removes the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
 ## Synthesis
 
