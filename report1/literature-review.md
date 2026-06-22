@@ -1,3 +1,45 @@
+<style>
+@page {
+  size: A4;
+  margin: 2.5cm;
+}
+
+html, body {
+  font-size: 12pt;
+  line-height: 1.45;
+}
+
+p, li, td, th, figcaption, blockquote {
+  font-size: 12pt;
+}
+
+pre, code {
+  font-size: 11pt;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+h1 {
+  font-size: 18pt;
+}
+
+h2 {
+  font-size: 15pt;
+}
+
+h3 {
+  font-size: 13pt;
+}
+
+table, figure, img {
+  max-width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+</style>
+
 # Literature Review (1067 words)
 
 ## Introduction (117 words)
