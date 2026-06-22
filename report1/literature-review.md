@@ -19,6 +19,8 @@ This review covers three areas: how methodology is defined, how information is e
 
 ## Defining Research Methodology
 
+Research methodology in computer paper has a well-defined structure, but defining it is not the same as extracting it.
+
 ## Closest Prior Work
 
 ## Zero-shot Classification

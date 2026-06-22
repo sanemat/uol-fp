@@ -51,12 +51,12 @@ Claim: Extracting research methodology from computing papers automatically is us
 
 ### Section 2: Defining Research Methodology (~600 words)
 
-Book: Oates [3] (chapters 3, 7–9, 13–16), Paper: Pilkington & Pretorius [4]
+Book: Oates [1] (chapters 3, 7–9, 13–16), Paper: Pilkington & Pretorius [2]
 
 Claim: Research methodology in computing has a well-defined structure, but defining it is not the same as extracting it.
 
-- Oates [3] provides the vocabulary: six research strategies (experiment, design and creation, survey, case study, action research, ethnography) and four data generation methods. His book defines what each strategy means for human researchers making methodology choices.
-- Pilkington & Pretorius [4] go further: they formalize methodology as a structured ontology (ResearchScheme = PhilosophicalWorldview + ResearchDesign + ResearchMethod) using UML and ontology engineering. Their goal is "providing clear and unambiguous semantics" — a formal structure, not a textbook description.
+- Oates [1] provides the vocabulary: six research strategies (experiment, design and creation, survey, case study, action research, ethnography) and four data generation methods. His book defines what each strategy means for human researchers making methodology choices.
+- Pilkington & Pretorius [2] go further: they formalize methodology as a structured ontology (ResearchScheme = PhilosophicalWorldview + ResearchDesign + ResearchMethod) using UML and ontology engineering. Their goal is "providing clear and unambiguous semantics" — a formal structure, not a textbook description.
 - The contrast: Oates gives concept names; Pilkington gives formal relationships between those concepts. Together they justify the four-component schema in this project: vocabulary from Oates, formal structure from Pilkington.
 - Both works are designed for human use. Neither provides a system to extract methodology components automatically from text.
 - Transition: A structured definition exists and can be formalized. The question is whether any system can extract it.
@@ -65,26 +65,26 @@ Claim: Research methodology in computing has a well-defined structure, but defin
 
 ### Section 3: Closest Prior Work (~450 words)
 
-Paper: SciREX [5]
+Paper: Jain et al. [3]
 
 Claim: Systems that extract methodology-like entities from papers exist, but all require labeled training data that this project does not have.
 
-- SciREX [5] is the closest prior work: it extracts four entity types — Method, Task, Dataset, Metric — which match the four roles in this project exactly. This shows the problem is real and solvable in principle.
-- SciREX operates at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" — relations span sections, not just sentences.
-- Key limitation: building SciREX required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks.
-- This project targets general computing papers (systems, algorithms, HCI) and has no annotated corpus. The SciREX approach cannot be adopted directly.
+- Jain et al. [3] is the closest prior work: it extracts four entity types — Method, Task, Dataset, Metric — which match the four roles in this project exactly. This shows the problem is real and solvable in principle.
+- Jain et al. [3] operates at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" — relations span sections, not just sentences.
+- Key limitation: building Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks.
+- This project targets general computing papers (systems, algorithms, HCI) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
 - Transition: The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
 
 ---
 
 ### Section 4: Zero-shot Classification (~550 words)
 
-Paper: Yin et al. [8]
+Paper: Yin et al. [4]
 
 Claim: Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
-- Yin et al. [8] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
-- Include Table 4 (reproduced from Yin et al. [8]) to illustrate the hypothesis templates:
+- Yin et al. [4] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+- Include Table 4 (reproduced from Yin et al. [4]) to illustrate the hypothesis templates:
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
@@ -92,7 +92,7 @@ Claim: Zero-shot NLI can assign roles to text without task-specific training dat
 | emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
 | situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
 
-*Table 4 (reproduced from Yin et al. [8]): example hypotheses for three task types.*
+*Table 4 (reproduced from Yin et al. [4]): example hypotheses for three task types.*
 
 - This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
@@ -115,10 +115,10 @@ Claim: Zero-shot NLI can assign roles to text without task-specific training dat
 Claim: No existing work applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project fills.
 
 - Section 2 (Oates + Pilkington) established the schema: methodology can be defined as four components (TechnicalMethod, Task, Dataset, EvaluationMetric), grounded in formal ontology structure.
-- Section 3 (SciREX) showed extraction of the same four types is possible — but required 438 annotated papers, 4 PhD annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort.
+- Section 3 (Jain et al.) showed extraction of the same four types is possible — but required 438 annotated papers, 4 PhD annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort.
 - Section 4 (Yin et al.) showed zero-shot NLI removes the labeled data requirement — but was tested only on news, tweets, and crisis reports, not scientific papers. Domain mismatch is a known risk.
 - The gap: no work combines (a) the 4-role methodology schema from Oates/Pilkington, (b) the zero-shot NLI method from Yin et al., and (c) applies it to general computing papers.
-- State what this project does: uses zero-shot NLI (Yin et al.'s entailment approach) with the 4-role schema (grounded in Oates and Pilkington) on GROBID-parsed computing papers. Addresses SciREX's annotation bottleneck and Yin et al.'s untested domain in one prototype.
+- State what this project does: uses zero-shot NLI (Yin et al.'s entailment approach) with the 4-role schema (grounded in Oates and Pilkington) on GROBID-parsed computing papers. Addresses Jain et al.'s annotation bottleneck and Yin et al.'s untested domain in one prototype.
 
 ---
 
@@ -133,7 +133,7 @@ Write your answers in the A fields.
 
 ---
 
-### Oates [3] — book chapters
+### Oates [1] — book chapters
 
 **Step 1 — Understand**
 
@@ -171,7 +171,7 @@ The vocabulary researchres use when writing about their methodology has not chan
 
 ---
 
-### Pilkington & Pretorius [4]
+### Pilkington & Pretorius [2]
 
 Sections: Introduction — Ontologies and Ontology Engineering — A Conceptual Model (Section 3) — Concluding Remarks
 
@@ -205,13 +205,13 @@ A: Pilikington's ontology was designed for planning research, not for reading co
 
 ---
 
-### SciREX [5]
+### Jain et al. [3]
 
 Sections: Introduction — Related Work — Document-Level IE (Section 3) — Model (Section 4) — Evaluation — Conclusion
 
 **Step 1 — Understand**
 
-Q1a (Introduction): SciREX defines four entity types. List them. Write one example for each from a paper you know (e.g. "Attention Is All You Need").
+Q1a (Introduction): Jain et al. defines four entity types. List them. Write one example for each from a paper you know (e.g. "Attention Is All You Need").
 A: Dataset, Metric, Task, Method.
 Dataset: WMT machine translation datasets
 Metric: BLEU score
@@ -221,26 +221,26 @@ Method: Transformer
 Q1b (Introduction — first paragraph): The paper says sentence-level IE is not enough. Find their reason and write it in your own words. (Key quote: "information ... usually span beyond sentences or even sections.")
 A: a lot of information about methodology cannot be extracted from a single sentence, becuase the relationship between method, task, datase, and metric is often spread across multiple sections of the paper..
 
-Q1c (Section 3): Papers with Code is described as "1,170 articles published in ML conferences." What does this tell you about which kind of computing papers SciREX covers? What is NOT covered?
-A: SciRex covers only ML benchmark papars, not systems nor algorithm.
+Q1c (Section 3): Papers with Code is described as "1,170 articles published in ML conferences." What does this tell you about which kind of computing papers Jain et al. covers? What is NOT covered?
+A: Jain et al. covers only ML benchmark papars, not systems nor algorithm.
 
 **Step 2 — Connect to your project**
 
-Q2 (Gap): SciREX extracts the same four types as your project (Method, Task, Dataset, Metric).
-A reviewer might ask: "If SciREX already does this, what is new about your project?"
-Write your answer. Focus on what SciREX requires that your project does not have.
-A: SciREX uses anotated data. I will use zero-shot text classification.
+Q2 (Gap): Jain et al. extracts the same four types as your project (Method, Task, Dataset, Metric).
+A reviewer might ask: "If Jain et al. already does this, what is new about your project?"
+Write your answer. Focus on what Jain et al. requires that your project does not have.
+A: Jain et al. uses anotated data. I will use zero-shot text classification.
 
-Q2 (Justify): SciREX required 438 annotated papers, 4 expert PhD annotators, and reached Cohen-κ 95%.
+Q2 (Justify): Jain et al. required 438 annotated papers, 4 expert PhD annotators, and reached Cohen-κ 95%.
 Its corpus is from Papers with Code, which covers only ML benchmark papers.
 Your project targets general computing papers (systems, HCI, algorithms).
-Write two sentences: (a) why SciREX's annotation scale is a problem for this project, (b) why the ML-only corpus is a further problem.
-A: (a) This project has no annotated computing papers. (b) SciREX covers only ML, I will use my system for not only ML, but also system, which use different vocabulary.
+Write two sentences: (a) why Jain et al.'s annotation scale is a problem for this project, (b) why the ML-only corpus is a further problem.
+A: (a) This project has no annotated computing papers. (b) Jain et al. covers only ML, I will use my system for not only ML, but also system, which use different vocabulary.
 
-Q3 (Critical): SciREX argues that relations span multiple sections — sentence-level IE is not enough.
+Q3 (Critical): Jain et al. argues that relations span multiple sections — sentence-level IE is not enough.
 proto2's pipeline classifies individual sentences. Does this mean proto2 has the same weakness SciREX identifies?
 What does proto2/memo.md say about this? (Check: where was Dataset found — sentence or section?)
-A: proto2 classifies individual sentences, which has the same weakness SciREX identifies. This is a limit of proto2.
+A: proto2 classifies individual sentences, which has the same weakness Jain et al. identifies. This is a limit of proto2.
 
 ---
 
@@ -290,7 +290,7 @@ A:
 Q1b: What does Pilkington & Pretorius contribute? What does it leave open?
 A:
 
-Q1c: What does SciREX contribute? What does it leave open?
+Q1c: What does Jain et al. contribute? What does it leave open?
 A:
 
 Q1d: What does Yin et al. contribute? What does it leave open?
@@ -309,9 +309,9 @@ It should name: (a) what schema, (b) what method, (c) what domain.
 Example structure: "No existing work applies [method] with [schema] to [domain]."
 A:
 
-Q3: SciREX is the closest prior work — same 4 entity types, document-level, published system.
+Q3: Jain et al. is the closest prior work — same 4 entity types, document-level, published system.
 Your project has NO annotated data, targets general computing papers (not just ML), and uses zero-shot NLI.
-Name the THREE specific differences between SciREX and your project.
+Name the THREE specific differences between Jain et al. and your project.
 Then write one sentence explaining why these differences matter for the gap argument.
 A:
 
