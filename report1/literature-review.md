@@ -36,6 +36,23 @@ Both works are designed for human use. Neither provides a system to extract meth
 
 Systems that extract methodology-like entities from papers exist, but all requre labeled training data that this project does not have.
 
+Jain et el. [3] extracts four entity types, Dataset, Metric, Task, and Method. 
+
+Dataset: WMT machine translation datasets
+Metric: BLEU score
+Task: machine translation
+Method: Transformer
+
+Figure 2: Entity types from "Attention Is All You Need".
+
+It match the four rules in this project exactly. This shows the problem is real and solvable in principle.
+
+Jain et al. [3] operates at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [3] — relations span sections, not just sentences.
+
+But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, etc) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
+
+The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
+
 ## Zero-shot Classification
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |

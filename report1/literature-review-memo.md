@@ -219,7 +219,7 @@ Task: machine translation
 Method: Transformer
 
 Q1b (Introduction — first paragraph): The paper says sentence-level IE is not enough. Find their reason and write it in your own words. (Key quote: "information ... usually span beyond sentences or even sections.")
-A: a lot of information about methodology cannot be extracted from a single sentence, becuase the relationship between method, task, datase, and metric is often spread across multiple sections of the paper..
+A: a lot of information about methodology cannot be extracted from a single sentence, becuase the relationship between method, task, datase, and metric is often spread across multiple sections of the paper.
 
 Q1c (Section 3): Papers with Code is described as "1,170 articles published in ML conferences." What does this tell you about which kind of computing papers Jain et al. covers? What is NOT covered?
 A: Jain et al. covers only ML benchmark papars, not systems nor algorithm.
