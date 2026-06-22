@@ -90,6 +90,16 @@ Zero-shot NLI removes the labeled data requirement. The question is whether any 
 
 ## Synthesis
 
+It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
+
+Section 2 established the schema. Oates [1] and Pilkington & Pretorius [2] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.
+
+Section 3 showed that extraction of the same four types is possible. Jain et al. [3] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.
+
+Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [4] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
+
+Combining all three remains an open challenge: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
+
 ## References
 
 [1] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
