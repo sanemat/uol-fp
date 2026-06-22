@@ -32,7 +32,7 @@ Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationsh
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. A structured definition exists and can be formalized. The question is whether any system can extract it.
 
 
-## Closest Prior Work
+## Closest Prior Work (170 words)
 
 Systems that extract methodology-like entities from papers exist, but all require labeled training data that this project does not have.
 
@@ -45,11 +45,11 @@ Method: Transformer
 
 Figure 2: Entity types from "Attention Is All You Need".
 
-It matches the four rules in this project exactly. This shows the problem is real and solvable in principle.
+It matches the four roles in this project exactly. This shows the problem is real and solvable in principle.
 
 Jain et al. [3] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [3] — relations span sections, not just sentences.
 
-But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, etc.) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
+But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
 
