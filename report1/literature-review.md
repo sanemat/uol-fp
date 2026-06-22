@@ -1,3 +1,5 @@
+# Literature Review (1067 words)
+
 ## Introduction (117 words)
 
 "Attention Is All You Need" is a very famous AI paper. But the title does not tell us how it works.
@@ -17,7 +19,7 @@ Figure 1: Research Methodology from "Attention Is All You Need".
 Extracting research methodology from computing papers automatically is useful, but it remains challenging. When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
-## Defining Research Methodology (264 words)
+## Defining Research Methodology (271 words)
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
@@ -32,7 +34,7 @@ Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationsh
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.
 
 
-## Closest Prior Work (170 words)
+## Closest Prior Work (183 words)
 
 Systems that extract methodology-like entities from papers exist, but the closest supervised approaches require labeled training data that this project does not have.
 
@@ -53,7 +55,7 @@ But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotat
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
-## Zero-shot Classification (262 words)
+## Zero-shot Classification (267 words)
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
@@ -88,7 +90,7 @@ This project accepts the risk and tests it: the hypothesis set comparison (short
 
 Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
-## Synthesis
+## Synthesis (229 words)
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
 
