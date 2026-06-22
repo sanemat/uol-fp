@@ -17,7 +17,7 @@ Figure 1: Research Methodology from "Attention Is All You Need".
 Extracting research methodology from computing papers automatically is useful, but it remains challenging. When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
-## Defining Research Methodology (237 words)
+## Defining Research Methodology (264 words)
 
 Research methodology in computing papers has a well-defined structure, but defining it is not the same as extracting it.
 
@@ -25,7 +25,7 @@ Oates [1] provides six research strategies (experiment, design and creation, sur
 
 Pilkington & Pretorius [2] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [2] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
-A philosophical worldview is one of the important part in Pilkington & Pretorius [2], but it rarely appear directly in paper text, so my project skips it.
+A philosophical worldview is one of the important parts of Pilkington & Pretorius [2], but it rarely appears directly in paper text, so my project skips it.
 
 Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
