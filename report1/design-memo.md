@@ -126,6 +126,8 @@ A: A MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, Evalua
 }
 ```
 
+The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
+
 **Q15:** Which parts run locally and which run on Google Colab? Why?
 
 > GROBID runs locally via Docker (it needs a server process). The NLI pipeline (sentence splitting, classification) runs on Colab because it needs a GPU and Python packages. Explain the split briefly.
@@ -248,6 +250,7 @@ A:
 - Only 3 papers — too small for statistical claims
 - Substring match is loose — a sentence can "contain" the gold term without being about it
 - Output is full sentences, not short terms — matching is easier than it appears
+- The number of accepted sentences per role can be 100+; with that many sentences, substring match is nearly certain to succeed, which inflates the apparent accuracy
 - Systems papers (MapReduce, Google Search) do not fit the 4-role structure; excluded from evaluation
 - Gold labels were written manually by the author (no formal inter-annotator agreement)
 
@@ -255,7 +258,7 @@ A:
 
 > Think about: reporting the result honestly, analysing which role or paper type failed and why, treating the hypothesis set comparison as qualitative evidence of iteration even if final numbers are low.
 
-A: Report the result honestly. Analyse which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The hypothesis set comparison experiment (verbose vs short) is qualitative evidence of iteration and analysis, even if final numbers are low. Chapter 4 will describe what to improve next.
+A: Report the result honestly. Analyse which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The hypothesis set comparison experiment (verbose vs short) is qualitative evidence of iteration and analysis, even if final numbers are low. The next prototype will address the large-output problem by applying document-level information extraction before role classification, reducing the number of candidates before NLI. Chapter 4 will describe this improvement plan in detail.
 
 ---
 
