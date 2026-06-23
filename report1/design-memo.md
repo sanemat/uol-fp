@@ -10,21 +10,26 @@ After you finish, use your answers as material for `design.md` (the PDF submissi
 
 **Q1:** What does this system do? Write one or two sentences.
 
-> Think about: input (a PDF), output (a role-based profile), and the core action (automatic extraction).
-
-A:
+A: The system extracts research methodology from computing papers. A input is a PDF, a out put is a role-based profile.
 
 **Q2:** Without this system, what does a researcher have to do manually? What is the problem?
 
-> Think about: reading many papers, identifying technical method / task / dataset / metric by themselves, how slow and error-prone that is.
-
-A:
+A: A researcher have to categorize them by themselves manually. It's very slow.
 
 **Q3:** What is the output of the system? Write a concrete example using "Attention Is All You Need".
 
-> Use the 4 roles. Look at Figure 1 in your literature review — the pre block at the top is a good reference for format.
-
 A:
+
+<pre>
+Methodology:
+    Technical method: Transformer
+    Task: machine translation
+    Dataset: WMT machine translation datasets
+    EvaluationMetric: BLEU score
+</pre>
+
+Figure 1: Research Methodology from "Attention Is All You Need".
+
 
 ---
 
@@ -32,9 +37,7 @@ A:
 
 **Q4:** Which template did you choose? (name and number) How does it match what your project does?
 
-> Template 12.1: Identifying research methodologies used in computing research. Connect the template title to what your system actually extracts.
-
-A:
+A: Template 12.1: Identifying research methodologies used in computing research. I extract research methodologies based on 4 roles.
 
 ---
 
@@ -44,19 +47,19 @@ A:
 
 > Computing research + NLP. What kind of documents? What kind of problem? Be specific — not just "AI" but what activity the system supports.
 
-A:
+A: Computing papers. The main targets are systems, ML, algorithm, HCI.
 
 **Q6:** Who are the intended users? Describe their role, what they want to do, and how they would use this system.
 
 > Think about: a researcher doing a literature survey, a student who needs to compare papers quickly, a reviewer who wants to see methodology at a glance. Pick the most realistic one and be specific.
 
-A:
+A: A student needs to compare papars quickly.
 
 **Q7:** What do those users currently do by hand? What is difficult or time-consuming for them?
 
 > A sentence from your literature review intro is useful here: "When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers."
 
-A:
+A: When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 
 ---
 
@@ -66,7 +69,7 @@ A:
 
 > Key fact from your literature review (Jain et al.): a supervised approach required 438 annotated papers and 4 PhD-level annotators. Your project has no annotated corpus. Yin et al. show that NLI can classify without task-specific training. Connect these two facts.
 
-A:
+A: Jain et al. a supervised approach required 438 annotated papers and 4 PhD-level annotators. Yin et al. show that NLI can classify without task-specific training. Connect these two facts.
 
 **Q9:** Why did you choose these four roles — TechnicalMethod, Task, Dataset, EvaluationMetric?
 
@@ -78,7 +81,7 @@ A:
 
 > Two reasons from your notes: (1) research design is "harder and more subjective" (proto2/memo.md), and (2) a philosophical worldview "may not appear directly in paper text" (your literature review). Write in your own words.
 
-A:
+A: research design is "harder and more subjective" (proto2/memo.md), and (2) a philosophical worldview "may not appear directly in paper text" (your literature review).
 
 **Q11:** Why do you classify at the sentence level?
 
@@ -126,13 +129,14 @@ A:
 
 **Q16:** What does GROBID do in this pipeline? Why is it needed?
 
-> GROBID converts a PDF into TEI XML, separating the paper into structured sections (heading + text). Without it, you would have raw PDF text with no section boundaries — making section filtering impossible.
+> GROBID converts a PDF into TEI XML, separating the paper into structured sections (heading + text). Without it, you would have raw PDF text with no section boundaries — making section filtering hard.
 
 A:
 
 **Q17:** Which NLI model does the prototype use? Why is zero-shot classification sufficient here?
 
-> From issue #44: primary model is `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). Fallback: `facebook/bart-large-mnli` (~1.6 GB). DeBERTa-v3-small is preferred because it fits in free Colab memory without a paid GPU. Zero-shot is sufficient because: (1) no methodology-annotated corpus exists for general computing papers, and (2) Yin et al. show NLI generalises across label sets without task-specific training. Mention both the model choice and the reason for zero-shot.
+primary model is `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). 
+Zero-shot is sufficient because: (1) no methodology-annotated corpus exists for general computing papers, and (2) Yin et al. show NLI generalises across label sets without task-specific training. Mention both the model choice and the reason for zero-shot.
 
 A:
 
@@ -148,11 +152,6 @@ A:
 
 A:
 
-**Q19b:** How does the `section_factor` weighting work? Why is it useful?
-
-> From issue #44: after role + usage classification, each sentence gets a weight = role_score × usage_score × usage_factor × section_factor. The section_factor is higher for method/experiment sections (1.1–1.2) and lower for introduction/discussion (0.7–0.8). This allows sentences from high-signal sections to rank above equally scored sentences from low-signal sections. Explain why this is better than hard filtering (cutting whole sections).
-
-A:
 
 ---
 
@@ -181,7 +180,6 @@ A:
 
 > Two types of contingency:
 > (1) Prototype scope: the usage NLI step (used vs mentioned) and section_factor weighting are the most recent additions — they could be simplified or removed if time is short, without breaking the core role classification.
-> (2) Report scope: if Feature Prototype chapter runs long, trim it first (target 1000 words instead of 1300). The Literature Review can also be trimmed if total is near 6000 words.
 
 A:
 
@@ -231,7 +229,7 @@ A:
 
 > Think about: reporting the result honestly, analysing which role or paper type failed and why, treating the hypothesis set comparison as qualitative evidence of iteration even if final numbers are low.
 
-A:
+A: see proto3
 
 ---
 
@@ -256,3 +254,13 @@ Marking criteria:
 - [ ] Contingency plans exist → Q22, Q28
 - [ ] Evaluation is sufficiently comprehensive
 - [ ] Evaluation strategy is appropriate to the aims
+
+## References
+
+[1] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+
+[2] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+
+[3] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
+
+[4] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
