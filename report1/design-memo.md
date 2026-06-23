@@ -69,13 +69,13 @@ A: When people read papers, they often identify the technical method, task, data
 
 > Key fact from your literature review (Jain et al.): a supervised approach required 438 annotated papers and 4 PhD-level annotators. Your project has no annotated corpus. Yin et al. show that NLI can classify without task-specific training. Connect these two facts.
 
-A: Jain et al. needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. show that NLI can classify text into any label set without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
+A: Jain et al. needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
 **Q9:** Why did you choose these four roles — TechnicalMethod, Task, Dataset, EvaluationMetric?
 
 > Two independent sources agree on these four types: (1) the ontology from Oates + Pilkington & Pretorius (your literature review section 2), and (2) Jain et al. who independently chose Dataset, Metric, Task, Method. Mention both.
 
-A: Two independent sources agree on the same four types. First, the ontology from Oates and Pilkington & Pretorius defines TechnicalMethod, Task, Dataset, and EvaluationMetric as the core structure of research methodology. Second, Jain et al. (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
+A: Two independent sources agree on the same four types. First, the ontology from Oates and Pilkington & Pretorius suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
 
 **Q10:** Why is "Design" (research design) out of scope?
 
@@ -87,13 +87,13 @@ A: Research design (e.g. experiment vs. survey) is subjective — two readers ca
 
 > From proto2/memo.md: "Hypothesis: sentences in a paper tend to focus on one role at a time. If this holds, sentence-level classification is sufficient." That is your design assumption — state it and say how you tested it.
 
-A: The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification is sufficient. Tested on 6 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search). Results supported the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
+A: The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
 **Q11b:** Why do you add a second NLI step to classify "used by this paper" vs "mentioned as prior work"?
 
 > Issue #44 (proto2 design): a sentence like "The feature-based approach, such as ELMo..." describes another paper's method, not this paper's. Section-level filtering (skipping Related Work by heading) misses such sentences in the Introduction. A second NLI classifier with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level, without needing keyword-based section rules. Explain why this matters for precision.
 
-A: A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules. This improves precision: fewer prior-work sentences are assigned to TechnicalMethod.
+A: A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
 
 ---
 
@@ -140,14 +140,14 @@ A: GROBID runs locally via Docker because it is a Java server process (~1 GB). T
 
 > GROBID converts a PDF into TEI XML, separating the paper into structured sections (heading + text). Without it, you would have raw PDF text with no section boundaries — making section filtering hard.
 
-A: GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it impossible to filter by section (e.g. skip References or Related Work).
+A: GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
 **Q17:** Which NLI model does the prototype use? Why is zero-shot classification sufficient here?
 
 primary model is `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). 
 Zero-shot is sufficient because: (1) no methodology-annotated corpus exists for general computing papers, and (2) Yin et al. show NLI generalises across label sets without task-specific training. Mention both the model choice and the reason for zero-shot.
 
-A: The prototype uses `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). Zero-shot is sufficient because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not possible; (2) Yin et al. show NLI can classify into any label set without task-specific training.
+A: The prototype uses `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.
 
 **Q18:** What pre-processing steps do you apply to sentences before classification? Why?
 
@@ -159,7 +159,7 @@ A: (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] before 
 
 > You tested 4 hypothesis sets (short, verbose_v1, verbose_v2, verbose_v3) on BERT paper (258 sentences). Short labels scored best on the 4-sentence probe (3/4 correct) and had the most balanced role distribution. Verbose hypotheses created strong bias (e.g. verbose_v1 assigned 244/258 sentences to EvaluationMetric). The proto2 design (issue #44) uses natural-language sentences as labels: e.g. "This sentence describes a method used in the paper." — and adds a 5th label "This sentence is background or other information." to capture noise without keyword-based section filtering. Summarise what you tried and what you concluded.
 
-A: Tested 4 hypothesis sets on the BERT paper (258 sentences). Short labels (e.g. "technical method") scored best on the 4-sentence probe (3 of 4 correct) and had the most balanced distribution across roles. Verbose labels created strong role bias: verbose_v1 assigned 244 of 258 sentences to EvaluationMetric because the hypothesis was too broad. verbose_v3 was too narrow for EvaluationMetric and missed a sentence with "BLEU score." Conclusion: short labels work better for this model.
+A: Tested 4 hypothesis sets on the BERT paper (258 sentences). Short labels (e.g. "technical method") scored best on the 4-sentence probe (3 of 4 correct) and had the most balanced distribution across roles. Verbose labels created strong role bias: verbose_v1 assigned 244 of 258 sentences to EvaluationMetric because the hypothesis was too broad. verbose_v3 was too narrow for EvaluationMetric and missed a sentence with "BLEU score." Conclusion: in this test, short labels appear to work better for this model.
 
 
 ---
@@ -234,7 +234,7 @@ A: A table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × 
 
 > Decide your own threshold. Think about what a reasonable baseline is: if the system got 6/12 by chance, what does 10/12 mean? State a number and a reason.
 
-A: Success = ≥ 10 of 12 correct. 10/12 means the system correctly identifies the core methodology in most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.
+A: Success = ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.
 
 **Q27:** What are the known limitations of this evaluation method?
 
