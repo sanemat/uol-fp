@@ -69,13 +69,13 @@ A: When people read papers, they often identify the technical method, task, data
 
 > Key fact from your literature review (Jain et al.): a supervised approach required 438 annotated papers and 4 PhD-level annotators. Your project has no annotated corpus. Yin et al. show that NLI can classify without task-specific training. Connect these two facts.
 
-A: Jain et al. needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
+A: Jain et al. [3] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [4] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
 **Q9:** Why did you choose these four roles — TechnicalMethod, Task, Dataset, EvaluationMetric?
 
 > Two independent sources agree on these four types: (1) the ontology from Oates + Pilkington & Pretorius (your literature review section 2), and (2) Jain et al. who independently chose Dataset, Metric, Task, Method. Mention both.
 
-A: Two independent sources agree on the same four types. First, the ontology from Oates and Pilkington & Pretorius suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
+A: Two independent sources agree on the same four types. First, the ontology from Oates [1] and Pilkington & Pretorius [2] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [3] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
 
 **Q10:** Why is "Design" (research design) out of scope?
 
@@ -185,13 +185,11 @@ A:
 - Done: Literature Review (Chapter 2)
 - In progress: Chapter 3 — Design (#68); proto2 pipeline refinement (#44)
 - Backlog: Chapter 1 — Introduction (#70); Chapter 4 — Feature Prototype (#72); demonstration video MP4 3–5 min (#71)
-- Submission: Preliminary Report (#66, max 6000 words: Intro 1000 + Lit Review 2500 + Design 2000 + Feature Prototype 1500)
+- Submission: Preliminary Report (#66)
 
 **Q21:** What is the start week and end week for each task? What is the final submission deadline?
 
-> Write the actual dates. The Preliminary Report submission (#66) is the next hard deadline — find the exact date in the course portal. You will turn Q20 + Q21 into a Gantt chart image for the PDF (does not count toward the word limit).
-
-A: [Add actual dates from the course portal. Today is 2026-06-23. Suggested Gantt chart range: June–August 2026. Add a Gantt chart image for the PDF — it does not count toward the word limit.]
+A: Preliminary Report Submission is 29 June.
 
 **Q22:** If the plan falls behind, what will you do? (contingency)
 
