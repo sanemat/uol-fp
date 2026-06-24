@@ -18,7 +18,7 @@ After you finish, use your answers as material for `feature-prototype.md` (the P
 > - Action: classifies each sentence by research methodology role using zero-shot NLI
 > - Output: a JSON object with four lists — TechnicalMethod, Task, Dataset, EvaluationMetric
 
-A:
+A: The prototype takes a TEI XML file processed by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to product a JSON object with four tuple, TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
 **Q2:** Why is sentence-level zero-shot NLI classification the most important feature to prototype?
 
@@ -28,7 +28,7 @@ A:
 >
 > Classification is different. It decides which sentences belong to which role. Without it, you have a list of 183 sentences (Transformer) or 258 sentences (BERT) with no meaning attached. The role assignment IS the output. If the model fails, the whole prototype fails.
 >
-> Also: zero-shot classification was the key design choice (no training data). If zero-shot NLI does not work, you would need a supervised model — which would require 438 annotated papers (Jain et al. [3]). So showing that zero-shot works is the proof that the approach is viable.
+> Also: zero-shot classification was the key design choice (no training data). If zero-shot NLI does not work, you would need a supervised model — which would require 438 annotated papers (Jain et al. [2]). So showing that zero-shot works is the proof that the approach is viable.
 
 A:
 
@@ -154,7 +154,7 @@ A:
 > - It is a **recall-oriented** check: it tells you whether the correct information appears anywhere in the output. For a prototype, the key question is "does the system find the right information at all?" — not "is every output sentence correct?"
 > - Limitation: it does not measure precision (how much noise is in the output). That is a known limitation to discuss.
 >
-> **Link to background work:** Jain et al. [3] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
+> **Link to background work:** Jain et al. [1] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
 
 A:
 
@@ -312,3 +312,9 @@ Correct:                                           → short=3/4, v1=2/4, v2=2/4
 ```
 
 Finding: verbose hypotheses introduced strong label bias. Short labels gave the best probe score and most balanced distribution. This pattern is consistent across both BERT (258 sentences) and Transformer (183 sentences).
+
+## References
+
+[1] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
+
+[2] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
