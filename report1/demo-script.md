@@ -24,7 +24,7 @@ what data did they train on, and how did they measure results.
 
 Finding this manually takes time, and it doesn't scale
 when you have many papers to read.
-This prototype does it automatically."
+This prototype is designed to automate that process."
 
 ---
 
@@ -45,7 +45,7 @@ Zero-shot means the model was never trained on research papers specifically.
 Instead, it answers a simple question for each sentence:
 does this sentence describe a technical method?
 Does it describe a dataset? And so on.
-No labeled training data is needed."
+This avoids the need for task-specific labeled training data."
 
 ---
 
@@ -94,7 +94,7 @@ TechnicalMethod contains sentences about BERT itself.
 Task contains sentences about the GLUE benchmark.
 Dataset contains sentences about BooksCorpus.
 EvaluationMetric contains sentences mentioning F1 score.
-All four roles are found correctly."
+All four gold labels appear in the output."
 
 ---
 
@@ -106,9 +106,9 @@ All four roles are found correctly."
 Using a gold label check — one known answer per role per paper —
 BERT scored four out of four, and AlexNet also scored four out of four.
 
-The Transformer paper scored two out of four,
-but this was caused by the hypothesis wording I used,
-not by the pipeline failing to find the information."
+The Transformer paper scored two out of four.
+This appears to be related to the hypothesis wording I used
+rather than the pipeline missing the information entirely."
 
 ---
 
@@ -116,9 +116,9 @@ not by the pipeline failing to find the information."
 
 *[Show limitations slide or next steps cell]*
 
-"The main limitation is noise from the Introduction section,
+"One observed limitation is noise from the Introduction section,
 where the paper describes other researchers' methods,
-and the model incorrectly assigns those to the target paper.
+and the model may assign those to the target paper.
 
 The next step is a second NLI pass that filters sentences
 to keep only those used by the authors themselves,
