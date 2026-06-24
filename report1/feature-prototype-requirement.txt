@@ -1,0 +1,14 @@
+- A feature prototype: this is the only new element of the submission, details below
+
+The feature prototype should be an implementation of at least one of the most important technical features used in the project to show that it is feasible. It should work as designed, but it is ok at this stage if developing the prototype shows that the feature is not as effective as you expected. 
+
+You should describe the prototype in the final chapter of your preliminary report, together with an evaluation of how well you think the prototype works and how you would improve it. This evaluation should be according to appropriate approaches in the particular area you are working in --- for example, evaluation in the Machine Learning area may not be appropriate in the Web Development area. The evaluation you use must be appropriate for your particular project. It is even better if you are able to link your chosen evaluation approach to related background work.
+
+## Review Criteria
+You will be marked according to the following criteria:
+
+10. Is the feature prototype of high quality?
+11. Is the feature prototype technically challenging?
+12. Is the demonstration of the prototype effective and impactful?
+13. Does the report successfully evaluate the feature prototype and show suitable improvements if appropriate?
+14. Does the work demonstrate innovation and excellence beyond the above?
