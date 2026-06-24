@@ -50,15 +50,15 @@ The prototype was tested on six papers. Table 1 shows the number of accepted sen
 
 Table 1: Accepted sentences per role for six papers.
 
-The Transformer paper was run with verbose_v1. Using the verbose_v1 hypothesis set, TechnicalMethod received 14 sentences and EvaluationMetric received 160 sentences. Task and Dataset received 0 sentences each. The gold term "Transformer" was found in the TechnicalMethod output (e.g. "We propose a new simple network architecture, the Transformer...") and "BLEU" was found in the EvaluationMetric output (e.g. "Our model achieves 28.4 BLEU on the WMT 2014..."). However, Task and Dataset produced no output because the verbose_v1 EvaluationMetric hypothesis was too broad and absorbed most sentences.
+The Transformer paper was run with verbose_v1. Using the verbose_v1 hypothesis set, TechnicalMethod received 14 sentences and EvaluationMetric received 160 sentences. Task and Dataset received 0 sentences each. The gold label "Transformer" was found in the TechnicalMethod output (e.g. "We propose a new simple network architecture, the Transformer...") and "BLEU" was found in the EvaluationMetric output (e.g. "Our model achieves 28.4 BLEU on the WMT 2014..."). However, Task and Dataset produced no output because the verbose_v1 EvaluationMetric hypothesis was too broad and absorbed most sentences.
 
-ML papers (BERT, AlexNet, ResNet) produced balanced output across all four roles using short labels. BERT captured all four gold terms correctly. AlexNet and ResNet also captured Task, Dataset, and EvaluationMetric correctly; TechnicalMethod output did not contain "AlexNet" because the name was coined after the paper was published. Systems papers (MapReduce, PageRank) produced very large TechnicalMethod counts (151 and 69 respectively), possibly because the system is described throughout the paper, and very few Dataset and EvaluationMetric sentences, possibly because these papers do not follow the standard ML benchmark structure.
+ML papers (BERT, AlexNet, ResNet) produced balanced output across all four roles using short labels. BERT captured all four gold labels correctly. AlexNet and ResNet also captured Task, Dataset, and EvaluationMetric correctly; TechnicalMethod output did not contain "AlexNet" because the name was coined after the paper was published. Systems papers (MapReduce, PageRank) produced very large TechnicalMethod counts (151 and 69 respectively), possibly because the system is described throughout the paper, and very few Dataset and EvaluationMetric sentences, possibly because these papers do not follow the standard ML benchmark structure.
 
 ### Hypothesis Set Comparison
 
 The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.
 
-| Set | Probe (4 gold) | TechnicalMethod | Task | Dataset | EvaluationMetric |
+| Set | Probe (4 gold labels) | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|---|
 | short | **3/4** | 124 | 70 | 33 | 31 |
 | verbose_v1 | 2/4 | 11 | 0 | 3 | 244 |
@@ -85,7 +85,7 @@ Verbose hypotheses introduced strong label bias. Short labels gave the best prob
 
 ### 4.1 Method
 
-No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold term per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold term as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
+No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
 
 This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
 
@@ -101,7 +101,7 @@ Gold terms used:
 
 Table 3: Gold labels — 3 papers × 4 roles.
 
-Result (○ = gold term found in any accepted sentence, ✗ = not found):
+Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -113,7 +113,7 @@ Table 4: Gold label evaluation results.
 
 ### 4.3 Analysis
 
-BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold term (the 2012 paper does not use the name "AlexNet" — that name was coined later).
+BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).
 
 The Transformer scored ✗ on Task and Dataset, but this appears to be caused by the verbose_v1 hypothesis set, not by a failure to find the information in the paper. TechnicalMethod and Dataset tend to be the easier roles because they appear in dedicated sections with explicit mentions. EvaluationMetric is found correctly but in small quantities (4–13 sentences), as metric names appear in few places. Task appears to be the most difficult role: it is often stated implicitly and produced the fewest sentences across all papers. Systems papers (MapReduce, PageRank) produced empty or weak Dataset and EvaluationMetric output, possibly because they do not follow the standard ML benchmark structure.
 
