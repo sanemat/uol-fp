@@ -83,7 +83,9 @@ Template 12.1: Identifying research methodologies used in computing research. I 
 
 The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.
 
-The intended user is a student who needs to compare many papers quickly. They read each paper to find the method, task, dataset, and metric. This takes time when reviewing many papers.
+The primary users are computing students who need to review many papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly before reading the paper in detail.
+
+Secondary users may include early-stage researchers or supervisors who want a quick overview of a paper. However, the project is designed mainly for students, so the output should be simple, inspectable, and based on sentences from the original paper rather than hidden model decisions.
 
 When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 
@@ -100,6 +102,8 @@ Research design (e.g. experiment vs. survey) is subjective — two readers can a
 The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
 A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
+
+These choices fit the user need because the system is not intended to replace expert reading. It is intended to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.
 
 ---
 
@@ -140,6 +144,14 @@ Four hypothesis sets were tested on the BERT paper (258 sentences). Short labels
 
 ## 7. Work Plan
 
+The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
+
+| Period | Main task | Output |
+|---|---|---|
+| Before 29 June | Complete all chapters and working prototype | Preliminary Report |
+| After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
+| Final stage | Testing, analysis, video, final writing | Final submission |
+
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
 - Done: proto2 prototype — GROBID pipeline, NLI classification, section filtering, pre-processing, hypothesis comparison
@@ -172,15 +184,11 @@ Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell 
 
 Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.
 
-This evaluation has several known limitations:
-- Only 3 papers — too small for statistical claims
-- Substring match is loose — a sentence can "contain" the gold term without being about it
-- Output is full sentences, not short terms — matching is easier than it appears
-- The number of accepted sentences per role can be 100+; with that many sentences, substring match is nearly certain to succeed, which inflates the apparent accuracy
-- Systems papers (MapReduce, Google Search) do not fit the 4-role structure; excluded from evaluation
-- Gold labels were written manually by the author (no formal inter-annotator agreement)
+The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
-If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The hypothesis set comparison experiment (verbose vs short) is qualitative evidence of iteration and analysis, even if final numbers are low. The next prototype will address the large-output problem by applying document-level information extraction before role classification, reducing the number of candidates before NLI. Chapter 4 will describe this improvement plan in detail.
+Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce, Google Search) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.
+
+If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.
 
 ---
 
