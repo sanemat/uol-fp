@@ -81,15 +81,22 @@ Training, Experiments, and so on."
 "After cleaning and splitting, we have 258 valid sentences
 ready for classification."
 
-*[Run Step 2 — classification, scroll through output]*
+*[Run Step 2 — classification starts, briefly show first few lines of output]*
 
 "Now the model classifies each sentence.
-You can see the top label and score for each one.
+You can see the top label and score printed as it goes.
+Classification takes a few minutes on 258 sentences,
+so I have the results ready from a previous run."
+
+*[Switch to or scroll to pre-run output cell]*
+
+"Here is the output.
+Each line shows the section, the sentence, the predicted label, and the score.
 A checkmark means the score is at or above 0.5 and the sentence is accepted."
 
 *[Scroll to final JSON output]*
 
-"Here is the final output.
+"And here is the final JSON.
 TechnicalMethod contains sentences about BERT itself.
 Task contains sentences about the GLUE benchmark.
 Dataset contains sentences about BooksCorpus.
@@ -136,4 +143,6 @@ and a top-three selection to reduce the large output volume."
 
 - Upload the BERT XML before starting to record — avoids waiting for the file dialog
 - Pre-run Setup and Model Setup cells if runtime allows — saves ~40 seconds on camera
+- Pre-run Step 2 (classification) before recording — 258 sentences takes several minutes
+- Keep the pre-run output visible in a separate cell or scroll position for the cut
 - Keep the browser zoom at 100% so output text is readable
