@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Design
+# Design (1556 words)
 
 ## 1. Project Overview (39 words)
 
