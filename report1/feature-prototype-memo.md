@@ -10,13 +10,25 @@ After you finish, use your answers as material for `feature-prototype.md` (the P
 
 **Q1:** What did you implement? Write one sentence.
 
-> Tip: Name the input, what the system does, and the output.
+> Template to fill in:
+> "The prototype takes [input] and [what it does] to produce [output]."
+>
+> Facts to use:
+> - Input: a TEI XML file produced by GROBID from a computing research paper
+> - Action: classifies each sentence by research methodology role using zero-shot NLI
+> - Output: a JSON object with four lists — TechnicalMethod, Task, Dataset, EvaluationMetric
 
 A:
 
 **Q2:** Why is sentence-level zero-shot NLI classification the most important feature to prototype?
 
-> Tip: The whole pipeline depends on this step. If NLI classification does not work, the output is meaningless. Other steps (XML parsing, section filtering, sentence splitting) are preprocessing — classification is the core.
+> Think about the pipeline in two parts: preprocessing (Steps 0–0c) and classification (Step 2).
+>
+> Preprocessing (XML parsing, section filtering, sentence splitting) uses standard tools — ElementTree, spaCy. These are solved problems. You could replace them with other tools and the output would be similar.
+>
+> Classification is different. It decides which sentences belong to which role. Without it, you have a list of 183 sentences (Transformer) or 258 sentences (BERT) with no meaning attached. The role assignment IS the output. If the model fails, the whole prototype fails.
+>
+> Also: zero-shot classification was the key design choice (no training data). If zero-shot NLI does not work, you would need a supervised model — which would require 438 annotated papers (Jain et al. [3]). So showing that zero-shot works is the proof that the approach is viable.
 
 A:
 
@@ -26,25 +38,57 @@ A:
 
 **Q3:** Describe the pipeline from TEI XML to JSON output. List the main steps in order.
 
-> Tip: The notebook has these steps: (0) load TEI XML and extract sections, (0b) select sections, (0c) split sentences + filter, (2) classify with NLI, output JSON. Write in your own words.
+> Write as a numbered list. Each step: what goes in, what comes out.
+>
+> Step 1 — Load XML: Input = TEI XML file. Parse with ElementTree. Extract the abstract and all body `<div>` elements. Output = list of `{heading, text}` dicts.
+>
+> Step 2 — Filter sections: Skip sections whose heading is in SKIP_HEADINGS (References, Acknowledgements) or SKIP_KEYWORDS (Related Work). Also skip subsections of Related Work by tracking the `n` attribute (e.g. if Related Work is `n="2"`, skip `n="2.1"`, `n="2.2"` etc.). Output = filtered list of sections.
+>
+> Step 3 — Split and clean sentences: For each section, run `pre_clean()` to strip citation markers like `[13]`, then split with spaCy into sentences, then `is_valid()` to drop fragments (< 30 chars or no real words). Output = list of `CandidateWithContext` objects (sentence + section name).
+>
+> Step 4 — Classify: For each sentence, call the NLI classifier with 4 candidate labels. If the top label scores ≥ 0.5, add the sentence to the corresponding role list in `MethodologyProfile`. Output = JSON dict with 4 keys (TechnicalMethod, Task, Dataset, EvaluationMetric), each a list of accepted sentences.
 
 A:
 
 **Q4:** Which model did you use for zero-shot classification, and why?
 
-> Tip: The model is `cross-encoder/nli-deberta-v3-small`. It is a cross-encoder trained on NLI tasks. It accepts a premise (sentence) and a hypothesis (label description) and returns an entailment score. Zero-shot means no task-specific training is needed.
+> Model: `cross-encoder/nli-deberta-v3-small` from Hugging Face.
+>
+> What it does: it takes two inputs — a **premise** (the paper sentence) and a **hypothesis** (a label description like `"technical method"`) — and predicts whether the premise entails the hypothesis. The score for "entailment" is used as the classification score.
+>
+> Why this model:
+> - It is trained on NLI data (general text), so it generalises to new labels without task-specific training → zero-shot.
+> - DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well.
+> - The cross-encoder architecture scores premise + hypothesis jointly, which gives more accurate entailment judgements than bi-encoders.
+>
+> Why zero-shot matters: no annotated dataset exists for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot avoids this requirement entirely.
 
 A:
 
 **Q5:** What preprocessing does the pipeline apply before classification?
 
-> Tip: Two functions in Step 0c — `pre_clean()` strips citation markers like `[13]` or `[4, 27]`; `is_valid()` drops sentences shorter than 30 characters or without at least 3 letter-only words.
+> Two steps in Step 0c. For each, explain what the problem is, what the function does, and give a concrete before/after example.
+>
+> **pre_clean()** — Problem: citation markers like `[13]` or `[4, 27]` appear inside sentences after GROBID extraction. If not removed, spaCy may split on them or the NLI model sees noise. The function strips them with a regex. Example: `"The model outperforms [4, 27] the baseline."` → `"The model outperforms the baseline."`
+>
+> **is_valid()** — Problem: after splitting, some "sentences" are fragments — a bullet character `"•"`, a lone number, or a citation stub like `"[4, 27, 28] ."`. These pass through sentence splitting but carry no information. The function drops any sentence shorter than 30 characters or without at least one word of 3+ letters.
+>
+> Effect: from proto2/memo.md — `en_core_web_sm` produced 185 sentences on the Transformer paper after pre-cleaning; without these filters, fragments and stubs would appear in the classification input.
 
 A:
 
 **Q6:** Which sections of the paper are included, and which are excluded? Why?
 
-> Tip: Excluded via `SKIP_HEADINGS`: References, Acknowledgements. Excluded via `SKIP_KEYWORDS`: Related Work (and its subsections, tracked by the `n` attribute). Reason: these sections describe other papers' work, not this paper's methodology. All other body sections are used. Earlier version used only Experiment/Result sections — switching to full paper improved Dataset recall (e.g., `Training Data` section in Transformer was missed before).
+> Describe three things: (1) what is excluded and why, (2) what is included, (3) why you chose "all body sections" rather than only experiment sections.
+>
+> **Excluded:**
+> - References, Acknowledgements — via exact heading match (`SKIP_HEADINGS`). These sections list citations and credits, not methodology.
+> - Related Work — via keyword match (`SKIP_KEYWORDS`). Also skips subsections automatically by tracking the `n` attribute. Reason: Related Work describes other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of this paper. Testing on BERT showed 67 → 62 TechnicalMethod sentences (-5) after excluding Related Work.
+>
+> **Included:** all other body sections — Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc.
+>
+> **Why all sections, not just Experiment/Results:**
+> Earlier version used only sections whose heading matched keywords like "experiment" or "result". The `Training Data` section in the Transformer paper has no such keyword — it was missed. Dataset role recall improved significantly after switching to all body sections. The trade-off is more noise from Introduction (other papers' methods), but recall is more important at this prototype stage.
 
 A:
 
@@ -98,7 +142,19 @@ A:
 
 **Q9:** What evaluation method did you use? Why is it appropriate for an NLP prototype?
 
-> Tip: You have no annotated dataset, so precision/recall/F1 cannot be measured in the traditional way. Instead: for each paper × role, manually define a gold term (e.g. "Transformer", "BLEU"), then check whether any accepted sentence in the output contains that term (substring match). This is a recall-oriented check: it tells you whether the correct information is in the output at all. Reference: Jain et al. [3] used a similar role-based evaluation against annotated spans.
+> **What the method is (step by step):**
+> 1. For each paper, manually identify the correct answer for each role. Example for Transformer: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT", EvaluationMetric = "BLEU".
+> 2. Run the pipeline on that paper. Collect all accepted sentences per role.
+> 3. For each role: check whether any accepted sentence contains the gold term (case-insensitive substring match). Mark ○ if found, ✗ if not.
+> 4. Result: a 3-paper × 4-role table (12 data points).
+>
+> **Why this is appropriate:**
+> - No annotated dataset exists for this task. Standard precision/recall/F1 requires a gold-standard annotation for every sentence — you have none.
+> - This method only requires knowing the correct answer per paper (easy to verify manually from the paper itself).
+> - It is a **recall-oriented** check: it tells you whether the correct information appears anywhere in the output. For a prototype, the key question is "does the system find the right information at all?" — not "is every output sentence correct?"
+> - Limitation: it does not measure precision (how much noise is in the output). That is a known limitation to discuss.
+>
+> **Link to background work:** Jain et al. [3] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
 
 A:
 
@@ -131,8 +187,21 @@ A:
 
 **Q11:** What do the evaluation results show? Which roles are easy and which are hard?
 
-> From run results: BERT captured all 4 roles correctly (short labels, balanced distribution). Transformer captured only TM and EM (verbose_v1 caused EM bias, leaving Task and Dataset empty). AlexNet captured Task, Dataset, EM correctly; TM depends on gold label choice.
-> Across ML papers (BERT, AlexNet, ResNet): TechnicalMethod and Dataset tend to appear in dedicated architecture/data sections. EvaluationMetric appears in experiment/results sections. Task is most often implicit (only in Abstract or Introduction).
+> Answer in two parts: (a) what the table shows overall, (b) role-by-role analysis.
+>
+> **(a) Overall:**
+> BERT scored ○ on all 4 roles. This shows the pipeline can find all four types of methodology information in a well-structured ML paper using short labels.
+> Transformer scored ✗ on Task and Dataset — but the cause is the hypothesis set (verbose_v1), not the paper. This shows that hypothesis choice has a large effect on output.
+>
+> **(b) Role-by-role — what tends to work and what does not:**
+>
+> - **TechnicalMethod** — usually ○. The method is named explicitly in dedicated sections (Abstract, Architecture). Many sentences describe it. 62 TM sentences in BERT, 51 in AlexNet, 51 in ResNet.
+>
+> - **Dataset** — usually ○ for ML papers. Papers have a dedicated "Dataset" or "Data" section. 15 sentences in BERT (BooksCorpus found), 11 in AlexNet (ImageNet found), 14 in ResNet. Weak for systems papers (MapReduce: 3 sentences, no standard benchmark).
+>
+> - **EvaluationMetric** — mixed. BERT ○ (F1 found in 13 sentences). AlexNet ○ (top-5 found in 4 sentences). But quantity is low — often only 4–13 sentences. Metric names appear in a small number of places (Experiment/Results tables).
+>
+> - **Task** — hardest role. BERT ○ (GLUE found, 23 sentences). AlexNet ○ (object recognition found, 6 sentences). For Transformer with verbose_v1: 0 sentences (all absorbed by EM). Task is often stated implicitly ("we solve X") rather than labelled, making it harder to classify.
 
 A:
 
@@ -142,11 +211,24 @@ A:
 
 **Q12:** What types of noise did you observe in the output? For each type, describe the cause.
 
-> Tip: Four types identified in proto2/memo.md:
-> (1) Quoted/example text — e.g. Google Search: `"you looked at a lot of pages..."` classified as Task.
-> (2) Author contributions — GROBID includes contribution text in the abstract; classified as TechnicalMethod.
-> (3) Introduction noise — other papers' methods described in Introduction score high (e.g. "The feature-based approach, such as ELMo" scored 0.87 as TechnicalMethod on BERT).
-> (4) Sentences with numbers or fragments still passing `is_valid()` — a 30-char minimum helps but does not eliminate all cases.
+> Write as a numbered list. For each: name the type, give the specific example from the runs, explain why the model classifies it incorrectly.
+>
+> **(1) Introduction noise — other papers' methods:**
+> Example from BERT: the sentence `"The feature-based approach, such as ELMo..."` scored 0.87 as TechnicalMethod.
+> Cause: The Introduction describes prior work to motivate BERT. The NLI model sees "feature-based approach" and correctly judges it as a technical method — but it is another paper's method, not BERT's.
+> Effect from testing: excluding Introduction on BERT reduced TechnicalMethod from 62 → 54 (-8) and Task from 23 → 17 (-6). But Introduction also contains signal about BERT itself, so excluding it entirely loses correct information.
+>
+> **(2) Quoted / example text:**
+> Example from Google Search paper: `"you looked at a lot of pages from my Web site."` was classified as Task.
+> Cause: This is a quoted user query used as an example in the paper. The NLI model reads it as a description of a task. The model has no way to distinguish quoted strings from factual claims.
+>
+> **(3) Author contributions (GROBID artefact):**
+> GROBID sometimes includes author contribution text in the abstract element. Example: a sentence like "Niki designed, implemented, tuned and evaluated countless model variants" (Transformer paper, found in TechnicalMethod output) describes what a person did, not the technical method.
+> Cause: GROBID extraction artefact — this text is in the XML abstract but is not part of the scientific content.
+>
+> **(4) Large output volume — hundreds of sentences per role:**
+> MapReduce: 151 TechnicalMethod sentences. Transformer: 160 EvaluationMetric sentences.
+> Cause: no upper limit on accepted sentences. Every sentence scoring ≥ 0.5 is included. For a long paper or a biased hypothesis set, this produces hundreds of sentences that are hard to use.
 
 A:
 
@@ -156,10 +238,22 @@ A:
 
 **Q13:** What three improvements are planned for the next iteration? For each, explain why you expect it to help.
 
-> Tip: From proto2/memo.md Future sections:
-> (1) First-person verb filter — "we propose / introduce / use" signals the paper's own work; third-person mentions are usually references to prior work. Applied before or after NLI to reduce Introduction noise.
-> (2) Top-N selection by score × section weight — current output keeps all accepted sentences (can be hundreds). Top 3 per role, ranked by score, gives a cleaner result. Section weight: Abstract and Methods rank higher than Introduction.
-> (3) LLM term extraction — current output is full sentences; pitch target is short terms like "Transformer" or "BLEU". Pass each accepted sentence to an LLM with prompt: "What is the [role] named in this sentence?" Extract the key noun phrase.
+> Write as a numbered list. For each: (a) what you will add/change, (b) what problem it solves, (c) what evidence from proto2 makes you think it will help.
+>
+> **(1) First-person verb filter:**
+> What: before or after NLI, check whether the sentence contains a first-person active verb — "we propose", "we introduce", "we present", "we use", "we train". Keep only sentences with such verbs as strong candidates. Third-person or passive sentences ("X has been used in prior work") are more likely to describe other papers.
+> Problem it solves: Introduction noise (type 1 in Q12). The sentence "The feature-based approach, such as ELMo..." does not contain "we propose" — it would be filtered.
+> Evidence: testing on BERT showed Introduction noise as the biggest remaining noise source after Related Work exclusion.
+>
+> **(2) Top-N selection by score × section weight:**
+> What: instead of keeping all sentences with score ≥ 0.5, keep only the top N (e.g. N=3) per role, ranked by score multiplied by a section weight. Abstract and Methods sections get a higher weight than Introduction.
+> Problem it solves: large output volume (Q12 type 4). MapReduce had 151 TM sentences. Top-3 would give 3 sentences — usable output.
+> Evidence: current output for Transformer has 160 EvaluationMetric sentences. The first one already contains "BLEU". Keeping all 160 adds no value.
+>
+> **(3) LLM term extraction:**
+> What: take each accepted sentence and pass it to an LLM (e.g. Claude) with a prompt: "What is the [TechnicalMethod / Task / Dataset / EvaluationMetric] named in this sentence? Reply with a short noun phrase only."
+> Problem it solves: the gap between sentence-level output and the pitch target. Current output: `"We propose a new simple network architecture, the Transformer, based solely on attention mechanisms..."`. Target output: `"Transformer"`.
+> Evidence: the gold label evaluation (Q10) checks for substring match — it shows the correct information IS in the sentence. The missing step is extracting just the key term from that sentence.
 
 A:
 
@@ -169,10 +263,16 @@ A:
 
 **Q14:** Why is zero-shot NLI classification on academic text technically challenging? Give two or three specific reasons.
 
-> Tip from proto2/memo.md Technical challenge section:
-> (1) No training data — the model must generalise from NLI training data (general text) to scientific writing without any task-specific examples.
-> (2) Hypothesis engineering is non-trivial — you tested 4 hypothesis sets (short, verbose_v1, verbose_v2, verbose_v3). Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 classified most sentences as EvaluationMetric; verbose_v3 as TechnicalMethod. Short labels (3/4 probe correct, most balanced distribution) outperformed all verbose variants. This is counter-intuitive and required systematic experimentation to discover.
-> (3) Domain mismatch — NLI models are trained on general-domain text; academic writing has long complex sentences, citation noise, and domain-specific terminology that was not in the training data.
+> Write each reason as a paragraph. Use specific numbers and examples from the results.
+>
+> **(1) Hypothesis engineering is non-trivial and counter-intuitive:**
+> You cannot just describe the label in plain English and expect better results. The experiment tested 4 hypothesis sets. Intuition says: more detailed descriptions → better accuracy. The result was the opposite. verbose_v1 (long description of TechnicalMethod, Dataset, EvaluationMetric, Task) caused EM to absorb nearly all sentences — 244/258 on BERT, 160/183 on Transformer. Task became 0. verbose_v3 shifted the bias to TechnicalMethod instead. Short labels (just `"technical method"`, `"dataset"`, etc.) achieved the best probe score (3/4) and the most balanced distribution across all runs. This required 4 iterations of design and systematic comparison to discover.
+>
+> **(2) Domain mismatch between NLI training data and scientific writing:**
+> The model (`cross-encoder/nli-deberta-v3-small`) was trained on general-domain NLI benchmarks (e.g. SNLI, MultiNLI). Academic text is different: sentences are longer, more complex, and contain domain-specific terms, citation markers, and structure (e.g. section headings, figure references) that were not in the training data. Example: the sentence "The attention function can be described as mapping a query and a set of key-value pairs to an output" (Transformer) is grammatically complex and domain-specific. The model must judge whether this sentence entails "technical method" without ever having seen similar text during training.
+>
+> **(3) Noise is hard to separate from signal without task-specific knowledge:**
+> The sentence "The feature-based approach, such as ELMo, uses the pre-trained representations as additional features" (BERT Introduction) describes ELMo, not BERT. But to the NLI model, it entails "technical method" with high confidence (0.87) — because it does describe a technical method. Distinguishing "this paper's method" from "another paper's method" requires understanding of who is the author and what the paper claims, which goes beyond what NLI can do. This is why BERT had 62 TechnicalMethod sentences when only a few describe BERT itself.
 
 A:
 
