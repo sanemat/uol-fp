@@ -55,7 +55,7 @@ h3 {
 
 # Design
 
-## 1. Project Overview
+## 1. Project Overview (39 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile.
 
@@ -73,13 +73,13 @@ Figure 1: Research Methodology from "Attention Is All You Need".
 
 ---
 
-## 2. Template
+## 2. Template (19 words)
 
 Template 12.1: Identifying research methodologies used in computing research. I extract research methodologies based on 4 roles.
 
 ---
 
-## 3. Domain and Users
+## 3. Domain and Users (130 words)
 
 The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.
 
@@ -91,7 +91,7 @@ When people read papers, they often identify the technical method, task, dataset
 
 ---
 
-## 4. Design Justification
+## 4. Design Justification (367 words)
 
 Jain et al. [3] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [4] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
@@ -107,7 +107,7 @@ These choices fit the user need because the system is not intended to replace ex
 
 ---
 
-## 5. Overall Structure
+## 5. Overall Structure (218 words)
 
 The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → usage NLI (used by this paper / mentioned as prior work) → top-k sentences per role → MethodologyProfile output as JSON.
 
@@ -124,13 +124,15 @@ The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Data
 }
 ```
 
+Figure 2: Example output of the system (proto2 prototype).
+
 The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
 
 GROBID runs locally via Docker because it is a Java server process (~1 GB). The NLI pipeline runs on Google Colab because it needs a GPU for fast inference and installs Python packages (transformers, torch, spacy). The TEI XML produced by GROBID is uploaded to Colab manually.
 
 ---
 
-## 6. Key Technologies and Methods
+## 6. Key Technologies and Methods (248 words)
 
 GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
@@ -142,7 +144,7 @@ Four hypothesis sets were tested on the BERT paper (258 sentences). Short labels
 
 ---
 
-## 7. Work Plan
+## 7. Work Plan (183 words)
 
 The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
 
@@ -151,6 +153,8 @@ The work plan is shown visually in Appendix A as a Gantt chart. The main remaini
 | Before 29 June | Complete all chapters and working prototype | Preliminary Report |
 | After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
 | Final stage | Testing, analysis, video, final writing | Final submission |
+
+Table 1: Work plan summary.
 
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
@@ -166,11 +170,11 @@ If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_fact
 
 ---
 
-## 8. Test and Evaluation
+## 8. Test and Evaluation (352 words)
 
 For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
 
-The gold labels for the three test papers are shown in Table 1.
+The gold labels for the three test papers are shown in Table 2.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -178,7 +182,7 @@ The gold labels for the three test papers are shown in Table 1.
 | BERT | BERT | GLUE / SQuAD | BooksCorpus / Wikipedia | accuracy / F1 |
 | AlexNet | AlexNet | image classification | ImageNet | top-1 / top-5 error |
 
-Table 1: Gold labels — 3 papers × 4 roles.
+Table 2: Gold labels — 3 papers × 4 roles.
 
 Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.
 
