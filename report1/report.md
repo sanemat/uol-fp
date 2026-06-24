@@ -221,19 +221,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ### 1. Project Overview
 
-The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile.
-
-Without this system, a researcher has to categorize them by themselves manually. It is very slow.
-
-<pre>
-Methodology:
-    Technical method: Transformer
-    Task: machine translation
-    Dataset: WMT machine translation datasets
-    EvaluationMetric: BLEU score
-</pre>
-
-Figure 3: Research Methodology from "Attention Is All You Need".
+The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example). Without this system, a researcher has to categorize papers by themselves manually. It is very slow.
 
 ---
 
@@ -250,8 +238,6 @@ The domain is computing research papers. The main targets are systems, ML, algor
 The primary users are computing students who need to review many papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly before reading the paper in detail.
 
 Secondary users may include early-stage researchers or supervisors who want a quick overview of a paper. However, the project is designed mainly for students, so the output should be simple, inspectable, and based on sentences from the original paper rather than hidden model decisions.
-
-When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 
 ---
 
@@ -304,7 +290,7 @@ The prototype uses `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Cola
 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
-Four hypothesis sets were tested on the BERT paper (258 sentences). Short labels (e.g. "technical method") scored best on the 4-sentence probe (3 of 4 correct) and had the most balanced distribution across roles. Verbose labels created strong role bias: verbose_v1 assigned 244 of 258 sentences to EvaluationMetric because the hypothesis was too broad. verbose_v3 was too narrow for EvaluationMetric and missed a sentence with "BLEU score." Conclusion: in this test, short labels appear to work better for this model.
+Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 3.
 
 ---
 
@@ -380,17 +366,17 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
-The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Because no annotated training data exists for this task, supervised training is not feasible at this scale — Jain et al. [3] used 438 labeled papers. Zero-shot NLI avoids that requirement entirely, making it the central design choice to validate.
+The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Zero-shot NLI avoids the annotation requirement (see Chapter 3, Section 4 for justification), making it the central design choice to validate.
 
 ### 2. Implementation
 
 #### 2.1 Pipeline
 
-First, a computing paper is converted to TEI XML by GROBID. The pipeline then loads the XML, extracts sections, and filters out References, Acknowledgements, and Related Work. Next, it cleans each section and splits the text into sentences using spaCy. After that, each sentence is classified by the NLI classifier with four candidate labels. If the top score is at or above the threshold (0.5), the sentence is added to the accepted list for that role. The final output is a JSON object containing the accepted sentences per role.
+The pipeline follows the design described in Chapter 3, Section 5. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
 
 #### 2.2 Model
 
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well. No annotated dataset was available for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot reduces this requirement.
+The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 6.
 
 #### 2.3 Preprocessing
 
@@ -453,7 +439,7 @@ This approach seems appropriate for a prototype because the key question at this
 
 #### 4.2 Results
 
-Gold terms used:
+Gold terms used (based on the planned labels in Chapter 3, Table 4, refined after running the pipeline):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -461,7 +447,7 @@ Gold terms used:
 | BERT | "BERT" | "GLUE" | "BooksCorpus" | "F1" |
 | AlexNet | "convolutional" | "object recognition" | "ImageNet" | "top-5" |
 
-Table 7: Gold labels — 3 papers × 4 roles.
+Table 7: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).
 
 Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
