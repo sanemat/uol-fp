@@ -61,7 +61,7 @@ A:
 > - DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well.
 > - The cross-encoder architecture scores premise + hypothesis jointly, which gives more accurate entailment judgements than bi-encoders.
 >
-> Why zero-shot matters: no annotated dataset exists for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot avoids this requirement entirely.
+> Why zero-shot matters: no annotated dataset exists for this task. Supervised training would need hundreds of labeled papers (Jain et al. [1] used 438). Zero-shot avoids this requirement entirely.
 
 A:
 
