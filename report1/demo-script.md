@@ -2,6 +2,8 @@
 
 Total: ~3 minutes
 
+Stage directions: `▶ run` = click Run on that cell now. `(pre-run)` = already executed before recording.
+
 ---
 
 ## [0:00–0:35] Introduction & Motivation
@@ -27,14 +29,13 @@ This prototype is designed to automate that process."
 *[Open BERT PDF on screen]*
 
 "The input is a standard research paper PDF.
-This is the BERT paper by Devlin et al., published in 2019.
-The pipeline starts here."
+This is the BERT paper by Devlin et al., published in 2019."
 
 ---
 
 ## [0:45–1:00] Show the XML
 
-*[Open BERT XML in editor or browser]*
+*[Open BERT XML in editor or file viewer]*
 
 "First I convert the PDF to TEI XML using a tool called GROBID,
 which runs locally.
@@ -51,68 +52,100 @@ in a format the pipeline can read."
 
 ### [1:00–1:10] Setup
 
-*[Show Setup cell — already run]*
+*[Scroll to Setup section — cells already executed (pre-run)]*
 
-"The notebook installs the dependencies: transformers, spaCy, and torch.
-I've already run this to save time."
+`(pre-run)` Python version check → pip install transformers torch spacy → imports → Data Models
+
+"The notebook starts with setup — installing libraries and defining data models.
+I've already run these to save time.
+You can see 'Setup complete' and 'Models ready' in the output."
 
 ---
 
-### [1:10–1:25] Load XML — section list
+### [1:10–1:20] Model load
 
-*[Run Step 0 — upload XML, show section list]*
+*[Scroll to Model Setup cell — already executed (pre-run)]*
 
-"I upload the BERT XML here.
-The notebook loads all body sections and skips References,
-Acknowledgements, and Related Work.
+`(pre-run)` spacy load + classifier pipeline load → "Models ready."
+
+"The NLI model is also pre-loaded.
+It's about 568 megabytes and runs on the free Colab GPU."
+
+---
+
+### [1:20–1:40] Load XML
+
+*[Scroll to Step 0 cell]*
+
+`▶ run` Step 0 — upload dialog appears → select BERT XML → output shows section list
+
+"Now I upload the BERT XML.
+The notebook parses all body sections and skips References,
+Acknowledgements, and Related Work automatically.
 
 The design decision here is to include all other sections —
-Abstract, Introduction, Architecture, Training, Experiments —
 rather than filtering by keyword.
-An earlier version that filtered by keyword missed the Training Data section entirely."
+An earlier version that filtered by keyword missed the Training Data section."
+
+*[Wait for output — section list printed]*
+
+"You can see twelve sections loaded —
+Abstract, Introduction, Conclusion, and so on."
 
 ---
 
-### [1:25–1:40] Sentence splitting
+### [1:40–1:50] Select sections
 
-*[Run Step 0c — show sentence count]*
+*[Step 0b cell]*
 
-"The text is cleaned — citation markers like [13] are removed —
+`▶ run` Step 0b — target_sections = sections → prints section list again
+
+"This cell confirms which sections go into the pipeline.
+All loaded sections are used."
+
+---
+
+### [1:50–2:05] Sentence splitting
+
+*[Step 0c cell]*
+
+`▶ run` Step 0c — sentence splitting → "Total sentences: 258" + first 5 lines
+
+"The text is cleaned first — inline citation markers like [13] are removed —
 then split into sentences using spaCy.
 That gives us 258 valid sentences ready for classification."
 
 ---
 
-### [1:40–2:10] Classification
+### [2:05–2:20] Classification
 
-*[Run Step 2 — show first few lines printing]*
+*[Step 2 cell]*
 
-"Now the model classifies each sentence.
-The technique is called zero-shot NLI.
+`▶ run` Step 2 — classification starts, first few lines print
+
+"Now the model classifies each sentence using zero-shot NLI.
 Instead of training on labeled examples,
 the model answers a question for each sentence:
 does this sentence describe a technical method? A dataset? And so on.
-This avoids the need for task-specific labeled training data.
+This avoids the need for task-specific labeled training data."
 
-Classification takes a few minutes on 258 sentences,
-so I have a pre-run cell below."
+*[After ~5 lines print, scroll down to pre-run output cell below]*
 
-*[Scroll to pre-run output cell]*
+"Classification takes a few minutes on 258 sentences,
+so I have the completed output here from a previous run."
 
-"You can see each sentence with its predicted label and score.
+*[Show pre-run output — scroll through a few lines]*
+
+"Each line shows the section, the sentence, the predicted label, and the score.
 A checkmark means the score is at or above 0.5 and the sentence is accepted.
-
-The hypothesis wording has a large effect on results.
-I tested four versions. Short labels like 'technical method' gave the best
-and most balanced output across all roles.
-Longer, more detailed descriptions introduced strong label bias —
-one label absorbed nearly all sentences."
+The labels are short strings — 'technical method', 'task', 'dataset', 'evaluation metric' —
+and the model scores each sentence against all four."
 
 ---
 
-### [2:10–2:25] JSON output
+### [2:20–2:30] JSON output
 
-*[Scroll to final JSON output]*
+*[Scroll to final JSON in pre-run output]*
 
 "Here is the final output.
 TechnicalMethod contains sentences about BERT itself.
@@ -123,46 +156,39 @@ All four gold labels appear in the output."
 
 ---
 
-## [2:25–2:45] Results
+## [2:30–2:45] Results
 
-*[Stay in Colab or show results cell]*
+*[Stay in Colab or show results summary cell]*
 
-"I tested the pipeline on three papers using a gold label check —
-one expected answer per role per paper, twelve data points in total.
+"I ran the pipeline on six papers in total.
+For three of them — BERT, AlexNet, and ResNet —
+I checked one gold label per role and the pipeline found all four in the output.
 
-BERT and AlexNet each found all four gold labels in the output.
-The Transformer paper found two out of four.
-That run used a more verbose hypothesis set, not the short labels used here.
-Testing with short labels improved the score,
-so the issue appears to be in the hypothesis wording
-rather than the pipeline missing the information.
+For systems papers like MapReduce and Google Search,
+the output looked different.
+TechnicalMethod had over 150 sentences in some cases,
+while Dataset and EvaluationMetric had almost none.
+This is likely because systems papers describe the system throughout,
+and they don't follow the standard ML benchmark structure with a clear dataset and metric.
 
-One thing this evaluation also showed is that the output is very large —
-for some papers, over a hundred sentences are accepted per role.
-That makes it harder to identify the primary answer."
+So the approach appears to work better for ML papers than for systems papers at this stage."
 
 ---
 
 ## [2:45–3:00] Summary
 
-*[Camera or stay in Colab]*
+*[Camera]*
 
-"Building this prototype made clear that the problem is closer to
-question answering than sentence classification.
-The real question is: what is the primary method of this paper —
-not which sentences happen to describe a method.
-
-The next design reduces the candidate pool first using a first-person verb filter,
-then selects the top three sentences per role by score,
-then uses an LLM to extract short terms like 'Transformer' or 'BLEU'
-from those sentences.
+"The prototype shows that zero-shot NLI can find relevant methodology sentences
+in ML papers without any labeled training data,
+though output volume and systems papers remain challenges.
 Thank you."
 
 ---
 
 ## Notes for recording
 
-- Pre-run Setup, Model Setup, and Step 2 (classification) before recording
-- Keep the pre-run Step 2 output visible below the live cell
+- Pre-run before recording: Python check, pip install, imports, Data Models, Model Setup
+- Pre-run Step 2 (classification) and keep output visible below the live cell
 - Upload BERT XML before starting — avoids the file dialog on camera
 - Keep browser zoom at 100% so output is readable
