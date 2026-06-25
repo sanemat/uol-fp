@@ -4,99 +4,117 @@ Total: ~3 minutes
 
 ---
 
-## [0:00–0:10] Introduction
+## [0:00–0:35] Introduction & Motivation
 
-*[Show title slide or notebook top]*
+*[Camera only — no slides]*
 
 "In this video I'll demonstrate a prototype that automatically extracts
-research methodology from computing papers."
+research methodology from computing papers.
 
----
-
-## [0:10–0:40] Motivation
-
-*[Stay on slide or scroll to motivation cell]*
-
-"When you read a research paper, it can be hundreds of sentences long.
+When you read a research paper, it can be hundreds of sentences long.
 But you usually want to know just four things:
 what method did they use, what task did they solve,
 what data did they train on, and how did they measure results.
 
-Finding this manually takes time, and it doesn't scale
+Finding this manually takes time, and it doesn't scale well
 when you have many papers to read.
 This prototype is designed to automate that process."
 
 ---
 
-## [0:40–1:05] Approach
+## [0:35–0:45] Show the input — BERT PDF
 
-*[Show pipeline overview]*
+*[Open BERT PDF on screen]*
 
-"The pipeline works in two stages.
-First, I convert a PDF to structured XML using a tool called GROBID,
-which runs locally on my machine.
-
-Then, inside Google Colab, the notebook loads that XML,
-splits the text into sentences,
-and classifies each sentence into one of four roles
-using a technique called zero-shot NLI.
-
-Zero-shot means the model was never trained on research papers specifically.
-Instead, it answers a simple question for each sentence:
-does this sentence describe a technical method?
-Does it describe a dataset? And so on.
-This avoids the need for task-specific labeled training data."
+"The input is a standard research paper PDF.
+This is the BERT paper by Devlin et al., published in 2019.
+The pipeline starts here."
 
 ---
 
-## [1:05–1:10] Demo Transition
+## [0:45–1:00] Show the XML
 
-*[Switch to Colab — open 2pipeline.ipynb]*
+*[Open BERT XML in editor or browser]*
 
-"Let me run it now on the BERT paper."
+"First I convert the PDF to TEI XML using a tool called GROBID,
+which runs locally.
+The XML preserves the document structure — sections, headings, paragraphs —
+in a format the pipeline can read."
 
 ---
 
-## [1:10–2:10] Live Demo
+## [1:00–2:45] Colab Demo
 
-*[Run Setup cell]*
+*[Switch to Google Colab — 2pipeline.ipynb]*
 
-"First I install the dependencies — transformers, spaCy, and torch.
-This takes about thirty seconds on a fresh Colab runtime."
+---
 
-*[Run Model Setup cell — classifier loads]*
+### [1:00–1:10] Setup
 
-"Now the NLI model is loaded. It's about 568 megabytes
-and fits within the free Colab memory limit."
+*[Show Setup cell — already run]*
+
+"The notebook installs the dependencies: transformers, spaCy, and torch.
+I've already run this to save time."
+
+---
+
+### [1:10–1:25] Load XML — section list
 
 *[Run Step 0 — upload XML, show section list]*
 
-"I upload the BERT paper XML produced by GROBID.
-The notebook finds twelve sections — Abstract, Introduction,
-Related Work is skipped automatically, then Model Architecture,
-Training, Experiments, and so on."
+"I upload the BERT XML here.
+The notebook loads all body sections and skips References,
+Acknowledgements, and Related Work.
 
-*[Run Step 0c — sentence splitting, show count]*
+The design decision here is to include all other sections —
+Abstract, Introduction, Architecture, Training, Experiments —
+rather than filtering by keyword.
+An earlier version that filtered by keyword missed the Training Data section entirely."
 
-"After cleaning and splitting, we have 258 valid sentences
-ready for classification."
+---
 
-*[Run Step 2 — classification starts, briefly show first few lines of output]*
+### [1:25–1:40] Sentence splitting
+
+*[Run Step 0c — show sentence count]*
+
+"The text is cleaned — citation markers like [13] are removed —
+then split into sentences using spaCy.
+That gives us 258 valid sentences ready for classification."
+
+---
+
+### [1:40–2:10] Classification
+
+*[Run Step 2 — show first few lines printing]*
 
 "Now the model classifies each sentence.
-You can see the top label and score printed as it goes.
+The technique is called zero-shot NLI.
+Instead of training on labeled examples,
+the model answers a question for each sentence:
+does this sentence describe a technical method? A dataset? And so on.
+This avoids the need for task-specific labeled training data.
+
 Classification takes a few minutes on 258 sentences,
-so I have the results ready from a previous run."
+so I have a pre-run cell below."
 
-*[Switch to or scroll to pre-run output cell]*
+*[Scroll to pre-run output cell]*
 
-"Here is the output.
-Each line shows the section, the sentence, the predicted label, and the score.
-A checkmark means the score is at or above 0.5 and the sentence is accepted."
+"You can see each sentence with its predicted label and score.
+A checkmark means the score is at or above 0.5 and the sentence is accepted.
+
+The hypothesis wording has a large effect on results.
+I tested four versions. Short labels like 'technical method' gave the best
+and most balanced output across all roles.
+Longer, more detailed descriptions introduced strong label bias —
+one label absorbed nearly all sentences."
+
+---
+
+### [2:10–2:25] JSON output
 
 *[Scroll to final JSON output]*
 
-"And here is the final JSON.
+"Here is the final output.
 TechnicalMethod contains sentences about BERT itself.
 Task contains sentences about the GLUE benchmark.
 Dataset contains sentences about BooksCorpus.
@@ -105,44 +123,36 @@ All four gold labels appear in the output."
 
 ---
 
-## [2:10–2:35] Results
+## [2:25–2:45] Results
 
-*[Show results slide or results cell]*
+*[Stay in Colab or show results cell]*
 
-"I tested the pipeline on six papers in total.
-Using a gold label check — one known answer per role per paper —
-BERT scored four out of four, and AlexNet also scored four out of four.
+"I ran this on six papers.
+Using a gold label check — one expected answer per role per paper —
+BERT and AlexNet each found all four roles.
 
-The Transformer paper scored two out of four.
-This appears to be related to the hypothesis wording I used
-rather than the pipeline missing the information entirely."
-
----
-
-## [2:35–2:55] Limitations and Next Steps
-
-*[Show limitations slide or next steps cell]*
-
-"One observed limitation is noise from the Introduction section,
-where the paper describes other researchers' methods,
-and the model may assign those to the target paper.
-
-The next step is a second NLI pass that filters sentences
-to keep only those used by the authors themselves,
-and a top-three selection to reduce the large output volume."
+The Transformer paper found two out of four.
+This appears to be related to the hypothesis wording used in that run
+rather than the pipeline missing the information."
 
 ---
 
-## [2:55–3:00] Wrap-up
+## [2:45–3:00] Summary
 
-"Thank you for watching."
+*[Camera or stay in Colab]*
+
+"The prototype shows that zero-shot NLI can extract research methodology
+from structured ML papers without any labeled training data.
+The main limitations are noise from the Introduction section
+and large output volume in systems papers.
+The next steps are a usage filter and top-three selection by score.
+Thank you."
 
 ---
 
 ## Notes for recording
 
-- Upload the BERT XML before starting to record — avoids waiting for the file dialog
-- Pre-run Setup and Model Setup cells if runtime allows — saves ~40 seconds on camera
-- Pre-run Step 2 (classification) before recording — 258 sentences takes several minutes
-- Keep the pre-run output visible in a separate cell or scroll position for the cut
-- Keep the browser zoom at 100% so output text is readable
+- Pre-run Setup, Model Setup, and Step 2 (classification) before recording
+- Keep the pre-run Step 2 output visible below the live cell
+- Upload BERT XML before starting — avoids the file dialog on camera
+- Keep browser zoom at 100% so output is readable
