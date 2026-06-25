@@ -127,13 +127,19 @@ All four gold labels appear in the output."
 
 *[Stay in Colab or show results cell]*
 
-"I ran this on six papers.
-Using a gold label check — one expected answer per role per paper —
-BERT and AlexNet each found all four roles.
+"I tested the pipeline on three papers using a gold label check —
+one expected answer per role per paper, twelve data points in total.
 
+BERT and AlexNet each found all four gold labels in the output.
 The Transformer paper found two out of four.
-This appears to be related to the hypothesis wording used in that run
-rather than the pipeline missing the information."
+That run used a more verbose hypothesis set, not the short labels used here.
+Testing with short labels improved the score,
+so the issue appears to be in the hypothesis wording
+rather than the pipeline missing the information.
+
+One thing this evaluation also showed is that the output is very large —
+for some papers, over a hundred sentences are accepted per role.
+That makes it harder to identify the primary answer."
 
 ---
 
@@ -141,11 +147,15 @@ rather than the pipeline missing the information."
 
 *[Camera or stay in Colab]*
 
-"The prototype shows that zero-shot NLI can extract research methodology
-from structured ML papers without any labeled training data.
-The main limitations are noise from the Introduction section
-and large output volume in systems papers.
-The next steps are a usage filter and top-three selection by score.
+"Building this prototype made clear that the problem is closer to
+question answering than sentence classification.
+The real question is: what is the primary method of this paper —
+not which sentences happen to describe a method.
+
+The next design reduces the candidate pool first using a first-person verb filter,
+then selects the top three sentences per role by score,
+then uses an LLM to extract short terms like 'Transformer' or 'BLEU'
+from those sentences.
 Thank you."
 
 ---
