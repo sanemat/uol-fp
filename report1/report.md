@@ -107,8 +107,6 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ## Chapter 2: Literature Review
 
-### 1. Introduction
-
 Chapter 1 showed a four-role profile for "Attention Is All You Need". Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [1].
 
 <pre>
@@ -125,7 +123,7 @@ Figure 1: Research Methodology from "Attention Is All You Need".
 
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
-### 2. Defining Research Methodology
+### 1. Defining Research Methodology
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
@@ -140,7 +138,7 @@ Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationsh
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.
 
 
-### 3. Closest Prior Work
+### 2. Closest Prior Work
 
 Systems that extract methodology-like entities from papers exist, but the closest supervised approaches require labeled training data that this project does not have.
 
@@ -161,7 +159,7 @@ But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotat
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
-### 4. Zero-shot Classification
+### 3. Zero-shot Classification
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
@@ -196,7 +194,7 @@ This project accepts the risk and tests it: the hypothesis set comparison (short
 
 Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
-### 5. Synthesis
+### 4. Synthesis
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
 
