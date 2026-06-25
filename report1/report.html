@@ -1,0 +1,642 @@
+<!DOCTYPE html><html><head>
+      <title>report</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////home/matt/.vscode-server/extensions/shd101wyy.markdown-preview-enhanced-0.8.30/crossnote/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-details{margin:0;padding:0;border:none}.markdown-preview .md-toc summary.md-toc-link-wrapper{cursor:pointer;list-style-position:outside}.markdown-preview .md-toc summary.md-toc-link-wrapper::marker{font-size:.85em}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='0']{margin-left:12px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='1']{margin-left:28px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='2']{margin-left:44px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='3']{margin-left:60px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='4']{margin-left:76px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='5']{margin-left:80px}.markdown-preview a.tag,.markdown-preview a.tag:active,.markdown-preview a.tag:link,.markdown-preview a.tag:visited,.markdown-preview span.tag:not(.token){display:inline-block;background-color:var(--vscode-badge-background,rgba(127,127,127,.18));color:var(--vscode-badge-foreground,currentColor);border-radius:2em;font-size:.85em;font-weight:500;padding:.05em .55em;line-height:1.5;white-space:nowrap;text-decoration:none;text-shadow:none;box-shadow:none;transition:background-color .12s ease,opacity .12s ease}.markdown-preview a.tag{cursor:pointer}.markdown-preview a.tag:focus,.markdown-preview a.tag:hover{background-color:var(--vscode-badge-background,rgba(127,127,127,.32));color:var(--vscode-badge-foreground,currentColor);opacity:.85;text-decoration:none;outline:0}.markdown-preview .wikilink-embed-content{border-left:3px solid var(--vscode-textBlockQuote-border,rgba(128,128,128,.3));background:var(--vscode-textBlockQuote-background,rgba(128,128,128,.05));margin:.5em 0;padding:.5em .75em;border-radius:0 3px 3px 0}.markdown-preview .wikilink-embed-content.wikilink-embed-error{border-left-color:var(--vscode-errorForeground,#cf222e);color:var(--vscode-errorForeground,#cf222e);font-style:italic;opacity:.8}.markdown-preview .wikilink-embed-content h1:first-child,.markdown-preview .wikilink-embed-content h2:first-child,.markdown-preview .wikilink-embed-content h3:first-child,.markdown-preview .wikilink-embed-content h4:first-child,.markdown-preview .wikilink-embed-content h5:first-child,.markdown-preview .wikilink-embed-content h6:first-child{margin-top:.25em}.markdown-preview .wikilink-embed-content .wikilink-embed-content{margin:.25em 0;padding:.25em .5em}.markdown-preview .block-id{display:none}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));border:4px solid var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));background-clip:content-box}.scrollbar-style::-webkit-scrollbar-thumb:hover{background-color:var(--vscode-scrollbarSlider-hoverBackground,rgba(120,120,120,.66))}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));border:4px solid var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb:hover{background-color:var(--vscode-scrollbarSlider-hoverBackground,rgba(120,120,120,.66))}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-details{margin:0;padding:0;border:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='0']{padding-left:0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='1']{padding-left:16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='2']{padding-left:32px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='3']{padding-left:48px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='4']{padding-left:64px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='5']{padding-left:80px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. -->
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script>
+    </head>
+    <body for="html-export">
+      <div class="crossnote markdown-preview  ">
+      
+<style>
+@page {
+  size: A4;
+  margin: 2.5cm;
+}
+
+html, body {
+  font-size: 12.5pt;
+  line-height: 1.5;
+}
+
+p, li, td, th, blockquote, figcaption, caption {
+  font-size: 12.5pt;
+  line-height: 1.5;
+}
+
+pre, code {
+  font-size: 12pt;
+  line-height: 1.4;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, figure, img {
+  max-width: 100%;
+}
+
+h1 {
+  font-size: 18pt;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 15pt;
+  line-height: 1.35;
+}
+
+h3 {
+  font-size: 13.5pt;
+  line-height: 1.4;
+}
+
+* {
+  box-sizing: border-box;
+}
+</style>
+<h1 id="report-4828-words">Report (4828 words) </h1>
+<h2 id="chapter-1-introduction-815-words">Chapter 1: Introduction (815 words) </h2>
+<p>When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. Research methodology in computing papers has a recognizable structure: the technical method used, the task being solved, the dataset evaluated on, and the evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.</p>
+<p>Consider "Attention Is All You Need" [D6], one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Methodology role</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Technical method</td>
+<td>Transformer</td>
+</tr>
+<tr>
+<td>Research task</td>
+<td>machine translation</td>
+</tr>
+<tr>
+<td>Evaluation dataset</td>
+<td>WMT datasets</td>
+</tr>
+<tr>
+<td>Evaluation metric</td>
+<td>BLEU score</td>
+</tr>
+</tbody>
+</table>
+<p>Table 1: Role-based methodology profile for "Attention Is All You Need" [D6].</p>
+<p>A reader needing this summary would currently have to read through the paper and construct it themselves.</p>
+<h3 id="1-topic-labels-and-role-profiles">1. Topic labels and role profiles </h3>
+<p>Topic classifiers and search tools help researchers find papers about a subject. But a topic label answers "what is this paper about?", not "how was this research conducted?" Two papers on the same topic can use different methods, train on different datasets, and report different metrics. A role-based profile answers the second question. It does not replace reading; it supports the first pass through a set of papers — before a researcher decides which ones to read in depth.</p>
+<p>The distinction matters in practice. A student reviewing papers on text classification needs to know not only which papers address that topic, but also which ones use transformer models versus older approaches, which datasets are most commonly used, and which metrics are reported. Without a structured profile, this comparison requires reading each paper.</p>
+<h3 id="2-project-goal-and-approach">2. Project goal and approach </h3>
+<p>This project addresses <strong>Template 12.1</strong>: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:</p>
+<ul>
+<li><strong>TechnicalMethod</strong> — the method, algorithm, or architecture the authors used (e.g. Transformer)</li>
+<li><strong>Task</strong> — the problem the research addresses (e.g. machine translation)</li>
+<li><strong>Dataset</strong> — the data used for training or evaluation (e.g. WMT datasets)</li>
+<li><strong>EvaluationMetric</strong> — the metric used to assess results (e.g. BLEU score)</li>
+</ul>
+<p>The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID [6], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.</p>
+<p>Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [10] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.</p>
+<p>Research design (e.g. experiment vs survey) [5] and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.</p>
+<h3 id="3-target-users">3. Target users </h3>
+<p>The primary users are computing students who need to survey multiple papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly, before reading a paper in full. The system is intended to support this first pass, not to replace reading.</p>
+<p>The output is designed to be inspectable. Each role field contains actual sentences from the paper, allowing the user to judge whether a classified sentence is genuinely relevant to the paper's methodology. At this prototype stage, the output is full sentences rather than short extracted terms. This limitation is discussed in Chapter 4.</p>
+<h3 id="4-report-structure">4. Report structure </h3>
+<p>Chapter 2 reviews three areas of related work: how research methodology in computing is defined and structured; how methodology-related information can be extracted from scientific papers; and how zero-shot classification can assign labels to text without labeled training data. The chapter identifies a gap that this project addresses.</p>
+<p>Chapter 3 describes the system design. It covers the four-role schema and its justification, the full pipeline architecture, the choice of technologies, the evaluation approach, and the work plan.</p>
+<p>Chapter 4 presents the feature prototype. It describes the implementation of the zero-shot NLI classification step, demonstrates results on six computing papers, evaluates the prototype against manually identified gold labels, and discusses planned improvements for the next iteration.</p>
+<hr>
+<h2 id="chapter-2-literature-review-1100-words">Chapter 2: Literature Review (1100 words) </h2>
+<p>Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [8].</p>
+<pre>Methodology:
+    Design or strategy: design and creation + experiment
+    Data generation method: documents
+    Technical method: Transformer
+    Task: machine translation
+    Dataset: WMT machine translation datasets
+    EvaluationMetric: BLEU score
+</pre>
+<p>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</p>
+<p>This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.</p>
+<h3 id="1-defining-research-methodology">1. Defining Research Methodology </h3>
+<p>Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.</p>
+<p>Oates [8] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work.</p>
+<p>Pilkington &amp; Pretorius [9] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [9] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.</p>
+<p>A philosophical worldview is one of the important parts of Pilkington &amp; Pretorius [9], but it may not appear directly in paper text, so my project skips it.</p>
+<p>Oates [8] gives concept names. Pilkington &amp; Pretorius [9] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington &amp; Pretorius.</p>
+<p>Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.</p>
+<h3 id="2-closest-prior-work">2. Closest Prior Work </h3>
+<p>Systems that extract methodology-like entities from papers exist [2, 3], but the closest supervised approaches require labeled training data that this project does not have.</p>
+<p>Jain et al. [4] extract four entity types: Dataset, Metric, Task, and Method.</p>
+<p>Dataset: WMT machine translation datasets<br>
+Metric: BLEU score<br>
+Task: machine translation<br>
+Method: Transformer</p>
+<p>Figure 2: Entity types from "Attention Is All You Need" [D6].</p>
+<p>These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.</p>
+<p>Jain et al. [4] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [4] — relations may span sections, not just sentences.</p>
+<p>But Jain et al. [4] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [4] approach is difficult to adopt directly.</p>
+<p>Ma et al. [7] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.</p>
+<p>The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.</p>
+<h3 id="3-zero-shot-classification">3. Zero-shot Classification </h3>
+<p>Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.</p>
+<p>Yin et al. [10] define zero-shot text classification as assigning a label to text without any task-specific training examples.</p>
+<p>Yin et al. [10] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [10] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.</p>
+<table>
+<thead>
+<tr>
+<th>aspect</th>
+<th>labels</th>
+<th>interpretation</th>
+<th>example hypothesis (word)</th>
+<th>example hypothesis (wordnet definition)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>topic</td>
+<td>sports etc.</td>
+<td>this text is about ?</td>
+<td>"?"= sports</td>
+<td>"?" = an active diversion requiring physical exertion and competition</td>
+</tr>
+<tr>
+<td>emotion</td>
+<td>anger etc.</td>
+<td>this text expresses ?</td>
+<td>"?"= anger</td>
+<td>"?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance</td>
+</tr>
+<tr>
+<td>situation</td>
+<td>shelter etc.</td>
+<td>The people there need ?</td>
+<td>"?"= shelter</td>
+<td>"?" = a structure that provides privacy and protection from danger</td>
+</tr>
+</tbody>
+</table>
+<p><em>Table 2 (reproduced from Yin et al. [10]): example hypotheses for three task types.</em></p>
+<p>This provides a possible way to support the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:</p>
+<table>
+<thead>
+<tr>
+<th>role</th>
+<th>hypothesis (this project, short label)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TechnicalMethod</td>
+<td>technical_method</td>
+</tr>
+<tr>
+<td>Task</td>
+<td>task</td>
+</tr>
+<tr>
+<td>Dataset</td>
+<td>dataset</td>
+</tr>
+<tr>
+<td>EvaluationMetric</td>
+<td>evaluation_metric</td>
+</tr>
+</tbody>
+</table>
+<p><em>Table 3: hypothesis set used in this project (short label format, selected by hypothesis set comparison).</em></p>
+<p>For TechnicalMethod, a longer hypothesis was also tested: "This text describes a technique, algorithm, system, or architecture used or proposed in the research." The hypothesis set comparison investigates whether this verbose form can extract TechnicalMethod more accurately than the short label on scientific text.</p>
+<p>However, a domain mismatch risk exists. Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports. Their NLI model is trained on MNLI (news, fiction, telephone speech). None of these are scientific papers, which use dense technical vocabulary, passive constructions, and section-based structure.</p>
+<p>This project accepts the risk and tests it: the hypothesis set comparison (short vs verbose hypotheses) directly investigates how label wording affects classification on scientific text.</p>
+<p>Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.</p>
+<h3 id="4-synthesis">4. Synthesis </h3>
+<p>It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.</p>
+<p>Section 2 established the schema. Oates [8] and Pilkington &amp; Pretorius [9] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.</p>
+<p>Section 3 showed that extraction of the same four types is possible. Jain et al. [4] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.</p>
+<p>Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [10] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.</p>
+<p>Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.</p>
+<hr>
+<h2 id="chapter-3-design-1416-words">Chapter 3: Design (1416 words) </h2>
+<p>The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).</p>
+<h3 id="1-domain-and-users">1. Domain and Users </h3>
+<p>The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.</p>
+<p>The primary users are computing students doing literature reviews (see Chapter 1, "Target users"). Secondary users may include early-stage researchers or supervisors who want a quick overview of a paper. The output is designed mainly for students: simple, inspectable, and based on sentences from the original paper rather than hidden model decisions.</p>
+<hr>
+<h3 id="2-design-justification">2. Design Justification </h3>
+<p>Jain et al. [4] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [10] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.</p>
+<p>Two independent sources agree on the same four types. First, the ontology from Oates [8] and Pilkington &amp; Pretorius [9] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [4] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.</p>
+<p>Research design (e.g. experiment vs. survey) is subjective — two readers can assign different labels to the same paper. A philosophical worldview may not appear in the paper text at all. The four roles (TechnicalMethod, Task, Dataset, EvaluationMetric) appear as explicit phrases in the text and are easier to match automatically.</p>
+<p>The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer [D6], BERT [D3], AlexNet [D5], ResNet [D4], MapReduce [D2], Google Search [D1]). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.</p>
+<p>A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules [1]. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.</p>
+<p>These choices fit the user need because the system is not intended to replace expert reading. It is intended to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.</p>
+<hr>
+<h3 id="3-overall-structure">3. Overall Structure </h3>
+<p>The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → usage NLI (used by this paper / mentioned as prior work) → top-k sentences per role → MethodologyProfile output as JSON.</p>
+<p>The input is a PDF of a computing research paper. After GROBID, the intermediate format is TEI XML. Each section has a heading attribute and body text. The abstract is separate from the body sections.</p>
+<p>The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, EvaluationMetric. Each field is a list of sentences from the paper. Final output is a Python dict printed as JSON. Example:</p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
+  <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"We propose the Transformer..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"Task"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"applied to machine translation..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"Dataset"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"on the WMT 2014 English-German..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"EvaluationMetric"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"achieving 28.4 BLEU on the WMT 2014..."</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre><p>Figure 3: Example output of the system (proto2 prototype).</p>
+<p>The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.</p>
+<p>GROBID runs locally via Docker because it is a Java server process (~1 GB). The NLI pipeline runs on Google Colab because it needs a GPU for fast inference and installs Python packages (transformers, torch, spacy). The TEI XML produced by GROBID is uploaded to Colab manually.</p>
+<hr>
+<h3 id="4-key-technologies-and-methods">4. Key Technologies and Methods </h3>
+<p>GROBID [6] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).</p>
+<p>The prototype uses <code>cross-encoder/nli-deberta-v3-small</code> (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.</p>
+<p>Two pre-processing steps clean each sentence before classification. (1) <code>pre_clean()</code> strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) <code>is_valid()</code> drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.</p>
+<p>Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 3.</p>
+<hr>
+<h3 id="5-work-plan">5. Work Plan </h3>
+<p>The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.</p>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Main task</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Before 29 June</td>
+<td>Complete all chapters and working prototype</td>
+<td>Preliminary Report</td>
+</tr>
+<tr>
+<td>After preliminary report</td>
+<td>Iterate: improve candidate selection, reduce large outputs, re-evaluate</td>
+<td>Improved prototype</td>
+</tr>
+<tr>
+<td>Final stage</td>
+<td>Testing, analysis, video, final writing</td>
+<td>Final submission</td>
+</tr>
+</tbody>
+</table>
+<p>Table 4: Work plan summary.</p>
+<p>The major tasks are:</p>
+<ul>
+<li>Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch</li>
+<li>Done: proto2 prototype — GROBID pipeline, NLI classification, section filtering, pre-processing, hypothesis comparison</li>
+<li>Done: Literature Review (Chapter 2)</li>
+<li>In progress: Chapter 3 — Design; proto2 pipeline refinement</li>
+<li>Backlog: Chapter 4 — Feature Prototype; demonstration video MP4 3–5 min</li>
+<li>Submission: Preliminary Report</li>
+</ul>
+<p>The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2) for the full project roadmap.</p>
+<p>If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_factor weighting are the newest additions. They can be simplified or removed without breaking the core role classification. (2) Chapter 4 (Feature Prototype) can be shortened to a brief description of planned improvements. The core pipeline (GROBID → role NLI → profile output) is the minimum deliverable.</p>
+<hr>
+<h3 id="6-test-and-evaluation">6. Test and Evaluation </h3>
+<p>For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.</p>
+<p>The gold labels for the three test papers are shown in Table 5.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer</td>
+<td>Transformer</td>
+<td>machine translation</td>
+<td>WMT</td>
+<td>BLEU</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>BERT</td>
+<td>GLUE / SQuAD</td>
+<td>BooksCorpus / Wikipedia</td>
+<td>accuracy / F1</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>AlexNet</td>
+<td>image classification</td>
+<td>ImageNet</td>
+<td>top-1 / top-5 error</td>
+</tr>
+</tbody>
+</table>
+<p>Table 5: Gold labels — 3 papers × 4 roles.</p>
+<p>Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.</p>
+<p>Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.</p>
+<p>The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.</p>
+<p>Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.</p>
+<p>If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.</p>
+<hr>
+<h2 id="chapter-4-feature-prototype-1497-words">Chapter 4: Feature Prototype (1497 words) </h2>
+<p>The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.</p>
+<p>Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).</p>
+<h3 id="1-implementation">1. Implementation </h3>
+<h4 id="11-pipeline">1.1 Pipeline </h4>
+<p>The pipeline follows the design described in Chapter 3, Section 3. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.</p>
+<h4 id="12-model">1.2 Model </h4>
+<p>The classifier is <code>cross-encoder/nli-deberta-v3-small</code> from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The <code>v3-small</code> variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.</p>
+<h4 id="13-preprocessing">1.3 Preprocessing </h4>
+<p>The pipeline applies two preprocessing steps before classification.</p>
+<p>First, <code>pre_clean()</code> removes inline citation markers such as <code>[13]</code> or <code>[4, 27]</code> using a regex. Without this step, spaCy may split a sentence at the bracket, producing broken fragments. For example:</p>
+<blockquote>
+<p><code>"The model outperforms [4, 27] the baseline."</code> → <code>"The model outperforms the baseline."</code></p>
+</blockquote>
+<p>Second, <code>is_valid()</code> drops sentences that are shorter than 30 characters or contain no word of three or more letters. This removes bullet characters, lone numbers, and citation stubs that pass through sentence splitting but carry no information. After these two steps, the Transformer paper produced 183 valid sentences for classification.</p>
+<h4 id="14-section-filtering">1.4 Section Filtering </h4>
+<p>References, Acknowledgements, and Related Work are excluded.</p>
+<ul>
+<li>References and Acknowledgements are excluded by exact heading match (<code>SKIP_HEADINGS</code>). These sections list citations and credits, not methodology.</li>
+<li>Related Work is excluded by keyword match (<code>SKIP_KEYWORDS</code>). Subsections are also skipped automatically by tracking the <code>n</code> attribute (e.g. if Related Work is <code>n="2"</code>, then <code>n="2.1"</code> and <code>n="2.2"</code> are also skipped). The reason is that Related Work describes other papers' methods, which the NLI model classifies as TechnicalMethod of the target paper. Testing on BERT showed that excluding Related Work reduced TechnicalMethod from 67 to 62 sentences (−5).</li>
+</ul>
+<p>All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version used only sections whose heading matched keywords such as "experiment" or "result". The <code>Training Data</code> section in the Transformer paper has no such keyword and was missed. Switching to all body sections improved Dataset recall significantly.</p>
+<h3 id="2-demonstration">2. Demonstration </h3>
+<p>The prototype was tested on six papers. Table 6 shows the number of accepted sentences per role.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer</td>
+<td>14</td>
+<td>0</td>
+<td>0</td>
+<td>160</td>
+<td>verbose_v1: extreme EM bias</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>62</td>
+<td>23</td>
+<td>15</td>
+<td>13</td>
+<td>short: balanced</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>51</td>
+<td>6</td>
+<td>11</td>
+<td>4</td>
+<td>short: balanced</td>
+</tr>
+<tr>
+<td>ResNet</td>
+<td>51</td>
+<td>6</td>
+<td>14</td>
+<td>12</td>
+<td>short: balanced</td>
+</tr>
+<tr>
+<td>MapReduce</td>
+<td>151</td>
+<td>24</td>
+<td>3</td>
+<td>5</td>
+<td>short: TM heavy, weak DS/EM</td>
+</tr>
+<tr>
+<td>Google Search</td>
+<td>69</td>
+<td>21</td>
+<td>8</td>
+<td>29</td>
+<td>short: no standard benchmark</td>
+</tr>
+</tbody>
+</table>
+<p>Table 6: Accepted sentences per role for six papers.</p>
+<p>Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.</p>
+<h4 id="21-hypothesis-set-comparison">2.1 Hypothesis Set Comparison </h4>
+<p>The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.</p>
+<table>
+<thead>
+<tr>
+<th>Set</th>
+<th>Probe (4 gold labels)</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>short</td>
+<td><strong>3/4</strong></td>
+<td>124</td>
+<td>70</td>
+<td>33</td>
+<td>31</td>
+</tr>
+<tr>
+<td>verbose_v1</td>
+<td>2/4</td>
+<td>11</td>
+<td>0</td>
+<td>3</td>
+<td>244</td>
+</tr>
+<tr>
+<td>verbose_v2</td>
+<td>2/4</td>
+<td>63</td>
+<td>11</td>
+<td>19</td>
+<td>165</td>
+</tr>
+<tr>
+<td>verbose_v3</td>
+<td>2/4</td>
+<td>131</td>
+<td>56</td>
+<td>60</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<p>Table 7: Hypothesis set comparison on the BERT paper (258 sentences).</p>
+<p>Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.</p>
+<h3 id="3-evaluation">3. Evaluation </h3>
+<h4 id="31-method">3.1 Method </h4>
+<p>No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.</p>
+<p>This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [4] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.</p>
+<h4 id="32-results">3.2 Results </h4>
+<p>Gold terms used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer</td>
+<td>"Transformer"</td>
+<td>"machine translation"</td>
+<td>"WMT"</td>
+<td>"BLEU"</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>"BERT"</td>
+<td>"GLUE"</td>
+<td>"BooksCorpus"</td>
+<td>"F1"</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>"convolutional"</td>
+<td>"object recognition"</td>
+<td>"ImageNet"</td>
+<td>"top-5"</td>
+</tr>
+</tbody>
+</table>
+<p>Table 8: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).</p>
+<p>Result (○ = gold label found in any accepted sentence, ✗ = not found):</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer</td>
+<td>○</td>
+<td>✗</td>
+<td>✗</td>
+<td>○</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+</tr>
+</tbody>
+</table>
+<p>Table 9: Gold label evaluation results.</p>
+<h4 id="33-analysis">3.3 Analysis </h4>
+<p>BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).</p>
+<p>The Transformer scored ✗ on Task and Dataset, but this appears to be caused by the verbose_v1 hypothesis set, not by a failure to find the information in the paper. TechnicalMethod and Dataset tend to be the easier roles because they appear in dedicated sections with explicit mentions. EvaluationMetric is found correctly but in small quantities (4–13 sentences), as metric names appear in few places. Task appears to be the most difficult role: it is often stated implicitly and produced the fewest sentences among the papers tested. Systems papers (MapReduce, PageRank) produced empty or weak Dataset and EvaluationMetric output, possibly because they do not follow the standard ML benchmark structure.</p>
+<h3 id="4-limitations">4. Limitations </h3>
+<p>Four types of noise were observed.</p>
+<p>The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. For example, "The feature-based approach, such as ELMo..." scored 0.87 as TechnicalMethod in the BERT paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.</p>
+<p>The second type is quoted or example text. Text that is quoted or used as an example in the paper body is classified as a real claim. For example, "you looked at a lot of pages from my Web site." from the Google Search paper [D1] was classified as Task.</p>
+<p>The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.</p>
+<p>The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences and the Transformer produced 160 EvaluationMetric sentences, because there is no upper limit on accepted sentences.</p>
+<h3 id="5-improvements-for-the-next-iteration">5. Improvements for the Next Iteration </h3>
+<p>Three improvements are planned.</p>
+<p>The first is a usage NLI step after role classification. A second NLI pass with labels ["used by the authors", "mentioned as prior or related work"] keeps only sentences about the paper's own work, catching Introduction noise at the sentence level without additional keyword rules. As a lighter alternative, a first-person verb filter ("we propose", "we introduce", "we use") may reduce the candidate pool from 200+ to approximately 15–40 sentences before NLI.</p>
+<p>The second is Top-N selection by score × section weight. Instead of keeping all accepted sentences, only the top 3 per role are kept, ranked by NLI score multiplied by a section weight (Abstract and Method sections ranked higher than Introduction). This addresses the large output volume: MapReduce produced 151 TechnicalMethod sentences, but the top 3 by score may be sufficient for a methodology profile.</p>
+<p>The third is LLM term extraction. The current output is full sentences, but the target profile contains short terms (e.g. "Transformer" rather than "We propose a new simple network architecture, the Transformer..."). The gold label evaluation suggests the correct term is present in the output sentence; the next step is extracting it with a prompt such as "What is the TechnicalMethod named in this sentence?"</p>
+<h3 id="6-technical-challenge">6. Technical Challenge </h3>
+<p>Zero-shot NLI classification on academic text is technically challenging for three reasons.</p>
+<p>The first challenge is that hypothesis engineering is non-trivial. More detailed label descriptions do not necessarily improve accuracy: verbose_v1 and verbose_v2 sent nearly all BERT sentences to EvaluationMetric (244 of 258), while verbose_v3 shifted the bias to TechnicalMethod. Short labels achieved the best probe score and most balanced distribution, but this required four iterations of hypothesis design to discover.</p>
+<p>The second challenge is domain mismatch. The NLI model was trained on general-domain benchmarks, but academic writing is structurally different: sentences are longer, more technical, and contain citation markers and figure references that were not in the training data. The model classifies these without any task-specific training on scientific text.</p>
+<p>The third challenge is authorship attribution. The sentence "The feature-based approach, such as ELMo..." correctly entails "technical method" according to the NLI model — it does describe a method — but the method belongs to a different paper. Distinguishing a paper's own methods from those it cites may go beyond what NLI alone can do, since it requires understanding who the authors are and what the paper claims.</p>
+<hr>
+<h2 id="references">References </h2>
+<p>[1] Michael Färber, Alexander Albers, and Felix Schüber. 2021. Identifying Used Methods and Datasets in Scientific Publications. In <em>Proceedings of the Second Workshop on Scholarly Document Understanding (SDU@AAAI 2021)</em>. <a href="https://api.semanticscholar.org/CorpusID:232369268">https://api.semanticscholar.org/CorpusID:232369268</a></p>
+<p>[2] Ghosh, M., Ganguly, D., Basuchowdhuri, P. and Naskar, S.K. 2023a. Enhancing AI research paper analysis: methodology component extraction using factored transformer-based sequence modeling. arXiv:2311.03401. <a href="https://arxiv.org/abs/2311.03401">https://arxiv.org/abs/2311.03401</a></p>
+<p>[3] Ghosh, M., Ganguly, D. and Naskar, S.K. 2023b. Extracting methodology components from AI research papers: a data-driven factored sequence labeling approach. In <em>Proceedings of the 32nd ACM International Conference on Information and Knowledge Management (CIKM 2023)</em>. <a href="https://doi.org/10.1145/3583780.3615258">https://doi.org/10.1145/3583780.3615258</a></p>
+<p>[4] S. Jain, M. van Zuylen, H. Hajishirzi, and I. Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In <em>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</em>, Online, July 2020. Association for Computational Linguistics, 7506–7516. <a href="https://doi.org/10.18653/v1/2020.acl-main.670">https://doi.org/10.18653/v1/2020.acl-main.670</a></p>
+<p>[5] Kosztyán, Z.T. and Király, T. 2025. Automated research methodology classification using machine learning. <em>Engineering Applications of Artificial Intelligence</em>, article 111039. <a href="https://doi.org/10.1016/j.engappai.2025.111039">https://doi.org/10.1016/j.engappai.2025.111039</a></p>
+<p>[6] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In <em>Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009</em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. <a href="https://doi.org/10.1007/978-3-642-04346-8_62">https://doi.org/10.1007/978-3-642-04346-8_62</a></p>
+<p>[7] Ma, Y., Liu, J., Lu, W. and Cheng, Q. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. <em>Information Processing &amp; Management</em>, 60(3), article 103315. <a href="https://doi.org/10.1016/j.ipm.2023.103315">https://doi.org/10.1016/j.ipm.2023.103315</a></p>
+<p>[8] B. J. Oates. 2006. <em>Researching Information Systems and Computing</em>. SAGE Publications, London.</p>
+<p>[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In <em>Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD</em>. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. <a href="https://doi.org/10.5220/0005613100960107">https://doi.org/10.5220/0005613100960107</a></p>
+<p>[10] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In <em>Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</em>, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. <a href="https://doi.org/10.18653/v1/D19-1404">https://doi.org/10.18653/v1/D19-1404</a></p>
+<hr>
+<h2 id="dataset-papers">Dataset Papers </h2>
+<p>[D1] Brin, S. and Page, L. 1998. The anatomy of a large-scale hypertextual web search engine. <em>Computer Networks and ISDN Systems</em>, 30(1–7), 107–117. <a href="https://doi.org/10.1016/S0169-7552(98)00110-X">https://doi.org/10.1016/S0169-7552(98)00110-X</a></p>
+<p>[D2] Dean, J. and Ghemawat, S. 2004. MapReduce: Simplified data processing on large clusters. In <em>Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI '04)</em>. USENIX Association, 137–150.</p>
+<p>[D3] Devlin, J., Chang, M.W., Lee, K. and Toutanova, K. 2019. BERT: Pre-training of deep bidirectional transformers for language understanding. In <em>Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019)</em>, Volume 1. Minneapolis, Minnesota: Association for Computational Linguistics, 4171–4186. <a href="https://doi.org/10.18653/v1/N19-1423">https://doi.org/10.18653/v1/N19-1423</a></p>
+<p>[D4] He, K., Zhang, X., Ren, S. and Sun, J. 2016. Deep residual learning for image recognition. In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)</em>, 770–778. <a href="https://doi.org/10.1109/CVPR.2016.90">https://doi.org/10.1109/CVPR.2016.90</a></p>
+<p>[D5] Krizhevsky, A., Sutskever, I. and Hinton, G.E. 2012. ImageNet classification with deep convolutional neural networks. In <em>Advances in Neural Information Processing Systems</em>, 25, 1097–1105. <a href="https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html">https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html</a></p>
+<p>[D6] Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. 2017. Attention is all you need. In <em>Advances in Neural Information Processing Systems</em>, 30, 5998–6008. <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></p>
+<hr>
+<h2 id="appendix-a--project-roadmap">Appendix A — Project Roadmap </h2>
+<figure>
+<img src="Screenshot%202026-06-23%20204411.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–24). GitHub Projects roadmap view showing completed iterations (April–June 2026) and current sprint.</figcaption>
+</figure>
+<figure>
+<img src="Screenshot%202026-06-23%20204423.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 26–34). Remaining tasks including chapter writing, video recording, and Preliminary Report submission.</figcaption>
+</figure>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>

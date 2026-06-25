@@ -28,7 +28,7 @@ Only include used entities in the final MethodologyProfile.
 
 ## Outline
 
-Papers: Oates [3], Pilkington & Pretorius [4], SciREX [5], Yin et al. [8]
+Papers: Oates [8], Pilkington & Pretorius [9], SciREX [4], Yin et al. [10]
 Total word limit: 2500 words.
 
 Argumentative arc:
@@ -51,12 +51,12 @@ Claim: Extracting research methodology from computing papers automatically is us
 
 ### Section 2: Defining Research Methodology (~600 words)
 
-Book: Oates [1] (chapters 3, 7–9, 13–16), Paper: Pilkington & Pretorius [2]
+Book: Oates [8] (chapters 3, 7–9, 13–16), Paper: Pilkington & Pretorius [9]
 
 Claim: Research methodology in computing has a well-defined structure, but defining it is not the same as extracting it.
 
-- Oates [1] provides the vocabulary: six research strategies (experiment, design and creation, survey, case study, action research, ethnography) and four data generation methods. His book defines what each strategy means for human researchers making methodology choices.
-- Pilkington & Pretorius [2] go further: they formalize methodology as a structured ontology (ResearchScheme = PhilosophicalWorldview + ResearchDesign + ResearchMethod) using UML and ontology engineering. Their goal is "providing clear and unambiguous semantics" — a formal structure, not a textbook description.
+- Oates [8] provides the vocabulary: six research strategies (experiment, design and creation, survey, case study, action research, ethnography) and four data generation methods. His book defines what each strategy means for human researchers making methodology choices.
+- Pilkington & Pretorius [9] go further: they formalize methodology as a structured ontology (ResearchScheme = PhilosophicalWorldview + ResearchDesign + ResearchMethod) using UML and ontology engineering. Their goal is "providing clear and unambiguous semantics" — a formal structure, not a textbook description.
 - The contrast: Oates gives concept names; Pilkington gives formal relationships between those concepts. Together they justify the four-component schema in this project: vocabulary from Oates, formal structure from Pilkington.
 - Both works are designed for human use. Neither provides a system to extract methodology components automatically from text.
 - Transition: A structured definition exists and can be formalized. The question is whether any system can extract it.
@@ -65,26 +65,26 @@ Claim: Research methodology in computing has a well-defined structure, but defin
 
 ### Section 3: Closest Prior Work (~450 words)
 
-Paper: Jain et al. [3]
+Paper: Jain et al. [4]
 
 Claim: Systems that extract methodology-like entities from papers exist, but all require labeled training data that this project does not have.
 
-- Jain et al. [3] is the closest prior work: it extracts four entity types — Method, Task, Dataset, Metric — which match the four roles in this project exactly. This shows the problem is real and solvable in principle.
-- Jain et al. [3] operates at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" — relations span sections, not just sentences.
-- Key limitation: building Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks.
-- This project targets general computing papers (systems, algorithms, HCI) and has no annotated corpus. The Jain et al. [3] approach cannot be adopted directly.
+- Jain et al. [4] is the closest prior work: it extracts four entity types — Method, Task, Dataset, Metric — which match the four roles in this project exactly. This shows the problem is real and solvable in principle.
+- Jain et al. [4] operates at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" — relations span sections, not just sentences.
+- Key limitation: building Jain et al. [4] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks.
+- This project targets general computing papers (systems, algorithms, HCI) and has no annotated corpus. The Jain et al. [4] approach cannot be adopted directly.
 - Transition: The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is needed.
 
 ---
 
 ### Section 4: Zero-shot Classification (~550 words)
 
-Paper: Yin et al. [4]
+Paper: Yin et al. [10]
 
 Claim: Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
-- Yin et al. [4] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
-- Include Table 4 (reproduced from Yin et al. [4]) to illustrate the hypothesis templates:
+- Yin et al. [10] show that NLI can classify text into any label by turning the label into a natural language hypothesis — "this text is about [label]" — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+- Include Table 4 (reproduced from Yin et al. [10]) to illustrate the hypothesis templates:
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
@@ -92,7 +92,7 @@ Claim: Zero-shot NLI can assign roles to text without task-specific training dat
 | emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
 | situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
 
-*Table 4 (reproduced from Yin et al. [4]): example hypotheses for three task types.*
+*Table 4 (reproduced from Yin et al. [10]): example hypotheses for three task types.*
 
 - This directly enables the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
@@ -133,7 +133,7 @@ Write your answers in the A fields.
 
 ---
 
-### Oates [1] — book chapters
+### Oates [8] — book chapters
 
 **Step 1 — Understand**
 
@@ -171,7 +171,7 @@ The vocabulary researchres use when writing about their methodology has not chan
 
 ---
 
-### Pilkington & Pretorius [2]
+### Pilkington & Pretorius [9]
 
 Sections: Introduction — Ontologies and Ontology Engineering — A Conceptual Model (Section 3) — Concluding Remarks
 
@@ -205,7 +205,7 @@ A: Pilikington's ontology was designed for planning research, not for reading co
 
 ---
 
-### Jain et al. [3]
+### Jain et al. [4]
 
 Sections: Introduction — Related Work — Document-Level IE (Section 3) — Model (Section 4) — Evaluation — Conclusion
 
@@ -244,7 +244,7 @@ A: proto2 classifies individual sentences, which has the same weakness Jain et a
 
 ---
 
-### Yin et al. [4]
+### Yin et al. [10]
 
 Sections: Introduction — Related Work — Benchmark the dataset (Section 3) — Benchmark the evaluation (Section 4) — An entailment model for 0SHOT-TC (Section 5) — Experiments (Section 6) — Summary
 

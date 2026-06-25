@@ -69,13 +69,13 @@ A: When people read papers, they often identify the technical method, task, data
 
 > Key fact from your literature review (Jain et al.): a supervised approach required 438 annotated papers and 4 PhD-level annotators. Your project has no annotated corpus. Yin et al. show that NLI can classify without task-specific training. Connect these two facts.
 
-A: Jain et al. [3] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [4] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
+A: Jain et al. [4] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [10] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
 **Q9:** Why did you choose these four roles — TechnicalMethod, Task, Dataset, EvaluationMetric?
 
 > Two independent sources agree on these four types: (1) the ontology from Oates + Pilkington & Pretorius (your literature review section 2), and (2) Jain et al. who independently chose Dataset, Metric, Task, Method. Mention both.
 
-A: Two independent sources agree on the same four types. First, the ontology from Oates [1] and Pilkington & Pretorius [2] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [3] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
+A: Two independent sources agree on the same four types. First, the ontology from Oates [8] and Pilkington & Pretorius [9] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [4] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
 
 **Q10:** Why is "Design" (research design) out of scope?
 
@@ -284,10 +284,10 @@ Marking criteria:
 
 ## References
 
-[1] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+[4] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
 
-[2] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+[8] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
-[3] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
+[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
 
-[4] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
+[10] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
