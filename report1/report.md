@@ -66,6 +66,8 @@ Consider "Attention Is All You Need" [D6], one of the most cited papers in machi
 | Evaluation dataset | WMT datasets |
 | Evaluation metric | BLEU score |
 
+Table 1: Role-based methodology profile for "Attention Is All You Need" [D6].
+
 A reader needing this summary would currently have to read through the paper and construct it themselves.
 
 ### 1. Topic labels and role profiles
@@ -175,7 +177,7 @@ Yin et al. [10] show that NLI can classify text into many possible labels by tur
 | emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
 | situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
 
-*Table 1 (reproduced from Yin et al. [10]): example hypotheses for three task types.*
+*Table 2 (reproduced from Yin et al. [10]): example hypotheses for three task types.*
 
 This provides a possible way to support the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
@@ -186,7 +188,7 @@ This provides a possible way to support the core step in this project: classifyi
 | Dataset | dataset |
 | EvaluationMetric | evaluation_metric |
 
-*Table 2: hypothesis set used in this project (short label format, selected by hypothesis set comparison).*
+*Table 3: hypothesis set used in this project (short label format, selected by hypothesis set comparison).*
 
 For TechnicalMethod, a longer hypothesis was also tested: "This text describes a technique, algorithm, system, or architecture used or proposed in the research." The hypothesis set comparison investigates whether this verbose form can extract TechnicalMethod more accurately than the short label on scientific text.
 
@@ -255,7 +257,7 @@ The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Data
 }
 ```
 
-Figure 4: Example output of the system (proto2 prototype).
+Figure 3: Example output of the system (proto2 prototype).
 
 The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
 
@@ -285,7 +287,7 @@ The work plan is shown visually in Appendix A as a Gantt chart. The main remaini
 | After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
 | Final stage | Testing, analysis, video, final writing | Final submission |
 
-Table 3: Work plan summary.
+Table 4: Work plan summary.
 
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
@@ -305,7 +307,7 @@ If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_fact
 
 For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
 
-The gold labels for the three test papers are shown in Table 4.
+The gold labels for the three test papers are shown in Table 5.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -313,7 +315,7 @@ The gold labels for the three test papers are shown in Table 4.
 | BERT | BERT | GLUE / SQuAD | BooksCorpus / Wikipedia | accuracy / F1 |
 | AlexNet | AlexNet | image classification | ImageNet | top-1 / top-5 error |
 
-Table 4: Gold labels — 3 papers × 4 roles.
+Table 5: Gold labels — 3 papers × 4 roles.
 
 Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.
 
@@ -364,7 +366,7 @@ All other body sections are included: Abstract, Introduction, Method/Architectur
 
 ### 2. Demonstration
 
-The prototype was tested on six papers. Table 5 shows the number of accepted sentences per role.
+The prototype was tested on six papers. Table 6 shows the number of accepted sentences per role.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Notes |
 |---|---|---|---|---|---|
@@ -375,7 +377,7 @@ The prototype was tested on six papers. Table 5 shows the number of accepted sen
 | MapReduce | 151 | 24 | 3 | 5 | short: TM heavy, weak DS/EM |
 | Google Search | 69 | 21 | 8 | 29 | short: no standard benchmark |
 
-Table 5: Accepted sentences per role for six papers.
+Table 6: Accepted sentences per role for six papers.
 
 Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
 
@@ -390,7 +392,7 @@ The choice of hypothesis text has a large effect on classification. Four hypothe
 | verbose_v2 | 2/4 | 63 | 11 | 19 | 165 |
 | verbose_v3 | 2/4 | 131 | 56 | 60 | 11 |
 
-Table 6: Hypothesis set comparison on the BERT paper (258 sentences).
+Table 7: Hypothesis set comparison on the BERT paper (258 sentences).
 
 Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.
 
@@ -404,7 +406,7 @@ This approach seems appropriate for a prototype because the key question at this
 
 #### 3.2 Results
 
-Gold terms used (based on the planned labels in Chapter 3, Table 4, refined after running the pipeline):
+Gold terms used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -412,7 +414,7 @@ Gold terms used (based on the planned labels in Chapter 3, Table 4, refined afte
 | BERT | "BERT" | "GLUE" | "BooksCorpus" | "F1" |
 | AlexNet | "convolutional" | "object recognition" | "ImageNet" | "top-5" |
 
-Table 7: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).
+Table 8: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).
 
 Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
@@ -422,7 +424,7 @@ Result (○ = gold label found in any accepted sentence, ✗ = not found):
 | BERT | ○ | ○ | ○ | ○ |
 | AlexNet | ○ | ○ | ○ | ○ |
 
-Table 8: Gold label evaluation results.
+Table 9: Gold label evaluation results.
 
 #### 3.3 Analysis
 
