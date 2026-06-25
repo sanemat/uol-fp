@@ -6,176 +6,101 @@ Stage directions: `▶ run` = click Run on that cell now. `(pre-run)` = already 
 
 ---
 
-## [0:00–0:35] Introduction & Motivation
+## [0:00–0:20] Introduction & Motivation
 
 *[Camera only — no slides]*
 
-"In this video I'll demonstrate a prototype that automatically extracts
-research methodology from computing papers.
-
-When you read a research paper, it can be hundreds of sentences long.
-But you usually want to know just four things:
-what method did they use, what task did they solve,
-what data did they train on, and how did they measure results.
-
-Finding this manually takes time, and it doesn't scale well
-when you have many papers to read.
-This prototype is designed to automate that process."
+"This prototype automatically extracts research methodology from computing papers —
+what method, what task, what data, and how results were measured.
+Finding this manually takes time, so this prototype is designed to automate it."
 
 ---
 
-## [0:35–0:45] Show the input — BERT PDF
+## [0:20–0:30] Show the input — BERT PDF
 
 *[Open BERT PDF on screen]*
 
-"The input is a standard research paper PDF.
-This is the BERT paper by Devlin et al., published in 2019."
+"The input is the BERT paper by Devlin et al., 2019."
 
 ---
 
-## [0:45–1:00] Show the XML
+## [0:30–0:40] Show the XML
 
 *[Open BERT XML in editor or file viewer]*
 
-"First I convert the PDF to TEI XML using a tool called GROBID,
-which runs locally.
-The XML preserves the document structure — sections, headings, paragraphs —
-in a format the pipeline can read."
+"GROBID converts the PDF to TEI XML locally, preserving section structure."
 
 ---
 
-## [1:00–2:45] Colab Demo
+## [0:40–2:30] Colab Demo
 
 *[Switch to Google Colab — 2pipeline.ipynb]*
 
 ---
 
-### [1:00–1:10] Setup
+### [0:40–0:50] Setup
 
-*[Scroll to Setup section — cells already executed (pre-run)]*
+*[Scroll to Setup and Model Setup sections — all pre-run]*
 
-`(pre-run)` Python version check → pip install transformers torch spacy → imports → Data Models
+`(pre-run)` Python check → pip install → imports → Data Models → spacy + classifier load
 
-"The notebook starts with setup — installing libraries and defining data models.
-I've already run these to save time.
-You can see 'Setup complete' and 'Models ready' in the output."
+"Setup and model loading are pre-run. The NLI model is about 568 megabytes."
 
 ---
 
-### [1:10–1:20] Model load
-
-*[Scroll to Model Setup cell — already executed (pre-run)]*
-
-`(pre-run)` spacy load + classifier pipeline load → "Models ready."
-
-"The NLI model is also pre-loaded.
-It's about 568 megabytes and runs on the free Colab GPU."
-
----
-
-### [1:20–1:40] Load XML
+### [0:50–1:10] Load XML
 
 *[Scroll to Step 0 cell]*
 
-`(pre-run)` Step 0 — upload dialog appears → select BERT XML → output shows section list
+`(pre-run)` Step 0 — XML uploaded → section list printed
 
-"Now I upload the BERT XML.
-The notebook parses all body sections and skips References,
-Acknowledgements, and Related Work automatically.
-
-The design decision here is to include all other sections —
-rather than filtering by keyword.
-An earlier version that filtered by keyword missed the Training Data section."
-
-*[Wait for output — section list printed]*
-
-"You can see twelve sections loaded —
-Abstract, Introduction, Conclusion, and so on."
+"The XML is uploaded here. The pipeline skips References, Acknowledgements, and Related Work,
+and loads all other body sections — twelve sections for the BERT paper."
 
 ---
 
-### [1:40–1:50] Select sections
-
-*[Step 0b cell]*
-
-`▶ run` Step 0b — target_sections = sections → prints section list again
-
-"This cell confirms which sections go into the pipeline.
-All loaded sections are used."
-
----
-
-### [1:50–2:05] Sentence splitting
+### [1:10–1:20] Sentence splitting
 
 *[Step 0c cell]*
 
-`▶ run` Step 0c — sentence splitting → "Total sentences: 258" + first 5 lines
+`▶ run` Step 0c — "Total sentences: 258"
 
-"The text is cleaned first — inline citation markers like [13] are removed —
-then split into sentences using spaCy.
-That gives us 258 valid sentences ready for classification."
+"After cleaning citation markers and splitting with spaCy, we have 258 valid sentences."
 
 ---
 
-### [2:05–2:20] Classification
+### [1:20–2:10] Classification
 
 *[## Step 2 — Classify Sentences cell]*
 
-`▶ run` Step 2 — classification starts, first few lines print
+`▶ run` Step 2 — first few lines print
 
-"Now the model classifies each sentence using zero-shot NLI.
-Instead of training on labeled examples,
-the model answers a question for each sentence:
-does this sentence describe a technical method? A dataset? And so on.
-This avoids the need for task-specific labeled training data."
+"Zero-shot NLI classifies each sentence by role — no labeled training data needed.
+Classification takes a few minutes, so here is the pre-run output."
 
-*[Scroll down to ## Step 2 — Classify Sentences (Pre-run output) cell]*
+*[Scroll down to ## Step 2 — Classify Sentences (Pre-run output) cell — do not scroll through it]*
 
-"Classification takes a few minutes on 258 sentences,
-so I have the completed output here from a previous run."
+*[Scroll past it to ## Step 2 — Results Summary cell]*
 
-*[Scroll through a few lines of pre-run output]*
+`▶ run` Results Summary
 
-"Each line shows the section, the sentence, the predicted label, and the score.
-A checkmark means the score is at or above 0.5 and the sentence is accepted.
-The labels are short strings — 'technical method', 'task', 'dataset', 'evaluation metric' —
-and the model scores each sentence against all four."
+"Here is the summary. Each role, the count of accepted sentences,
+and one example containing the expected term.
+All four roles appear in the output for the BERT paper."
 
 ---
 
-### [2:20–2:30] JSON output
+## [2:10–2:40] Results
 
-*[Scroll to final JSON in pre-run output]*
+*[Stay in Colab]*
 
-"Here is the final output.
-TechnicalMethod contains sentences about BERT itself.
-Task contains sentences about the GLUE benchmark.
-Dataset contains sentences about BooksCorpus.
-EvaluationMetric contains sentences mentioning F1 score.
-All four gold labels appear in the output."
+"I ran this on six papers. For BERT, AlexNet, and ResNet, all four gold labels appeared in the output.
+For systems papers like MapReduce and Google Search, TechnicalMethod dominated —
+over 150 sentences in some cases — while Dataset and EvaluationMetric had almost none."
 
 ---
 
-## [2:30–2:45] Results
-
-*[Stay in Colab or show results summary cell]*
-
-"I ran the pipeline on six papers in total.
-For three of them — BERT, AlexNet, and ResNet —
-I checked one gold label per role and the pipeline found all four in the output.
-
-For systems papers like MapReduce and Google Search,
-the output looked different.
-TechnicalMethod had over 150 sentences in some cases,
-while Dataset and EvaluationMetric had almost none.
-This is likely because systems papers describe the system throughout,
-and they don't follow the standard ML benchmark structure with a clear dataset and metric.
-
-So the approach appears to work better for ML papers than for systems papers at this stage."
-
----
-
-## [2:45–3:00] Summary
+## [2:40–3:00] Summary
 
 *[Camera]*
 
@@ -188,7 +113,7 @@ Thank you."
 
 ## Notes for recording
 
-- Pre-run before recording: Python check, pip install, imports, Data Models, Model Setup
-- Pre-run Step 2 (classification) and keep output visible below the live cell
-- Upload BERT XML before starting — avoids the file dialog on camera
+- Pre-run before recording: Python check, pip install, imports, Data Models, Model Setup, Step 0 (XML upload)
+- Pre-run Step 2 (Pre-run output cell) — do not need to scroll through it on camera
+- Pre-run Results Summary cell so output is ready
 - Keep browser zoom at 100% so output is readable
