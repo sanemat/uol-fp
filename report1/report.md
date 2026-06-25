@@ -87,7 +87,7 @@ The pipeline works in three stages. First, a PDF is converted to TEI XML by GROB
 
 Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [12] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
 
-Research design (e.g. experiment vs survey) and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
+Research design (e.g. experiment vs survey) [5] and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
 
 ### 3. Target users
 
@@ -140,7 +140,7 @@ Both works are designed for human use. Neither provides a system to extract meth
 
 ### 2. Closest Prior Work
 
-Systems that extract methodology-like entities from papers exist, but the closest supervised approaches require labeled training data that this project does not have.
+Systems that extract methodology-like entities from papers exist [2, 3], but the closest supervised approaches require labeled training data that this project does not have.
 
 Jain et al. [4] extract four entity types: Dataset, Metric, Task, and Method.
 
@@ -156,6 +156,8 @@ These four types closely match the four roles in this project. This suggests tha
 Jain et al. [4] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [4] — relations may span sections, not just sentences.
 
 But Jain et al. [4] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [4] approach is difficult to adopt directly.
+
+Ma et al. [7] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
@@ -230,7 +232,7 @@ Research design (e.g. experiment vs. survey) is subjective — two readers can a
 
 The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer [D6], BERT [D3], AlexNet [D5], ResNet [D4], MapReduce [D2], Google Search [D1]). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
-A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
+A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules [1]. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
 
 These choices fit the user need because the system is not intended to replace expert reading. It is intended to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.
 
