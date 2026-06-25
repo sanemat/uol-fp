@@ -77,7 +77,7 @@ It's about 568 megabytes and runs on the free Colab GPU."
 
 *[Scroll to Step 0 cell]*
 
-`▶ run` Step 0 — upload dialog appears → select BERT XML → output shows section list
+`(pre-run)` Step 0 — upload dialog appears → select BERT XML → output shows section list
 
 "Now I upload the BERT XML.
 The notebook parses all body sections and skips References,
@@ -119,7 +119,7 @@ That gives us 258 valid sentences ready for classification."
 
 ### [2:05–2:20] Classification
 
-*[Step 2 cell]*
+*[## Step 2 — Classify Sentences cell]*
 
 `▶ run` Step 2 — classification starts, first few lines print
 
@@ -129,12 +129,12 @@ the model answers a question for each sentence:
 does this sentence describe a technical method? A dataset? And so on.
 This avoids the need for task-specific labeled training data."
 
-*[After ~5 lines print, scroll down to pre-run output cell below]*
+*[Scroll down to ## Step 2 — Classify Sentences (Pre-run output) cell]*
 
 "Classification takes a few minutes on 258 sentences,
 so I have the completed output here from a previous run."
 
-*[Show pre-run output — scroll through a few lines]*
+*[Scroll through a few lines of pre-run output]*
 
 "Each line shows the section, the sentence, the predicted label, and the score.
 A checkmark means the score is at or above 0.5 and the sentence is accepted.
