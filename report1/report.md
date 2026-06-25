@@ -327,23 +327,21 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 ## Chapter 4: Feature Prototype
 
-### 1. Overview
-
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
 Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).
 
-### 2. Implementation
+### 1. Implementation
 
-#### 2.1 Pipeline
+#### 1.1 Pipeline
 
 The pipeline follows the design described in Chapter 3, Section 3. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
 
-#### 2.2 Model
+#### 1.2 Model
 
 The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.
 
-#### 2.3 Preprocessing
+#### 1.3 Preprocessing
 
 The pipeline applies two preprocessing steps before classification.
 
@@ -353,7 +351,7 @@ First, `pre_clean()` removes inline citation markers such as `[13]` or `[4, 27]`
 
 Second, `is_valid()` drops sentences that are shorter than 30 characters or contain no word of three or more letters. This removes bullet characters, lone numbers, and citation stubs that pass through sentence splitting but carry no information. After these two steps, the Transformer paper produced 183 valid sentences for classification.
 
-#### 2.4 Section Filtering
+#### 1.4 Section Filtering
 
 References, Acknowledgements, and Related Work are excluded.
 
@@ -362,7 +360,7 @@ References, Acknowledgements, and Related Work are excluded.
 
 All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version used only sections whose heading matched keywords such as "experiment" or "result". The `Training Data` section in the Transformer paper has no such keyword and was missed. Switching to all body sections improved Dataset recall significantly.
 
-### 3. Demonstration
+### 2. Demonstration
 
 The prototype was tested on six papers. Table 5 shows the number of accepted sentences per role.
 
@@ -379,7 +377,7 @@ Table 5: Accepted sentences per role for six papers.
 
 Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
 
-#### 3.1 Hypothesis Set Comparison
+#### 2.1 Hypothesis Set Comparison
 
 The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.
 
@@ -394,15 +392,15 @@ Table 6: Hypothesis set comparison on the BERT paper (258 sentences).
 
 Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.
 
-### 4. Evaluation
+### 3. Evaluation
 
-#### 4.1 Method
+#### 3.1 Method
 
 No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
 
 This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
 
-#### 4.2 Results
+#### 3.2 Results
 
 Gold terms used (based on the planned labels in Chapter 3, Table 4, refined after running the pipeline):
 
@@ -424,13 +422,13 @@ Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
 Table 8: Gold label evaluation results.
 
-#### 4.3 Analysis
+#### 3.3 Analysis
 
 BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).
 
 The Transformer scored ✗ on Task and Dataset, but this appears to be caused by the verbose_v1 hypothesis set, not by a failure to find the information in the paper. TechnicalMethod and Dataset tend to be the easier roles because they appear in dedicated sections with explicit mentions. EvaluationMetric is found correctly but in small quantities (4–13 sentences), as metric names appear in few places. Task appears to be the most difficult role: it is often stated implicitly and produced the fewest sentences among the papers tested. Systems papers (MapReduce, PageRank) produced empty or weak Dataset and EvaluationMetric output, possibly because they do not follow the standard ML benchmark structure.
 
-### 5. Limitations
+### 4. Limitations
 
 Four types of noise were observed.
 
@@ -442,7 +440,7 @@ The third type is GROBID artefacts. Author contribution text can appear in the G
 
 The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences and the Transformer produced 160 EvaluationMetric sentences, because there is no upper limit on accepted sentences.
 
-### 6. Improvements for the Next Iteration
+### 5. Improvements for the Next Iteration
 
 Three improvements are planned.
 
@@ -452,7 +450,7 @@ The second is Top-N selection by score × section weight. Instead of keeping all
 
 The third is LLM term extraction. The current output is full sentences, but the target profile contains short terms (e.g. "Transformer" rather than "We propose a new simple network architecture, the Transformer..."). The gold label evaluation suggests the correct term is present in the output sentence; the next step is extracting it with a prompt such as "What is the TechnicalMethod named in this sentence?"
 
-### 7. Technical Challenge
+### 6. Technical Challenge
 
 Zero-shot NLI classification on academic text is technically challenging for three reasons.
 
