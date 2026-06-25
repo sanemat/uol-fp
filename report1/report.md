@@ -53,12 +53,6 @@ h3 {
 }
 </style>
 
-# Preliminary Report: Extracting Research Methodology from Computing Papers
-
-**Template:** 12.1 — Identifying research methodologies used in computing research  
-
----
-
 ## Chapter 1: Introduction
 
 When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. Research methodology in computing papers has a recognisable structure: the technical method used, the task being solved, the dataset evaluated on, and the evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.
@@ -82,7 +76,7 @@ The distinction matters in practice. A student reviewing papers on text classifi
 
 ### Project goal and approach
 
-This project addresses Template 12.1: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:
+This project addresses **Template 12.1**: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:
 
 - **TechnicalMethod** — the method, algorithm, or architecture the authors used (e.g. Transformer)
 - **Task** — the problem the research addresses (e.g. machine translation)
@@ -225,13 +219,7 @@ The system extracts research methodology from computing papers. An input is a PD
 
 ---
 
-### 2. Template
-
-Template 12.1: Identifying research methodologies used in computing research. I extract research methodologies based on 4 roles.
-
----
-
-### 3. Domain and Users
+### 2. Domain and Users
 
 The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.
 
@@ -241,7 +229,7 @@ Secondary users may include early-stage researchers or supervisors who want a qu
 
 ---
 
-### 4. Design Justification
+### 3. Design Justification
 
 Jain et al. [3] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [4] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
@@ -257,7 +245,7 @@ These choices fit the user need because the system is not intended to replace ex
 
 ---
 
-### 5. Overall Structure
+### 4. Overall Structure
 
 The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → usage NLI (used by this paper / mentioned as prior work) → top-k sentences per role → MethodologyProfile output as JSON.
 
@@ -282,7 +270,7 @@ GROBID runs locally via Docker because it is a Java server process (~1 GB). The 
 
 ---
 
-### 6. Key Technologies and Methods
+### 5. Key Technologies and Methods
 
 GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
@@ -294,7 +282,7 @@ Four hypothesis sets (short and three verbose variants) were tested on the BERT 
 
 ---
 
-### 7. Work Plan
+### 6. Work Plan
 
 The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
 
@@ -320,7 +308,7 @@ If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_fact
 
 ---
 
-### 8. Test and Evaluation
+### 7. Test and Evaluation
 
 For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
 
@@ -366,17 +354,17 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
-The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Zero-shot NLI avoids the annotation requirement (see Chapter 3, Section 4 for justification), making it the central design choice to validate.
+The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Zero-shot NLI avoids the annotation requirement (see Chapter 3, Section 3 for justification), making it the central design choice to validate.
 
 ### 2. Implementation
 
 #### 2.1 Pipeline
 
-The pipeline follows the design described in Chapter 3, Section 5. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
+The pipeline follows the design described in Chapter 3, Section 4. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
 
 #### 2.2 Model
 
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 6.
+The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 5.
 
 #### 2.3 Preprocessing
 
