@@ -83,7 +83,7 @@ This project addresses **Template 12.1**: Identifying research methodologies use
 - **Dataset** — the data used for training or evaluation (e.g. WMT datasets)
 - **EvaluationMetric** — the metric used to assess results (e.g. BLEU score)
 
-The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID, which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
+The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID [6], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
 
 Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [12] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
 
@@ -263,7 +263,7 @@ GROBID runs locally via Docker because it is a Java server process (~1 GB). The 
 
 ### 4. Key Technologies and Methods
 
-GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
+GROBID [6] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
 The prototype uses `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.
 
