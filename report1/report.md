@@ -210,13 +210,9 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ## Chapter 3: Design
 
-### 1. Project Overview
-
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
----
-
-### 2. Domain and Users
+### 1. Domain and Users
 
 The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.
 
@@ -224,7 +220,7 @@ The primary users are computing students doing literature reviews (see Chapter 1
 
 ---
 
-### 3. Design Justification
+### 2. Design Justification
 
 Jain et al. [3] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [4] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
@@ -240,7 +236,7 @@ These choices fit the user need because the system is not intended to replace ex
 
 ---
 
-### 4. Overall Structure
+### 3. Overall Structure
 
 The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → usage NLI (used by this paper / mentioned as prior work) → top-k sentences per role → MethodologyProfile output as JSON.
 
@@ -265,7 +261,7 @@ GROBID runs locally via Docker because it is a Java server process (~1 GB). The 
 
 ---
 
-### 5. Key Technologies and Methods
+### 4. Key Technologies and Methods
 
 GROBID converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
@@ -277,7 +273,7 @@ Four hypothesis sets (short and three verbose variants) were tested on the BERT 
 
 ---
 
-### 6. Work Plan
+### 5. Work Plan
 
 The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
 
@@ -303,7 +299,7 @@ If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_fact
 
 ---
 
-### 7. Test and Evaluation
+### 6. Test and Evaluation
 
 For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
 
@@ -349,17 +345,17 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
-Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 3 for justification).
+Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).
 
 ### 2. Implementation
 
 #### 2.1 Pipeline
 
-The pipeline follows the design described in Chapter 3, Section 4. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
+The pipeline follows the design described in Chapter 3, Section 3. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
 
 #### 2.2 Model
 
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 5.
+The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.
 
 #### 2.3 Preprocessing
 
