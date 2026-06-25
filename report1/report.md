@@ -68,13 +68,13 @@ Consider "Attention Is All You Need" (Vaswani et al., 2017), one of the most cit
 
 A reader needing this summary would currently have to read through the paper and construct it themselves.
 
-### Topic labels and role profiles
+### 1. Topic labels and role profiles
 
 Topic classifiers and search tools help researchers find papers about a subject. But a topic label answers "what is this paper about?", not "how was this research conducted?" Two papers on the same topic can use different methods, train on different datasets, and report different metrics. A role-based profile answers the second question. It does not replace reading; it supports the first pass through a set of papers — before a researcher decides which ones to read in depth.
 
 The distinction matters in practice. A student reviewing papers on text classification needs to know not only which papers address that topic, but also which ones use transformer models versus older approaches, which datasets are most commonly used, and which metrics are reported. Without a structured profile, this comparison requires reading each paper.
 
-### Project goal and approach
+### 2. Project goal and approach
 
 This project addresses **Template 12.1**: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:
 
@@ -89,13 +89,13 @@ Zero-shot classification was chosen because no methodology-annotated corpus exis
 
 Research design (e.g. experiment vs survey) and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
 
-### Target users
+### 3. Target users
 
 The primary users are computing students who need to survey multiple papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly, before reading a paper in full. The system is intended to support this first pass, not to replace reading.
 
 The output is designed to be inspectable. Each role field contains actual sentences from the paper, allowing the user to judge whether a classified sentence is genuinely relevant to the paper's methodology. At this prototype stage, the output is full sentences rather than short extracted terms. This limitation is discussed in Chapter 4.
 
-### Report structure
+### 4. Report structure
 
 Chapter 2 reviews three areas of related work: how research methodology in computing is defined and structured; how methodology-related information can be extracted from scientific papers; and how zero-shot classification can assign labels to text without labeled training data. The chapter identifies a gap that this project addresses.
 
@@ -107,9 +107,9 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ## Chapter 2: Literature Review
 
-### Introduction
+### 1. Introduction
 
-"Attention Is All You Need" is a very famous AI paper. But the title does not tell us how it works.
+Chapter 1 showed a four-role profile for "Attention Is All You Need". Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [1].
 
 <pre>
 Methodology:
@@ -123,10 +123,9 @@ Methodology:
 
 Figure 1: Research Methodology from "Attention Is All You Need".
 
-Extracting research methodology from computing papers automatically is useful, but it remains challenging. When people read papers, they often identify the technical method, task, dataset, and evaluation metric by themselves. This process is slow and manual, especially when they must review many papers.
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
-### Defining Research Methodology
+### 2. Defining Research Methodology
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
@@ -141,7 +140,7 @@ Oates [1] gives concept names. Pilkington & Pretorius [2] give formal relationsh
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.
 
 
-### Closest Prior Work
+### 3. Closest Prior Work
 
 Systems that extract methodology-like entities from papers exist, but the closest supervised approaches require labeled training data that this project does not have.
 
@@ -162,7 +161,7 @@ But Jain et al. [3] required 438 annotated papers and 4 expert PhD-level annotat
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
-### Zero-shot Classification
+### 4. Zero-shot Classification
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
@@ -197,7 +196,7 @@ This project accepts the risk and tests it: the hypothesis set comparison (short
 
 Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
-### Synthesis
+### 5. Synthesis
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
 
@@ -215,7 +214,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ### 1. Project Overview
 
-The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example). Without this system, a researcher has to categorize papers by themselves manually. It is very slow.
+The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
 ---
 
@@ -223,9 +222,7 @@ The system extracts research methodology from computing papers. An input is a PD
 
 The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.
 
-The primary users are computing students who need to review many papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly before reading the paper in detail.
-
-Secondary users may include early-stage researchers or supervisors who want a quick overview of a paper. However, the project is designed mainly for students, so the output should be simple, inspectable, and based on sentences from the original paper rather than hidden model decisions.
+The primary users are computing students doing literature reviews (see Chapter 1, "Target users"). Secondary users may include early-stage researchers or supervisors who want a quick overview of a paper. The output is designed mainly for students: simple, inspectable, and based on sentences from the original paper rather than hidden model decisions.
 
 ---
 
@@ -354,7 +351,7 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
-The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Zero-shot NLI avoids the annotation requirement (see Chapter 3, Section 3 for justification), making it the central design choice to validate.
+Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 3 for justification).
 
 ### 2. Implementation
 
@@ -402,7 +399,7 @@ Table 5: Accepted sentences per role for six papers.
 
 Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
 
-#### Hypothesis Set Comparison
+#### 3.1 Hypothesis Set Comparison
 
 The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.
 
