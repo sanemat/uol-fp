@@ -44,7 +44,7 @@ Finding this manually takes time, so this prototype is designed to automate it."
 
 `(pre-run)` Python check → pip install → imports → Data Models → spacy + classifier load
 
-"Setup and model loading are pre-run. The NLI model is about 568 megabytes."
+"Setup and model loading are pre-run."
 
 ---
 
@@ -55,7 +55,7 @@ Finding this manually takes time, so this prototype is designed to automate it."
 `(pre-run)` Step 0 — XML uploaded → section list printed
 
 "The XML is uploaded here. The pipeline skips References, Acknowledgements, and Related Work,
-and loads all other body sections — twelve sections for the BERT paper."
+and loads all other body sections — twenty three sections for the BERT paper."
 
 ---
 
