@@ -96,7 +96,7 @@ A: I exclude References, Acknowledgements, and Related Work.
 
 ## 3. Demonstration
 
-**Q7:** What does the system output for "Attention Is All You Need"? Describe the result (sentence counts and whether gold terms were found). Note which hypothesis set was used and what effect it had.
+**Q7:** What does the system output for "Attention Is All You Need"? Describe the result (sentence counts and whether gold labels were found). Note which hypothesis set was used and what effect it had.
 
 > Run result (proto2/result/2pipeline-attention.ipynb — used **verbose_v1** hypothesis set):
 > - TechnicalMethod: **14 sentences** — ○ contains "Transformer" (e.g. "We propose a new simple network architecture, the Transformer...")
@@ -108,7 +108,7 @@ A: I exclude References, Acknowledgements, and Related Work.
 > This matches the hypothesis set comparison result in the Reference table below.
 > The short-label run (BERT notebook) gives a much more balanced distribution.
 
-A: The system classified 183 sentences from the Transformer paper. Using the verbose_v1 hypothesis set, TechnicalMethod received 14 sentences and EvaluationMetric received 160 sentences. Task and Dataset received 0 sentences each. The gold term "Transformer" was found in the TechnicalMethod output (e.g. "We propose a new simple network architecture, the Transformer...") and "BLEU" was found in the EvaluationMetric output (e.g. "Our model achieves 28.4 BLEU on the WMT 2014..."). However, Task and Dataset produced no output because the verbose_v1 EvaluationMetric hypothesis was too broad and absorbed most sentences. This suggests that hypothesis choice can have a large effect on the output distribution.
+A: The system classified 183 sentences from the Transformer paper. Using the verbose_v1 hypothesis set, TechnicalMethod received 14 sentences and EvaluationMetric received 160 sentences. Task and Dataset received 0 sentences each. The gold label "Transformer" was found in the TechnicalMethod output (e.g. "We propose a new simple network architecture, the Transformer...") and "BLEU" was found in the EvaluationMetric output (e.g. "Our model achieves 28.4 BLEU on the WMT 2014..."). However, Task and Dataset produced no output because the verbose_v1 EvaluationMetric hypothesis was too broad and absorbed most sentences. This suggests that hypothesis choice can have a large effect on the output distribution.
 
 **Q8:** You tested the prototype on six papers. For each, briefly describe what worked and what did not.
 
@@ -125,7 +125,7 @@ A: The system classified 183 sentences from the Transformer paper. Using the ver
 >
 > Key patterns: Transformer (verbose_v1) shows severe EM bias — Task and Dataset are empty. ML papers (BERT, AlexNet, ResNet) produce balanced results with short labels. Systems papers (MapReduce, PageRank) have large TM counts (the whole system described in every section) and very few Dataset/EM sentences.
 
-A: The prototype was tested on six papers. ML papers (BERT, AlexNet, ResNet) produced balanced output across all four roles using short labels. BERT captured all four gold terms correctly. AlexNet and ResNet also captured Task, Dataset, and EvaluationMetric correctly; TechnicalMethod output did not contain "AlexNet" because the name was coined after the paper was published. The Transformer paper was run with verbose_v1 and showed extreme EvaluationMetric bias, leaving Task and Dataset empty. Systems papers (MapReduce, PageRank) produced very large TechnicalMethod counts (151 and 69 respectively), possibly because the system is described throughout the paper, and very few Dataset and EvaluationMetric sentences, possibly because these papers do not follow the standard ML benchmark structure.
+A: The prototype was tested on six papers. ML papers (BERT, AlexNet, ResNet) produced balanced output across all four roles using short labels. BERT captured all four gold labels correctly. AlexNet and ResNet also captured Task, Dataset, and EvaluationMetric correctly; TechnicalMethod output did not contain "AlexNet" because the name was coined after the paper was published. The Transformer paper was run with verbose_v1 and showed extreme EvaluationMetric bias, leaving Task and Dataset empty. Systems papers (MapReduce, PageRank) produced very large TechnicalMethod counts (151 and 69 respectively), possibly because the system is described throughout the paper, and very few Dataset and EvaluationMetric sentences, possibly because these papers do not follow the standard ML benchmark structure.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Notes |
 |---|---|---|---|---|---|
@@ -145,7 +145,7 @@ A: The prototype was tested on six papers. ML papers (BERT, AlexNet, ResNet) pro
 > **What the method is (step by step):**
 > 1. For each paper, manually identify the correct answer for each role. Example for Transformer: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT", EvaluationMetric = "BLEU".
 > 2. Run the pipeline on that paper. Collect all accepted sentences per role.
-> 3. For each role: check whether any accepted sentence contains the gold term (case-insensitive substring match). Mark ○ if found, ✗ if not.
+> 3. For each role: check whether any accepted sentence contains the gold label (case-insensitive substring match). Mark ○ if found, ✗ if not.
 > 4. Result: a 3-paper × 4-role table (12 data points).
 >
 > **Why this is appropriate:**
@@ -156,9 +156,9 @@ A: The prototype was tested on six papers. ML papers (BERT, AlexNet, ResNet) pro
 >
 > **Link to background work:** Jain et al. [3] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
 
-A: No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold term per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold term as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗. This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. Success is defined as ≥ 10 of 12 correct (consistent with design.md section 8).
+A: No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗. This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. Success is defined as ≥ 10 of 12 correct (consistent with design.md section 8).
 
-**Q10:** Fill in the gold label evaluation table. For each cell, write ○ (any accepted sentence contains the gold term) or × (not found).
+**Q10:** Fill in the gold label evaluation table. For each cell, write ○ (any accepted sentence contains the gold label) or × (not found).
 
 > Gold terms and run results (from proto2/result/):
 >
@@ -167,11 +167,14 @@ A: No annotated sentence-level dataset exists for this task, so standard precisi
 > | Transformer | "Transformer" | "machine translation" | "WMT" | "BLEU" |
 > | BERT | "BERT" | "GLUE" or "SQuAD" | "BooksCorpus" or "Wikipedia" | "F1" or "accuracy" |
 > | AlexNet (CNN) | note below | "object recognition" | "ImageNet" | "top-1" or "top-5" |
+> | ResNet | "residual" | "image recognition" | "ImageNet" | "top-1" |
+> | MapReduce | "MapReduce" | "distributed" | "TeraSort" | "seconds" |
+> | Google Search | "PageRank" | "web search" | "million pages" | "quality" |
 >
 > **AlexNet naming note:** The 2012 paper does not use the name "AlexNet" — that name was coined later.
 > Gold term for TM should be "convolutional" (or similar), not "AlexNet".
 >
-> Run results (○ = gold term found in any accepted sentence, ✗ = not found):
+> Run results (○ = gold label found in any accepted sentence, ✗ = not found):
 
 A:
 
@@ -182,7 +185,7 @@ A:
 | AlexNet | ✗ (if gold="AlexNet") | ○ | ○ | ○ |
 
 > Transformer ✗ for Task and Dataset: caused by verbose_v1 EvaluationMetric bias (Task=0 sentences, Dataset=0 sentences).
-> AlexNet TM ✗: paper does not use the word "AlexNet". Change gold term to "convolutional" → ○.
+> AlexNet TM ✗: paper does not use the word "AlexNet". Change gold label to "convolutional" → ○.
 > Write in your own words below what these results mean.
 
 **Q11:** What do the evaluation results show? Which roles are easy and which are hard?

@@ -91,15 +91,18 @@ This approach seems appropriate for a prototype because the key question at this
 
 ### 4.2 Results
 
-Gold terms used:
+Gold labels used:
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
 | Transformer | "Transformer" | "machine translation" | "WMT" | "BLEU" |
 | BERT | "BERT" | "GLUE" | "BooksCorpus" | "F1" |
 | AlexNet | "convolutional" | "object recognition" | "ImageNet" | "top-5" |
+| ResNet | "residual" | "image recognition" | "ImageNet" | "top-1" |
+| MapReduce | "MapReduce" | "distributed" | "TeraSort" | "seconds" |
+| Google Search | "PageRank" | "web search" | "million pages" | "quality" |
 
-Table 3: Gold labels — 3 papers × 4 roles.
+Table 3: Gold labels — 6 papers × 4 roles.
 
 Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
