@@ -28,7 +28,7 @@ A: The prototype takes a TEI XML file produced by GROBID from a computing resear
 >
 > Classification is different. It decides which sentences belong to which role. Without it, you have a list of 183 sentences (Transformer) or 258 sentences (BERT) with no meaning attached. The role assignment IS the output. If the model fails, the whole prototype fails.
 >
-> Also: zero-shot classification was the key design choice (no training data). If zero-shot NLI does not work, you would need a supervised model — which would require 438 annotated papers (Jain et al. [3]). So showing that zero-shot works is the proof that the approach is viable.
+> Also: zero-shot classification was the key design choice (no training data). If zero-shot NLI does not work, you would need a supervised model — which would require 438 annotated papers (Jain et al. [4]). So showing that zero-shot works is the proof that the approach is viable.
 
 A: The prototype uses zero-shot NLI classification to assign a role (label) to each sentence.
 
@@ -61,9 +61,9 @@ A: First, a computing paper is converted to TEI XML by GROBID. The pipeline then
 > - DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well.
 > - The cross-encoder architecture scores premise + hypothesis jointly, which gives more accurate entailment judgements than bi-encoders.
 >
-> Why zero-shot matters: no annotated dataset exists for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot avoids this requirement entirely.
+> Why zero-shot matters: no annotated dataset exists for this task. Supervised training would need hundreds of labeled papers (Jain et al. [4] used 438). Zero-shot avoids this requirement entirely.
 
-A: DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well. No annotated dataset was available for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot reduces this requirement.
+A: DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well. No annotated dataset was available for this task. Supervised training would need hundreds of labeled papers (Jain et al. [4] used 438). Zero-shot reduces this requirement.
 
 **Q5:** What preprocessing does the pipeline apply before classification?
 
@@ -154,9 +154,9 @@ A: The prototype was tested on six papers. ML papers (BERT, AlexNet, ResNet) pro
 > - It is a **recall-oriented** check: it tells you whether the correct information appears anywhere in the output. For a prototype, the key question is "does the system find the right information at all?" — not "is every output sentence correct?"
 > - Limitation: it does not measure precision (how much noise is in the output). That is a known limitation to discuss.
 >
-> **Link to background work:** Jain et al. [3] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
+> **Link to background work:** Jain et al. [4] (SciREX) evaluated role extraction by checking whether predicted spans match annotated spans per role — a similar "is the right entity found?" approach.
 
-A: No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗. This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. Success is defined as ≥ 10 of 12 correct (consistent with design.md section 8).
+A: No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗. This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [4] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. Success is defined as ≥ 10 of 12 correct (consistent with design.md section 8).
 
 **Q10:** Fill in the gold label evaluation table. For each cell, write ○ (any accepted sentence contains the gold label) or × (not found).
 
@@ -318,10 +318,10 @@ Finding: verbose hypotheses introduced strong label bias. Short labels gave the 
 
 ## References
 
-[1] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+[4] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
 
-[2] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+[8] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
-[3] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
+[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
 
-[4] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
+[10] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404

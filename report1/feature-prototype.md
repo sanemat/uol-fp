@@ -4,7 +4,7 @@
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
-The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Because no annotated training data exists for this task, supervised training is not feasible at this scale — Jain et al. [3] used 438 labeled papers. Zero-shot NLI avoids that requirement entirely, making it the central design choice to validate.
+The prototype uses zero-shot NLI classification to assign a role (label) to each sentence. Without this step, the pipeline produces only a list of sentences with no meaning attached. The role assignment is the output. If the model fails, the whole prototype fails. Because no annotated training data exists for this task, supervised training is not feasible at this scale — Jain et al. [4] used 438 labeled papers. Zero-shot NLI avoids that requirement entirely, making it the central design choice to validate.
 
 ## 2. Implementation
 
@@ -14,7 +14,7 @@ First, a computing paper is converted to TEI XML by GROBID. The pipeline then lo
 
 ### 2.2 Model
 
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well. No annotated dataset was available for this task. Supervised training would need hundreds of labeled papers (Jain et al. [3] used 438). Zero-shot reduces this requirement.
+The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab memory (568 MB) while still performing well. No annotated dataset was available for this task. Supervised training would need hundreds of labeled papers (Jain et al. [4] used 438). Zero-shot reduces this requirement.
 
 ### 2.3 Preprocessing
 
@@ -87,7 +87,7 @@ Verbose hypotheses introduced strong label bias. Short labels gave the best prob
 
 No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
 
-This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [3] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
+This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [4] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
 
 ### 4.2 Results
 
@@ -154,10 +154,10 @@ The third challenge is that the model may not distinguish between this paper's m
 
 ## References
 
-[1] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+[4] S. Jain, M. van Zuylen, H. Hajishirzi, and I. Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
 
-[2] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+[8] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
-[3] S. Jain, M. van Zuylen, H. Hajishirzi, and I. Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
+[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
 
-[4] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
+[10] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
