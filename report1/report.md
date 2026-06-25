@@ -57,7 +57,7 @@ h3 {
 
 When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. Research methodology in computing papers has a recognisable structure: the technical method used, the task being solved, the dataset evaluated on, and the evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.
 
-Consider "Attention Is All You Need" (Vaswani et al., 2017), one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarised as follows:
+Consider "Attention Is All You Need" [D6], one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarised as follows:
 
 | Methodology role | Component |
 |---|---|
@@ -107,7 +107,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ## Chapter 2: Literature Review
 
-Chapter 1 showed a four-role profile for "Attention Is All You Need". Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [8].
+Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [8].
 
 <pre>
 Methodology:
@@ -119,7 +119,7 @@ Methodology:
     EvaluationMetric: BLEU score
 </pre>
 
-Figure 1: Research Methodology from "Attention Is All You Need".
+Figure 1: Research Methodology from "Attention Is All You Need" [D6].
 
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
@@ -149,7 +149,7 @@ Metric: BLEU score
 Task: machine translation
 Method: Transformer
 
-Figure 2: Entity types from "Attention Is All You Need".
+Figure 2: Entity types from "Attention Is All You Need" [D6].
 
 These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.
 
@@ -228,7 +228,7 @@ Two independent sources agree on the same four types. First, the ontology from O
 
 Research design (e.g. experiment vs. survey) is subjective — two readers can assign different labels to the same paper. A philosophical worldview may not appear in the paper text at all. The four roles (TechnicalMethod, Task, Dataset, EvaluationMetric) appear as explicit phrases in the text and are easier to match automatically.
 
-The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
+The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer [D6], BERT [D3], AlexNet [D5], ResNet [D4], MapReduce [D2], Google Search [D1]). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
 A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
 
@@ -319,7 +319,7 @@ Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds rele
 
 The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
-Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce, Google Search) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.
+Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.
 
 If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.
 
@@ -434,7 +434,7 @@ Four types of noise were observed.
 
 The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. For example, "The feature-based approach, such as ELMo..." scored 0.87 as TechnicalMethod in the BERT paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.
 
-The second type is quoted or example text. Text that is quoted or used as an example in the paper body is classified as a real claim. For example, "you looked at a lot of pages from my Web site." from the Google Search paper was classified as Task.
+The second type is quoted or example text. Text that is quoted or used as an example in the paper body is classified as a real claim. For example, "you looked at a lot of pages from my Web site." from the Google Search paper [D1] was classified as Task.
 
 The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.
 
