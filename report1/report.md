@@ -85,7 +85,7 @@ This project addresses **Template 12.1**: Identifying research methodologies use
 
 The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID [6], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
 
-Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [12] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
+Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [10] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
 
 Research design (e.g. experiment vs survey) [5] and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
 
@@ -165,9 +165,9 @@ The right entity types are identified, but building a supervised system requires
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
-Yin et al. [12] define zero-shot text classification as assigning a label to text without any task-specific training examples.
+Yin et al. [10] define zero-shot text classification as assigning a label to text without any task-specific training examples.
 
-Yin et al. [12] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [12] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+Yin et al. [10] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [10] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
@@ -175,7 +175,7 @@ Yin et al. [12] show that NLI can classify text into many possible labels by tur
 | emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
 | situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
 
-*Table 1 (reproduced from Yin et al. [12]): example hypotheses for three task types.*
+*Table 1 (reproduced from Yin et al. [10]): example hypotheses for three task types.*
 
 This provides a possible way to support the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
@@ -204,7 +204,7 @@ Section 2 established the schema. Oates [8] and Pilkington & Pretorius [9] toget
 
 Section 3 showed that extraction of the same four types is possible. Jain et al. [4] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.
 
-Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [12] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
+Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [10] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
 Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
 
@@ -224,7 +224,7 @@ The primary users are computing students doing literature reviews (see Chapter 1
 
 ### 2. Design Justification
 
-Jain et al. [4] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [12] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
+Jain et al. [4] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [10] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
 Two independent sources agree on the same four types. First, the ontology from Oates [8] and Pilkington & Pretorius [9] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [4] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
 
@@ -484,11 +484,7 @@ The third challenge is authorship attribution. The sentence "The feature-based a
 
 [9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
 
-[10] Salatino, A.A., Thanapalasingam, T., Mannocci, A., Osborne, F. and Motta, E. 2020. The computer science ontology: a comprehensive automatically-generated taxonomy of research areas. *Data Intelligence*, 2(3), 1–20. https://doi.org/10.1162/dint_a_00055
-
-[11] Angelo Salatino, Francesco Osborne, and Enrico Motta. 2022. CSO Classifier 3.0: a scalable unsupervised method for classifying documents in terms of research topics. *International Journal on Digital Libraries* 23, 1 (March 2022), 91–110. https://doi.org/10.1007/s00799-021-00305-y
-
-[12] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
+[10] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
 
 ---
 

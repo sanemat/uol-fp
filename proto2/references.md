@@ -1,32 +1,24 @@
 ## References
 
-[1] Beltagy, I., Lo, K., and Cohan, A. 2019. SciBERT: A Pretrained Language Model for Scientific Text. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3615–3620. DOI: https://doi.org/10.18653/v1/D19-1371
+[1] Michael Färber, Alexander Albers, and Felix Schüber. 2021. Identifying Used Methods and Datasets in Scientific Publications. In *Proceedings of the Second Workshop on Scholarly Document Understanding (SDU@AAAI 2021)*. https://api.semanticscholar.org/CorpusID:232369268
 
-[2] Michael Färber, Alexander Albers, and Felix Schüber. 2021. Identifying Used Methods and Datasets in Scientific Publications. In *Proceedings of the Second Workshop on Scholarly Document Understanding (SDU@AAAI 2021)*. https://api.semanticscholar.org/CorpusID:232369268
+[2] Ghosh, M., Ganguly, D., Basuchowdhuri, P. and Naskar, S.K. 2023a. Enhancing AI research paper analysis: methodology component extraction using factored transformer-based sequence modeling. arXiv:2311.03401. Available at: https://arxiv.org/abs/2311.03401
 
-[3] Ghosh, M., Ganguly, D., Basuchowdhuri, P. and Naskar, S.K. 2023a. Enhancing AI research paper analysis: methodology component extraction using factored transformer-based sequence modeling. arXiv:2311.03401. Available at: https://arxiv.org/abs/2311.03401
+[3] Ghosh, M., Ganguly, D. and Naskar, S.K. 2023b. Extracting methodology components from AI research papers: a data-driven factored sequence labeling approach. In *Proceedings of the 32nd ACM International Conference on Information and Knowledge Management (CIKM 2023)*. DOI: https://doi.org/10.1145/3583780.3615258
 
-[4] Ghosh, M., Ganguly, D. and Naskar, S.K. 2023b. Extracting methodology components from AI research papers: a data-driven factored sequence labeling approach. In *Proceedings of the 32nd ACM International Conference on Information and Knowledge Management (CIKM 2023)*. DOI: https://doi.org/10.1145/3583780.3615258
+[4] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
 
-[5] Jain, S., van Zuylen, M., Hajishirzi, H., and Beltagy, I. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: https://doi.org/10.18653/v1/2020.acl-main.670
+[5] Kosztyán, Z.T. and Király, T. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence*, article 111039. DOI: https://doi.org/10.1016/j.engappai.2025.111039
 
-[6] Kosztyán, Z.T. and Király, T. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence*, article 111039. DOI: https://doi.org/10.1016/j.engappai.2025.111039
+[6] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In *Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009*. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. DOI: https://doi.org/10.1007/978-3-642-04346-8_62
 
-[7] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In *Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009*. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. DOI: https://doi.org/10.1007/978-3-642-04346-8_62
+[7] Ma, Y., Liu, J., Lu, W. and Cheng, Q. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management*, 60(3), article 103315. DOI: https://doi.org/10.1016/j.ipm.2023.103315
 
-[8] Ma, Y., Liu, J., Lu, W. and Cheng, Q. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management*, 60(3), article 103315. DOI: https://doi.org/10.1016/j.ipm.2023.103315
+[8] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
-[9] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. DOI: https://doi.org/10.5220/0005613100960107
 
-[10] Osborne, F. and Motta, E. 2015. Klink-2: integrating multiple web sources to generate semantic topic networks. In Gandon, F., Sabou, M., Sack, H., d'Amato, C., Cudré-Mauroux, P. and Zimmermann, A. (eds.) *The Semantic Web – ISWC 2015*. Cham: Springer International Publishing, 408–424. DOI: https://doi.org/10.1007/978-3-319-25007-6_24
-
-[11] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. DOI: https://doi.org/10.5220/0005613100960107
-
-[12] Salatino, A.A., Thanapalasingam, T., Mannocci, A., Osborne, F. and Motta, E. 2020. The computer science ontology: a comprehensive automatically-generated taxonomy of research areas. *Data Intelligence*, 2(3), 1–20. DOI: https://doi.org/10.1162/dint_a_00055
-
-[13] Angelo Salatino, Francesco Osborne, and Enrico Motta. 2022. CSO Classifier 3.0: a scalable unsupervised method for classifying documents in terms of research topics. *International Journal on Digital Libraries* 23, 1 (March 2022), 91–110. DOI: https://doi.org/10.1007/s00799-021-00305-y
-
-[14] Yin, W., Hay, J., and Roth, D. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
+[10] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. DOI: https://doi.org/10.18653/v1/D19-1404
 
 ---
 
