@@ -26,7 +26,7 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 
 ---
 
-## Key Inconsistency to Fix
+## Key Inconsistency to Fix (ONGOING)
 
 The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis set, which caused extreme EvaluationMetric bias (160/183 sentences → EvaluationMetric). This is why Transformer scored ✗ on Task and Dataset. The report itself says short labels work better, but Table 5 still shows verbose_v1 data for the Transformer row. Re-running with short labels could push the evaluation score from 10/12 to 12/12.
 
@@ -34,7 +34,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 
 ## Priority 1 — Must-do (blocks marks entirely)
 
-### A. Record the video (MP4, 3–5 min)
+### A. Record the video (MP4, 3–5 min) (DONE)
 
 - **Criteria:** 12
 - **Why:** Without the video, criterion 12 scores 0. It is a required submission item. No amount of report polish compensates.
