@@ -9,19 +9,19 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 
 | # | Criterion | Status | Notes |
 |---|---|---|---|
-| 1 | Clear, well-formatted, coherent | ⚠ | Ch.2 opens with "very famous AI paper" (informal); Figure 2 has no markup |
-| 2 | Knowledge of area | ⚠ | Only 4 references; GROBID and DeBERTa not cited |
+| 1 | Clear, well-formatted, coherent | ✓ | Opening sentence fixed (D done); Figure 1 and 2 now use `<figure>/<figcaption>` (G done) |
+| 2 | Knowledge of area | ✓ | 11 references; GROBID [7] and DeBERTa [11] now cited |
 | 3 | Critically evaluates prior work | ✓ | Jain et al. limitations well explained |
-| 4 | Proper citation and referencing | ⚠ | 4 references is thin for a literature review |
+| 4 | Proper citation and referencing | ✓ | 11 references; all central tools cited |
 | 5 | Design clear and high quality | ✓ | Chapter 3 is thorough |
 | 6 | Concept justified | ✓ | Good |
 | 7 | Workplan in enough detail | ⚠ | Table 3 is sparse; Gantt chart is screenshots |
 | 8 | Workplan feasible | ✓ | OK |
-| 9 | Evaluation strategy appropriate | ⚠ | 3 papers, substring match — weak but acknowledged |
+| 9 | Evaluation strategy appropriate | ⚠ | Core: 3 papers, substring match; extended 6-paper results in Appendix B |
 | 10 | Feature prototype high quality | ⚠ | Large output (MapReduce 151 sentences) unaddressed |
 | 11 | Technically challenging | ✓ | Section 7 documents the challenges well |
-| 12 | Demonstration effective and impactful | ✗ | Video not yet made — **required submission item** |
-| 13 | Evaluate prototype and show improvements | ⚠ | Improvements listed as "planned" — none implemented |
+| 12 | Demonstration effective and impactful | ✓ | Video recorded |
+| 13 | Evaluate prototype and show improvements | ⚠ | GPU batch processing implemented; more improvements still planned |
 | 14 | Innovation and excellence | ✓ | Hypothesis comparison is a genuine contribution |
 
 ---
@@ -90,7 +90,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 
 ## Priority 4 — Lower impact, low effort
 
-### G. Fix Figure 2 markup in Chapter 2
+### G. Fix Figure 2 markup in Chapter 2 (DONE)
 
 - **Criteria:** 1
 - **Why:** Figure 1 uses proper `<figure>` and `<figcaption>` markup. Figure 2 is a raw code block with no figure number or caption. They should be consistent.

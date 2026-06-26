@@ -113,6 +113,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 
+<figure>
 <pre>
 Methodology:
     Design or strategy: design and creation + experiment
@@ -122,8 +123,8 @@ Methodology:
     Dataset: WMT machine translation datasets
     EvaluationMetric: BLEU score
 </pre>
-
-Figure 1: Research Methodology from "Attention Is All You Need" [D6].
+<figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
+</figure>
 
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
@@ -148,12 +149,15 @@ Systems that extract methodology-like entities from papers exist [2, 3], but the
 
 Jain et al. [5] extract four entity types: Dataset, Metric, Task, and Method.
 
+<figure>
+<pre>
 Dataset: WMT machine translation datasets
 Metric: BLEU score
 Task: machine translation
 Method: Transformer
-
-Figure 2: Entity types from "Attention Is All You Need" [D6].
+</pre>
+<figcaption>Figure 2: Entity types from "Attention Is All You Need" [D6].</figcaption>
+</figure>
 
 These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.
 
