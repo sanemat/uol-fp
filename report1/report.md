@@ -218,7 +218,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ---
 
-## Chapter 3: Design (1381 words)
+## Chapter 3: Design (1452 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -279,7 +279,18 @@ The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free 
 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
-Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 3.
+Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.
+
+| Set | Probe (4 gold labels) | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|---|
+| short | **3/4** | 124 | 70 | 33 | 31 |
+| verbose_v1 | 2/4 | 11 | 0 | 3 | 244 |
+| verbose_v2 | 2/4 | 63 | 11 | 19 | 165 |
+| verbose_v3 | 2/4 | 131 | 56 | 60 | 11 |
+
+Table 4: Hypothesis set comparison on the BERT paper (258 sentences).
+
+Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.
 
 ---
 
@@ -294,7 +305,7 @@ The work plan is shown visually in Appendix A as a Gantt chart.
 | Iteration 2 | Usage NLI step; LLM term extraction; extended evaluation on all 6 papers | Short-form methodology profile |
 | Final stage | Testing, analysis, Final Report writing | Final submission |
 
-Table 4: Work plan summary.
+Table 5: Work plan summary.
 
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
@@ -316,7 +327,7 @@ The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A
 
 For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
 
-The gold labels for the three test papers are shown in Table 5.
+The gold labels for the three test papers are shown in Table 6.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
@@ -324,7 +335,7 @@ The gold labels for the three test papers are shown in Table 5.
 | BERT | BERT | GLUE / SQuAD | BooksCorpus / Wikipedia | accuracy / F1 |
 | AlexNet | AlexNet | image classification | ImageNet | top-1 / top-5 error |
 
-Table 5: Gold labels — 3 papers × 4 roles.
+Table 6: Gold labels — 3 papers × 4 roles.
 
 Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.
 
@@ -338,7 +349,7 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 ---
 
-## Chapter 4: Feature Prototype (1515 words)
+## Chapter 4: Feature Prototype (1406 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -375,7 +386,7 @@ All other body sections are included: Abstract, Introduction, Method/Architectur
 
 ### 2. Demonstration
 
-The prototype was tested on six papers. Table 6 shows the number of accepted sentences per role.
+The prototype was tested on six papers. Hypothesis set selection is described in Chapter 3, Section 4. Table 7 shows the number of accepted sentences per role.
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Notes |
 |---|---|---|---|---|---|
@@ -386,24 +397,9 @@ The prototype was tested on six papers. Table 6 shows the number of accepted sen
 | MapReduce | 151 | 24 | 3 | 5 | short: TM heavy, weak DS/EM |
 | Google Search | 69 | 21 | 8 | 29 | short: no standard benchmark |
 
-Table 6: Accepted sentences per role for six papers.
+Table 7: Accepted sentences per role for six papers.
 
 All six papers were run with short labels. ML papers (Transformer, BERT, AlexNet, ResNet) produced balanced output across all four roles. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
-
-#### 2.1 Hypothesis Set Comparison
-
-The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.
-
-| Set | Probe (4 gold labels) | TechnicalMethod | Task | Dataset | EvaluationMetric |
-|---|---|---|---|---|---|
-| short | **3/4** | 124 | 70 | 33 | 31 |
-| verbose_v1 | 2/4 | 11 | 0 | 3 | 244 |
-| verbose_v2 | 2/4 | 63 | 11 | 19 | 165 |
-| verbose_v3 | 2/4 | 131 | 56 | 60 | 11 |
-
-Table 7: Hypothesis set comparison on the BERT paper (258 sentences).
-
-Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.
 
 ### 3. Evaluation
 
@@ -415,7 +411,7 @@ This approach seems appropriate for a prototype because the key question at this
 
 #### 3.2 Results
 
-Gold terms used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):
+Gold terms used (based on the planned labels in Chapter 3, Table 6, refined after running the pipeline):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
