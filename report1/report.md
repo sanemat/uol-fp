@@ -87,11 +87,11 @@ This project addresses **Template 12.1**: Identifying research methodologies use
 - **Dataset** — the data used for training or evaluation (e.g. WMT datasets)
 - **EvaluationMetric** — the metric used to assess results (e.g. BLEU score)
 
-The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID [6], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
+The pipeline works in three stages. First, a PDF is converted to TEI XML by GROBID [7], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
 
-Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [4] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [10] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
+Zero-shot classification was chosen because no methodology-annotated corpus exists for general computing papers. Supervised approaches require substantial annotation effort: Jain et al. [5] built a comparable information extraction system using 438 annotated papers and four expert PhD-level annotators. This project targets a broader range of computing papers — including systems, algorithms, and HCI research as well as ML — where no comparable annotated dataset is available. Yin et al. [11] show that NLI-based zero-shot classification can assign arbitrary labels to text without task-specific training examples, making it a practical choice for this setting.
 
-Research design (e.g. experiment vs survey) [5] and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
+Research design (e.g. experiment vs survey) [6] and philosophical worldview are out of scope. These components can be subjective and may not appear as explicit phrases in the paper text. The four roles listed above appear more directly in the text and are more tractable to classify automatically at the sentence level.
 
 ### 3. Target users
 
@@ -111,7 +111,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ## Chapter 2: Literature Review (1100 words)
 
-Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [8].
+Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 
 <pre>
 Methodology:
@@ -131,13 +131,13 @@ This review covers three areas: how methodology is defined, how information is e
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
-Oates [8] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work.
+Oates [9] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work.
 
-Pilkington & Pretorius [9] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [9] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
+Pilkington & Pretorius [10] go further: they formalize the structure using UML and ontology engineering, with the goal of "providing clear and unambiguous semantics" [10] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
-A philosophical worldview is one of the important parts of Pilkington & Pretorius [9], but it may not appear directly in paper text, so my project skips it.
+A philosophical worldview is one of the important parts of Pilkington & Pretorius [10], but it may not appear directly in paper text, so my project skips it.
 
-Oates [8] gives concept names. Pilkington & Pretorius [9] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
+Oates [9] gives concept names. Pilkington & Pretorius [10] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
 Both works are designed for human use. Neither provides a system to extract methodology components automatically from text. These works suggest that methodology can be defined and formalized. The question is whether any system can extract it.
 
@@ -146,7 +146,7 @@ Both works are designed for human use. Neither provides a system to extract meth
 
 Systems that extract methodology-like entities from papers exist [2, 3], but the closest supervised approaches require labeled training data that this project does not have.
 
-Jain et al. [4] extract four entity types: Dataset, Metric, Task, and Method.
+Jain et al. [5] extract four entity types: Dataset, Metric, Task, and Method.
 
 Dataset: WMT machine translation datasets
 Metric: BLEU score
@@ -157,11 +157,11 @@ Figure 2: Entity types from "Attention Is All You Need" [D6].
 
 These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.
 
-Jain et al. [4] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [4] — relations may span sections, not just sentences.
+Jain et al. [5] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [5] — relations may span sections, not just sentences.
 
-But Jain et al. [4] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [4] approach is difficult to adopt directly.
+But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [5] approach is difficult to adopt directly.
 
-Ma et al. [7] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
+Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
@@ -169,9 +169,9 @@ The right entity types are identified, but building a supervised system requires
 
 Zero-shot NLI can assign roles to text without task-specific training data, but applying it to scientific papers introduces a domain mismatch risk.
 
-Yin et al. [10] define zero-shot text classification as assigning a label to text without any task-specific training examples.
+Yin et al. [11] define zero-shot text classification as assigning a label to text without any task-specific training examples.
 
-Yin et al. [10] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [10] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
+Yin et al. [11] show that NLI can classify text into many possible labels by turning the label into a natural language hypothesis — "this text is about [label]" [11] — and asking a model whether the text entails it. No labeled examples for the target labels are needed.
 
 | aspect | labels | interpretation | example hypothesis (word) | example hypothesis (wordnet definition) |
 |---|---|---|---|---|
@@ -179,7 +179,7 @@ Yin et al. [10] show that NLI can classify text into many possible labels by tur
 | emotion | anger etc. | this text expresses ? | "?"= anger | "?" = a strong emotion; a feeling that is oriented toward some real or supposed grievance |
 | situation | shelter etc. | The people there need ? | "?"= shelter | "?" = a structure that provides privacy and protection from danger |
 
-*Table 2 (reproduced from Yin et al. [10]): example hypotheses for three task types.*
+*Table 2 (reproduced from Yin et al. [11]): example hypotheses for three task types.*
 
 This provides a possible way to support the core step in this project: classifying sentences into TechnicalMethod, Task, Dataset, or EvaluationMetric without a methodology-annotated corpus. This project applies the same entailment approach with four methodology roles:
 
@@ -204,11 +204,11 @@ Zero-shot NLI reduces the labeled data requirement. The question is whether any 
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
 
-Section 2 established the schema. Oates [8] and Pilkington & Pretorius [9] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.
+Section 2 established the schema. Oates [9] and Pilkington & Pretorius [10] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.
 
-Section 3 showed that extraction of the same four types is possible. Jain et al. [4] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.
+Section 3 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.
 
-Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [10] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
+Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
 Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
 
@@ -228,9 +228,9 @@ The primary users are computing students doing literature reviews (see Chapter 1
 
 ### 2. Design Justification
 
-Jain et al. [4] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [10] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
+Jain et al. [5] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [11] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
-Two independent sources agree on the same four types. First, the ontology from Oates [8] and Pilkington & Pretorius [9] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [4] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
+Two independent sources agree on the same four types. First, the ontology from Oates [9] and Pilkington & Pretorius [10] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [5] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
 
 Research design (e.g. experiment vs. survey) is subjective — two readers can assign different labels to the same paper. A philosophical worldview may not appear in the paper text at all. The four roles (TechnicalMethod, Task, Dataset, EvaluationMetric) appear as explicit phrases in the text and are easier to match automatically.
 
@@ -269,9 +269,9 @@ GROBID runs locally via Docker because it is a Java server process (~1 GB). The 
 
 ### 4. Key Technologies and Methods
 
-GROBID [6] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
+GROBID [7] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
-The prototype uses `cross-encoder/nli-deberta-v3-small` (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.
+The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.
 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
@@ -325,7 +325,7 @@ Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds rele
 
 The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
-Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.
+Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.
 
 If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.
 
@@ -345,7 +345,7 @@ The pipeline follows the design described in Chapter 3, Section 3. In brief: GRO
 
 #### 1.2 Model
 
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.
+The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) [4] is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.
 
 #### 1.3 Preprocessing
 
@@ -372,7 +372,7 @@ The prototype was tested on six papers. Table 6 shows the number of accepted sen
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Notes |
 |---|---|---|---|---|---|
-| Transformer | 14 | 0 | 0 | 160 | verbose_v1: extreme EM bias |
+| Transformer | 62 | 14 | 4 | 3 | short: balanced |
 | BERT | 62 | 23 | 15 | 13 | short: balanced |
 | AlexNet | 51 | 6 | 11 | 4 | short: balanced |
 | ResNet | 51 | 6 | 14 | 12 | short: balanced |
@@ -381,7 +381,7 @@ The prototype was tested on six papers. Table 6 shows the number of accepted sen
 
 Table 6: Accepted sentences per role for six papers.
 
-Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
+All six papers were run with short labels. ML papers (Transformer, BERT, AlexNet, ResNet) produced balanced output across all four roles. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
 
 #### 2.1 Hypothesis Set Comparison
 
@@ -404,7 +404,7 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
 
-This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [4] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
+This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
 
 #### 3.2 Results
 
@@ -422,17 +422,17 @@ Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
-| Transformer | ○ | ✗ | ✗ | ○ |
+| Transformer | ○ | ✗ | ○ | ✗ |
 | BERT | ○ | ○ | ○ | ○ |
 | AlexNet | ○ | ○ | ○ | ○ |
 
-Table 9: Gold label evaluation results.
+Table 9: Gold label evaluation results (10/12). Extended results for all 6 papers are in Appendix B.
 
 #### 3.3 Analysis
 
 BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).
 
-The Transformer scored ✗ on Task and Dataset, but this appears to be caused by the verbose_v1 hypothesis set, not by a failure to find the information in the paper. TechnicalMethod and Dataset tend to be the easier roles because they appear in dedicated sections with explicit mentions. EvaluationMetric is found correctly but in small quantities (4–13 sentences), as metric names appear in few places. Task appears to be the most difficult role: it is often stated implicitly and produced the fewest sentences among the papers tested. Systems papers (MapReduce, PageRank) produced empty or weak Dataset and EvaluationMetric output, possibly because they do not follow the standard ML benchmark structure.
+The Transformer scored ✗ on Task and EvaluationMetric. For Task: 14 sentences were accepted but none contains "machine translation" — the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). For EvaluationMetric: 3 sentences were accepted but none contains "BLEU" — metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.
 
 ### 4. Limitations
 
@@ -476,19 +476,21 @@ The third challenge is authorship attribution. The sentence "The feature-based a
 
 [3] Ghosh, M., Ganguly, D. and Naskar, S.K. 2023b. Extracting methodology components from AI research papers: a data-driven factored sequence labeling approach. In *Proceedings of the 32nd ACM International Conference on Information and Knowledge Management (CIKM 2023)*. https://doi.org/10.1145/3583780.3615258
 
-[4] S. Jain, M. van Zuylen, H. Hajishirzi, and I. Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
+[4] He, P., Gao, J. and Chen, W. 2021. DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. arXiv:2111.09543. https://arxiv.org/abs/2111.09543
 
-[5] Kosztyán, Z.T. and Király, T. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence*, article 111039. https://doi.org/10.1016/j.engappai.2025.111039
+[5] S. Jain, M. van Zuylen, H. Hajishirzi, and I. Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
 
-[6] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In *Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009*. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. https://doi.org/10.1007/978-3-642-04346-8_62
+[6] Kosztyán, Z.T. and Király, T. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence*, article 111039. https://doi.org/10.1016/j.engappai.2025.111039
 
-[7] Ma, Y., Liu, J., Lu, W. and Cheng, Q. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management*, 60(3), article 103315. https://doi.org/10.1016/j.ipm.2023.103315
+[7] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In *Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009*. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. https://doi.org/10.1007/978-3-642-04346-8_62
 
-[8] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
+[8] Ma, Y., Liu, J., Lu, W. and Cheng, Q. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management*, 60(3), article 103315. https://doi.org/10.1016/j.ipm.2023.103315
 
-[9] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+[9] B. J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
-[10] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
+[10] C. Pilkington and L. Pretorius. 2015. A conceptual model of the research methodology domain. In *Proceedings of the 7th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management (IC3K 2015), Volume 2: KEOD*. SCITEPRESS – Science and Technology Publications, Setúbal, Portugal, 96–107. https://doi.org/10.5220/0005613100960107
+
+[11] W. Yin, J. Hay, and D. Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
 
 ---
 
@@ -505,6 +507,41 @@ The third challenge is authorship attribution. The sentence "The feature-based a
 [D5] Krizhevsky, A., Sutskever, I. and Hinton, G.E. 2012. ImageNet classification with deep convolutional neural networks. In *Advances in Neural Information Processing Systems*, 25, 1097–1105. https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html
 
 [D6] Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. 2017. Attention is all you need. In *Advances in Neural Information Processing Systems*, 30, 5998–6008. https://arxiv.org/abs/1706.03762
+
+---
+
+## Appendix B — Extended Evaluation (All 6 Papers)
+
+The primary evaluation in Chapter 4 §3 covers three ML papers (Transformer, BERT, AlexNet) as designed in Chapter 3 §6. This appendix extends the same evaluation to all six dataset papers including two systems papers (MapReduce, Google Search).
+
+Gold labels used:
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|
+| Transformer | "Transformer" | "machine translation" | "WMT" | "BLEU" |
+| BERT | "BERT" | "GLUE" | "BooksCorpus" | "F1" |
+| AlexNet | "convolutional" | "object recognition" | "ImageNet" | "top-5" |
+| ResNet | "residual" | "image recognition" | "ImageNet" | "top-1" |
+| MapReduce | "MapReduce" | "distributed" | "TeraSort" | "seconds" |
+| Google Search | "PageRank" | "web search" | "million pages" | "quality" |
+
+Table B1: Gold labels for all 6 papers.
+
+Results:
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Total |
+|---|---|---|---|---|---|
+| Transformer | ○ | ✗ | ○ | ✗ | 2/4 |
+| BERT | ○ | ○ | ○ | ○ | 4/4 |
+| AlexNet | ○ | ○ | ○ | ○ | 4/4 |
+| ResNet | ○ | ✗ | ○ | ○ | 3/4 |
+| MapReduce | ○ | ✗ | ✗ | ○ | 2/4 |
+| Google Search | ✗ | ○ | ○ | ○ | 3/4 |
+| **Total** | | | | | **18/24 (75%)** |
+
+Table B2: Extended gold label evaluation results.
+
+ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet ✗ on Task: "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce ✗ on Task and Dataset: "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search ✗ on TechnicalMethod: "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
 ---
 

@@ -26,9 +26,9 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 
 ---
 
-## Key Inconsistency to Fix (ONGOING)
+## Key Inconsistency (RESOLVED)
 
-The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis set, which caused extreme EvaluationMetric bias (160/183 sentences → EvaluationMetric). This is why Transformer scored ✗ on Task and Dataset. The report itself says short labels work better, but Table 5 still shows verbose_v1 data for the Transformer row. Re-running with short labels could push the evaluation score from 10/12 to 12/12.
+Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold check: Dataset flipped to ✓ (WMT found), but EvaluationMetric flipped to ✗ (BLEU not in any EM sentence — "Our model achieves 28.4 BLEU" was classified as Task). Total remains 10/12. ResNet was re-run correctly (4_resnet); counts 51/6/14/12 confirmed — Table 6 row unchanged.
 
 ---
 
@@ -45,7 +45,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 
 ## Priority 2 — High impact, low effort (30–60 min each)
 
-### B. Re-run Transformer with short labels → update Tables 5 and 8
+### B. Re-run Transformer with short labels → update Tables 5 and 8 (DONE)
 
 - **Criteria:** 9, 13
 - **Why:** The Transformer row in Table 5 and Table 8 was generated with `verbose_v1` (not short labels like the other papers). Short labels are the chosen hypothesis set. The inconsistency weakens the evaluation chapter. Re-running and updating the tables fixes this and likely improves the score.
@@ -59,7 +59,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 - **Effort:** 3–4 lines of code; add one sentence to Chapter 4 Section 6.
 - **Code location:** `proto2/2pipeline.ipynb`, Step 2 (Classify Sentences cell).
 
-### D. Fix Chapter 2 opening sentence
+### D. Fix Chapter 2 opening sentence (DONE)
 
 - **Criteria:** 1
 - **Why:** `"Attention Is All You Need" is a very famous AI paper.` is too informal for an academic report. It undermines the credibility of the whole chapter.
@@ -70,7 +70,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 
 ## Priority 3 — Medium impact, medium effort (1–2 hours)
 
-### E. Add citations for GROBID and DeBERTa
+### E. Add citations for GROBID and DeBERTa (DONE)
 
 - **Criteria:** 2, 4
 - **Why:** GROBID and `cross-encoder/nli-deberta-v3-small` are the two most central technologies in the system. Neither is cited. Academic reports are expected to cite the tools they depend on.
