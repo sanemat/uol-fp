@@ -290,7 +290,8 @@ The work plan is shown visually in Appendix A as a Gantt chart.
 | Period | Main task | Output |
 |---|---|---|
 | Before 29 June | Complete all chapters, prototype, and video | Preliminary Report |
-| After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
+| Iteration 1 (post-submission) | First-person verb filter; top-N selection (top 3 per role by NLI score) | Improved prototype — reduced output volume; re-evaluation |
+| Iteration 2 | Usage NLI step; LLM term extraction; extended evaluation on all 6 papers | Short-form methodology profile |
 | Final stage | Testing, analysis, Final Report writing | Final submission |
 
 Table 4: Work plan summary.

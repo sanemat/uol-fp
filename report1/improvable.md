@@ -15,7 +15,7 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 | 4 | Proper citation and referencing | ✓ | 11 references; all central tools cited |
 | 5 | Design clear and high quality | ✓ | Chapter 3 is thorough |
 | 6 | Concept justified | ✓ | Good |
-| 7 | Workplan in enough detail | ⚠ | Table 3 is sparse; Gantt chart is screenshots |
+| 7 | Workplan in enough detail | ✓ | Table 4 has 4 rows with specific iteration tasks; Gantt chart in Appendix A |
 | 8 | Workplan feasible | ✓ | OK |
 | 9 | Evaluation strategy appropriate | ⚠ | Core: 3 papers, substring match; extended 6-paper results in Appendix B |
 | 10 | Feature prototype high quality | ⚠ | Large output (MapReduce 151 sentences) unaddressed |
@@ -96,11 +96,11 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 - **Why:** Figure 1 uses proper `<figure>` and `<figcaption>` markup. Figure 2 is a raw code block with no figure number or caption. They should be consistent.
 - **Effort:** Wrap Figure 2 in `<figure>` markup, add `<figcaption>Figure 2: ...`.
 
-### H. Add post-submission iteration rows to Table 3 (workplan)
+### H. Add post-submission iteration rows to Table 4 (workplan) (DONE)
 
 - **Criteria:** 7
-- **Why:** Table 3 ends at "Final submission" with no detail. The backlog improvements (top-N, usage NLI, term extraction) are described in Chapter 4 Section 6 but not in the workplan. Adding 2 rows makes the workplan appear more planned.
-- **Effort:** Add 2 rows to Table 3 in Chapter 3 Section 7.
+- **Why:** Table 4 ended at "Final submission" with no detail. The backlog improvements (top-N, usage NLI, term extraction) are described in Chapter 4 Section 5 but not in the workplan. Adding 2 rows makes the workplan appear more planned.
+- **Effort:** Add 2 rows to Table 4 in Chapter 3 Section 5.
 
 ---
 
