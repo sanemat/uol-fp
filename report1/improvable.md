@@ -59,7 +59,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 - **Effort:** 3–4 lines of code; add one sentence to Chapter 4 Section 6.
 - **Code location:** `proto2/2pipeline.ipynb`, Step 2 (Classify Sentences cell).
 
-### D. Fix Chapter 2 opening sentence
+### D. Fix Chapter 2 opening sentence (DONE)
 
 - **Criteria:** 1
 - **Why:** `"Attention Is All You Need" is a very famous AI paper.` is too informal for an academic report. It undermines the credibility of the whole chapter.
@@ -70,7 +70,7 @@ The Transformer evaluation (Table 8) was run with the `verbose_v1` hypothesis se
 
 ## Priority 3 — Medium impact, medium effort (1–2 hours)
 
-### E. Add citations for GROBID and DeBERTa
+### E. Add citations for GROBID and DeBERTa (DONE)
 
 - **Criteria:** 2, 4
 - **Why:** GROBID and `cross-encoder/nli-deberta-v3-small` are the two most central technologies in the system. Neither is cited. Academic reports are expected to cite the tools they depend on.
