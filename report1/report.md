@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (0 words)
+# Report (4752 words)
 
 ## Chapter 1: Introduction (798 words)
 
@@ -218,7 +218,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ---
 
-## Chapter 3: Design (1452 words)
+## Chapter 3: Design (1405 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -349,7 +349,7 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 ---
 
-## Chapter 4: Feature Prototype (1406 words)
+## Chapter 4: Feature Prototype (1449 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 

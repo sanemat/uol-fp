@@ -81,8 +81,8 @@ h3 {
   box-sizing: border-box;
 }
 </style>
-<h1 id="report-4828-words">Report (4828 words) </h1>
-<h2 id="chapter-1-introduction-815-words">Chapter 1: Introduction (815 words) </h2>
+<h1 id="report-4752-words">Report (4752 words) </h1>
+<h2 id="chapter-1-introduction-798-words">Chapter 1: Introduction (798 words) </h2>
 <p>When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. Research methodology in computing papers has a recognizable structure: the technical method used, the task being solved, the dataset evaluated on, and the evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.</p>
 <p>Consider "Attention Is All You Need" [D6], one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:</p>
 <table>
@@ -250,7 +250,7 @@ Method: Transformer
 <p>Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.</p>
 <p>Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.</p>
 <hr>
-<h2 id="chapter-3-design-1416-words">Chapter 3: Design (1416 words) </h2>
+<h2 id="chapter-3-design-1405-words">Chapter 3: Design (1405 words) </h2>
 <p>The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).</p>
 <h3 id="1-domain-and-users">1. Domain and Users </h3>
 <p>The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.</p>
@@ -282,7 +282,55 @@ Method: Transformer
 <p>GROBID [7] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).</p>
 <p>The prototype uses <code>cross-encoder/nli-deberta-v3-small</code> [4] (~300 MB, fits free Colab GPU). Zero-shot is therefore a reasonable approach because: (1) no methodology-annotated corpus exists for general computing papers, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.</p>
 <p>Two pre-processing steps clean each sentence before classification. (1) <code>pre_clean()</code> strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) <code>is_valid()</code> drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.</p>
-<p>Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 3.</p>
+<p>Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.</p>
+<table>
+<thead>
+<tr>
+<th>Set</th>
+<th>Probe (4 gold labels)</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>short</td>
+<td><strong>3/4</strong></td>
+<td>124</td>
+<td>70</td>
+<td>33</td>
+<td>31</td>
+</tr>
+<tr>
+<td>verbose_v1</td>
+<td>2/4</td>
+<td>11</td>
+<td>0</td>
+<td>3</td>
+<td>244</td>
+</tr>
+<tr>
+<td>verbose_v2</td>
+<td>2/4</td>
+<td>63</td>
+<td>11</td>
+<td>19</td>
+<td>165</td>
+</tr>
+<tr>
+<td>verbose_v3</td>
+<td>2/4</td>
+<td>131</td>
+<td>56</td>
+<td>60</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<p>Table 4: Hypothesis set comparison on the BERT paper (258 sentences).</p>
+<p>Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.</p>
 <hr>
 <h3 id="5-work-plan">5. Work Plan </h3>
 <p>The work plan is shown visually in Appendix A as a Gantt chart.</p>
@@ -317,7 +365,7 @@ Method: Transformer
 </tr>
 </tbody>
 </table>
-<p>Table 4: Work plan summary.</p>
+<p>Table 5: Work plan summary.</p>
 <p>The major tasks are:</p>
 <ul>
 <li>Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch</li>
@@ -335,7 +383,7 @@ Method: Transformer
 <hr>
 <h3 id="6-test-and-evaluation">6. Test and Evaluation </h3>
 <p>For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.</p>
-<p>The gold labels for the three test papers are shown in Table 5.</p>
+<p>The gold labels for the three test papers are shown in Table 6.</p>
 <table>
 <thead>
 <tr>
@@ -370,14 +418,14 @@ Method: Transformer
 </tr>
 </tbody>
 </table>
-<p>Table 5: Gold labels — 3 papers × 4 roles.</p>
+<p>Table 6: Gold labels — 3 papers × 4 roles.</p>
 <p>Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.</p>
 <p>Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.</p>
 <p>The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.</p>
 <p>Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.</p>
 <p>If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.</p>
 <hr>
-<h2 id="chapter-4-feature-prototype-1497-words">Chapter 4: Feature Prototype (1497 words) </h2>
+<h2 id="chapter-4-feature-prototype-1449-words">Chapter 4: Feature Prototype (1449 words) </h2>
 <p>The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.</p>
 <p>Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).</p>
 <h3 id="1-implementation">1. Implementation </h3>
@@ -400,7 +448,7 @@ Method: Transformer
 </ul>
 <p>All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version used only sections whose heading matched keywords such as "experiment" or "result". The <code>Training Data</code> section in the Transformer paper has no such keyword and was missed. Switching to all body sections improved Dataset recall significantly.</p>
 <h3 id="2-demonstration">2. Demonstration </h3>
-<p>The prototype was tested on six papers. Table 6 shows the number of accepted sentences per role.</p>
+<p>The prototype was tested on six papers. Hypothesis set selection is described in Chapter 3, Section 4. Table 7 shows the number of accepted sentences per role.</p>
 <table>
 <thead>
 <tr>
@@ -463,64 +511,14 @@ Method: Transformer
 </tr>
 </tbody>
 </table>
-<p>Table 6: Accepted sentences per role for six papers.</p>
+<p>Table 7: Accepted sentences per role for six papers.</p>
 <p>All six papers were run with short labels. ML papers (Transformer, BERT, AlexNet, ResNet) produced balanced output across all four roles. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.</p>
-<h4 id="21-hypothesis-set-comparison">2.1 Hypothesis Set Comparison </h4>
-<p>The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.</p>
-<table>
-<thead>
-<tr>
-<th>Set</th>
-<th>Probe (4 gold labels)</th>
-<th>TechnicalMethod</th>
-<th>Task</th>
-<th>Dataset</th>
-<th>EvaluationMetric</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>short</td>
-<td><strong>3/4</strong></td>
-<td>124</td>
-<td>70</td>
-<td>33</td>
-<td>31</td>
-</tr>
-<tr>
-<td>verbose_v1</td>
-<td>2/4</td>
-<td>11</td>
-<td>0</td>
-<td>3</td>
-<td>244</td>
-</tr>
-<tr>
-<td>verbose_v2</td>
-<td>2/4</td>
-<td>63</td>
-<td>11</td>
-<td>19</td>
-<td>165</td>
-</tr>
-<tr>
-<td>verbose_v3</td>
-<td>2/4</td>
-<td>131</td>
-<td>56</td>
-<td>60</td>
-<td>11</td>
-</tr>
-</tbody>
-</table>
-<p>Table 7: Hypothesis set comparison on the BERT paper (258 sentences).</p>
-<p>Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.</p>
 <h3 id="3-evaluation">3. Evaluation </h3>
 <h4 id="31-method">3.1 Method </h4>
 <p>No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.</p>
 <p>This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.</p>
 <h4 id="32-results">3.2 Results </h4>
-<p>Gold terms used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):</p>
+<p>Gold terms used (based on the planned labels in Chapter 3, Table 6, refined after running the pipeline):</p>
 <table>
 <thead>
 <tr>
