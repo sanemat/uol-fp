@@ -285,27 +285,29 @@ Four hypothesis sets (short and three verbose variants) were tested on the BERT 
 
 ### 5. Work Plan
 
-The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
+The work plan is shown visually in Appendix A as a Gantt chart.
 
 | Period | Main task | Output |
 |---|---|---|
-| Before 29 June | Complete all chapters and working prototype | Preliminary Report |
+| Before 29 June | Complete all chapters, prototype, and video | Preliminary Report |
 | After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
-| Final stage | Testing, analysis, video, final writing | Final submission |
+| Final stage | Testing, analysis, Final Report writing | Final submission |
 
 Table 4: Work plan summary.
 
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
 - Done: proto2 prototype — GROBID pipeline, NLI classification, section filtering, pre-processing, hypothesis comparison
-- Done: Literature Review (Chapter 2)
-- In progress: Chapter 3 — Design; proto2 pipeline refinement
-- Backlog: Chapter 4 — Feature Prototype; demonstration video MP4 3–5 min
-- Submission: Preliminary Report
+- Done: Chapter 1 — Introduction
+- Done: Chapter 2 — Literature Review
+- Done: Chapter 3 — Design
+- Done: Chapter 4 — Feature Prototype
+- Done: demonstration video (MP4, 3–5 min)
+- In progress: Preliminary Report submission (29 June)
+- Post-submission backlog: prototype refinement (first-person verb filter, top-N selection), extended evaluation
+- Final stage: testing, analysis, Final Report writing and submission
 
 The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2) for the full project roadmap.
-
-If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_factor weighting are the newest additions. They can be simplified or removed without breaking the core role classification. (2) Chapter 4 (Feature Prototype) can be shortened to a brief description of planned improvements. The core pipeline (GROBID → role NLI → profile output) is the minimum deliverable.
 
 ---
 
