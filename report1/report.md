@@ -325,7 +325,7 @@ Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds rele
 
 The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
-Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement.
+Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.
 
 If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.
 
@@ -372,7 +372,7 @@ The prototype was tested on six papers. Table 6 shows the number of accepted sen
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Notes |
 |---|---|---|---|---|---|
-| Transformer | 14 | 0 | 0 | 160 | verbose_v1: extreme EM bias |
+| Transformer | 62 | 14 | 4 | 3 | short: balanced |
 | BERT | 62 | 23 | 15 | 13 | short: balanced |
 | AlexNet | 51 | 6 | 11 | 4 | short: balanced |
 | ResNet | 51 | 6 | 14 | 12 | short: balanced |
@@ -381,7 +381,7 @@ The prototype was tested on six papers. Table 6 shows the number of accepted sen
 
 Table 6: Accepted sentences per role for six papers.
 
-Verbose hypotheses caused extreme label bias: verbose_v1 assigned 160 of 183 Transformer sentences to EvaluationMetric, leaving Task and Dataset with 0. ML papers tested (BERT, AlexNet, ResNet) produced balanced output across all four roles with short labels. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
+All six papers were run with short labels. ML papers (Transformer, BERT, AlexNet, ResNet) produced balanced output across all four roles. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.
 
 #### 2.1 Hypothesis Set Comparison
 
@@ -422,17 +422,17 @@ Result (○ = gold label found in any accepted sentence, ✗ = not found):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|
-| Transformer | ○ | ✗ | ✗ | ○ |
+| Transformer | ○ | ✗ | ○ | ✗ |
 | BERT | ○ | ○ | ○ | ○ |
 | AlexNet | ○ | ○ | ○ | ○ |
 
-Table 9: Gold label evaluation results.
+Table 9: Gold label evaluation results (10/12). Extended results for all 6 papers are in Appendix B.
 
 #### 3.3 Analysis
 
 BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).
 
-The Transformer scored ✗ on Task and Dataset, but this appears to be caused by the verbose_v1 hypothesis set, not by a failure to find the information in the paper. TechnicalMethod and Dataset tend to be the easier roles because they appear in dedicated sections with explicit mentions. EvaluationMetric is found correctly but in small quantities (4–13 sentences), as metric names appear in few places. Task appears to be the most difficult role: it is often stated implicitly and produced the fewest sentences among the papers tested. Systems papers (MapReduce, PageRank) produced empty or weak Dataset and EvaluationMetric output, possibly because they do not follow the standard ML benchmark structure.
+The Transformer scored ✗ on Task and EvaluationMetric. For Task: 14 sentences were accepted but none contains "machine translation" — the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). For EvaluationMetric: 3 sentences were accepted but none contains "BLEU" — metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.
 
 ### 4. Limitations
 
@@ -507,6 +507,41 @@ The third challenge is authorship attribution. The sentence "The feature-based a
 [D5] Krizhevsky, A., Sutskever, I. and Hinton, G.E. 2012. ImageNet classification with deep convolutional neural networks. In *Advances in Neural Information Processing Systems*, 25, 1097–1105. https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html
 
 [D6] Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. 2017. Attention is all you need. In *Advances in Neural Information Processing Systems*, 30, 5998–6008. https://arxiv.org/abs/1706.03762
+
+---
+
+## Appendix B — Extended Evaluation (All 6 Papers)
+
+The primary evaluation in Chapter 4 §3 covers three ML papers (Transformer, BERT, AlexNet) as designed in Chapter 3 §6. This appendix extends the same evaluation to all six dataset papers including two systems papers (MapReduce, Google Search).
+
+Gold labels used:
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
+|---|---|---|---|---|
+| Transformer | "Transformer" | "machine translation" | "WMT" | "BLEU" |
+| BERT | "BERT" | "GLUE" | "BooksCorpus" | "F1" |
+| AlexNet | "convolutional" | "object recognition" | "ImageNet" | "top-5" |
+| ResNet | "residual" | "image recognition" | "ImageNet" | "top-1" |
+| MapReduce | "MapReduce" | "distributed" | "TeraSort" | "seconds" |
+| Google Search | "PageRank" | "web search" | "million pages" | "quality" |
+
+Table B1: Gold labels for all 6 papers.
+
+Results:
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Total |
+|---|---|---|---|---|---|
+| Transformer | ○ | ✗ | ○ | ✗ | 2/4 |
+| BERT | ○ | ○ | ○ | ○ | 4/4 |
+| AlexNet | ○ | ○ | ○ | ○ | 4/4 |
+| ResNet | ○ | ✗ | ○ | ○ | 3/4 |
+| MapReduce | ○ | ✗ | ✗ | ○ | 2/4 |
+| Google Search | ✗ | ○ | ○ | ○ | 3/4 |
+| **Total** | | | | | **18/24 (75%)** |
+
+Table B2: Extended gold label evaluation results.
+
+ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet ✗ on Task: "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce ✗ on Task and Dataset: "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search ✗ on TechnicalMethod: "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
 ---
 
