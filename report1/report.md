@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (4828 words)
+# Report (4637 words)
 
 ## Chapter 1: Introduction (815 words)
 
@@ -109,10 +109,11 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ---
 
-## Chapter 2: Literature Review (1100 words)
+## Chapter 2: Literature Review (1105 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 
+<figure>
 <pre>
 Methodology:
     Design or strategy: design and creation + experiment
@@ -122,8 +123,8 @@ Methodology:
     Dataset: WMT machine translation datasets
     EvaluationMetric: BLEU score
 </pre>
-
-Figure 1: Research Methodology from "Attention Is All You Need" [D6].
+<figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
+</figure>
 
 This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
 
@@ -148,12 +149,15 @@ Systems that extract methodology-like entities from papers exist [2, 3], but the
 
 Jain et al. [5] extract four entity types: Dataset, Metric, Task, and Method.
 
+<figure>
+<pre>
 Dataset: WMT machine translation datasets
 Metric: BLEU score
 Task: machine translation
 Method: Transformer
-
-Figure 2: Entity types from "Attention Is All You Need" [D6].
+</pre>
+<figcaption>Figure 2: Entity types from "Attention Is All You Need" [D6].</figcaption>
+</figure>
 
 These four types closely match the four roles in this project. This suggests that the problem is real and may be solvable in principle.
 
@@ -214,7 +218,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ---
 
-## Chapter 3: Design (1416 words)
+## Chapter 3: Design (1381 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -275,39 +279,42 @@ The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free 
 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
-Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 3.
+Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 2.
 
 ---
 
 ### 5. Work Plan
 
-The work plan is shown visually in Appendix A as a Gantt chart. The main remaining work is Chapter 3, prototype refinement, Chapter 4, and the demonstration video.
+The work plan is shown visually in Appendix A as a Gantt chart.
 
 | Period | Main task | Output |
 |---|---|---|
-| Before 29 June | Complete all chapters and working prototype | Preliminary Report |
-| After preliminary report | Iterate: improve candidate selection, reduce large outputs, re-evaluate | Improved prototype |
-| Final stage | Testing, analysis, video, final writing | Final submission |
+| Before 29 June | Complete all chapters, prototype, and video | Preliminary Report |
+| Iteration 1 (post-submission) | First-person verb filter; top-N selection (top 3 per role by NLI score) | Improved prototype — reduced output volume; re-evaluation |
+| Iteration 2 | Usage NLI step; LLM term extraction; extended evaluation on all 6 papers | Short-form methodology profile |
+| Final stage | Testing, analysis, Final Report writing | Final submission |
 
 Table 4: Work plan summary.
 
 The major tasks are:
 - Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch
 - Done: proto2 prototype — GROBID pipeline, NLI classification, section filtering, pre-processing, hypothesis comparison
-- Done: Literature Review (Chapter 2)
-- In progress: Chapter 3 — Design; proto2 pipeline refinement
-- Backlog: Chapter 4 — Feature Prototype; demonstration video MP4 3–5 min
-- Submission: Preliminary Report
+- Done: Chapter 1 — Introduction
+- Done: Chapter 2 — Literature Review
+- Done: Chapter 3 — Design
+- Done: Chapter 4 — Feature Prototype
+- Done: demonstration video (MP4, 3–5 min)
+- In progress: Preliminary Report submission (29 June)
+- Post-submission backlog: prototype refinement (first-person verb filter, top-N selection), extended evaluation
+- Final stage: testing, analysis, Final Report writing and submission
 
 The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2) for the full project roadmap.
-
-If behind schedule: (1) The usage NLI step (used vs. mentioned) and section_factor weighting are the newest additions. They can be simplified or removed without breaking the core role classification. (2) Chapter 4 (Feature Prototype) can be shortened to a brief description of planned improvements. The core pipeline (GROBID → role NLI → profile output) is the minimum deliverable.
 
 ---
 
 ### 6. Test and Evaluation
 
-For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold term as a substring. A role is correct (○) if at least one classified sentence contains the gold term. Incorrect (×) otherwise.
+For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold label as a substring. A role is correct (○) if at least one classified sentence contains the gold label. Incorrect (×) otherwise.
 
 The gold labels for the three test papers are shown in Table 5.
 
@@ -323,7 +330,7 @@ Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell 
 
 Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.
 
-The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold term. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
+The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold label. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
 Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.
 
@@ -331,7 +338,7 @@ If precision or recall is low, the result will be reported honestly. The analysi
 
 ---
 
-## Chapter 4: Feature Prototype (1497 words)
+## Chapter 4: Feature Prototype (1336 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -339,15 +346,7 @@ Zero-shot NLI role assignment is the central design choice this chapter evaluate
 
 ### 1. Implementation
 
-#### 1.1 Pipeline
-
-The pipeline follows the design described in Chapter 3, Section 3. In brief: GROBID converts the PDF to TEI XML; filtered sections are sentence-split with spaCy; each sentence is classified by the NLI model with four candidate labels; sentences scoring ≥ 0.5 are accepted for that role; the final output is a JSON object with one list per role.
-
-#### 1.2 Model
-
-The classifier is `cross-encoder/nli-deberta-v3-small` from Hugging Face. DeBERTa (Decoding-enhanced BERT with Disentangled Attention) [4] is a strong NLI backbone. The `v3-small` variant fits in Colab GPU memory (568 MB) while still performing well. The model choice and zero-shot rationale are described in Chapter 3, Section 4.
-
-#### 1.3 Preprocessing
+#### 1.1 Preprocessing
 
 The pipeline applies two preprocessing steps before classification.
 
@@ -357,7 +356,7 @@ First, `pre_clean()` removes inline citation markers such as `[13]` or `[4, 27]`
 
 Second, `is_valid()` drops sentences that are shorter than 30 characters or contain no word of three or more letters. This removes bullet characters, lone numbers, and citation stubs that pass through sentence splitting but carry no information. After these two steps, the Transformer paper produced 183 valid sentences for classification.
 
-#### 1.4 Section Filtering
+#### 1.2 Section Filtering
 
 References, Acknowledgements, and Related Work are excluded.
 
@@ -402,13 +401,11 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 #### 3.1 Method
 
-No annotated sentence-level dataset exists for this task, so standard precision, recall, and F1 cannot be measured. Instead, I used a recall-oriented gold label check. For each of three papers, I manually identified one gold label per role — the answer I would expect the system to find (e.g. "Transformer" for TechnicalMethod, "BLEU" for EvaluationMetric). I then ran the pipeline and checked whether any accepted sentence contained that gold label as a substring. The result is a 3-paper × 4-role table (12 data points) with ○ or ✗.
-
-This approach seems appropriate for a prototype because the key question at this stage is whether the system finds the right information at all, not how precise the full output is. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
+The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
 
 #### 3.2 Results
 
-Gold terms used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):
+Gold labels used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):
 
 | Paper | TechnicalMethod | Task | Dataset | EvaluationMetric |
 |---|---|---|---|---|

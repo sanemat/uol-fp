@@ -9,19 +9,19 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 
 | # | Criterion | Status | Notes |
 |---|---|---|---|
-| 1 | Clear, well-formatted, coherent | ⚠ | Ch.2 opens with "very famous AI paper" (informal); Figure 2 has no markup |
-| 2 | Knowledge of area | ⚠ | Only 4 references; GROBID and DeBERTa not cited |
+| 1 | Clear, well-formatted, coherent | ✓ | Opening sentence fixed (D done); Figure 1 and 2 now use `<figure>/<figcaption>` (G done) |
+| 2 | Knowledge of area | ✓ | 11 references; GROBID [7] and DeBERTa [11] now cited |
 | 3 | Critically evaluates prior work | ✓ | Jain et al. limitations well explained |
-| 4 | Proper citation and referencing | ⚠ | 4 references is thin for a literature review |
+| 4 | Proper citation and referencing | ✓ | 11 references; all central tools cited |
 | 5 | Design clear and high quality | ✓ | Chapter 3 is thorough |
 | 6 | Concept justified | ✓ | Good |
-| 7 | Workplan in enough detail | ⚠ | Table 3 is sparse; Gantt chart is screenshots |
+| 7 | Workplan in enough detail | ✓ | Table 4 has 4 rows with specific iteration tasks; Gantt chart in Appendix A |
 | 8 | Workplan feasible | ✓ | OK |
-| 9 | Evaluation strategy appropriate | ⚠ | 3 papers, substring match — weak but acknowledged |
+| 9 | Evaluation strategy appropriate | ⚠ | Core: 3 papers, substring match; extended 6-paper results in Appendix B |
 | 10 | Feature prototype high quality | ⚠ | Large output (MapReduce 151 sentences) unaddressed |
 | 11 | Technically challenging | ✓ | Section 7 documents the challenges well |
-| 12 | Demonstration effective and impactful | ✗ | Video not yet made — **required submission item** |
-| 13 | Evaluate prototype and show improvements | ⚠ | Improvements listed as "planned" — none implemented |
+| 12 | Demonstration effective and impactful | ✓ | Video recorded |
+| 13 | Evaluate prototype and show improvements | ⚠ | GPU batch processing implemented; more improvements still planned |
 | 14 | Innovation and excellence | ✓ | Hypothesis comparison is a genuine contribution |
 
 ---
@@ -90,17 +90,17 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 
 ## Priority 4 — Lower impact, low effort
 
-### G. Fix Figure 2 markup in Chapter 2
+### G. Fix Figure 2 markup in Chapter 2 (DONE)
 
 - **Criteria:** 1
 - **Why:** Figure 1 uses proper `<figure>` and `<figcaption>` markup. Figure 2 is a raw code block with no figure number or caption. They should be consistent.
 - **Effort:** Wrap Figure 2 in `<figure>` markup, add `<figcaption>Figure 2: ...`.
 
-### H. Add post-submission iteration rows to Table 3 (workplan)
+### H. Add post-submission iteration rows to Table 4 (workplan) (DONE)
 
 - **Criteria:** 7
-- **Why:** Table 3 ends at "Final submission" with no detail. The backlog improvements (top-N, usage NLI, term extraction) are described in Chapter 4 Section 6 but not in the workplan. Adding 2 rows makes the workplan appear more planned.
-- **Effort:** Add 2 rows to Table 3 in Chapter 3 Section 7.
+- **Why:** Table 4 ended at "Final submission" with no detail. The backlog improvements (top-N, usage NLI, term extraction) are described in Chapter 4 Section 5 but not in the workplan. Adding 2 rows makes the workplan appear more planned.
+- **Effort:** Add 2 rows to Table 4 in Chapter 3 Section 5.
 
 ---
 
