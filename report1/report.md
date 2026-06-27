@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5522 words)
+# Report (5413 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -352,7 +352,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1441 words)
+## Chapter 4: Feature Prototype (1332 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -461,13 +461,7 @@ The fourth type is large output volume. MapReduce produced 151 TechnicalMethod s
 
 ### 5. Improvements for the Next Iteration
 
-Three improvements are planned.
-
-The first is a usage NLI step after role classification. A second NLI pass with labels ["used by the authors", "mentioned as prior or related work"] keeps only sentences about the paper's own work, catching Introduction noise at the sentence level without additional keyword rules. As a lighter alternative, a first-person verb filter ("we propose", "we introduce", "we use") may reduce the candidate pool from 200+ to approximately 15–40 sentences before NLI.
-
-The second is Top-N selection by score × section weight. Instead of keeping all accepted sentences, only the top 3 per role are kept, ranked by NLI score multiplied by a section weight (Abstract and Method sections ranked higher than Introduction). This addresses the large output volume: MapReduce produced 151 TechnicalMethod sentences, but the top 3 by score may be sufficient for a methodology profile.
-
-The third is LLM term extraction. The current output is full sentences, but the target profile contains short terms (e.g. "Transformer" rather than "We propose a new simple network architecture, the Transformer..."). The gold label evaluation suggests the correct term is present in the output sentence; the next step is extracting it with a prompt such as "What is the TechnicalMethod named in this sentence?"
+Sentence classification produces too many results to be useful: MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot distinguish the paper's own method from methods cited in related work. Jain et al. [5] argue that methodology extraction requires document-level context because relevant information may be spread across sections. The next iteration treats the task as document-level extraction instead: a long-context LLM reads the cleaned full paper and returns one term per role as JSON. Each answer includes a quoted sentence from the paper.
 
 ### 6. Technical Challenge
 
