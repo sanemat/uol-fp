@@ -86,7 +86,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 - **Effort:** Add 1–2 sentences of critical evaluation per source (4 sources = ~4–8 sentences total). Revise rather than add paragraphs.
 - **Location:** Chapter 2 Sections 1–3; each source's paragraph.
 
-### M. Fix attribution overclaim — Oates/Pilkington justify schema concept, Jain justifies the 4 roles
+### M. Fix attribution overclaim — Oates/Pilkington justify schema concept, Jain justifies the 4 roles (DONE)
 
 - **Criteria:** 3, 14
 - **Why:** Chapter 3 Section 2 currently says: "Two independent sources agree on the same four types. First, the ontology from Oates [9] and Pilkington & Pretorius [10] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric." This is an overclaim. Oates and Pilkington & Pretorius define methodology structure in general terms (ResearchDesign, ResearchMethod, PhilosophicalWorldview, data generation methods). They do not name TechnicalMethod, Task, Dataset, or EvaluationMetric. The direct support for the four extraction roles comes from Jain et al. [5] (SciREX). The claim that two independent sources agree on the exact four roles is too strong. Fix: separate the two functions clearly:

@@ -208,13 +208,13 @@ Zero-shot NLI reduces the labeled data requirement. The question is whether any 
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project addresses.
 
-Section 2 established the schema. Oates [9] and Pilkington & Pretorius [10] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.
+Section 2 established the basis for a structured approach. Oates [9] and Pilkington & Pretorius [10] suggest that research methodology has formal, structured components, but neither work names the specific extraction roles used in this project. The four roles — TechnicalMethod, Task, Dataset, and EvaluationMetric — draw more directly on Jain et al. [5]. Both Oates and Pilkington are designed for human use. Neither provides a system to extract methodology from text automatically.
 
 Section 3 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach does not readily generalize to general computing papers without similar annotation effort.
 
 Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
-Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on general computing papers, which made this direction uncertain but worth attempting.
+Combining these elements appears to remain underexplored: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on general computing papers, which made this direction uncertain but worth attempting.
 
 ---
 
@@ -234,7 +234,7 @@ The primary users are computing students doing literature reviews (see Chapter 1
 
 Jain et al. [5] needed 438 annotated papers and 4 PhD-level annotators for a supervised approach. This project has no annotated corpus. Yin et al. [11] show that NLI can classify text into many possible labels without task-specific training. Zero-shot NLI is a practical choice when training data does not exist.
 
-Two independent sources agree on the same four types. First, the ontology from Oates [9] and Pilkington & Pretorius [10] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric. Second, Jain et al. [5] (SciREX) independently chose the same four categories (Dataset, Metric, Task, Method) for their annotation scheme. The agreement of two independent sources supports the role vocabulary.
+The role vocabulary draws on two sources serving different functions. Oates [9] and Pilkington & Pretorius [10] suggest that research methodology has formal, structured components — a concept-level justification for extracting something. The specific four roles in this project — TechnicalMethod, Task, Dataset, EvaluationMetric — draw more directly on Jain et al. [5] (SciREX), who annotated the same four types (Dataset, Metric, Task, Method) across 438 papers, providing evidence that these categories are recognizable in paper text.
 
 Research design (e.g. experiment vs. survey) is subjective — two readers can assign different labels to the same paper. A philosophical worldview may not appear in the paper text at all. The four roles (TechnicalMethod, Task, Dataset, EvaluationMetric) appear as explicit phrases in the text and are easier to match automatically.
 
