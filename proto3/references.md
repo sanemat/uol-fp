@@ -1,6 +1,6 @@
 ## References
 
-[1] Zaid Alyafeai, Maged Saeed Al-shaibani, and Bernard Ghanem. 2025. MOLE: Metadata Extraction and Validation in Scientific Papers Using LLMs. In *Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP 2025)*. https://api.semanticscholar.org/CorpusID:278911416
+[1] Zaid Alyafeai, Maged Saeed Al-shaibani, and Bernard Ghanem. 2025. MOLE: Metadata Extraction and Validation in Scientific Papers Using LLMs. In *Findings of the Association for Computational Linguistics: EMNLP 2025*, Suzhou, China. Association for Computational Linguistics, 12236–12264. https://doi.org/10.18653/v1/2025.findings-emnlp.655
 
 [2] John Dagdelen, Alexander Dunn, Sanghoon Lee, Nicholas Walker, Andrew S. Rosen, Gerbrand Ceder, Kristin A. Persson, and Anubhav Jain. 2024. Structured information extraction from scientific text with large language models. *Nature Communications* 15 (2024), 1418. DOI: https://doi.org/10.1038/s41467-024-45563-x
 
@@ -12,4 +12,6 @@
 
 [6] Maciej P. Polak and Dane Morgan. 2024. Extracting accurate materials data from research papers with conversational language models and prompt engineering. *Nature Communications* 15 (2024), 1569. DOI: https://doi.org/10.1038/s41467-024-45914-8
 
-[7] Pengcheng He, Jianfeng Gao, and Weizhu Chen. 2021. DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. arXiv:2111.09543. Available at: https://arxiv.org/abs/2111.09543
+[7] Pengcheng He, Jianfeng Gao, and Weizhu Chen. 2023. DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. In *The Eleventh International Conference on Learning Representations (ICLR 2023)*, Kigali, Rwanda. https://doi.org/10.48550/arXiv.2111.09543
+
+[8] Yubo Ma, Yixin Cao, YongChing Hong, and Aixin Sun. 2023. Large Language Model Is Not a Good Few-shot Information Extractor, but a Good Reranker for Hard Samples! In *Findings of the Association for Computational Linguistics: EMNLP 2023*. Association for Computational Linguistics. DOI: https://doi.org/10.48550/arXiv.2303.08559
