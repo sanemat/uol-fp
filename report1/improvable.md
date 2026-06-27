@@ -11,7 +11,7 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 |---|---|---|---|
 | 1 | Clear, well-formatted, coherent | ✓ | Opening sentence fixed (D done); Figure 1 and 2 now use `<figure>/<figcaption>` (G done) |
 | 2 | Knowledge of area | ✓ | 11 references; GROBID [7] and DeBERTa [11] now cited |
-| 3 | Critically evaluates prior work | ✓ | Jain et al. limitations well explained |
+| 3 | Critically evaluates prior work | ⚠ | Jain et al. limitations noted, but all sources need sharper "does not transfer because…" critique (→ J, K) |
 | 4 | Proper citation and referencing | ✓ | 11 references; all central tools cited |
 | 5 | Design clear and high quality | ✓ | Chapter 3 is thorough |
 | 6 | Concept justified | ✓ | Good |
@@ -45,6 +45,24 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 
 ## Priority 2 — High impact, low effort (30–60 min each)
 
+### I. Fix Design / Prototype inconsistency — separate implemented from planned
+
+- **Criteria:** 1, 5, 13
+- **Why:** Chapter 3 Section 3 lists usage NLI and top-k as part of the pipeline ("→ usage NLI → top-k sentences per role"). Chapter 4 Section 5 lists the same two as improvements for the next iteration. A marker reading the report sees a contradiction: either they are in or they are not. This is the most visible consistency problem in the report. Fix: in Chapter 3, mark these two steps as planned (e.g. "planned for Iteration 1") or move them out of the pipeline diagram entirely. In Chapter 4, keep them as next-iteration improvements. The pipeline description in Chapter 3 should exactly match what is implemented.
+- **Effort:** Edit 1 paragraph in Chapter 3 Section 3; no code change needed.
+- **Location:** Chapter 3 Section 3 ("Overall Structure") pipeline sentence; Chapter 4 Section 5 stays unchanged.
+
+### J. Add critical evaluation to Literature Review — not just summaries
+
+- **Criteria:** 3
+- **Why:** Criterion 3 is "critically evaluates previous work and/or academic literature." The current Literature Review describes each paper clearly, but the criticism is generic ("his book was published in 2006, but it still provides useful categories"). What is missing: for each source, explain specifically which parts do NOT transfer to this project and why. Examples:
+  - Oates [9]: the six strategies are useful for naming design type, but they were written for human researchers to self-classify, not for automatic extraction — no paper explicitly writes "this is an experiment".
+  - Pilkington & Pretorius [10]: the formal ontology is useful for schema justification, but philosophical worldview was excluded because it almost never appears as an explicit phrase in paper text — state this as a testable observation, not just a design decision.
+  - Jain et al. [5]: the 4-entity schema matches well, but two specific constraints prevent direct reuse: the corpus is Papers with Code (ML benchmark papers only) and annotation required 4 PhD-level experts at Cohen-κ 95% — neither is available here.
+  - Yin et al. [11]: the entailment approach transfers, but the training data (MNLI: news, fiction, telephone) has no scientific text — this means the domain mismatch risk is not just theoretical but structurally built into the model weights.
+- **Effort:** Add 1–2 sentences of critical evaluation per source (4 sources = ~4–8 sentences total). Revise rather than add paragraphs.
+- **Location:** Chapter 2 Sections 1–3; each source's paragraph.
+
 ### B. Re-run Transformer with short labels → update Tables 5 and 8 (DONE)
 
 - **Criteria:** 9, 13
@@ -69,6 +87,26 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 ---
 
 ## Priority 3 — Medium impact, medium effort (1–2 hours)
+
+### K. Add personal judgment traces — show decision process, not just decisions
+
+- **Criteria:** 3, 14
+- **Why:** The report reads uniformly as "This project…", "The pipeline…", "This suggests…". This makes every sentence sound the same and removes evidence that a student made real choices. Criterion 14 ("innovation and excellence") and criterion 3 (critical evaluation) reward visible judgment. The goal is not to rewrite the whole report, but to add a few first-person traces in places where a real decision was made under uncertainty.
+- **What to add (targeted, not scattered):**
+  - Chapter 2 Synthesis: add 1 sentence about why combining these three streams seemed promising but not obvious — e.g. "I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on computing papers, which made the direction uncertain but worth trying."
+  - Chapter 3 Section 2 (Design Justification): the hypothesis set comparison was not planned from the start — it was discovered that verbose labels broke the output. Add 1 sentence: "An early run with verbose hypotheses sent almost all BERT sentences to EvaluationMetric, which forced a comparison of four hypothesis sets before settling on short labels."
+  - Chapter 4 Section 1.2 (Section Filtering): the switch from keyword-only sections to all body sections was a real decision after a failure. Add 1 sentence: "An earlier version filtered to sections with headings matching 'experiment' or 'result', but the Training Data section of the Transformer paper has neither keyword, and the WMT dataset was missed."
+- **Effort:** Add 3 sentences total in targeted locations. Do not rewrite paragraphs.
+
+### L. Strengthen limitations — connect to claim validity, not just observation
+
+- **Criteria:** 13
+- **Why:** Chapter 4 Section 4 lists four noise types honestly. But the current writing stops at observation ("substring match is loose", "gold labels were written by the author"). The next step — which shows human judgment — is to say what each limitation means for the reported result (10/12). Examples:
+  - Substring match is a recall check, not a precision check. 10/12 means the correct term is present somewhere in the output sentences, not that the output is a clean methodology profile. The result should be stated as "the system retrieves at least one relevant sentence for 10 of 12 role-paper pairs" — not as 83% precision.
+  - Gold labels were written by the author without a second annotator. The AlexNet TechnicalMethod label was changed from "AlexNet" to "convolutional" after running the pipeline. This adjustment should be named explicitly: "the gold label was revised after inspection to match what the paper actually uses."
+  - These two points together mean: the 10/12 result is an upper bound on recall, not a precision or F1 claim. State this explicitly in the analysis paragraph.
+- **Effort:** Add 2–3 sentences to Chapter 4 Section 3.3 (Analysis) and 1 sentence to Section 3.1 (Method).
+- **Location:** Chapter 4 Sections 3.1 and 3.3.
 
 ### E. Add citations for GROBID and DeBERTa (DONE)
 
