@@ -28,7 +28,9 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 
 ## Predicted Marks (external review estimate)
 
-Estimated total: **70–75**. With stronger literature review and clearer evaluation method, could move into high distinction range.
+Previous version estimate: **70–74**.
+Current version estimate: **75–78**. With strong video: **78–80**.
+For stable distinction: top-3 precision evaluation or manual judgment of sample output is needed.
 
 | # | Criterion | Predicted | Weak point |
 |---|---|---|---|
@@ -141,6 +143,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 ### N. Add a precision-oriented check — evaluate top-3 sentences per role for relevance
 
 - **Criteria:** 9, 13
+- **Note:** Criteria 9 and 13 will not reach full marks without a precision check. 10/12 via substring match only shows recall; a marker who notices MapReduce produced 151 sentences can reasonably question whether the result is meaningful.
 - **Why:** The current evaluation (substring match on any accepted sentence) is recall-oriented. A marker who notices that MapReduce produced 151 TechnicalMethod sentences can reasonably question whether "10/12 gold labels found" is a meaningful result — it may only show that large output lists eventually contain the expected term. Chapter 4 Section 4 acknowledges this honestly, but the evaluation design itself should respond to it. A precision-oriented check addresses this directly. Once Top-N selection (item F) is implemented, the top-3 sentences per role can be manually inspected: does each returned sentence genuinely describe the paper's own methodology in that role? Even a 5-paper × 4-role × top-3 manual check (60 sentences, ~30 min) gives a more convincing evaluation than substring match on 100+ sentences.
 - **What to add:** After implementing F (top-N), add a small table in Chapter 4 Section 3: for each role × paper (or a sample of 3 papers), judge whether the top-1 sentence is genuinely relevant (yes/no/partial). Report as "top-1 precision". This does not replace the existing evaluation — it supplements it and directly answers the recall-only weakness.
 - **Dependency:** Item F must be implemented first (top-3 selection).
@@ -155,6 +158,14 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 - **References to add:**
   - DeBERTa: He et al. (2021). DeBERTa: Decoding-enhanced BERT with Disentangled Attention. ICLR 2021.
   - GROBID: Lopez (2009). GROBID: Combining automatic bibliographic data recognition and term extraction for scholarship publications. ECDL 2009.
+
+### O. Expand literature review — currently 1105 words against a 2500-word limit
+
+- **Criteria:** 2, 3
+- **Why:** At 1105 words the literature review uses less than half the available budget. For an MSc-level submission, a marker may expect more comparative analysis between sources — not just "how each source differs from this project" but "how these sources relate to each other". The existing review summarises each source clearly, but cross-source comparison is thin.
+- **What to add:** A paragraph comparing Jain et al. [5] with Ghosh et al. [2, 3] (both extract methodology-like entities, but with different schemas and supervision approaches). A paragraph comparing Yin et al. [11]'s zero-shot approach against the supervised approaches in [2, 3] to make the trade-off explicit.
+- **Effort:** ~500–800 words; stays within the 2500-word chapter limit.
+- **Location:** Chapter 2 Sections 2 and 4 (Closest Prior Work and Synthesis).
 
 ### F. Implement Top-N selection (top 3 per role by NLI score)
 
