@@ -46,3 +46,4 @@ Avoid absolute claims in report text:
 - Do not write "X will always work" → write "X may work" or "X is expected to work"
 - Do not write "all X are Y" → write "many X tend to be Y" or "X often appears to be Y"
 - Use hedged language: "tends to", "appears to", "may", "suggests", "is likely"
+- Expand non-general abbreviations on first use, e.g. "human-computer interaction (HCI)". Skip common terms like ML, GPU, JSON, PDF, API.
