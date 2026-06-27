@@ -75,7 +75,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 - **Effort:** Edit 1 paragraph in Chapter 3 Section 3; no code change needed.
 - **Location:** Chapter 3 Section 3 ("Overall Structure") pipeline sentence; Chapter 4 Section 5 stays unchanged.
 
-### J. Add critical evaluation to Literature Review — not just summaries
+### J. Add critical evaluation to Literature Review — not just summaries (DONE)
 
 - **Criteria:** 3
 - **Why:** Criterion 3 is "critically evaluates previous work and/or academic literature." The current Literature Review describes each paper clearly, but the criticism is generic ("his book was published in 2006, but it still provides useful categories"). What is missing: for each source, explain specifically which parts do NOT transfer to this project and why. Examples:

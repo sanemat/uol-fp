@@ -132,11 +132,11 @@ This review covers three areas: how methodology is defined, how information is e
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
-Oates [9] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work.
+Oates [9] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. His book was published in 2006, but it still provides useful categories for describing how computing researchers conduct their work. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
 
 Pilkington & Pretorius [10] go further: they formalize the structure using UML (Unified Modeling Language) and ontology engineering, with the goal of "providing clear and unambiguous semantics" [10] — a formal structure, not a textbook description. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod. ResearchScheme belongs to one PhilosophicalWorldview, has one or more ResearchDesigns, and has one or more ResearchMethods. The paper tries to solve the problem that students and supervisors had no shared, consistent vocabulary for methodology, so they often used the same terms with different meanings.
 
-A philosophical worldview is one of the important parts of Pilkington & Pretorius [10], but it may not appear directly in paper text, so my project skips it.
+A philosophical worldview is one of the key components in Pilkington & Pretorius [10], but it tends not to appear as an explicit phrase in completed research papers — this appears to be an empirical pattern rather than just a design decision. This project therefore excludes it from extraction.
 
 Oates [9] gives concept names. Pilkington & Pretorius [10] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius.
 
@@ -163,7 +163,7 @@ These four types closely match the four roles in this project. This suggests tha
 
 Jain et al. [5] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [5] — relations may span sections, not just sentences.
 
-But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. The Jain et al. [5] approach is difficult to adopt directly.
+But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. Two constraints make the Jain et al. [5] approach difficult to adopt directly: the corpus is limited to ML benchmark papers, and annotation required 4 PhD-level experts at Cohen-κ 95% — neither condition is available for this project.
 
 Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP (Natural Language Processing) papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
@@ -198,7 +198,7 @@ This provides a possible way to support the core step in this project: classifyi
 
 For TechnicalMethod, a longer hypothesis was also tested: "This text describes a technique, algorithm, system, or architecture used or proposed in the research." The hypothesis set comparison investigates whether this verbose form can extract TechnicalMethod more accurately than the short label on scientific text.
 
-However, a domain mismatch risk exists. Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports. Their NLI model is trained on MNLI (Multi-Genre Natural Language Inference; covers news, fiction, and telephone speech). None of these are scientific papers, which use dense technical vocabulary, passive constructions, and section-based structure.
+However, a domain mismatch risk exists. Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports. Their NLI model is trained on MNLI (Multi-Genre Natural Language Inference; covers news, fiction, and telephone speech). None of these are scientific papers, which tend to use dense technical vocabulary, passive constructions, and section-based structure. This suggests the domain mismatch may be structurally built into the model weights, not merely a test-time distribution shift.
 
 This project accepts the risk and tests it: the hypothesis set comparison (short vs verbose hypotheses) directly investigates how label wording affects classification on scientific text.
 
