@@ -80,7 +80,7 @@ The distinction matters in practice. A student reviewing papers on text classifi
 
 ### 2. Project goal and approach
 
-This project addresses **Template 12.1**: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:
+This project addresses **Template 12.1** from the Natural Language Processing (NLP) module: Identifying research methodologies used in computing research. The goal is to build an automated pipeline that takes a PDF of a computing research paper as input and produces a role-based methodology profile as output. The profile contains four fields:
 
 - **TechnicalMethod** — the method, algorithm, or architecture the authors used (e.g. Transformer)
 - **Task** — the problem the research addresses (e.g. machine translation)
@@ -165,7 +165,7 @@ Jain et al. [5] operate at the document level. The authors argue that "a signifi
 
 But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotators (Cohen-κ 95%). The corpus comes from Papers with Code, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, HCI, etc.) and has no annotated corpus. Two constraints make the Jain et al. [5] approach difficult to adopt directly: the corpus is limited to ML benchmark papers, and annotation required 4 PhD-level experts at Cohen-κ 95% — neither condition is available for this project.
 
-Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP (Natural Language Processing) papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
+Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
 The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
 
