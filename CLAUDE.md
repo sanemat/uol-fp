@@ -113,3 +113,11 @@ Colab pipeline steps (`pipeline.ipynb`):
 ## Tool Management
 
 `aqua.yaml` manages CLI tools (uses [aqua](https://aquaproj.github.io/)). Run `aqua install` to install declared tools.
+
+## Writing (report1/)
+
+Avoid absolute claims in report text:
+- Do not write "X does not exist" → write "X is difficult to find" or "I could not find X"
+- Do not write "X will always work" → write "X may work" or "X is expected to work"
+- Do not write "all X are Y" → write "many X tend to be Y" or "X often appears to be Y"
+- Use hedged language: "tends to", "appears to", "may", "suggests", "is likely"
