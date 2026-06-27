@@ -122,15 +122,11 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 
 ## Priority 3 — Medium impact, medium effort (1–2 hours)
 
-### K. Add personal judgment traces — show decision process, not just decisions
+### K. Add personal judgment traces — show decision process, not just decisions (DONE)
 
 - **Criteria:** 3, 14
-- **Why:** The report reads uniformly as "This project…", "The pipeline…", "This suggests…". This makes every sentence sound the same and removes evidence that a student made real choices. Criterion 14 ("innovation and excellence") and criterion 3 (critical evaluation) reward visible judgment. The goal is not to rewrite the whole report, but to add a few first-person traces in places where a real decision was made under uncertainty.
-- **What to add (targeted, not scattered):**
-  - Chapter 2 Synthesis: add 1 sentence about why combining these three streams seemed promising but not obvious — e.g. "I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on computing papers, which made the direction uncertain but worth trying."
-  - Chapter 3 Section 2 (Design Justification): the hypothesis set comparison was not planned from the start — it was discovered that verbose labels broke the output. Add 1 sentence: "An early run with verbose hypotheses sent almost all BERT sentences to EvaluationMetric, which forced a comparison of four hypothesis sets before settling on short labels."
-  - Chapter 4 Section 1.2 (Section Filtering): the switch from keyword-only sections to all body sections was a real decision after a failure. Add 1 sentence: "An earlier version filtered to sections with headings matching 'experiment' or 'result', but the Training Data section of the Transformer paper has neither keyword, and the WMT dataset was missed."
-- **Effort:** Add 3 sentences total in targeted locations. Do not rewrite paragraphs.
+- Added 3 sentences: Ch2 §4 Synthesis ("I could not find a paper that combined…"), Ch3 §2 ("An early run with verbose hypotheses…"), Ch4 §1.2 (reworded existing sentence to "An earlier version filtered…was missed entirely").
+- Also softened 2 absolute claims nearby: "cannot generalize" → "does not readily generalize"; "catches this" → "is expected to reduce this noise".
 
 ### L. Strengthen limitations — connect to claim validity, not just observation
 
