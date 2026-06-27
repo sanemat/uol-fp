@@ -167,6 +167,12 @@ But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotat
 
 Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
+Ghosh et al. [2, 3] use supervised transformer-based sequence labeling to extract methodology component names from AI research papers. They argue that methodology names are difficult to extract because they are large, fast-evolving, domain-specific, and context-dependent. Unlike Jain et al. [5], who extract four entity types at the document level, Ghosh et al. focus narrowly on TechnicalMethod. This makes direct reuse difficult: even if the sequence labeling approach transferred, it would not address Task, Dataset, or EvaluationMetric — three of the four roles in this project. The approach is also specific to AI research papers; the training data does not cover general computing research such as systems, algorithms, or HCI. Like Jain et al. [5], the approach is supervised and requires annotated training data that this project does not have.
+
+Färber et al. [1] extract methods and datasets from scientific publications using domain-specific named entity recognition followed by usage classification — distinguishing whether each mention is *used by the authors* or only *cited as prior work*. This "used vs mentioned" distinction is directly relevant to a noise problem in the prototype: a sentence in the BERT Introduction describing ELMo's approach entails "technical method" under NLI but belongs to a different paper. However, Färber et al. [1] cover only Method and Dataset — not Task or EvaluationMetric. Their NER model also requires labeled entity mentions, which are not available for this project.
+
+Across these three supervised systems, a common pattern emerges. Jain et al. [5] achieve the broadest coverage — all four roles at document level — but require 438 annotated papers from a single domain. Ghosh et al. [2, 3] narrow the scope to TechnicalMethod and apply finer-grained sequence labeling, but cover only one of the four roles. Färber et al. [1] add a useful usage signal for two roles, but do not extend to Task or EvaluationMetric. All three depend on domain-specific labeled corpora. For a project targeting general computing papers — where no annotated methodology corpus appears to exist — reusing any of these directly would require rebuilding the annotation infrastructure from scratch. This constraint motivates a zero-shot approach, which removes the labeled data requirement at the cost of domain adaptation.
+
 These papers support the entity types, but their supervised methods depend on annotation that this project does not have. A zero-shot method is therefore a reasonable direction.
 
 ### 3. Zero-shot Classification
@@ -202,6 +208,8 @@ However, a domain mismatch risk exists. Yin et al. test on Yahoo News articles, 
 
 I test this risk by comparing short and verbose hypothesis labels on scientific text.
 
+The supervised approaches reviewed in Section 2 handle domain distribution more directly: they train on text from the target domain. Yin et al. [11] avoid this by relying on the semantic relationship between text and label hypothesis. The trade-off is concrete: the supervised systems achieve strong extraction within their training domains but do not transfer to a new domain without re-annotation. Zero-shot NLI shifts the bottleneck from annotation to hypothesis design. The hypothesis comparison in this project tests this directly: verbose_v1 assigned 94% of BERT sentences (244 of 258) to EvaluationMetric — a single poorly chosen hypothesis collapsed the distribution. Short labels gave the best probe score (3/4) and the most balanced distribution across four roles. This shows that hypothesis quality is a real design cost in zero-shot systems, not merely a minor parameter choice.
+
 Zero-shot NLI reduces the labeled data requirement. The question is whether any prior work combines this approach with a methodology schema on scientific papers.
 
 ### 4. Synthesis
@@ -215,6 +223,8 @@ Section 3 showed that extraction of the same four types is possible. Jain et al.
 Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
 I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This made the approach worth testing in a prototype.
+
+The three supervised systems in Section 2 confirm that the four-role extraction task is achievable with sufficient annotation. Jain et al. [5] extract all four roles but require ML-benchmark annotation at scale. Ghosh et al. [2, 3] narrow to TechnicalMethod. Färber et al. [1] add usage sensitivity for two roles. None of the conditions that make these approaches work — large labeled corpora, single-domain scope — apply to this project. Yin et al.'s [11] zero-shot approach removes the annotation requirement but was tested only on general-domain text. My project occupies a specific position in this space: schema informed by Jain et al. [5], extraction method from Yin et al. [11], preprocessing from GROBID [7], applied to the domain vocabulary of Oates [9] and Pilkington & Pretorius [10]. This combination — not any one paper alone — is what the prototype tests.
 
 ---
 
