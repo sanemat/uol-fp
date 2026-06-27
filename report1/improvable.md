@@ -68,7 +68,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 
 ## Priority 2 — High impact, low effort (30–60 min each)
 
-### I. Fix Design / Prototype inconsistency — separate implemented from planned
+### I. Fix Design / Prototype inconsistency — separate implemented from planned (DONE)
 
 - **Criteria:** 1, 5, 13
 - **Why:** Chapter 3 Section 3 lists usage NLI and top-k as part of the pipeline ("→ usage NLI → top-k sentences per role"). Chapter 4 Section 5 lists the same two as improvements for the next iteration. A marker reading the report sees a contradiction: either they are in or they are not. This is the most visible consistency problem in the report. Fix: in Chapter 3, mark these two steps as planned (e.g. "planned for Iteration 1") or move them out of the pipeline diagram entirely. In Chapter 4, keep them as next-iteration improvements. The pipeline description in Chapter 3 should exactly match what is implemented.
