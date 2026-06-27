@@ -218,7 +218,7 @@ Combining these elements appears to remain underexplored: the 4-role methodology
 
 ---
 
-## Chapter 3: Design (1381 words)
+## Chapter 3: Design (1382 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -308,7 +308,7 @@ The major tasks are:
 - Post-submission backlog: prototype refinement (first-person verb filter, top-N selection), extended evaluation
 - Final stage: testing, analysis, Final Report writing and submission
 
-The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2) for the full project roadmap.
+The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2, A3) for the full project roadmap.
 
 ---
 
@@ -545,11 +545,16 @@ ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems paper
 ## Appendix A — Project Roadmap
 
 <figure>
-<img src="Screenshot%202026-06-23%20204411.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
-<figcaption>Figure A1: Project roadmap (rows 1–24). GitHub Projects roadmap view showing completed iterations (April–June 2026) and current sprint.</figcaption>
+<img src="Screenshot%202026-06-27%20112842.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–19). Completed tasks from March–May 2026, including background research, literature notes, and proto2 prototype build.</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-06-23%20204423.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
-<figcaption>Figure A2: Project roadmap (rows 26–34). Remaining tasks including chapter writing, video recording, and Preliminary Report submission.</figcaption>
+<img src="Screenshot%202026-06-27%20112931.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 20–36). April–June 2026 sprint showing chapter writing, video recording, and Preliminary Report submission deadline (red line, 29 June).</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-06-27%20113032.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 35–38). Post-submission iterations: Prototype Iteration 1 (first-person verb filter + top-N selection), Prototype Iteration 2 (usage NLI + LLM term extraction), and Final Report writing.</figcaption>
 </figure>
