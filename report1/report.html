@@ -81,8 +81,8 @@ h3 {
   box-sizing: border-box;
 }
 </style>
-<h1 id="report-4637-words">Report (4637 words) </h1>
-<h2 id="chapter-1-introduction-815-words">Chapter 1: Introduction (815 words) </h2>
+<h1 id="report-5016-words">Report (5016 words) </h1>
+<h2 id="chapter-1-introduction-827-words">Chapter 1: Introduction (827 words) </h2>
 <p>When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. Research methodology in computing papers has a recognizable structure: the technical method used, the task being solved, the dataset evaluated on, and the evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.</p>
 <p>Consider "Attention Is All You Need" [D6], one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:</p>
 <table>
@@ -135,7 +135,7 @@ h3 {
 <p>Chapter 3 describes the system design. It covers the four-role schema and its justification, the full pipeline architecture, the choice of technologies, the evaluation approach, and the work plan.</p>
 <p>Chapter 4 presents the feature prototype. It describes the implementation of the zero-shot NLI classification step, demonstrates results on six computing papers, evaluates the prototype against manually identified gold labels, and discusses planned improvements for the next iteration.</p>
 <hr>
-<h2 id="chapter-2-literature-review-1105-words">Chapter 2: Literature Review (1105 words) </h2>
+<h2 id="chapter-2-literature-review-1283-words">Chapter 2: Literature Review (1283 words) </h2>
 <p>Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].</p>
 <figure>
 <pre>Methodology:
@@ -250,7 +250,7 @@ Method: Transformer
 <p>Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.</p>
 <p>Combining these elements appears to remain underexplored: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on general computing papers, which made this direction uncertain but worth attempting.</p>
 <hr>
-<h2 id="chapter-3-design-1382-words">Chapter 3: Design (1382 words) </h2>
+<h2 id="chapter-3-design-1459-words">Chapter 3: Design (1459 words) </h2>
 <p>The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).</p>
 <h3 id="1-domain-and-users">1. Domain and Users </h3>
 <p>The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.</p>
@@ -379,7 +379,7 @@ Method: Transformer
 <p>Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.</p>
 <p>If precision or recall is low, the result will be reported honestly. The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.</p>
 <hr>
-<h2 id="chapter-4-feature-prototype-1336-words">Chapter 4: Feature Prototype (1336 words) </h2>
+<h2 id="chapter-4-feature-prototype-1447-words">Chapter 4: Feature Prototype (1447 words) </h2>
 <p>The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.</p>
 <p>Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).</p>
 <h3 id="1-implementation">1. Implementation </h3>
