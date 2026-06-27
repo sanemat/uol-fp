@@ -15,14 +15,37 @@ Target: `report.md`. Implementation: `proto2/2pipeline.ipynb`.
 | 4 | Proper citation and referencing | ✓ | 11 references; all central tools cited |
 | 5 | Design clear and high quality | ✓ | Chapter 3 is thorough |
 | 6 | Concept justified | ✓ | Good |
-| 7 | Workplan in enough detail | ✓ | Table 4 has 4 rows with specific iteration tasks; Gantt chart in Appendix A |
+| 7 | Workplan in enough detail | ⚠ | Table exists, but task granularity, risks, and evaluation schedule are thin (predicted 3/5) |
 | 8 | Workplan feasible | ✓ | OK |
 | 9 | Evaluation strategy appropriate | ⚠ | Core: 3 papers, substring match; extended 6-paper results in Appendix B |
 | 10 | Feature prototype high quality | ⚠ | Large output (MapReduce 151 sentences) unaddressed |
 | 11 | Technically challenging | ✓ | Section 7 documents the challenges well |
 | 12 | Demonstration effective and impactful | ✓ | Video recorded |
 | 13 | Evaluate prototype and show improvements | ⚠ | GPU batch processing implemented; more improvements still planned |
-| 14 | Innovation and excellence | ✓ | Hypothesis comparison is a genuine contribution |
+| 14 | Innovation and excellence | ⚠ | Hypothesis comparison is genuine, but novelty claim needs more careful support (predicted 3.5/5; → M) |
+
+---
+
+## Predicted Marks (external review estimate)
+
+Estimated total: **70–75**. With stronger literature review and clearer evaluation method, could move into high distinction range.
+
+| # | Criterion | Predicted | Weak point |
+|---|---|---|---|
+| 1 | Clear, formatted, coherent | 4/5 | — |
+| 2 | Knowledge of area | 3.5/5 | Literature review short, sources adequate but not deep |
+| 3 | Critical evaluation | 3/5 | Criticism exists but "why insufficient" comparisons are shallow |
+| 4 | Citation/referencing | 3.5/5 | Format OK; some claims still need stronger citation |
+| 5 | Design quality | 4/5 | — |
+| 6 | Domain/user justification | 4/5 | — |
+| 7 | Workplan detail | 3/5 | Task granularity, risks, evaluation schedule thin |
+| 8 | Workplan feasibility | 4/5 | — |
+| 9 | Evaluation strategy | 3/5 | Substring match is too recall-oriented; large output makes it easy to pass |
+| 10 | Prototype quality | 4/5 | — |
+| 11 | Technical challenge | 4/5 | — |
+| 12 | Demo effectiveness | n/a | Not reviewed (video not seen) |
+| 13 | Prototype evaluation/improvements | 4/5 | — |
+| 14 | Innovation/excellence | 3.5/5 | Combination is interesting; novelty claim needs more careful support |
 
 ---
 
@@ -62,6 +85,17 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
   - Yin et al. [11]: the entailment approach transfers, but the training data (MNLI: news, fiction, telephone) has no scientific text — this means the domain mismatch risk is not just theoretical but structurally built into the model weights.
 - **Effort:** Add 1–2 sentences of critical evaluation per source (4 sources = ~4–8 sentences total). Revise rather than add paragraphs.
 - **Location:** Chapter 2 Sections 1–3; each source's paragraph.
+
+### M. Fix attribution overclaim — Oates/Pilkington justify schema concept, Jain justifies the 4 roles
+
+- **Criteria:** 3, 14
+- **Why:** Chapter 3 Section 2 currently says: "Two independent sources agree on the same four types. First, the ontology from Oates [9] and Pilkington & Pretorius [10] suggests a structured vocabulary for research methodology, including TechnicalMethod, Task, Dataset, and EvaluationMetric." This is an overclaim. Oates and Pilkington & Pretorius define methodology structure in general terms (ResearchDesign, ResearchMethod, PhilosophicalWorldview, data generation methods). They do not name TechnicalMethod, Task, Dataset, or EvaluationMetric. The direct support for the four extraction roles comes from Jain et al. [5] (SciREX). The claim that two independent sources agree on the exact four roles is too strong. Fix: separate the two functions clearly:
+  - Oates [9] + Pilkington & Pretorius [10] → justify that research methodology has formal, structured components worth extracting
+  - Jain et al. [5] → the direct source for the four extraction roles (Dataset, Metric, Task, Method)
+  - Yin et al. [11] → justifies zero-shot NLI as the extraction method
+  This also strengthens the Literature Review argument, because the chain of reasoning becomes more precise and harder to challenge.
+- **Effort:** Revise 2–3 sentences in Chapter 3 Section 2 and 1–2 sentences in Chapter 2 Section 4 (Synthesis). No new sources needed.
+- **Location:** Chapter 3 Section 2 ("Design Justification"), first bullet; Chapter 2 Section 4 ("Synthesis"), second paragraph.
 
 ### B. Re-run Transformer with short labels → update Tables 5 and 8 (DONE)
 
@@ -107,6 +141,15 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
   - These two points together mean: the 10/12 result is an upper bound on recall, not a precision or F1 claim. State this explicitly in the analysis paragraph.
 - **Effort:** Add 2–3 sentences to Chapter 4 Section 3.3 (Analysis) and 1 sentence to Section 3.1 (Method).
 - **Location:** Chapter 4 Sections 3.1 and 3.3.
+
+### N. Add a precision-oriented check — evaluate top-3 sentences per role for relevance
+
+- **Criteria:** 9, 13
+- **Why:** The current evaluation (substring match on any accepted sentence) is recall-oriented. A marker who notices that MapReduce produced 151 TechnicalMethod sentences can reasonably question whether "10/12 gold labels found" is a meaningful result — it may only show that large output lists eventually contain the expected term. Chapter 4 Section 4 acknowledges this honestly, but the evaluation design itself should respond to it. A precision-oriented check addresses this directly. Once Top-N selection (item F) is implemented, the top-3 sentences per role can be manually inspected: does each returned sentence genuinely describe the paper's own methodology in that role? Even a 5-paper × 4-role × top-3 manual check (60 sentences, ~30 min) gives a more convincing evaluation than substring match on 100+ sentences.
+- **What to add:** After implementing F (top-N), add a small table in Chapter 4 Section 3: for each role × paper (or a sample of 3 papers), judge whether the top-1 sentence is genuinely relevant (yes/no/partial). Report as "top-1 precision". This does not replace the existing evaluation — it supplements it and directly answers the recall-only weakness.
+- **Dependency:** Item F must be implemented first (top-3 selection).
+- **Effort:** ~30 min manual annotation; ~10 lines of code to print top-1 per role; add one table and 2 sentences to Chapter 4 Section 3.
+- **Location:** Chapter 4 Section 3.2 (Results table) — add a "top-1 relevant?" column or a separate small table.
 
 ### E. Add citations for GROBID and DeBERTa (DONE)
 
