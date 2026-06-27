@@ -128,7 +128,7 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
 - Added 3 sentences: Ch2 §4 Synthesis ("I could not find a paper that combined…"), Ch3 §2 ("An early run with verbose hypotheses…"), Ch4 §1.2 (reworded existing sentence to "An earlier version filtered…was missed entirely").
 - Also softened 2 absolute claims nearby: "cannot generalize" → "does not readily generalize"; "catches this" → "is expected to reduce this noise".
 
-### L. Strengthen limitations — connect to claim validity, not just observation
+### L. Strengthen limitations — connect to claim validity, not just observation (DONE)
 
 - **Criteria:** 13
 - **Why:** Chapter 4 Section 4 lists four noise types honestly. But the current writing stops at observation ("substring match is loose", "gold labels were written by the author"). The next step — which shows human judgment — is to say what each limitation means for the reported result (10/12). Examples:

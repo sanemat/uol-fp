@@ -405,7 +405,7 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 #### 3.1 Method
 
-The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role.
+The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.
 
 #### 3.2 Results
 
@@ -434,6 +434,8 @@ Table 9: Gold label evaluation results (10/12). Extended results for all 6 paper
 BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).
 
 The Transformer scored ✗ on Task and EvaluationMetric. For Task: 14 sentences were accepted but none contains "machine translation" — the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). For EvaluationMetric: 3 sentences were accepted but none contains "BLEU" — metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.
+
+The 10/12 result is better interpreted as an upper bound on recall than as a precision or accuracy claim: it shows the system retrieves at least one relevant sentence for 10 of 12 role-paper pairs, but does not indicate whether the remaining output is clean or useful. The AlexNet gold label was also revised after running the pipeline — from "AlexNet" to "convolutional" — to match the terminology the 2012 paper actually uses; this represents evaluator influence on the result and limits how strongly the score can be generalised.
 
 ### 4. Limitations
 
