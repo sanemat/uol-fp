@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5460 words)
+# Report (5403 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -228,7 +228,7 @@ The three supervised systems in Section 2 confirm that the four-role extraction 
 
 ---
 
-## Chapter 3: Design (1437 words)
+## Chapter 3: Design (1380 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -293,7 +293,7 @@ Two pre-processing steps clean each sentence before classification. (1) `pre_cle
 
 Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 2.
 
-A later iteration plans to use an LLM (Large Language Model) to extract short terms from the top-ranked sentences per role (e.g. "Transformer" from a full sentence), reducing output to a compact profile.
+A later iteration plans to use a long-context LLM to extract one term per role from the cleaned full paper text, with one supporting sentence for each term.
 
 ---
 
@@ -318,10 +318,10 @@ The major tasks are:
 - Done: Chapter 4 — Feature Prototype
 - Done: demonstration video (MP4, 3–5 min)
 - In progress: Preliminary Report submission (29 June)
-- Post-submission backlog: prototype refinement (first-person verb filter, top-N selection), extended evaluation
+- Post-submission: document-level extraction prototype (proto3), extended evaluation
 - Final stage: testing, analysis, Final Report writing and submission
 
-The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2, A3) for the full project roadmap.
+The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1–A4) for the full project roadmap.
 
 ---
 
@@ -347,7 +347,7 @@ The evaluation is intentionally small but inspectable. Each paper-role pair is j
 
 Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.
 
-The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.
+The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). Chapter 4 describes the limitations of the current approach and the planned direction for the next iteration.
 
 ---
 
@@ -556,16 +556,21 @@ ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems paper
 ## Appendix A — Project Roadmap
 
 <figure>
-<img src="Screenshot%202026-06-27%20112842.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
-<figcaption>Figure A1: Project roadmap (rows 1–19). Completed tasks from March–May 2026, including background research, literature notes, and proto2 prototype build.</figcaption>
+<img src="Screenshot%202026-06-27%20172256.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–18). Completed tasks from April 2026, including background research, literature notes, and early prototype work.</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-06-27%20112931.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
-<figcaption>Figure A2: Project roadmap (rows 20–36). April–June 2026 sprint showing chapter writing, video recording, and Preliminary Report submission deadline (red line, 29 June).</figcaption>
+<img src="Screenshot%202026-06-27%20172338.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 19–26). April–May 2026, including prototype build, note rewriting, and literature acquisition.</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-06-27%20113032.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
-<figcaption>Figure A3: Project roadmap (rows 35–38). Post-submission iterations: Prototype Iteration 1 (first-person verb filter + top-N selection), Prototype Iteration 2 (usage NLI + LLM term extraction), and Final Report writing.</figcaption>
+<img src="Screenshot%202026-06-27%20172411.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 27–44). June–July 2026, including Preliminary Report submission (row 27, red line), chapter writing, and proto3 tasks (rows 39–44).</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-06-27%20172507.png" alt="GitHub Projects roadmap — part 4" style="width:100%;max-width:100%;">
+<figcaption>Figure A4: Project roadmap (rows 45–50). July–August 2026, including proto3 evaluation, ablation, comparison, and Final Report submission (Iteration 17).</figcaption>
 </figure>
