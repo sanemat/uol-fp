@@ -1,124 +1,98 @@
 # Demo Script — Auto-Extracting Research Methodology from Papers
 
-Total: ~2:40
+Total: about 2 minutes 40 seconds
 
-Stage directions: `▶ run` = click Run on that cell now. `(pre-run)` = already executed before recording.
+## [0:00–0:20] Introduction and motivation
 
-With GPU runtime, all cells except pip install and model download complete instantly.
+Today, I will demonstrate my prototype.
 
----
+This prototype automatically extracts research methodology from computing papers.
 
-## [0:00–0:20] Introduction & Motivation
+By research methodology, I mean four things:
+the technical method, the task, the dataset, and the evaluation metric.
 
-*[Camera only — no slides]*
+Normally, a researcher has to read the paper and find these manually.
+This can take time, especially when reviewing many papers.
+My prototype aims to support this process automatically.
 
-"This prototype automatically extracts research methodology from computing papers —
-what method, what task, what data, and how results were measured.
-Finding this manually takes time, so this prototype is designed to automate it."
+## [0:20–0:30] Input: BERT paper
 
----
+Here is the input.
 
-## [0:20–0:30] Show the input — BERT PDF
+This is the BERT paper by Devlin and colleagues, published in 2019.
 
-*[Open BERT PDF on screen]*
+## [0:30–0:40] XML output from GROBID
 
-"The input is the BERT paper by Devlin et al., 2019."
+Before using the prototype, the PDF is converted into TEI XML using GROBID.
 
----
+GROBID keeps useful document structure, such as section headings.
+This is important because the pipeline uses section information later.
 
-## [0:30–0:40] Show the XML
+## [0:40–0:50] Colab setup
 
-*[Open BERT XML in editor or file viewer]*
+Now I will switch to Google Colab.
 
-"GROBID converts the PDF to TEI XML locally, preserving section structure."
+The package installation and model download have already been run before recording, because they take some time.
 
----
+The remaining cells will be run live.
 
-## [0:40–2:00] Colab Demo
+## [0:50–1:05] Load XML
 
-*[Switch to Google Colab — 2pipeline.ipynb]*
+First, I upload the XML file.
 
----
+The pipeline loads the paper sections and skips sections that are not useful for methodology extraction, such as References, Acknowledgements, and Related Work.
 
-### [0:40–0:50] Setup
+For the BERT paper, it loads twenty-three body sections.
 
-*[Scroll to Setup and Model Setup sections — all pre-run]*
+## [1:05–1:15] Sentence splitting
 
-`(pre-run)` pip install → spacy download → classifier model download
+Next, the text is cleaned and split into sentences.
 
-`▶ run` Python check → imports → Data Models
+Citation markers are removed, and very short or invalid fragments are filtered out.
 
-"pip install and model download are pre-run. Everything else runs now."
+After this step, the BERT paper has 258 valid sentences.
 
----
+## [1:15–1:40] Zero-shot classification
 
-### [0:50–1:05] Load XML
+Now the prototype classifies the sentences.
 
-*[Scroll to Step 0 cell]*
+It uses zero-shot Natural Language Inference, or NLI.
 
-`▶ run` Step 0 — upload XML → section list prints instantly
+Each sentence is classified into one of four roles:
+TechnicalMethod, Task, Dataset, or EvaluationMetric.
 
-"The XML is uploaded here. The pipeline skips References, Acknowledgements, and Related Work,
-and loads all other body sections — twenty three sections for the BERT paper."
+The important point is that this does not require labeled training data for this project.
 
----
+With a GPU, all 258 sentences are classified in a few seconds.
 
-### [1:05–1:15] Sentence splitting
+## [1:40–1:50] Results summary
 
-*[Step 0c cell]*
+Here is the results summary.
 
-`▶ run` Step 0c — "Total sentences: 258" — instant
+For each role, the output shows the number of accepted sentences and an example sentence.
 
-"After cleaning citation markers and splitting with spaCy, we have 258 valid sentences."
+For the BERT paper, all four methodology roles appear in the output.
 
----
+## [1:50–2:20] Results across papers
 
-### [1:15–1:40] Classification
+I also tested the prototype on six computing papers.
 
-*[## Step 2 — Classify Sentences cell]*
+For machine learning papers such as BERT, AlexNet, and ResNet, the prototype found all four expected gold labels in the output.
 
-`▶ run` Step 2 — all 258 sentences classified instantly on GPU
+However, the results were weaker for systems papers such as MapReduce and Google Search.
 
-"Zero-shot NLI classifies each sentence by role — no labeled training data needed.
-With GPU, all 258 sentences finish in seconds."
+In those papers, TechnicalMethod dominated the output, sometimes with more than 150 sentences.
 
----
-
-### [1:40–1:50] Results summary
-
-*[## Step 2 — Results Summary cell]*
-
-`▶ run` Results Summary — instant
-
-"Here is the summary. Each role, the count of accepted sentences,
-and one example containing the expected term.
-All four roles appear in the output for the BERT paper."
-
----
-
-## [1:50–2:20] Results
-
-*[Stay in Colab]*
-
-"I ran this on six papers. For BERT, AlexNet, and ResNet, all four gold labels appeared in the output.
-For systems papers like MapReduce and Google Search, TechnicalMethod dominated —
-over 150 sentences in some cases — while Dataset and EvaluationMetric had almost none."
-
----
+At the same time, Dataset and EvaluationMetric were much less clear, because these papers do not always follow the standard machine learning benchmark structure.
 
 ## [2:20–2:40] Summary
 
-*[Camera]*
+To summarise, the prototype shows that zero-shot NLI can find relevant methodology sentences in machine learning papers without labeled training data.
 
-"The prototype shows that zero-shot NLI can find relevant methodology sentences
-in ML papers without any labeled training data,
-though output volume and systems papers remain challenges.
-Thank you."
+However, there are still two main challenges.
 
----
+First, the output can be too large.
 
-## Notes for recording
+Second, systems papers are harder to handle than standard machine learning papers.
 
-- Pre-run before recording: pip install (5851e3a0), Model Setup / classifier download (e3e215db)
-- All other cells run live during recording
-- Keep browser zoom at 100% so output is readable
+Thank you.
