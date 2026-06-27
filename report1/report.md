@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (4929 words)
+# Report (5568 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -109,7 +109,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ---
 
-## Chapter 2: Literature Review (1240 words)
+## Chapter 2: Literature Review (1879 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 

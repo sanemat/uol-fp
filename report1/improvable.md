@@ -159,13 +159,17 @@ Re-run done with short labels. Transformer now shows 62/14/4/3 (balanced). Gold 
   - DeBERTa: He et al. (2021). DeBERTa: Decoding-enhanced BERT with Disentangled Attention. ICLR 2021.
   - GROBID: Lopez (2009). GROBID: Combining automatic bibliographic data recognition and term extraction for scholarship publications. ECDL 2009.
 
-### O. Expand literature review — currently 1105 words against a 2500-word limit
+### O. Expand literature review — currently 1105 words against a 2500-word limit (DONE)
 
 - **Criteria:** 2, 3
 - **Why:** At 1105 words the literature review uses less than half the available budget. For an MSc-level submission, a marker may expect more comparative analysis between sources — not just "how each source differs from this project" but "how these sources relate to each other". The existing review summarises each source clearly, but cross-source comparison is thin.
-- **What to add:** A paragraph comparing Jain et al. [5] with Ghosh et al. [2, 3] (both extract methodology-like entities, but with different schemas and supervision approaches). A paragraph comparing Yin et al. [11]'s zero-shot approach against the supervised approaches in [2, 3] to make the trade-off explicit.
-- **Effort:** ~500–800 words; stays within the 2500-word chapter limit.
-- **Location:** Chapter 2 Sections 2 and 4 (Closest Prior Work and Synthesis).
+- **What was added (639 words):**
+  - Section 2: paragraph on Ghosh et al. [2, 3] (sequence labeling, TechnicalMethod only, supervised)
+  - Section 2: paragraph on Färber et al. [1] ("used vs mentioned" distinction, Method+Dataset only)
+  - Section 2: comparison paragraph across the three supervised systems (Jain / Ghosh / Färber)
+  - Section 3: paragraph on supervised vs zero-shot trade-off (annotation cost vs hypothesis design cost)
+  - Section 4: cross-source synthesis paragraph positioning this project in the space
+- **Result:** Chapter 2 now 1879 words (was 1240); report total 5568 words.
 
 ### F. Implement Top-N selection (top 3 per role by NLI score)
 
