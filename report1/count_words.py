@@ -1,8 +1,14 @@
 """
 Count words per chapter in report.md.
-Excludes: <figure>, <pre> blocks, markdown tables, code fences,
-          italic captions (*Table N...*), plain Table/Figure caption lines,
-          and word count annotations like (1240 words).
+
+Excluded from count:
+  - <figure> blocks (includes <figcaption>)
+  - <pre> blocks
+  - Markdown table rows (lines starting and ending with |)
+  - Table/Figure caption lines: "Table N:", "Table B1:", "*Table 2 ...*" etc.
+  - Code fences (``` ... ```)
+  - Horizontal rules (---)
+  - Word count annotations like (1240 words)
 
 Usage:
     python3 report1/count_words.py
@@ -18,15 +24,27 @@ text = re.sub(r"<style>.*?</style>", "", text, flags=re.DOTALL)
 
 
 def count_words(chunk: str) -> int:
+    # Remove <figure>...</figure> blocks (includes figcaption)
     chunk = re.sub(r"<figure>.*?</figure>", "", chunk, flags=re.DOTALL)
+    # Remove <pre>...</pre> blocks
     chunk = re.sub(r"<pre>.*?</pre>", "", chunk, flags=re.DOTALL)
+    # Strip remaining HTML tags
     chunk = re.sub(r"<[^>]+>", " ", chunk)
+    # Remove markdown table rows
     chunk = re.sub(r"^\|.*\|$", "", chunk, flags=re.MULTILINE)
+    # Remove code fences
     chunk = re.sub(r"```.*?```", "", chunk, flags=re.DOTALL)
-    chunk = re.sub(r"^\s*\*[^\n]*\*\s*$", "", chunk, flags=re.MULTILINE)
-    chunk = re.sub(r"^(Table|Figure)\s+\d+[^\n]*$", "", chunk, flags=re.MULTILINE)
+    # Remove Table/Figure caption lines (plain or italic, with any label like B1, A3)
+    chunk = re.sub(r"^\s*\*?(Table|Figure)\s+[A-Za-z]?\d+[^\n]*\*?\s*$", "", chunk, flags=re.MULTILINE)
+    # Remove horizontal rules
+    chunk = re.sub(r"^---+$", "", chunk, flags=re.MULTILINE)
+    # Remove citation markers like [5], [2, 3], [D6], [D1]
+    chunk = re.sub(r"\[[A-Za-z]?\d+[^\]]*\]", "", chunk)
+    # Remove word count annotations like (1240 words)
     chunk = re.sub(r"\(\d+ words\)", "", chunk)
+    # Strip markdown formatting characters
     chunk = re.sub(r"[*_`]", "", chunk)
+    # Strip heading markers (## ### etc.) but keep heading text
     chunk = re.sub(r"^#{1,4}\s+", "", chunk, flags=re.MULTILINE)
     return len(chunk.split())
 

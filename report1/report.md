@@ -53,9 +53,9 @@ h3 {
 }
 </style>
 
-# Report (5616 words)
+# Report (5551 words)
 
-## Chapter 1: Introduction (818 words)
+## Chapter 1: Introduction (814 words)
 
 When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. This project treats methodology as four extractable roles: technical method, task, dataset, and evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.
 
@@ -109,7 +109,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ---
 
-## Chapter 2: Literature Review (1890 words)
+## Chapter 2: Literature Review (1855 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 
@@ -228,7 +228,7 @@ The three supervised systems in Section 2 confirm that the four-role extraction 
 
 ---
 
-## Chapter 3: Design (1455 words)
+## Chapter 3: Design (1437 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -352,7 +352,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1453 words)
+## Chapter 4: Feature Prototype (1445 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
