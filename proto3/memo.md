@@ -10,19 +10,31 @@ Output: one answer per role, with supporting evidence
 {
   "TechnicalMethod": {
     "answer": "Transformer",
-    "evidence": "The Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution."
+    "evidence": {
+      "section": "Model Architecture",
+      "quote": "The Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution."
+    }
   },
   "Task": {
     "answer": "machine translation",
-    "evidence": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    }
   },
   "Dataset": {
     "answer": "WMT 2014 English-German",
-    "evidence": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    }
   },
   "EvaluationMetric": {
     "answer": "BLEU",
-    "evidence": "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task."
+    "evidence": {
+      "section": "Results",
+      "quote": "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task."
+    }
   }
 }
 ```
@@ -54,7 +66,7 @@ The real task is: given a paper, what is the primary TechnicalMethod? This is cl
 
 Jain et al. (SciREX) argue: "a significant amount of information can only be gleaned from analyzing the full document." Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method. Sending only a subset recreates the recall gap that document-level IE was designed to avoid.
 
-A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-context LLMs handle this without chunking:
+A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-context LLMs can usually handle this range without chunking:
 
 | Model | Context | Cost |
 |---|---|---|
@@ -62,7 +74,7 @@ A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-co
 | Claude Haiku | 200k tokens | cheap API |
 | Llama 3.1 8B Instruct | 128k tokens | free (Colab GPU) |
 
-The full paper fits. No chunking or RAG needed.
+For the selected papers in this project, the cleaned full text is expected to fit within the context window of modern long-context LLMs. Therefore, chunking is not used in the main pipeline.
 
 ---
 
@@ -79,7 +91,8 @@ Output: MethodologyProfile JSON (answer + evidence per role)
 ### Stage 0 — Parse XML
 
 Same as proto2. Extract Abstract and body sections from TEI XML via GROBID.
-Skip: References, Acknowledgements. Related Work: see Open Questions.
+Skip: References, Acknowledgements.
+Keep: Related Work (main setting). See Ablation below.
 
 ### Stage 1 — Text extraction
 
@@ -106,6 +119,7 @@ Roles:
 Rules:
 - Use the authors' own method, not methods cited from prior work.
 - If a field is not present in the paper, return null for both answer and evidence.
+- For each evidence, return the section heading and one sentence quoted verbatim from the paper.
 - Return only the JSON object, no explanation.
 
 Paper text:
@@ -129,11 +143,12 @@ Catches cases where the answer is not in the gold labels but is still valid (or 
 
 **3. Evidence check**
 For each returned answer:
-- Does `evidence` appear verbatim in the paper text?
-- Does `evidence` support `answer`?
-- Is `evidence` about the authors' own work, not prior work?
+- Does `evidence.quote` appear verbatim in the paper text?
+- Does `evidence.quote` support `answer`?
+- Is `evidence.section` consistent with the quote's actual location in the paper?
+- Is the evidence about the authors' own work, not prior work?
 
-This check catches hallucination (fabricated evidence) and attribution errors (evidence from Related Work attributed to the authors).
+The `section` field makes Related Work attribution visible without needing to exclude that section entirely. If the LLM cites a Related Work sentence as evidence for TechnicalMethod, the error is detectable. This check catches hallucination (fabricated evidence) and attribution errors.
 
 ---
 
@@ -143,11 +158,21 @@ This project uses a long-context LLM as a schema-guided document-level informati
 
 ---
 
+## Ablation
+
+**Related Work inclusion**
+
+Main setting: keep Related Work in the input text.
+Ablation: exclude Related Work and compare results.
+
+Rationale: Related Work may help the model understand the contribution of the paper in context. If it causes attribution errors, these are detectable through `evidence.section` — a TechnicalMethod claim citing a Related Work sentence is a visible signal. Keeping Related Work as the main setting gives the model more document context. The ablation tests whether this extra context introduces noise.
+
+---
+
 ## Open questions
 
 - **Which LLM?** Llama 3.1 8B Instruct avoids API cost but needs a Colab GPU. Claude Haiku is more reliable but requires an API key. Decide before implementation.
-- **Related Work section**: it describes prior methods, which may confuse the LLM into returning a prior work's method instead of the authors'. Exclude it as a default; test both.
-- **Evidence format**: exact quote vs paraphrase. Exact quote enables verbatim verification in the paper. Use exact quote.
+- **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
 
 ---
 
