@@ -59,7 +59,7 @@ h3 {
 
 When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. This project treats methodology as four extractable roles: technical method, task, dataset, and evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.
 
-Consider "Attention Is All You Need" [D6], one of the most cited papers in machine learning. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:
+Consider "Attention Is All You Need" [D6], a well-known machine learning paper. The title signals the research direction — attention mechanisms — but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:
 
 | Methodology role | Component |
 |---|---|
@@ -126,7 +126,7 @@ Methodology:
 <figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
 </figure>
 
-This review covers three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but reliably extracting full research methodology from computing papers is still difficult.
+This review focuses on three areas: how methodology is defined, how information is extracted from papers, and how classification can work without training data. At the end, this review will identify a gap: existing methods can extract some information from papers, but extracting these methodology components consistently from computing papers is still difficult.
 
 ### 1. Defining Research Methodology
 
@@ -159,7 +159,7 @@ Method: Transformer
 <figcaption>Figure 2: Entity types from "Attention Is All You Need" [D6].</figcaption>
 </figure>
 
-These four types closely match the four roles in this project. This is useful because it suggests the problem is real and may be solvable.
+These four types closely match the four roles in this project. This supports using these four roles in the prototype.
 
 Jain et al. [5] operate at the document level. The authors argue that "a significant amount of information can only be gleaned from analyzing the full document" [5] — relations may span sections, not just sentences.
 
@@ -167,7 +167,7 @@ But Jain et al. [5] required 438 annotated papers and 4 expert PhD-level annotat
 
 Ma et al. [8] propose a metric-driven mechanism schema that extracts three components — mechanism, task, and metric — from NLP papers using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
-The right entity types are identified, but building a supervised system requires annotation effort that does not exist for this scope. A zero-shot method is therefore a reasonable direction.
+These papers support the entity types, but their supervised methods depend on annotation that this project does not have. A zero-shot method is therefore a reasonable direction.
 
 ### 3. Zero-shot Classification
 
@@ -206,7 +206,7 @@ Zero-shot NLI reduces the labeled data requirement. The question is whether any 
 
 ### 4. Synthesis
 
-It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This is the gap this project investigates.
+It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This motivates the prototype.
 
 Section 2 established the basis for a structured approach. Oates [9] and Pilkington & Pretorius [10] suggest that research methodology has formal, structured components, but neither work names the specific extraction roles used in this project. The four roles — TechnicalMethod, Task, Dataset, and EvaluationMetric — draw more directly on Jain et al. [5]. Both Oates and Pilkington are designed for human use. Neither provides a system to extract methodology from text automatically.
 
@@ -214,7 +214,7 @@ Section 3 showed that extraction of the same four types is possible. Jain et al.
 
 Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
-I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This direction was uncertain but worth attempting.
+I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This made the approach worth testing in a prototype.
 
 ---
 
@@ -244,7 +244,7 @@ A sentence like "The feature-based approach, such as ELMo, applies independently
 
 An early run with verbose hypotheses sent almost all BERT sentences to EvaluationMetric, which forced a comparison of four hypothesis sets before settling on short labels.
 
-These choices fit the user need because the system is not intended to replace expert reading. It is intended to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.
+This design matches the intended use case: the system is not intended to replace expert reading, but to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.
 
 ---
 
@@ -461,13 +461,13 @@ The third is LLM term extraction. The current output is full sentences, but the 
 
 ### 6. Technical Challenge
 
-Zero-shot NLI classification on academic text is technically challenging for three reasons.
+The prototype raised three technical issues with zero-shot NLI classification on academic text.
 
 The first challenge is that hypothesis engineering is non-trivial. More detailed label descriptions do not necessarily improve accuracy: verbose_v1 and verbose_v2 sent nearly all BERT sentences to EvaluationMetric (244 of 258), while verbose_v3 shifted the bias to TechnicalMethod. Short labels achieved the best probe score and most balanced distribution, but this required four iterations of hypothesis design to discover.
 
 The second challenge is domain mismatch. The NLI model was trained on general-domain benchmarks, but academic writing is structurally different: sentences are longer, more technical, and contain citation markers and figure references that were not in the training data. The model classifies these without any task-specific training on scientific text.
 
-The third challenge is authorship attribution. The sentence "The feature-based approach, such as ELMo..." correctly entails "technical method" according to the NLI model — it does describe a method — but the method belongs to a different paper. Distinguishing a paper's own methods from those it cites may go beyond what NLI alone can do, since it requires understanding who the authors are and what the paper claims.
+The third challenge is authorship attribution. The sentence "The feature-based approach, such as ELMo..." correctly entails "technical method" according to the NLI model — it does describe a method — but the method belongs to a different paper. Distinguishing a paper's own methods from those it cites was not handled well by the current NLI step, since it requires understanding who the authors are and what the paper claims.
 
 ---
 
