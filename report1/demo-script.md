@@ -23,7 +23,7 @@ This is the BERT paper by Devlin and colleagues, published in 2019.
 
 ## [0:30–0:40] XML output from GROBID
 
-Before using the prototype, the PDF is converted into TEI XML using GROBID.
+Before using the prototype, I convert the PDF into TEI XML using GROBID.
 
 GROBID keeps useful document structure, such as section headings.
 This is important because the pipeline uses section information later.
@@ -32,9 +32,9 @@ This is important because the pipeline uses section information later.
 
 Now I will switch to Google Colab.
 
-The package installation and model download have already been run before recording, because they take some time.
+I already ran the package installation and model download before recording, because they take some time.
 
-The remaining cells will be run live.
+I will run the remaining cells live.
 
 ## [0:50–1:05] Load XML
 
@@ -46,9 +46,9 @@ For the BERT paper, it loads twenty-three body sections.
 
 ## [1:05–1:15] Sentence splitting
 
-Next, the text is cleaned and split into sentences.
+Next, the pipeline cleans and splits the text into sentences.
 
-Citation markers are removed, and very short or invalid fragments are filtered out.
+It removes citation markers and filters out very short or invalid fragments.
 
 After this step, the BERT paper has 258 valid sentences.
 
@@ -58,12 +58,12 @@ Now the prototype classifies the sentences.
 
 It uses zero-shot Natural Language Inference, or NLI.
 
-Each sentence is classified into one of four roles:
+The model assigns each sentence to one of four roles:
 TechnicalMethod, Task, Dataset, or EvaluationMetric.
 
 The important point is that this does not require labeled training data for this project.
 
-With a GPU, all 258 sentences are classified in a few seconds.
+With a GPU, it classifies all 258 sentences in a few seconds.
 
 ## [1:40–1:50] Results summary
 
