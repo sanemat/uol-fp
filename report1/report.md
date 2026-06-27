@@ -210,11 +210,11 @@ It is difficult to find existing work that applies zero-shot NLI with a structur
 
 Section 2 established the schema. Oates [9] and Pilkington & Pretorius [10] together justify a four-component structure — TechnicalMethod, Task, Dataset, and EvaluationMetric — grounded in formal ontology. But both works are designed for human use. Neither provides a system to extract those components from text automatically.
 
-Section 3 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach cannot generalize to general computing papers without similar annotation effort that this project does not have.
+Section 3 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach does not readily generalize to general computing papers without similar annotation effort.
 
 Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
-Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data.
+Combining these elements appears to remain underexplored: the 4-role methodology schema from Oates and Pilkington, the zero-shot NLI method from Yin et al., and application to general computing papers. This project addresses that gap. It applies Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. I could not find a paper that combined Yin et al.'s NLI method with Oates's four-role schema on general computing papers, which made this direction uncertain but worth attempting.
 
 ---
 
@@ -240,7 +240,9 @@ Research design (e.g. experiment vs. survey) is subjective — two readers can a
 
 The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. Tested on 6 papers (Transformer [D6], BERT [D3], AlexNet [D5], ResNet [D4], MapReduce [D2], Google Search [D1]). Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
-A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] catches this at the sentence level without needing more keyword rules [1]. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
+A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] is expected to reduce this noise at the sentence level without needing more keyword rules [1]. This is expected to improve precision: fewer prior-work sentences may be assigned to TechnicalMethod.
+
+An early run with verbose hypotheses sent almost all BERT sentences to EvaluationMetric, which forced a comparison of four hypothesis sets before settling on short labels.
 
 These choices fit the user need because the system is not intended to replace expert reading. It is intended to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.
 
@@ -363,7 +365,7 @@ References, Acknowledgements, and Related Work are excluded.
 - References and Acknowledgements are excluded by exact heading match (`SKIP_HEADINGS`). These sections list citations and credits, not methodology.
 - Related Work is excluded by keyword match (`SKIP_KEYWORDS`). Subsections are also skipped automatically by tracking the `n` attribute (e.g. if Related Work is `n="2"`, then `n="2.1"` and `n="2.2"` are also skipped). The reason is that Related Work describes other papers' methods, which the NLI model classifies as TechnicalMethod of the target paper. Testing on BERT showed that excluding Related Work reduced TechnicalMethod from 67 to 62 sentences (−5).
 
-All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version used only sections whose heading matched keywords such as "experiment" or "result". The `Training Data` section in the Transformer paper has no such keyword and was missed. Switching to all body sections improved Dataset recall significantly.
+All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version filtered to sections whose heading matched keywords such as "experiment" or "result", but the `Training Data` section in the Transformer paper has neither keyword, and the WMT dataset was missed entirely. Switching to all body sections improved Dataset recall significantly.
 
 ### 2. Demonstration
 
