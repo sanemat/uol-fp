@@ -129,3 +129,184 @@ This measures something proto2 could not: precision on a single answer, not reca
 The original proto3 design kept NLI but added a first-person filter, top-N selection, and LLM term extraction as a final step. This is an improvement over proto2 but does not change the fundamental framing — it is still sentence classification. The first-person filter reduces noise but misses passive or impersonal primary claims ("BERT is pre-trained on..."). The LLM in Stage 4 only sees the top sentences selected by NLI, so it cannot recover anything Stage 1–3 missed.
 
 Document-level LLM extraction avoids this dependency chain. The LLM reads the full paper and decides what is the primary method. The authorship problem ("we propose X" vs "X was proposed by Y") is handled by the LLM's language understanding, not by heuristic filters.
+
+# Long-Context LLM for Methodology Extraction
+
+## Main Idea
+
+The project should not only send a paper to a black-box LLM and trust the answer.
+
+Instead, the project can treat the LLM as a **document-level information extraction tool**.
+
+The input is one full research paper.
+The output is a short JSON profile:
+
+```json
+{
+  "TechnicalMethod": "Transformer",
+  "Task": "machine translation",
+  "Dataset": "WMT 2014 English-German",
+  "EvaluationMetric": "BLEU"
+}
+```
+
+## Why Full Paper Context Matters
+
+In the earlier design, the system classified each sentence.
+
+This caused several problems:
+
+* It produced too many candidate sentences.
+* It could not clearly separate the authors' own method from prior work.
+* It measured recall, but not whether the final answer was useful.
+* It depended on an arbitrary threshold.
+
+The real question is not:
+
+> Which sentences look relevant?
+
+The real question is:
+
+> What is the main method, task, dataset, and evaluation metric of this paper?
+
+This is closer to a question-answering or information extraction task.
+
+## Why Long-Context LLMs Are Useful
+
+A normal computing paper is often small enough to fit into a modern long-context LLM.
+
+This means the system may not need to split the paper into many chunks.
+
+Instead, it can send the cleaned full paper text to the model.
+
+The system should remove parts that may confuse the model, such as:
+
+* References
+* Acknowledgements
+* Possibly Related Work
+
+Then the model can read the paper as one document.
+
+## Related Work Direction
+
+There are several useful areas of prior work:
+
+### 1. Document-Level Information Extraction
+
+SciREX is useful because it argues that some scientific information needs the full document.
+
+This supports the idea that methodology extraction should not only use the abstract or a few sentences.
+
+### 2. LLM-Based Scientific Information Extraction
+
+Recent studies use LLMs to extract structured information from scientific papers.
+
+These studies are useful because they show that LLMs can produce structured outputs such as JSON.
+
+### 3. Schema-Guided Extraction
+
+The project should give the LLM a clear schema.
+
+For example:
+
+```json
+{
+  "TechnicalMethod": "...",
+  "Task": "...",
+  "Dataset": "...",
+  "EvaluationMetric": "..."
+}
+```
+
+This makes the task more controlled than simply asking the LLM to “summarise the paper”.
+
+### 4. Validation of Black-Box LLMs
+
+A black-box LLM is difficult to trust.
+
+Therefore, the project should not only check the final answer.
+It should also ask the model to give evidence from the paper.
+
+For example:
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": "The Transformer is the first transduction model relying entirely on self-attention..."
+  }
+}
+```
+
+This makes the output easier to check.
+
+## Evaluation Plan
+
+The system can be evaluated in three ways.
+
+### 1. Gold Label Evaluation
+
+Use a small set of papers with gold labels.
+
+For example:
+
+```text
+6 papers × 4 roles = 24 items
+```
+
+The four roles are:
+
+* TechnicalMethod
+* Task
+* Dataset
+* EvaluationMetric
+
+The system returns one answer for each role.
+
+Then the answer is compared with the gold label.
+
+### 2. Human Precision Check
+
+A human checks whether the returned answer is reasonable.
+
+This is important because a substring match may not always be enough.
+
+For example, the model may return a term that is not exactly the gold label but is still correct.
+
+### 3. Evidence Check
+
+Each answer should include a short supporting passage.
+
+The check asks:
+
+* Does the evidence appear in the paper?
+* Does the evidence support the answer?
+* Is the answer about the authors' own work, not prior work?
+
+## Stronger Research Framing
+
+The project should not be described as:
+
+> Send the paper to an LLM and use the answer.
+
+A stronger framing is:
+
+> This project uses a long-context LLM as a schema-guided document-level information extractor. The output is evaluated against gold labels and checked with supporting evidence.
+
+This makes the project more testable and less dependent on blind trust in the LLM.
+
+## Main Conclusion
+
+Using the full cleaned paper is a reasonable new design.
+
+The key point is that the project must still evaluate the output.
+
+Long context solves the input-size problem, but it does not solve the trust problem.
+
+Therefore, the project should combine:
+
+* full-paper input,
+* a clear JSON schema,
+* gold-label evaluation,
+* human precision checking,
+* and evidence-based validation.
