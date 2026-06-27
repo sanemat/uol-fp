@@ -81,7 +81,7 @@ h3 {
   box-sizing: border-box;
 }
 </style>
-<h1 id="report-5522-words">Report (5522 words) </h1>
+<h1 id="report-5403-words">Report (5403 words) </h1>
 <h2 id="chapter-1-introduction-804-words">Chapter 1: Introduction (804 words) </h2>
 <p>When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. This project treats methodology as four extractable roles: technical method, task, dataset, and evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.</p>
 <p>Consider "Attention Is All You Need" [D6], a well-known machine learning paper. The title signals attention mechanisms but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:</p>
@@ -255,7 +255,7 @@ Method: Transformer
 <p>I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This made the approach worth testing in a prototype.</p>
 <p>The three supervised systems in Section 2 confirm that the four-role extraction task is achievable with sufficient annotation. Jain et al. [5] extract all four roles but require ML-benchmark annotation at scale. Ghosh et al. [2, 3] narrow to TechnicalMethod. Färber et al. [1] add usage sensitivity for two roles. None of the conditions that make these approaches work (large labeled corpora, single-domain scope) apply to this project. Yin et al.'s [11] zero-shot approach removes the annotation requirement but was tested only on general-domain text. My project occupies a specific position in this space: it draws on the schema from Jain et al. [5], the extraction method from Yin et al. [11], the preprocessing from GROBID [7], and the domain vocabulary from Oates [9] and Pilkington &amp; Pretorius [10]. The prototype tests whether this combination is effective in practice.</p>
 <hr>
-<h2 id="chapter-3-design-1436-words">Chapter 3: Design (1436 words) </h2>
+<h2 id="chapter-3-design-1380-words">Chapter 3: Design (1380 words) </h2>
 <p>The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).</p>
 <h3 id="1-domain-and-users">1. Domain and Users </h3>
 <p>The domain is computing research papers. The main targets are systems, ML, algorithm, and HCI.</p>
@@ -271,7 +271,7 @@ Method: Transformer
 <p>This design matches the intended use case: the system is not intended to replace expert reading, but to support the first pass of a literature review by showing likely methodology sentences that the user can inspect and verify.</p>
 <hr>
 <h3 id="3-overall-structure">3. Overall Structure </h3>
-<p>The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. A usage NLI step and top-k selection are planned for next Iteration (see Chapter 4, Section 5).</p>
+<p>The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. The next iteration changes the extraction unit from sentence-level classification to document-level extraction (see Chapter 4, Section 5).</p>
 <p>The input is a PDF of a computing research paper. After GROBID, the intermediate format is TEI XML. Each section has a heading attribute and body text. The abstract is separate from the body sections.</p>
 <p>The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, EvaluationMetric. Each field is a list of sentences from the paper. Final output is a Python dict printed as JSON. Example:</p>
 <pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
@@ -289,7 +289,7 @@ Method: Transformer
 <p>The prototype uses <code>cross-encoder/nli-deberta-v3-small</code> [4] (~300 MB, fits free Colab GPU). Zero-shot is therefore suitable for this prototype because: (1) I have no labelled corpus for this task, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.</p>
 <p>Two pre-processing steps clean each sentence before classification. (1) <code>pre_clean()</code> strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) <code>is_valid()</code> drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.</p>
 <p>Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 2.</p>
-<p>A later iteration plans to use an LLM (Large Language Model) to extract short terms from the top-ranked sentences per role (e.g. "Transformer" from a full sentence), reducing output to a compact profile.</p>
+<p>A later iteration plans to use a long-context LLM to extract one term per role from the cleaned full paper text, with one supporting sentence for each term.</p>
 <hr>
 <h3 id="5-work-plan">5. Work Plan </h3>
 <p>The work plan is shown visually in Appendix A as a Gantt chart.</p>
@@ -309,17 +309,12 @@ Method: Transformer
 </tr>
 <tr>
 <td>Iteration 1 (post-submission)</td>
-<td>First-person verb filter; top-N selection (top 3 per role by NLI score)</td>
-<td>Improved prototype — reduced output volume; re-evaluation</td>
-</tr>
-<tr>
-<td>Iteration 2</td>
-<td>Usage NLI step; LLM term extraction; extended evaluation on all 6 papers</td>
+<td>Replace sentence-level classification with document-level extraction using a long-context LLM; return one term and one supporting sentence per role</td>
 <td>Short-form methodology profile</td>
 </tr>
 <tr>
 <td>Final stage</td>
-<td>Testing, analysis, Final Report writing</td>
+<td>Compare NLI prototype and document-level extraction results; analyse failures across paper types; write Final Report</td>
 <td>Final submission</td>
 </tr>
 </tbody>
@@ -335,10 +330,10 @@ Method: Transformer
 <li>Done: Chapter 4 — Feature Prototype</li>
 <li>Done: demonstration video (MP4, 3–5 min)</li>
 <li>In progress: Preliminary Report submission (29 June)</li>
-<li>Post-submission backlog: prototype refinement (first-person verb filter, top-N selection), extended evaluation</li>
+<li>Post-submission: document-level extraction prototype (proto3), extended evaluation</li>
 <li>Final stage: testing, analysis, Final Report writing and submission</li>
 </ul>
-<p>The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1, A2, A3) for the full project roadmap.</p>
+<p>The Preliminary Report submission deadline is 29 June. See Appendix A (Figures A1–A4) for the full project roadmap.</p>
 <hr>
 <h3 id="6-test-and-evaluation">6. Test and Evaluation </h3>
 <p>For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold label as a substring. A role is correct (○) if at least one classified sentence contains the gold label. Incorrect (×) otherwise.</p>
@@ -382,9 +377,9 @@ Method: Transformer
 <p>Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.</p>
 <p>The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold label. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.</p>
 <p>Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.</p>
-<p>The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). The next iteration addresses the two main weaknesses of this evaluation: (1) a first-person verb filter reduces the sentence pool from 200+ to approximately 15–40 candidates before NLI, making substring match less trivially easy; (2) a term extraction step converts the top sentences into short terms (e.g. "Transformer"), allowing a stricter comparison against gold labels. Chapter 4 will describe this plan in detail.</p>
+<p>The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). Chapter 4 describes the limitations of the current approach and the planned direction for the next iteration.</p>
 <hr>
-<h2 id="chapter-4-feature-prototype-1441-words">Chapter 4: Feature Prototype (1441 words) </h2>
+<h2 id="chapter-4-feature-prototype-1378-words">Chapter 4: Feature Prototype (1378 words) </h2>
 <p>The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.</p>
 <p>Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).</p>
 <h3 id="1-implementation">1. Implementation </h3>
@@ -605,10 +600,8 @@ Method: Transformer
 <p>The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.</p>
 <p>The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences and the Transformer produced 160 EvaluationMetric sentences, because there is no upper limit on accepted sentences.</p>
 <h3 id="5-improvements-for-the-next-iteration">5. Improvements for the Next Iteration </h3>
-<p>Three improvements are planned.</p>
-<p>The first is a usage NLI step after role classification. A second NLI pass with labels ["used by the authors", "mentioned as prior or related work"] keeps only sentences about the paper's own work, catching Introduction noise at the sentence level without additional keyword rules. As a lighter alternative, a first-person verb filter ("we propose", "we introduce", "we use") may reduce the candidate pool from 200+ to approximately 15–40 sentences before NLI.</p>
-<p>The second is Top-N selection by score × section weight. Instead of keeping all accepted sentences, only the top 3 per role are kept, ranked by NLI score multiplied by a section weight (Abstract and Method sections ranked higher than Introduction). This addresses the large output volume: MapReduce produced 151 TechnicalMethod sentences, but the top 3 by score may be sufficient for a methodology profile.</p>
-<p>The third is LLM term extraction. The current output is full sentences, but the target profile contains short terms (e.g. "Transformer" rather than "We propose a new simple network architecture, the Transformer..."). The gold label evaluation suggests the correct term is present in the output sentence; the next step is extracting it with a prompt such as "What is the TechnicalMethod named in this sentence?"</p>
+<p>Sentence-level classification produced useful evidence sentences, but it did not produce a clean methodology profile. MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot reliably distinguish the paper's own method from methods cited in related work. This is not only a threshold problem: even a better threshold would still treat each sentence independently.</p>
+<p>For this reason, the next iteration changes the extraction unit from sentence-level classification to document-level extraction. Jain et al. [5] argue that methodology extraction often requires document-level context because relevant information may be spread across sections. The next prototype will therefore use a long-context LLM to read the cleaned paper text and return one term per role as JSON. Each term must be supported by a quoted sentence from the paper, so the output remains inspectable.</p>
 <h3 id="6-technical-challenge">6. Technical Challenge </h3>
 <p>The prototype raised three technical issues with zero-shot NLI classification on academic text.</p>
 <p>The first challenge is that hypothesis engineering is non-trivial. More detailed label descriptions do not necessarily improve accuracy: verbose_v1 and verbose_v2 sent nearly all BERT sentences to EvaluationMetric (244 of 258), while verbose_v3 shifted the bias to TechnicalMethod. Short labels achieved the best probe score and most balanced distribution, but this required four iterations of hypothesis design to discover.</p>
@@ -635,6 +628,24 @@ Method: Transformer
 <p>[D4] He, K., Zhang, X., Ren, S. and Sun, J. 2016. Deep residual learning for image recognition. In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)</em>, 770–778. <a href="https://doi.org/10.1109/CVPR.2016.90">https://doi.org/10.1109/CVPR.2016.90</a></p>
 <p>[D5] Krizhevsky, A., Sutskever, I. and Hinton, G.E. 2012. ImageNet classification with deep convolutional neural networks. In <em>Advances in Neural Information Processing Systems</em>, 25, 1097–1105. <a href="https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html">https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html</a></p>
 <p>[D6] Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. 2017. Attention is all you need. In <em>Advances in Neural Information Processing Systems</em>, 30, 5998–6008. <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></p>
+<hr>
+<h2 id="appendix-a--project-roadmap">Appendix A — Project Roadmap </h2>
+<figure>
+<img src="Screenshot%202026-06-27%20172256.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–18). Completed tasks from April 2026, including background research, literature notes, and early prototype work.</figcaption>
+</figure>
+<figure>
+<img src="Screenshot%202026-06-27%20172338.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 19–26). April–May 2026, including prototype build, note rewriting, and literature acquisition.</figcaption>
+</figure>
+<figure>
+<img src="Screenshot%202026-06-27%20172411.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 27–44). June–July 2026, including Preliminary Report submission (row 27, red line), chapter writing, and proto3 tasks (rows 39–44).</figcaption>
+</figure>
+<figure>
+<img src="Screenshot%202026-06-27%20172507.png" alt="GitHub Projects roadmap — part 4" style="width:100%;max-width:100%;">
+<figcaption>Figure A4: Project roadmap (rows 45–50). July–August 2026, including proto3 evaluation, ablation, comparison, and Final Report submission (Iteration 17).</figcaption>
+</figure>
 <hr>
 <h2 id="appendix-b--extended-evaluation-all-6-papers">Appendix B — Extended Evaluation (All 6 Papers) </h2>
 <p>The primary evaluation in Chapter 4 §3 covers three ML papers (Transformer, BERT, AlexNet) as designed in Chapter 3 §6. This appendix extends the same evaluation to all six dataset papers including two systems papers (MapReduce, Google Search).</p>
@@ -768,20 +779,6 @@ Method: Transformer
 </table>
 <p>Table B2: Extended gold label evaluation results.</p>
 <p>ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.</p>
-<hr>
-<h2 id="appendix-a--project-roadmap">Appendix A — Project Roadmap </h2>
-<figure>
-<img src="Screenshot%202026-06-27%20112842.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
-<figcaption>Figure A1: Project roadmap (rows 1–19). Completed tasks from March–May 2026, including background research, literature notes, and proto2 prototype build.</figcaption>
-</figure>
-<figure>
-<img src="Screenshot%202026-06-27%20112931.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
-<figcaption>Figure A2: Project roadmap (rows 20–36). April–June 2026 sprint showing chapter writing, video recording, and Preliminary Report submission deadline (red line, 29 June).</figcaption>
-</figure>
-<figure>
-<img src="Screenshot%202026-06-27%20113032.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
-<figcaption>Figure A3: Project roadmap (rows 35–38). Post-submission iterations: Prototype Iteration 1 (first-person verb filter + top-N selection), Prototype Iteration 2 (usage NLI + LLM term extraction), and Final Report writing.</figcaption>
-</figure>
 
       </div>
       

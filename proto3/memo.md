@@ -1,29 +1,80 @@
-# proto3 Pipeline Design
+# proto3 Design Memo
 
-## Goal
+## What proto3 does
 
 Input: TEI XML of one computing research paper
-Output: one or more primary items per role (TOP_N, default 3)
 
+Output: one answer per role, with supporting evidence
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+      "section": "Model Architecture",
+      "quote": "The Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution."
+    }
+  },
+  "Task": {
+    "answer": "machine translation",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    }
+  },
+  "Dataset": {
+    "answer": "WMT 2014 English-German",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "BLEU",
+    "evidence": {
+      "section": "Results",
+      "quote": "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task."
+    }
+  }
+}
 ```
-TechnicalMethod:  ["Transformer"]
-Task:             ["machine translation"]
-Dataset:          ["WMT 2014", "WMT 2014 English-French"]
-EvaluationMetric: ["BLEU", "accuracy"]
-```
+
+Approach: **schema-guided document-level information extraction with a long-context LLM**
+
+The LLM reads the full paper as one document and returns structured JSON.
+This is not "send paper to LLM and trust the answer."
+The output includes evidence so each answer can be validated against the source text.
 
 ---
 
-## Why a new design
+## Why proto2's approach fails
 
-The proto2 pipeline classifies every sentence in the paper with NLI.
-This produces hundreds of results and does not answer the real question:
-"What is THE primary method / task / dataset / metric of this paper?"
+proto2 classifies every sentence into one of four roles with NLI.
+This is text classification, not information extraction.
 
-The problem is closer to QA than sentence classification.
+Problems:
+- Output volume: MapReduce produced 151 TechnicalMethod sentences. Not usable.
+- No mechanism to distinguish the authors' own method from methods cited from prior work.
+- Evaluation was recall-only: 10/12 means the gold term appeared somewhere in 100+ sentences.
+- Threshold 0.5 is arbitrary; no principled way to cut the output.
 
-Constraint: Abstract alone misses Dataset and EvaluationMetric (often only in Experiments).
-Full paper does not fit in LLM context.
+The real task is: given a paper, what is the primary TechnicalMethod? This is closer to QA or IE than sentence classification.
+
+---
+
+## Why document-level and why full paper
+
+Jain et al. (SciREX) argue: "a significant amount of information can only be gleaned from analyzing the full document." Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method. Sending only a subset recreates the recall gap that document-level IE was designed to avoid.
+
+A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-context LLMs can usually handle this range without chunking:
+
+| Model | Context | Cost |
+|---|---|---|
+| Gemini 1.5 Flash | 1M tokens | cheap API |
+| Claude Haiku | 200k tokens | cheap API |
+| Llama 3.1 8B Instruct | 128k tokens | free (Colab GPU) |
+
+For the selected papers in this project, the cleaned full text is expected to fit within the context window of modern long-context LLMs. Therefore, chunking is not used in the main pipeline.
 
 ---
 
@@ -31,172 +82,102 @@ Full paper does not fit in LLM context.
 
 ```
 XML
-  ↓ Stage 0: parse sections
-  ↓ Stage 1: candidate extraction (first-person filter + keep Abstract)
-  ↓ Stage 2: NLI role classification on candidates only
-  ↓ Stage 3: top-N per role by score × section_weight
-  ↓ Stage 4: LLM term extraction (RAG-style)
-Output: MethodologyProfile with short terms
+  ↓ Stage 0: parse sections (GROBID, same as proto2)
+  ↓ Stage 1: extract and concatenate section texts (skip References, Acknowledgements)
+  ↓ Stage 2: LLM extraction with schema-guided prompt
+Output: MethodologyProfile JSON (answer + evidence per role)
+```
+
+### Stage 0 — Parse XML
+
+Same as proto2. Extract Abstract and body sections from TEI XML via GROBID.
+Skip: References, Acknowledgements.
+Keep: Related Work (main setting). See Ablation below.
+
+### Stage 1 — Text extraction
+
+Concatenate section texts in reading order (Abstract first, then body sections).
+No sentence-level filtering. The LLM sees everything except excluded sections.
+
+### Stage 2 — LLM extraction
+
+Prompt:
+
+```
+You are extracting research methodology from a computing research paper.
+
+For each of the four roles below, return:
+- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
+- "evidence": one sentence quoted directly from the paper that supports the answer
+
+Roles:
+- TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
+- Task: the research task or problem being addressed
+- Dataset: the dataset used for training or evaluation
+- EvaluationMetric: the metric used to report results
+
+Rules:
+- Use the authors' own method, not methods cited from prior work.
+- If a field is not present in the paper, return null for both answer and evidence.
+- For each evidence, return the section heading and one sentence quoted verbatim from the paper.
+- Return only the JSON object, no explanation.
+
+Paper text:
+{paper_text}
 ```
 
 ---
 
-## Stage 0 — Parse XML
+## Evaluation (3 axes)
 
-Same as proto2.
-Extract Abstract and body sections from TEI XML via GROBID.
-Skip: References, Acknowledgements, Related Work.
+Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
 
----
+**1. Gold label match**
+Does `answer` contain the gold label as a substring?
+Same method as proto2, but now applied to one answer per role, not 100+ sentences.
+A correct answer with one sentence is much harder to pass than recall over 151 sentences.
 
-## Stage 1 — Candidate Extraction
+**2. Human precision check**
+Is `answer` plausibly correct by human judgment?
+Catches cases where the answer is not in the gold labels but is still valid (or where it is wrong despite matching a substring).
 
-Replace "classify all sentences" with a targeted filter.
-Expected output: ~15–40 sentences (down from 200+ in proto2).
+**3. Evidence check**
+For each returned answer:
+- Does `evidence.quote` appear verbatim in the paper text?
+- Does `evidence.quote` support `answer`?
+- Is `evidence.section` consistent with the quote's actual location in the paper?
+- Is the evidence about the authors' own work, not prior work?
 
-### a) First-person active verb filter
-
-Keep sentences that contain:
-
-```
-we propose, we introduce, we present, we use, we train, we evaluate,
-we implement, we adopt, we employ, we develop,
-our model, our approach, our method, our system,
-in this paper, in this work
-```
-
-Implementation: case-insensitive regex.
-
-Effect: removes prior-work noise naturally.
-- "ELMo uses BiLSTM" → no "we" → excluded
-- "We propose the Transformer" → included
-
-### b) Keep Abstract regardless
-
-Abstract sentences are always included, even without first-person verbs.
-Abstract is short and contains the primary contribution summary.
-
-### c) Section priority weight
-
-Assign a weight per section heading (used in Stage 3, not for filtering):
-
-```python
-SECTION_WEIGHT = {
-    "abstract": 1.5,
-    "model": 1.3,
-    "method": 1.3,
-    "approach": 1.3,
-    "architecture": 1.3,
-    "experiment": 1.0,
-    "result": 1.0,
-    "evaluation": 1.0,
-    "introduction": 0.6,
-    "default": 0.8,
-}
-```
-
-Matching: case-insensitive substring match on section heading.
-
-### Known limitation
-
-Passive or third-person primary claims are missed:
-- "BERT is pre-trained on BooksCorpus and Wikipedia." → no "we" → excluded
-
-Mitigation: Abstract inclusion covers most such cases.
+The `section` field makes Related Work attribution visible without needing to exclude that section entirely. If the LLM cites a Related Work sentence as evidence for TechnicalMethod, the error is detectable. This check catches hallucination (fabricated evidence) and attribution errors.
 
 ---
 
-## Stage 2 — Role Classification (NLI)
+## Research framing
 
-Apply NLI only to Stage 1 candidates.
-Model: `cross-encoder/nli-deberta-v3-small`
-Hypothesis template: `"{}"`  (label string used as-is)
-
-Use best hypothesis set from proto2 comparison experiment (TBD).
-
-```python
-result = classifier(
-    sentence,
-    candidate_labels=LABELS,
-    hypothesis_template="{}",
-)
-role = LABEL_TO_ROLE[result["labels"][0]]
-score = result["scores"][0]
-```
-
-Output per candidate: `(sentence, role, score, section_weight)`
+This project uses a long-context LLM as a schema-guided document-level information extractor. The input is a full research paper; the output is a structured JSON profile of the methodology. The output is evaluated against gold labels and validated with supporting evidence quoted from the source text. This framing is more testable and more academically defensible than submitting the paper to an LLM and reporting whatever it returns.
 
 ---
 
-## Stage 3 — Top-N Selection per Role
+## Ablation
 
-Sort candidates per role by: `score × section_weight`
-Take top N.
+**Related Work inclusion**
 
-```python
-TOP_N = 3
+Main setting: keep Related Work in the input text.
+Ablation: exclude Related Work and compare results.
 
-for role in Role:
-    candidates_for_role = [(s, sc, w) for s, r, sc, w in all_candidates if r == role]
-    top = sorted(candidates_for_role, key=lambda x: x[1] * x[2], reverse=True)[:TOP_N]
-```
-
-Output: up to TOP_N sentences per role (up to 12 sentences total).
+Rationale: Related Work may help the model understand the contribution of the paper in context. If it causes attribution errors, these are detectable through `evidence.section` — a TechnicalMethod claim citing a Related Work sentence is a visible signal. Keeping Related Work as the main setting gives the model more document context. The ablation tests whether this extra context introduces noise.
 
 ---
 
-## Stage 4 — Term Extraction (LLM, RAG-style)
+## Open questions
 
-Pass top sentences from Stage 3 to LLM.
-Input: ≤12 sentences → always fits in context window.
-Captures terms from any section (body sections included via Stage 3).
-
-Prompt structure:
-
-```
-For each sentence below, extract the key term or name that represents
-the methodology role. Return only the term, not the full sentence.
-
-TechnicalMethod: "We propose the Transformer, a model architecture..."
-→ Transformer
-
-Task: "The task is English-to-German machine translation."
-→ machine translation
-
-Dataset: "We train on the WMT 2014 English-German dataset."
-→ WMT 2014 English-German
-
-EvaluationMetric: "We report BLEU score on the test set."
-→ BLEU
-```
-
-Which LLM to use: decided separately (Claude API, HF model, etc.).
+- **Which LLM?** Llama 3.1 8B Instruct avoids API cost but needs a Colab GPU. Claude Haiku is more reliable but requires an API key. Decide before implementation.
+- **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
 
 ---
 
-## Design Decisions
+## What happened to Stage 0–4 (NLI + first-person filter)
 
-| Decision | Rationale |
-|---|---|
-| First-person filter before NLI | Removes prior-work noise; reduces NLI calls |
-| Keep Abstract regardless | High recall; short enough to include safely |
-| score × section_weight | Combines NLI confidence with positional importance |
-| Top-N per role | Primary elements, not all mentions; N is configurable |
-| RAG for term extraction | Abstract alone misses body-only info; full paper too large for LLM |
+The earlier proto3 design kept NLI but added a first-person filter, top-N selection, and LLM term extraction as a final step. This is an improvement over proto2 but does not change the fundamental framing — it is still sentence classification. The first-person filter reduces authorship noise but misses passive or impersonal primary claims ("BERT is pre-trained on BooksCorpus..."). The LLM in Stage 4 only sees the top sentences selected by NLI, so it cannot recover anything Stage 1–3 missed.
 
----
-
-## Known Limitations
-
-- Passive/third-person claims missed by first-person filter
-- Section weight heuristic may not generalize to all paper styles
-- Term extraction quality depends on LLM choice
-- No gold labels for evaluation yet
-
----
-
-## Open Questions
-
-- Which hypothesis set from proto2 to use? (compare verbose_v1/v2/v3 results first)
-- Which LLM for Stage 4? (Claude API requires key; HF models vary in quality)
-- TOP_N = 3 appropriate? May need tuning per paper type
+Document-level LLM extraction removes this dependency chain. The LLM reads the full paper and decides what is the primary method. The authorship problem is handled by the LLM's language understanding, not by heuristic filters.
