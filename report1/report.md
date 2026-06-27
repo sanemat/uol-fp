@@ -518,6 +518,30 @@ The third challenge is authorship attribution. The sentence "The feature-based a
 
 ---
 
+## Appendix A — Project Roadmap
+
+<figure>
+<img src="Screenshot%202026-06-27%20172256.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–18). Completed tasks from April 2026, including background research, literature notes, and early prototype work.</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-06-27%20172338.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 19–26). April–May 2026, including prototype build, note rewriting, and literature acquisition.</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-06-27%20172411.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 27–44). June–July 2026, including Preliminary Report submission (row 27, red line), chapter writing, and proto3 tasks (rows 39–44).</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-06-27%20172507.png" alt="GitHub Projects roadmap — part 4" style="width:100%;max-width:100%;">
+<figcaption>Figure A4: Project roadmap (rows 45–50). July–August 2026, including proto3 evaluation, ablation, comparison, and Final Report submission (Iteration 17).</figcaption>
+</figure>
+
+---
+
 ## Appendix B — Extended Evaluation (All 6 Papers)
 
 The primary evaluation in Chapter 4 §3 covers three ML papers (Transformer, BERT, AlexNet) as designed in Chapter 3 §6. This appendix extends the same evaluation to all six dataset papers including two systems papers (MapReduce, Google Search).
@@ -550,27 +574,3 @@ Results:
 Table B2: Extended gold label evaluation results.
 
 ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%). Systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
-
----
-
-## Appendix A — Project Roadmap
-
-<figure>
-<img src="Screenshot%202026-06-27%20172256.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
-<figcaption>Figure A1: Project roadmap (rows 1–18). Completed tasks from April 2026, including background research, literature notes, and early prototype work.</figcaption>
-</figure>
-
-<figure>
-<img src="Screenshot%202026-06-27%20172338.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
-<figcaption>Figure A2: Project roadmap (rows 19–26). April–May 2026, including prototype build, note rewriting, and literature acquisition.</figcaption>
-</figure>
-
-<figure>
-<img src="Screenshot%202026-06-27%20172411.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
-<figcaption>Figure A3: Project roadmap (rows 27–44). June–July 2026, including Preliminary Report submission (row 27, red line), chapter writing, and proto3 tasks (rows 39–44).</figcaption>
-</figure>
-
-<figure>
-<img src="Screenshot%202026-06-27%20172507.png" alt="GitHub Projects roadmap — part 4" style="width:100%;max-width:100%;">
-<figcaption>Figure A4: Project roadmap (rows 45–50). July–August 2026, including proto3 evaluation, ablation, comparison, and Final Report submission (Iteration 17).</figcaption>
-</figure>
