@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5413 words)
+# Report (5460 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -228,7 +228,7 @@ The three supervised systems in Section 2 confirm that the four-role extraction 
 
 ---
 
-## Chapter 3: Design (1436 words)
+## Chapter 3: Design (1437 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -260,7 +260,7 @@ This design matches the intended use case: the system is not intended to replace
 
 ### 3. Overall Structure
 
-The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. A usage NLI step and top-k selection are planned for next Iteration (see Chapter 4, Section 5).
+The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. The next iteration changes the extraction unit from sentence-level classification to document-level extraction (see Chapter 4, Section 5).
 
 The input is a PDF of a computing research paper. After GROBID, the intermediate format is TEI XML. Each section has a heading attribute and body text. The abstract is separate from the body sections.
 
@@ -304,9 +304,8 @@ The work plan is shown visually in Appendix A as a Gantt chart.
 | Period | Main task | Output |
 |---|---|---|
 | Before 29 June | Complete all chapters, prototype, and video | Preliminary Report |
-| Iteration 1 (post-submission) | First-person verb filter; top-N selection (top 3 per role by NLI score) | Improved prototype — reduced output volume; re-evaluation |
-| Iteration 2 | Usage NLI step; LLM term extraction; extended evaluation on all 6 papers | Short-form methodology profile |
-| Final stage | Testing, analysis, Final Report writing | Final submission |
+| Iteration 1 (post-submission) | Replace sentence-level classification with document-level extraction using a long-context LLM; return one term and one supporting sentence per role | Short-form methodology profile |
+| Final stage | Compare NLI prototype and document-level extraction results; analyse failures across paper types; write Final Report | Final submission |
 
 Table 4: Work plan summary.
 
@@ -352,7 +351,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1332 words)
+## Chapter 4: Feature Prototype (1378 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -461,7 +460,9 @@ The fourth type is large output volume. MapReduce produced 151 TechnicalMethod s
 
 ### 5. Improvements for the Next Iteration
 
-Sentence classification produces too many results to be useful: MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot distinguish the paper's own method from methods cited in related work. Jain et al. [5] argue that methodology extraction requires document-level context because relevant information may be spread across sections. The next iteration treats the task as document-level extraction instead: a long-context LLM reads the cleaned full paper and returns one term per role as JSON. Each answer includes a quoted sentence from the paper.
+Sentence-level classification produced useful evidence sentences, but it did not produce a clean methodology profile. MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot reliably distinguish the paper's own method from methods cited in related work. This is not only a threshold problem: even a better threshold would still treat each sentence independently.
+
+For this reason, the next iteration changes the extraction unit from sentence-level classification to document-level extraction. Jain et al. [5] argue that methodology extraction often requires document-level context because relevant information may be spread across sections. The next prototype will therefore use a long-context LLM to read the cleaned paper text and return one term per role as JSON. Each term must be supported by a quoted sentence from the paper, so the output remains inspectable.
 
 ### 6. Technical Challenge
 
