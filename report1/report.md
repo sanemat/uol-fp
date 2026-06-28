@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5481 words)
+# Report (5356 words)
 
 ## Chapter 1: Introduction (789 words)
 
@@ -109,7 +109,7 @@ Chapter 4 presents the feature prototype. It describes the implementation of the
 
 ---
 
-## Chapter 2: Literature Review (1841 words)
+## Chapter 2: Literature Review (1716 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [9].
 
@@ -171,9 +171,7 @@ Ghosh et al. [2, 3] use supervised transformer-based sequence labeling to extrac
 
 Färber et al. [1] extract methods and datasets from scientific publications using domain-specific named entity recognition (NER) followed by usage classification, which distinguishes whether each mention is used by the authors or only cited as prior work. This "used vs mentioned" distinction is directly relevant to a noise problem in the prototype: a sentence in the BERT Introduction describing ELMo's approach entails "technical method" under NLI but belongs to a different paper. However, Färber et al. [1] cover only Method and Dataset, not Task or EvaluationMetric. Their NER model also requires labeled entity mentions, which are not available for this project.
 
-Across these three supervised systems, a common pattern emerges. Jain et al. [5] achieve the broadest coverage (all four roles at document level) but require 438 annotated papers from a single domain. Ghosh et al. [2, 3] narrow the scope to TechnicalMethod and apply finer-grained sequence labeling, but cover only one of the four roles. Färber et al. [1] add a useful usage signal for two roles, but do not extend to Task or EvaluationMetric. All three depend on domain-specific labeled corpora. For a project targeting general computing papers where no annotated methodology corpus appears to exist, reusing any of these directly would require rebuilding the annotation infrastructure from scratch. This constraint motivates a zero-shot approach, which removes the labeled data requirement at the cost of domain adaptation.
-
-These papers support the entity types, but their supervised methods depend on annotation that this project does not have. A zero-shot method is therefore a reasonable direction.
+These supervised methods depend on domain-specific annotated corpora that this project does not have. A zero-shot approach removes this requirement, at the cost of domain adaptation.
 
 ### 3. Zero-shot Classification
 
@@ -216,11 +214,11 @@ Zero-shot NLI reduces the labeled data requirement. The question is whether any 
 
 It is difficult to find existing work that applies zero-shot NLI with a structured methodology schema to general computing papers. This motivates the prototype.
 
-Section 2 established the basis for a structured approach. Oates [9] and Pilkington & Pretorius [10] suggest that research methodology has formal, structured components, but neither work names the specific extraction roles used in this project. The four roles (TechnicalMethod, Task, Dataset, and EvaluationMetric) draw more directly on Jain et al. [5]. Both Oates and Pilkington are designed for human use. Neither provides a system to extract methodology from text automatically.
+Section 1 established the basis for a structured approach. Oates [9] and Pilkington & Pretorius [10] suggest that research methodology has formal, structured components, but neither work names the specific extraction roles used in this project. The four roles (TechnicalMethod, Task, Dataset, and EvaluationMetric) draw more directly on Jain et al. [5]. Both Oates and Pilkington are designed for human use. Neither provides a system to extract methodology from text automatically.
 
-Section 3 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach does not readily generalize to general computing papers without similar annotation effort.
+Section 2 showed that extraction of the same four types is possible. Jain et al. [5] built a working system, but it required 438 annotated papers, 4 PhD-level annotators, and a corpus limited to ML benchmarks. This approach does not readily generalize to general computing papers without similar annotation effort.
 
-Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
+Section 3 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.
 
 I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This made the approach worth testing in a prototype.
 
