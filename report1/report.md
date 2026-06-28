@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5219 words)
+# Report (5222 words)
 
 ## Chapter 1: Introduction (789 words)
 
@@ -382,7 +382,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1471 words)
+## Chapter 4: Feature Prototype (1474 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -489,7 +489,7 @@ The second type is quoted or example text. Text that is quoted or used as an exa
 
 The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.
 
-The fourth type is large output volume. When no threshold limits the number of accepted sentences per role, the output can become too large to inspect in a first pass.
+The fourth type is large output volume. Because there is no upper limit on the number of accepted sentences per role, the output can become too large to inspect in a first pass.
 
 ### 5. Technical Challenge
 
