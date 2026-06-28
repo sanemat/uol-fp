@@ -254,6 +254,63 @@ Method: Transformer
 <p>Section 4 showed that zero-shot NLI removes the labeled data requirement. Yin et al. [11] demonstrate that NLI can classify text into any label without task-specific training. But their approach was tested only on news articles, tweets, and crisis reports — not scientific papers. Domain mismatch remains an open risk.</p>
 <p>I could not find prior work that combines these elements in the same way: the structured methodology concept from Oates and Pilkington, the four-role vocabulary from Jain et al., the zero-shot NLI method from Yin et al., and application to general computing papers. I apply Yin et al.'s entailment approach with the 4-role schema on GROBID-parsed computing papers, without requiring annotated data. This made the approach worth testing in a prototype.</p>
 <p>The three supervised systems in Section 2 confirm that the four-role extraction task is achievable with sufficient annotation. Jain et al. [5] extract all four roles but require ML-benchmark annotation at scale. Ghosh et al. [2, 3] narrow to TechnicalMethod. Färber et al. [1] add usage sensitivity for two roles. None of the conditions that make these approaches work (large labeled corpora, single-domain scope) apply to this project. Yin et al.'s [11] zero-shot approach removes the annotation requirement but was tested only on general-domain text. My project occupies a specific position in this space: it draws on the schema from Jain et al. [5], the extraction method from Yin et al. [11], the preprocessing from GROBID [7], and the domain vocabulary from Oates [9] and Pilkington &amp; Pretorius [10]. The prototype tests whether this combination is effective in practice.</p>
+<p>Table 4 summarises the key sources used to position this project.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Contribution</th>
+<th>Strength</th>
+<th>Limitation</th>
+<th>Relevance to this project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Oates [9]</td>
+<td>Methodology vocabulary</td>
+<td>Clear concept names for methodology components</td>
+<td>Designed for human use; not extraction-oriented</td>
+<td>Provides broader methodology vocabulary and motivates structured extraction</td>
+</tr>
+<tr>
+<td>Pilkington &amp; Pretorius [10]</td>
+<td>Formal methodology ontology</td>
+<td>Formal relationships between concepts</td>
+<td>No extraction system or corpus</td>
+<td>Supports treating methodology as a structured domain</td>
+</tr>
+<tr>
+<td>Jain et al. [5]</td>
+<td>Document-level extraction of Dataset, Metric, Task, and Method</td>
+<td>All four roles; working system</td>
+<td>438 annotated ML papers; four PhD annotators</td>
+<td>Confirms four roles; annotation cost motivates zero-shot</td>
+</tr>
+<tr>
+<td>Ghosh et al. [2, 3]</td>
+<td>TechnicalMethod extraction from AI papers</td>
+<td>Methodology-specific sequence labeling</td>
+<td>One role only; AI papers; supervised</td>
+<td>Shows difficulty of extracting method names</td>
+</tr>
+<tr>
+<td>Färber et al. [1]</td>
+<td>Used vs mentioned methods and datasets</td>
+<td>Handles authorship attribution</td>
+<td>Method and Dataset only; labeled mentions required</td>
+<td>Relevant to prior-work noise in the prototype</td>
+</tr>
+<tr>
+<td>Yin et al. [11]</td>
+<td>Zero-shot NLI text classification</td>
+<td>No task-specific training data needed</td>
+<td>Tested on general-domain text only</td>
+<td>Enables zero-shot role classification</td>
+</tr>
+</tbody>
+</table>
+<p>Table 4: Key sources for this project.</p>
 <hr>
 <h2 id="chapter-3-design-1380-words">Chapter 3: Design (1380 words) </h2>
 <p>The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).</p>
@@ -338,7 +395,7 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 4: Work plan summary.</p>
+<p>Table 5: Work plan summary.</p>
 <p>The major tasks are:</p>
 <ul>
 <li>Done: background research, literature notes (Oates, Pilkington, Jain, Yin, GROBID, CSO), pitch</li>
@@ -356,7 +413,7 @@ MethodologyProfile JSON
 <hr>
 <h3 id="6-test-and-evaluation">6. Test and Evaluation </h3>
 <p>For each paper × role, the system checks whether any accepted sentence (score ≥ 0.5) contains the gold label as a substring. A role is correct (○) if at least one classified sentence contains the gold label. Incorrect (×) otherwise.</p>
-<p>The gold labels for the three test papers are shown in Table 5.</p>
+<p>The gold labels for the three test papers are shown in Table 6.</p>
 <table>
 <thead>
 <tr>
@@ -391,7 +448,7 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 5: Gold labels — 3 papers × 4 roles.</p>
+<p>Table 6: Gold labels — 3 papers × 4 roles.</p>
 <p>Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell = ○ (correct) or × (wrong). Total = 12 data points. The matching sentence and score are shown for each ○ cell to make the result inspectable.</p>
 <p>Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.</p>
 <p>The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold label. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.</p>
@@ -417,7 +474,7 @@ MethodologyProfile JSON
 </ul>
 <p>All other body sections are included: Abstract, Introduction, Method/Architecture, Dataset, Experiment, Results, Conclusion, etc. An earlier version filtered to sections whose heading matched keywords such as "experiment" or "result", but the <code>Training Data</code> section in the Transformer paper has neither keyword, and the WMT dataset was missed entirely. Switching to all body sections improved Dataset recall significantly.</p>
 <h3 id="2-demonstration">2. Demonstration </h3>
-<p>The prototype was tested on six papers. Table 6 shows the number of accepted sentences per role.</p>
+<p>The prototype was tested on six papers. Table 7 shows the number of accepted sentences per role.</p>
 <table>
 <thead>
 <tr>
@@ -480,7 +537,7 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 6: Accepted sentences per role for six papers.</p>
+<p>Table 7: Accepted sentences per role for six papers.</p>
 <p>All six papers were run with short labels. ML papers (Transformer, BERT, AlexNet, ResNet) produced balanced output across all four roles. Systems papers (MapReduce, Google Search) produced very large TechnicalMethod counts and few Dataset or EvaluationMetric sentences, consistent with their lack of standard ML benchmark structure.</p>
 <h4 id="21-hypothesis-set-comparison">2.1 Hypothesis Set Comparison </h4>
 <p>The choice of hypothesis text has a large effect on classification. Four hypothesis sets were tested on the BERT paper (258 sentences). A probe set of four known-answer sentences (one per role) was used to measure correctness.</p>
@@ -530,13 +587,13 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 7: Hypothesis set comparison on the BERT paper (258 sentences).</p>
+<p>Table 8: Hypothesis set comparison on the BERT paper (258 sentences).</p>
 <p>Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.</p>
 <h3 id="3-evaluation">3. Evaluation </h3>
 <h4 id="31-method">3.1 Method </h4>
 <p>The evaluation follows the approach designed in Chapter 3, Section 6: a gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This evaluation is recall-oriented: it tests whether the expected gold label is retrieved somewhere in the accepted sentences, but it does not measure how much irrelevant text is also returned. A result of 10/12 means the gold label appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.</p>
 <h4 id="32-results">3.2 Results </h4>
-<p>Gold labels used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):</p>
+<p>Gold labels used (based on the planned labels in Chapter 3, Table 6, refined after running the pipeline):</p>
 <table>
 <thead>
 <tr>
@@ -571,7 +628,7 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 8: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).</p>
+<p>Table 9: Gold labels as used in evaluation (AlexNet TechnicalMethod refined to "convolutional" since the name "AlexNet" was coined after publication).</p>
 <p>Result (○ = gold label found in any accepted sentence, ✗ = not found):</p>
 <table>
 <thead>
@@ -607,12 +664,12 @@ MethodologyProfile JSON
 </tr>
 </tbody>
 </table>
-<p>Table 9: Gold label evaluation results (10/12). Extended results for all 6 papers are in Appendix B.</p>
+<p>Table 10: Gold label evaluation results (10/12). Extended results for all 6 papers are in Appendix B.</p>
 <h4 id="33-analysis">3.3 Analysis </h4>
 <p>BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).</p>
 <p>The Transformer scored ✗ on Task and EvaluationMetric. On Task, 14 sentences were accepted but none contains "machine translation"; the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). On EvaluationMetric, 3 sentences were accepted but none contains "BLEU"; metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.</p>
 <p>The 10/12 result is better interpreted as an upper bound on recall than as a precision or accuracy claim: it shows the system retrieves at least one relevant sentence for 10 of 12 role-paper pairs, but does not indicate whether the remaining output is clean or useful. The AlexNet gold label was also revised after running the pipeline, changing it from "AlexNet" to "convolutional", to match the terminology the 2012 paper actually uses; this represents evaluator influence on the result and limits how strongly the score can be generalised.</p>
-<p>Because the intended use is first-pass literature review support, output volume also matters. A result is less useful if the correct term appears only inside a very large set of accepted sentences. I therefore treat the number of accepted sentences per role (Table 6) as a usability signal alongside the binary correct/incorrect result. By this measure, ML papers perform better than systems papers: BERT and AlexNet retrieve the gold label within 4–15 accepted sentences per role, while MapReduce produces 151 TechnicalMethod sentences — too many to inspect in a first pass.</p>
+<p>Because the intended use is first-pass literature review support, output volume also matters. A result is less useful if the correct term appears only inside a very large set of accepted sentences. I therefore treat the number of accepted sentences per role (Table 7) as a usability signal alongside the binary correct/incorrect result. By this measure, ML papers perform better than systems papers: BERT and AlexNet retrieve the gold label within 4–15 accepted sentences per role, while MapReduce produces 151 TechnicalMethod sentences — too many to inspect in a first pass.</p>
 <h3 id="4-limitations">4. Limitations </h3>
 <p>Four types of noise were observed.</p>
 <p>The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. For example, "The feature-based approach, such as ELMo..." scored 0.87 as TechnicalMethod in the BERT paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.</p>
