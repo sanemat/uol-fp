@@ -1,0 +1,200 @@
+Final Project – Preliminary Report Rubric
+1. Preliminary Report (36 points)
+Does the report display knowledge of the area of study, previous work and
+academic literature?
+0 points
+2 points
+3 points
+4 points
+
+5 points
+
+No
+No, but... there are some attempts to refer to other work
+Yes, but… the report some discussion of the area and a few bits of previous work,
+but the discussion might be limited, confused or only partially correct
+Yes, the report gives an overview of the area and well written discussion of at
+least 4-6 pieces of previous work, based primarily on a good reading of the
+suggested work from the template
+Yes, and… the report gives and detailed and insightful analysis of the area of
+study with a detailed description of very well chosen examples of previous work
+that goes considerably beyond what was suggested in the template
+
+Does the report critically evaluate the previous work and/or academic literature?
+0 points
+1 point
+2 points
+3 points
+
+No
+Yes, but… the report makes some attempts at evaluating previous work
+Yes, the report situates the project in a critical analysis of previous work
+Yes, and… the report gives and detailed and insightful analysis of the area of
+study with a detailed description of very well chosen examples of previous work
+that goes considerably beyond what was suggested in the template
+
+Does the report contain appropriate citations?
+0 points
+1 point
+2 points
+
+No
+Yes, but… the report presents some previous work without proper citations (e.g.
+no citations or just links or incorrect style)
+Yes, all work mentioned in the report is cited in correct ACM style
+
+Is the design of the project clear and of high quality?
+0 points
+1 point
+2 points
+3 points
+3 points
+4 points
+
+No
+No, but... the design is hard to follow and very incomplete, but there are some
+attempts to present a design
+A design corresponding to the "acceptable" level of project described in the
+template but not described in a clear or complete way, or with several flaws
+A clearly described design that corresponds the “acceptable” level of project
+described in the template
+A design corresponding to the "good" or "excellent" level of project described in
+the template but not described in a clear or complete way, or with several flaws
+A clearly described design (including suitable visual communication)
+corresponding to the “good” level of project described in the template
+
+4 points
+6 points
+
+A design corresponding to an “excellent” project but with elements lacking or a
+few flaws
+A very clear and coherent design, described well in both visuals and writing that
+corresponds to the “excellent” level of project described in the template
+
+Is the project concept justified based on the domain and users?
+0 points
+1 point
+2 points
+3 points
+4 points
+
+No
+No, but... there are some attempts to justify the concept, but without evidence
+Yes, but… the project concept includes some reference to the domain and users
+but without a full analysis of requirements
+Yes, the project concept is based on a clear and evidenced argument for the
+requirements of users and/or the domain
+Yes, and… a project concept that is strongly based on a detailed, insightful and
+innovative analysis of the users and/or domain
+
+Is the workplan explained in enough detail?
+0 points
+1 point
+2 points
+3 points
+
+No, there is not plan
+No, but... though there is no real plan, there is some attempt to describe when
+things will be done
+Yes, but… there are elements missing or parts of the plan are vague
+Yes, this is a clearly thought out plan for implementing a project with all steps
+involved and appropriate timings
+
+Is the workplan feasible?
+0 points
+1 point
+2 points
+
+3 points
+
+No, there is no plan
+No, but... though there is no real plan, there is some attempt to describe when
+things will be done
+Yes, but… the scope of the project is not feasible or appropriate. It might need to
+be scaled down to ensure it is feasible, or it may need to be made more
+challenging (suggestions below)
+Yes, there might be elements of the plan that are difficult or challenging, but it is
+broadly feasible in terms of work proposed and timings
+
+Is the evaluation strategy appropriate to the aims of the project?
+0 points
+1 point
+2 points
+2 points
+3 points
+4 points
+
+No, there is no evaluation strategy
+No, but... there is some attempt at an evaluation plan, but it is very confused or
+not explained in any detail
+Yes, but… the strategy is simply a restatement of the suggested approach from
+the template
+Yes, but… The strategy does not engage with the suggestions of the template or
+is otherwise not appropriate
+Yes, it is a well thought out strategy that builds on that proposed in the template
+Yes, and… the strategy is very detailed an well thought out, going considerably
+beyond that described in the template
+
+Is the feature prototype technically challenging?
+0 points
+
+No, the prototype is OK but fairly standard
+
+1 point
+2 points
+3 points
+
+Yes, but… This prototype includes some of the more difficult techniques or
+algorithms taught in this degree
+Yes, This prototype includes some very difficult techniques or algorithms that go
+beyond what is taught in this degree (closer to masters or professional level)
+Yes, and… this prototype is extremely advanced, either being close to cutting
+edge research (advanced masters or PhD), or very advanced/cutting edge
+professional work
+
+Does the report successfully evaluate the feature prototype and suggest suitable
+improvements if appropriate?
+0 points
+1 point
+2 points
+3 points
+
+No
+Yes, but… there are some attempts at evaluation, but mostly simplistic (e.g. good
+vs bad) and lacking a full plan to address them
+Yes, a clear evaluation that identifies key areas for improvement and presents
+ideas for improvement
+Yes, and… a very insightful analysis with an innovative plan for improvement
+
+2. Video of Feature Prototype (4 points)
+Is the feature prototype of high quality?
+0 points
+1 point
+2 points
+2 points
+
+3 points
+4 points
+
+No, there is no demo
+No, but, there is no working prototype, but there is some attempt at making one
+Yes, but… there is a working prototype that would correspond to part of a project
+at the “acceptable” level of project described in the template
+Yes, but… there is a prototype that would correspond to part of a project at the
+“good” or "excellent" level of project described in the template, but it has many
+bugs and flaws
+Yes, there is a working prototype that would correspond to part of a project at the
+“good” level of project described in the template
+Yes, and… there is a working prototype that would correspond to part of a project
+at the “excellent” level of project described in the template
+
+3. Overall Assignment Evaluation (10 points)
+What are the best things about this project? What aspects should you focus on?
+(5 points)
+<Tutor feedback>
+What suggestions do you have for improving this project? For example, adding literature, adjusting
+the design, making the workplan more feasible or improving the prototype.
+(5 points)
+<Tutor feedback>
+
+
