@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5356 words)
+# Report (5265 words)
 
 ## Chapter 1: Introduction (789 words)
 
@@ -239,7 +239,7 @@ Table 4: Key sources for this project.
 
 ---
 
-## Chapter 3: Design (1380 words)
+## Chapter 3: Design (1289 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -261,7 +261,7 @@ Research design (e.g. experiment vs. survey) is subjective — two readers can a
 
 The hypothesis is that sentences in a paper tend to describe one role at a time. A sentence about the dataset does not also describe the method. If this holds, sentence-level classification may be sufficient. I tested this on six papers: Transformer [D6], BERT [D3], AlexNet [D5], ResNet [D4], MapReduce [D2], and Google Search [D1]. Results appear to support the assumption for ML papers. Systems papers (MapReduce, Google Search) showed weaker fit because they do not follow the standard ML benchmark structure.
 
-A sentence like "The feature-based approach, such as ELMo, applies independently trained context representations" appears in the Introduction of BERT and describes another paper's method, not BERT's. Skipping the Related Work section by heading removes some noise, but not sentences in the Introduction that describe prior work. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] may reduce this noise at the sentence level without needing more keyword rules [1]. This may reduce some prior-work sentences in the TechnicalMethod output.
+Introduction sections can also describe other papers' methods, which the NLI model may classify as TechnicalMethod of the target paper. Skipping Related Work by heading removes some noise, but not prior-work sentences in the Introduction. A second NLI step with labels ["used by the authors", "mentioned as prior or related work"] may reduce this noise [1].
 
 An early run with verbose hypotheses sent almost all BERT sentences to EvaluationMetric, which forced a comparison of four hypothesis sets before settling on short labels.
 
@@ -310,7 +310,7 @@ The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Data
 <figcaption>Figure 4: Example output of the system (proto2 prototype).</figcaption>
 </figure>
 
-The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
+The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod).
 
 GROBID runs locally via Docker because it is a Java server process (~1 GB). The NLI pipeline runs on Google Colab because it needs a GPU for fast inference and installs Python packages (transformers, torch, spacy). The TEI XML produced by GROBID is uploaded to Colab manually.
 
@@ -320,7 +320,7 @@ GROBID runs locally via Docker because it is a Java server process (~1 GB). The 
 
 GROBID [7] converts a PDF into TEI XML, dividing the paper into sections with headings and body text. Without GROBID, the input would be raw PDF text with no section boundaries, making it difficult to filter by section (e.g. skip References or Related Work).
 
-The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free Colab GPU). Zero-shot is therefore suitable for this prototype because: (1) I have no labelled corpus for this task, so supervised training is not straightforward; (2) Yin et al. show NLI can classify into many possible labels without task-specific training.
+The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free Colab GPU) for zero-shot NLI classification.
 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
@@ -376,7 +376,7 @@ Results are presented as a table: rows = 4 roles, columns = 3 papers, each cell 
 
 Success is defined as ≥ 10 of 12 correct. 10/12 suggests the system finds relevant sentences for most roles across most papers. Lower than 8/12 would indicate a systematic problem worth investigating.
 
-The evaluation is intentionally small but inspectable. Each paper-role pair is judged by whether the system retrieves at least one relevant sentence containing the expected gold label. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
+The evaluation is intentionally small but inspectable. To avoid hiding errors behind large outputs, the evaluation will also report the number of accepted sentences per role and show the top matching sentence with its score. This makes it possible to see both whether the system finds the correct evidence and whether the output is too broad.
 
 Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.
 
