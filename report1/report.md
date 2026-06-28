@@ -339,8 +339,8 @@ The work plan is shown visually in Appendix A as a Gantt chart.
 | Period | Main task | Output |
 |---|---|---|
 | Before 29 June | Complete all chapters, prototype, and video | Preliminary Report |
-| Iteration 1 (post-submission) | Replace sentence-level classification with document-level extraction using a long-context LLM; return one term and one supporting sentence per role | Short-form methodology profile |
-| Final stage | Compare NLI prototype and document-level extraction results; analyse failures across paper types; write Final Report | Final submission |
+| July (post-submission) | Replace sentence-level classification with document-level extraction using a long-context LLM; return one term and one supporting sentence per role | Short-form methodology profile |
+| August (final stage) | Compare NLI prototype and document-level extraction results; analyse failures across paper types; write Final Report | Final submission |
 
 Table 5: Work plan summary.
 
