@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5494 words)
+# Report (5510 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -373,7 +373,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1469 words)
+## Chapter 4: Feature Prototype (1485 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -436,7 +436,7 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 #### 3.1 Method
 
-The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.
+The evaluation follows the approach designed in Chapter 3, Section 6: a gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This evaluation is recall-oriented: it tests whether the expected gold label is retrieved somewhere in the accepted sentences, but it does not measure how much irrelevant text is also returned. A result of 10/12 means the gold label appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.
 
 #### 3.2 Results
 
@@ -480,7 +480,7 @@ The second type is quoted or example text. Text that is quoted or used as an exa
 
 The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.
 
-The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences and the Transformer produced 160 EvaluationMetric sentences, because there is no upper limit on accepted sentences.
+The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences, because there is no upper limit on accepted sentences.
 
 ### 5. Improvements for the Next Iteration
 
