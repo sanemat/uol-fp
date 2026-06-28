@@ -262,6 +262,25 @@ This design matches the intended use case: the system is not intended to replace
 
 The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. The next iteration changes the extraction unit from sentence-level classification to document-level extraction (see Chapter 4, Section 5).
 
+<figure>
+<pre>
+PDF
+  ↓
+GROBID (Docker)
+  ↓
+TEI XML
+  ↓
+Section filtering
+  ↓
+Sentence splitting + cleaning
+  ↓
+Zero-shot NLI role classification
+  ↓
+MethodologyProfile JSON
+</pre>
+<figcaption>Figure 3: Overall pipeline of the proto2 system.</figcaption>
+</figure>
+
 The input is a PDF of a computing research paper. After GROBID, the intermediate format is TEI XML. Each section has a heading attribute and body text. The abstract is separate from the body sections.
 
 The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, EvaluationMetric. Each field is a list of sentences from the paper. Final output is a Python dict printed as JSON. Example:
@@ -275,7 +294,7 @@ The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Data
 }
 ```
 
-Figure 3: Example output of the system (proto2 prototype).
+Figure 4: Example output of the system (proto2 prototype).
 
 The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
 
@@ -414,7 +433,7 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 #### 3.1 Method
 
-The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.
+The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile. This is similar to recall@k in information retrieval: for each paper-role pair, the system is judged by whether the expected gold term appears in the accepted set of sentences, where k is the number of accepted sentences for that role.
 
 #### 3.2 Results
 
@@ -445,6 +464,8 @@ BERT scored ○ on all four roles, which suggests that the pipeline can find all
 The Transformer scored ✗ on Task and EvaluationMetric. On Task, 14 sentences were accepted but none contains "machine translation"; the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). On EvaluationMetric, 3 sentences were accepted but none contains "BLEU"; metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.
 
 The 10/12 result is better interpreted as an upper bound on recall than as a precision or accuracy claim: it shows the system retrieves at least one relevant sentence for 10 of 12 role-paper pairs, but does not indicate whether the remaining output is clean or useful. The AlexNet gold label was also revised after running the pipeline, changing it from "AlexNet" to "convolutional", to match the terminology the 2012 paper actually uses; this represents evaluator influence on the result and limits how strongly the score can be generalised.
+
+Because the intended use is first-pass literature review support, output volume also matters. A result is less useful if the correct term appears only inside a very large set of accepted sentences. I therefore treat the number of accepted sentences per role (Table 6) as a usability signal alongside the binary correct/incorrect result. By this measure, ML papers perform better than systems papers: BERT and AlexNet retrieve the gold label within 4–15 accepted sentences per role, while MapReduce produces 151 TechnicalMethod sentences — too many to inspect in a first pass.
 
 ### 4. Limitations
 
