@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5222 words)
+# Report (5222 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (789 words)
 
