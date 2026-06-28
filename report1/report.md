@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5403 words)
+# Report (5494 words)
 
 ## Chapter 1: Introduction (804 words)
 
@@ -285,6 +285,8 @@ The input is a PDF of a computing research paper. After GROBID, the intermediate
 
 The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, EvaluationMetric. Each field is a list of sentences from the paper. Final output is a Python dict printed as JSON. Example:
 
+<figure>
+
 ```json
 {
   "TechnicalMethod": ["We propose the Transformer..."],
@@ -294,7 +296,8 @@ The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Data
 }
 ```
 
-Figure 4: Example output of the system (proto2 prototype).
+<figcaption>Figure 4: Example output of the system (proto2 prototype).</figcaption>
+</figure>
 
 The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.
 
@@ -370,7 +373,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1378 words)
+## Chapter 4: Feature Prototype (1469 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -433,7 +436,7 @@ Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent 
 
 #### 3.1 Method
 
-The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile. This is similar to recall@k in information retrieval: for each paper-role pair, the system is judged by whether the expected gold term appears in the accepted set of sentences, where k is the number of accepted sentences for that role.
+The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.
 
 #### 3.2 Results
 
