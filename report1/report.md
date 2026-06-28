@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5265 words)
+# Report (5219 words)
 
 ## Chapter 1: Introduction (789 words)
 
@@ -239,7 +239,7 @@ Table 4: Key sources for this project.
 
 ---
 
-## Chapter 3: Design (1289 words)
+## Chapter 3: Design (1243 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (see Figure 1 in Chapter 2 for an example).
 
@@ -271,7 +271,7 @@ This design matches the intended use case: the system is not intended to replace
 
 ### 3. Overall Structure
 
-The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. The next iteration changes the extraction unit from sentence-level classification to document-level extraction (see Chapter 4, Section 5).
+The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON.
 
 <figure>
 <pre>
@@ -325,8 +325,6 @@ The prototype uses `cross-encoder/nli-deberta-v3-small` [4] (~300 MB, fits free 
 Two pre-processing steps clean each sentence before classification. (1) `pre_clean()` strips inline citation markers like [13] or [4, 27] using a regex. Citations break sentence boundaries and cause the splitter to produce short fragments. (2) `is_valid()` drops sentences shorter than 30 characters or without at least one real word. This removes citation stubs (e.g. "[4, 27, 28]"), bullet symbols, and other formatting artefacts that would produce noisy classifications.
 
 Four hypothesis sets (short and three verbose variants) were tested on the BERT paper. Short labels gave the best probe score and the most balanced role distribution. Full results and analysis are in Chapter 4, Section 2.
-
-A later iteration plans to use a long-context LLM to extract one term per role from the cleaned full paper text, with one supporting sentence for each term.
 
 ---
 
@@ -493,13 +491,7 @@ The third type is GROBID artefacts. Author contribution text can appear in the G
 
 The fourth type is large output volume. When no threshold limits the number of accepted sentences per role, the output can become too large to inspect in a first pass.
 
-### 5. Improvements for the Next Iteration
-
-Sentence-level classification produced useful evidence sentences, but it did not produce a clean methodology profile. MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot reliably distinguish the paper's own method from methods cited in related work. This is not only a threshold problem: even a better threshold would still treat each sentence independently.
-
-For this reason, the next iteration changes the extraction unit from sentence-level classification to document-level extraction. Jain et al. [5] argue that methodology extraction often requires document-level context because relevant information may be spread across sections. The next prototype will therefore use a long-context LLM to read the cleaned paper text and return one term per role as JSON. Each term must be supported by a quoted sentence from the paper, so the output remains inspectable.
-
-### 6. Technical Challenge
+### 5. Technical Challenge
 
 The prototype raised three technical issues with zero-shot NLI classification on academic text.
 
@@ -508,6 +500,12 @@ The first challenge is that hypothesis engineering is non-trivial. More detailed
 The second challenge is domain mismatch. The NLI model was trained on general-domain benchmarks, but academic writing is structurally different: sentences are longer, more technical, and contain citation markers and figure references that were not in the training data. The model classifies these without any task-specific training on scientific text.
 
 The third challenge is authorship attribution. The sentence "The feature-based approach, such as ELMo..." correctly entails "technical method" according to the NLI model (it does describe a method), but the method belongs to a different paper. Distinguishing a paper's own methods from those it cites was not handled well by the current NLI step, since it requires understanding who the authors are and what the paper claims.
+
+### 6. Improvements for the Next Iteration
+
+Sentence-level classification produced useful evidence sentences, but it did not produce a clean methodology profile. MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot reliably distinguish the paper's own method from methods cited in related work. This is not only a threshold problem: even a better threshold would still treat each sentence independently.
+
+For this reason, the next iteration changes the extraction unit from sentence-level classification to document-level extraction. Jain et al. [5] argue that methodology extraction often requires document-level context because relevant information may be spread across sections. The next prototype will therefore use a long-context LLM to read the cleaned paper text and return one term per role as JSON. Each term must be supported by a quoted sentence from the paper, so the output remains inspectable.
 
 ---
 
