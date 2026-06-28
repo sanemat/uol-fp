@@ -226,18 +226,18 @@ I could not find prior work that combines these elements in the same way: the st
 
 The three supervised systems in Section 2 confirm that the four-role extraction task is achievable with sufficient annotation. Jain et al. [5] extract all four roles but require ML-benchmark annotation at scale. Ghosh et al. [2, 3] narrow to TechnicalMethod. Färber et al. [1] add usage sensitivity for two roles. None of the conditions that make these approaches work (large labeled corpora, single-domain scope) apply to this project. Yin et al.'s [11] zero-shot approach removes the annotation requirement but was tested only on general-domain text. My project occupies a specific position in this space: it draws on the schema from Jain et al. [5], the extraction method from Yin et al. [11], the preprocessing from GROBID [7], and the domain vocabulary from Oates [9] and Pilkington & Pretorius [10]. The prototype tests whether this combination is effective in practice.
 
-Table 4 summarises the six sources reviewed in this chapter.
+Table 4 summarises the key sources used to position this project.
 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
-| Oates [9] | Methodology vocabulary | Clear concept names for methodology components | Designed for human use; not extraction-oriented | Defines vocabulary for the four roles |
-| Pilkington & Pretorius [10] | Formal methodology ontology | Formal relationships between concepts | No extraction system or corpus | Supports the structured four-role schema |
+| Oates [9] | Methodology vocabulary | Clear concept names for methodology components | Designed for human use; not extraction-oriented | Provides broader methodology vocabulary and motivates structured extraction |
+| Pilkington & Pretorius [10] | Formal methodology ontology | Formal relationships between concepts | No extraction system or corpus | Supports treating methodology as a structured domain |
 | Jain et al. [5] | Document-level extraction of Dataset, Metric, Task, and Method | All four roles; working system | 438 annotated ML papers; four PhD annotators | Confirms four roles; annotation cost motivates zero-shot |
 | Ghosh et al. [2, 3] | TechnicalMethod extraction from AI papers | Methodology-specific sequence labeling | One role only; AI papers; supervised | Shows difficulty of extracting method names |
 | Färber et al. [1] | Used vs mentioned methods and datasets | Handles authorship attribution | Method and Dataset only; labeled mentions required | Relevant to prior-work noise in the prototype |
 | Yin et al. [11] | Zero-shot NLI text classification | No task-specific training data needed | Tested on general-domain text only | Enables zero-shot role classification |
 
-Table 4: Summary of sources reviewed in this chapter.
+Table 4: Key sources for this project.
 
 ---
 
