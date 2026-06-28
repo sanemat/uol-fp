@@ -53,9 +53,9 @@ h3 {
 }
 </style>
 
-# Report (5510 words)
+# Report (5481 words)
 
-## Chapter 1: Introduction (804 words)
+## Chapter 1: Introduction (789 words)
 
 When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. This project treats methodology as four extractable roles: technical method, task, dataset, and evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.
 
@@ -82,10 +82,10 @@ The distinction matters in practice. A student reviewing papers on text classifi
 
 This project addresses **Template 12.1** from the Natural Language Processing (NLP) module: Identifying research methodologies used in computing research. The project builds a prototype pipeline that takes a computing paper PDF and returns sentences grouped by four methodology roles. The profile contains four fields:
 
-- **TechnicalMethod** — the method, algorithm, or architecture the authors used (e.g. Transformer)
-- **Task** — the problem the research addresses (e.g. machine translation)
-- **Dataset** — the data used for training or evaluation (e.g. WMT datasets)
-- **EvaluationMetric** — the metric used to assess results (e.g. BLEU score)
+- **TechnicalMethod** — the method, algorithm, or architecture the authors used
+- **Task** — the problem the research addresses
+- **Dataset** — the data used for training or evaluation
+- **EvaluationMetric** — the metric used to assess results
 
 The pipeline works in three stages. First, a PDF is converted to TEI (Text Encoding Initiative) XML by GROBID [7], which identifies sections with headings. Second, sections are filtered (References and Related Work are excluded), and each remaining sentence is cleaned and validated. Third, a zero-shot Natural Language Inference (NLI) model assigns one of the four roles to each sentence without requiring task-specific training data.
 
@@ -95,7 +95,7 @@ Research design (e.g. experiment vs survey) [6] and philosophical worldview are 
 
 ### 3. Target users
 
-The primary users are computing students who need to survey multiple papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly, before reading a paper in full. The system is intended to support this first pass, not to replace reading.
+The primary users are computing students who need to survey multiple papers for a literature review or research project. They need to find the method, task, dataset, and evaluation metric quickly, before reading a paper in full. The system is intended to support this first pass.
 
 The output is designed to be inspectable. Each role field contains actual sentences from the paper, allowing the user to judge whether a classified sentence is genuinely relevant to the paper's methodology. At this prototype stage, the output is full sentences rather than short extracted terms. This limitation is discussed in Chapter 4.
 
@@ -386,7 +386,7 @@ The analysis will identify which role or paper type failed and explain why (e.g.
 
 ---
 
-## Chapter 4: Feature Prototype (1485 words)
+## Chapter 4: Feature Prototype (1471 words)
 
 The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.
 
@@ -487,13 +487,13 @@ Because the intended use is first-pass literature review support, output volume 
 
 Four types of noise were observed.
 
-The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. For example, "The feature-based approach, such as ELMo..." scored 0.87 as TechnicalMethod in the BERT paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.
+The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.
 
 The second type is quoted or example text. Text that is quoted or used as an example in the paper body is classified as a real claim. For example, "you looked at a lot of pages from my Web site." from the Google Search paper [D1] was classified as Task.
 
 The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.
 
-The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences, because there is no upper limit on accepted sentences.
+The fourth type is large output volume. When no threshold limits the number of accepted sentences per role, the output can become too large to inspect in a first pass.
 
 ### 5. Improvements for the Next Iteration
 
@@ -505,7 +505,7 @@ For this reason, the next iteration changes the extraction unit from sentence-le
 
 The prototype raised three technical issues with zero-shot NLI classification on academic text.
 
-The first challenge is that hypothesis engineering is non-trivial. More detailed label descriptions do not necessarily improve accuracy: verbose_v1 and verbose_v2 sent nearly all BERT sentences to EvaluationMetric (244 of 258), while verbose_v3 shifted the bias to TechnicalMethod. Short labels achieved the best probe score and most balanced distribution, but this required four iterations of hypothesis design to discover.
+The first challenge is that hypothesis engineering is non-trivial. More detailed label descriptions do not necessarily improve accuracy: verbose_v1 and verbose_v2 sent nearly all BERT sentences to EvaluationMetric (244 of 258), while verbose_v3 shifted the bias to TechnicalMethod. Arriving at short labels as the best option required four iterations of hypothesis design.
 
 The second challenge is domain mismatch. The NLI model was trained on general-domain benchmarks, but academic writing is structurally different: sentences are longer, more technical, and contain citation markers and figure references that were not in the training data. The model classifies these without any task-specific training on scientific text.
 
