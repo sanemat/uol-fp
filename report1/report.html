@@ -81,7 +81,7 @@ h3 {
   box-sizing: border-box;
 }
 </style>
-<h1 id="report-5403-words">Report (5403 words) </h1>
+<h1 id="report-5510-words">Report (5510 words) </h1>
 <h2 id="chapter-1-introduction-804-words">Chapter 1: Introduction (804 words) </h2>
 <p>When computing researchers conduct a literature review, they often need to read many papers and identify the research methodology of each one. This project treats methodology as four extractable roles: technical method, task, dataset, and evaluation metric. Identifying these four components for each paper is useful for comparing related work and for understanding how methods in a field have changed over time. When reviewing many papers, however, this process is slow and manual.</p>
 <p>Consider "Attention Is All You Need" [D6], a well-known machine learning paper. The title signals attention mechanisms but does not describe how the research was conducted. That information is spread across the paper and requires careful reading to extract. The paper's methodology, once identified, can be summarized as follows:</p>
@@ -272,15 +272,34 @@ Method: Transformer
 <hr>
 <h3 id="3-overall-structure">3. Overall Structure </h3>
 <p>The pipeline runs as follows: PDF → GROBID (runs locally via Docker) → TEI XML → section filtering (skip References, Acknowledgements, Related Work by heading) → sentence splitting with spaCy + pre_clean() + is_valid() → role NLI (TechnicalMethod / Task / Dataset / EvaluationMetric) with threshold 0.5 → MethodologyProfile output as JSON. The next iteration changes the extraction unit from sentence-level classification to document-level extraction (see Chapter 4, Section 5).</p>
+<figure>
+<pre>PDF
+  ↓
+GROBID (Docker)
+  ↓
+TEI XML
+  ↓
+Section filtering
+  ↓
+Sentence splitting + cleaning
+  ↓
+Zero-shot NLI role classification
+  ↓
+MethodologyProfile JSON
+</pre>
+<figcaption>Figure 3: Overall pipeline of the proto2 system.</figcaption>
+</figure>
 <p>The input is a PDF of a computing research paper. After GROBID, the intermediate format is TEI XML. Each section has a heading attribute and body text. The abstract is separate from the body sections.</p>
 <p>The output is a MethodologyProfile with four fields: TechnicalMethod, Task, Dataset, EvaluationMetric. Each field is a list of sentences from the paper. Final output is a Python dict printed as JSON. Example:</p>
+<figure>
 <pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"We propose the Transformer..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   <span class="token property">"Task"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"applied to machine translation..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   <span class="token property">"Dataset"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"on the WMT 2014 English-German..."</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   <span class="token property">"EvaluationMetric"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"achieving 28.4 BLEU on the WMT 2014..."</span><span class="token punctuation">]</span>
 <span class="token punctuation">}</span>
-</code></pre><p>Figure 3: Example output of the system (proto2 prototype).</p>
+</code></pre><figcaption>Figure 4: Example output of the system (proto2 prototype).</figcaption>
+</figure>
 <p>The current prototype accepts all sentences above a threshold, which can result in a large number of output sentences per role (e.g. 100+ for TechnicalMethod). This is a known prototype limitation.</p>
 <p>GROBID runs locally via Docker because it is a Java server process (~1 GB). The NLI pipeline runs on Google Colab because it needs a GPU for fast inference and installs Python packages (transformers, torch, spacy). The TEI XML produced by GROBID is uploaded to Colab manually.</p>
 <hr>
@@ -379,7 +398,7 @@ Method: Transformer
 <p>Known constraints of this approach: only 3 papers (too small for statistical claims); substring match is loose; systems papers (MapReduce [D2], Google Search [D1]) do not fit the 4-role structure and are excluded; gold labels were written by the author with no formal inter-annotator agreement. An extended evaluation covering all 6 papers is in Appendix B.</p>
 <p>The analysis will identify which role or paper type failed and explain why (e.g. EvaluationMetric is hardest to capture; systems papers have no standard dataset). Chapter 4 describes the limitations of the current approach and the planned direction for the next iteration.</p>
 <hr>
-<h2 id="chapter-4-feature-prototype-1378-words">Chapter 4: Feature Prototype (1378 words) </h2>
+<h2 id="chapter-4-feature-prototype-1485-words">Chapter 4: Feature Prototype (1485 words) </h2>
 <p>The prototype takes a TEI XML file produced by GROBID from a computing research paper and classifies each sentence by research methodology role using zero-shot NLI to produce a JSON object with four lists — TechnicalMethod, Task, Dataset, and EvaluationMetric.</p>
 <p>Zero-shot NLI role assignment is the central design choice this chapter evaluates (see Chapter 3, Section 2 for justification).</p>
 <h3 id="1-implementation">1. Implementation </h3>
@@ -515,7 +534,7 @@ Method: Transformer
 <p>Verbose hypotheses introduced strong label bias: verbose_v1 and verbose_v2 sent nearly all sentences to EvaluationMetric, while verbose_v3 shifted the bias to TechnicalMethod. Short labels gave the best probe score (3/4) and the most balanced distribution.</p>
 <h3 id="3-evaluation">3. Evaluation </h3>
 <h4 id="31-method">3.1 Method </h4>
-<p>The evaluation follows the approach designed in Chapter 3, Section 6: a recall-oriented gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This check does not measure precision: a result of 10/12 means the gold term appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.</p>
+<p>The evaluation follows the approach designed in Chapter 3, Section 6: a gold label check where a role is correct (○) if any accepted sentence contains the gold label as a substring. Jain et al. [5] used a similar role-based recall check in SciREX, evaluating whether predicted spans match the annotated entity per role. This evaluation is recall-oriented: it tests whether the expected gold label is retrieved somewhere in the accepted sentences, but it does not measure how much irrelevant text is also returned. A result of 10/12 means the gold label appears in at least one accepted sentence per role-paper pair, not that the full output is a clean methodology profile.</p>
 <h4 id="32-results">3.2 Results </h4>
 <p>Gold labels used (based on the planned labels in Chapter 3, Table 5, refined after running the pipeline):</p>
 <table>
@@ -593,12 +612,13 @@ Method: Transformer
 <p>BERT scored ○ on all four roles, which suggests that the pipeline can find all types of methodology information in a well-structured ML paper using short labels. AlexNet also scored ○ on all four roles when using "convolutional" as the TechnicalMethod gold label (the 2012 paper does not use the name "AlexNet" — that name was coined later).</p>
 <p>The Transformer scored ✗ on Task and EvaluationMetric. On Task, 14 sentences were accepted but none contains "machine translation"; the key sentence ("Experiments on two machine translation tasks show the model to be superior") was classified as TechnicalMethod (score 0.53). On EvaluationMetric, 3 sentences were accepted but none contains "BLEU"; metric sentences such as "Our model achieves 28.4 BLEU" were classified as Task. Dataset is ✓ because 4 sentences were accepted and one contains "WMT". TechnicalMethod tends to be the easier role because it appears in dedicated sections with explicit mentions. Task appears to be the most difficult role: it is often stated implicitly or in sentences that the model assigns to another role. An extended evaluation covering ResNet, MapReduce, and Google Search is in Appendix B.</p>
 <p>The 10/12 result is better interpreted as an upper bound on recall than as a precision or accuracy claim: it shows the system retrieves at least one relevant sentence for 10 of 12 role-paper pairs, but does not indicate whether the remaining output is clean or useful. The AlexNet gold label was also revised after running the pipeline, changing it from "AlexNet" to "convolutional", to match the terminology the 2012 paper actually uses; this represents evaluator influence on the result and limits how strongly the score can be generalised.</p>
+<p>Because the intended use is first-pass literature review support, output volume also matters. A result is less useful if the correct term appears only inside a very large set of accepted sentences. I therefore treat the number of accepted sentences per role (Table 6) as a usability signal alongside the binary correct/incorrect result. By this measure, ML papers perform better than systems papers: BERT and AlexNet retrieve the gold label within 4–15 accepted sentences per role, while MapReduce produces 151 TechnicalMethod sentences — too many to inspect in a first pass.</p>
 <h3 id="4-limitations">4. Limitations </h3>
 <p>Four types of noise were observed.</p>
 <p>The first type is Introduction noise. Introduction sections describe other papers' methods, which the NLI model incorrectly classifies as TechnicalMethod of the target paper. For example, "The feature-based approach, such as ELMo..." scored 0.87 as TechnicalMethod in the BERT paper. Excluding the Introduction on BERT reduced TechnicalMethod from 62 to 54 sentences, but also removed correct sentences about BERT itself, so full exclusion risks losing signal.</p>
 <p>The second type is quoted or example text. Text that is quoted or used as an example in the paper body is classified as a real claim. For example, "you looked at a lot of pages from my Web site." from the Google Search paper [D1] was classified as Task.</p>
 <p>The third type is GROBID artefacts. Author contribution text can appear in the GROBID abstract element, producing irrelevant sentences in the TechnicalMethod output.</p>
-<p>The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences and the Transformer produced 160 EvaluationMetric sentences, because there is no upper limit on accepted sentences.</p>
+<p>The fourth type is large output volume. MapReduce produced 151 TechnicalMethod sentences, because there is no upper limit on accepted sentences.</p>
 <h3 id="5-improvements-for-the-next-iteration">5. Improvements for the Next Iteration </h3>
 <p>Sentence-level classification produced useful evidence sentences, but it did not produce a clean methodology profile. MapReduce returned 151 TechnicalMethod sentences, with no principled way to select the primary one. A deeper problem is that classifying sentences in isolation cannot reliably distinguish the paper's own method from methods cited in related work. This is not only a threshold problem: even a better threshold would still treat each sentence independently.</p>
 <p>For this reason, the next iteration changes the extraction unit from sentence-level classification to document-level extraction. Jain et al. [5] argue that methodology extraction often requires document-level context because relevant information may be spread across sections. The next prototype will therefore use a long-context LLM to read the cleaned paper text and return one term per role as JSON. Each term must be supported by a quoted sentence from the paper, so the output remains inspectable.</p>
