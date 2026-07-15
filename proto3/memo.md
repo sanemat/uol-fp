@@ -76,7 +76,9 @@ A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-co
 
 For the selected papers in this project, the cleaned full text is expected to fit within the context window of modern long-context LLMs. Therefore, chunking is not used in the main pipeline.
 
-**Selected: Gemini (`gemini-2.5-flash`, via the `google-genai` SDK).** Easiest to set up from Google Colab: the API key is read from Colab's built-in secret manager (`google.colab.userdata`), no separate `.env` or `getpass` flow, and no other API account is needed beyond the Google account already used for Colab.
+**Selected: Gemini (`gemini-3.5-flash`, via the `google-genai` SDK).** Easiest to set up from Google Colab: the API key is read from Colab's built-in secret manager (`google.colab.userdata`), no separate `.env` or `getpass` flow, and no other API account is needed beyond the Google account already used for Colab.
+
+Note: `gemini-2.5-flash` was tried first but returned a 404 (`This model ... is no longer available to new users`) as of July 2026. Gemini model IDs rotate over time — if `gemini-3.5-flash` later stops working, check `https://ai.google.dev/gemini-api/docs/models` for the current stable flash-tier model ID and update `MODEL_NAME` in the notebook.
 
 ---
 
@@ -181,7 +183,7 @@ Rationale: Related Work may help the model understand the contribution of the pa
 
 ## Open questions
 
-- ~~**Which LLM?**~~ Resolved: Gemini (`gemini-2.5-flash`), chosen for the simplest Colab setup (see Selected note above).
+- ~~**Which LLM?**~~ Resolved: Gemini (`gemini-3.5-flash`), chosen for the simplest Colab setup (see Selected note above).
 - **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
 
 ---
