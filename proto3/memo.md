@@ -70,11 +70,13 @@ A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-co
 
 | Model | Context | Cost |
 |---|---|---|
-| Gemini 1.5 Flash | 1M tokens | cheap API |
+| Gemini Flash | 1M tokens | cheap API |
 | Claude Haiku | 200k tokens | cheap API |
 | Llama 3.1 8B Instruct | 128k tokens | free (Colab GPU) |
 
 For the selected papers in this project, the cleaned full text is expected to fit within the context window of modern long-context LLMs. Therefore, chunking is not used in the main pipeline.
+
+**Selected: Gemini (`gemini-2.5-flash`, via the `google-genai` SDK).** Easiest to set up from Google Colab: the API key is read from Colab's built-in secret manager (`google.colab.userdata`), no separate `.env` or `getpass` flow, and no other API account is needed beyond the Google account already used for Colab.
 
 ---
 
@@ -128,6 +130,14 @@ Paper text:
 
 ---
 
+## Implementation status
+
+Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
+prompt to Gemini and parsing the JSON response. Not yet implemented: the 3-axis evaluation
+below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
+
+---
+
 ## Evaluation (3 axes)
 
 Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
@@ -171,7 +181,7 @@ Rationale: Related Work may help the model understand the contribution of the pa
 
 ## Open questions
 
-- **Which LLM?** Llama 3.1 8B Instruct avoids API cost but needs a Colab GPU. Claude Haiku is more reliable but requires an API key. Decide before implementation.
+- ~~**Which LLM?**~~ Resolved: Gemini (`gemini-2.5-flash`), chosen for the simplest Colab setup (see Selected note above).
 - **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
 
 ---
