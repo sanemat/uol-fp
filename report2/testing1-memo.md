@@ -33,38 +33,48 @@ A:
 > 3. Show the Colab notebook (`proto3/3pipeline.ipynb`) running on that XML file.
 > 4. Show the prompt sent to the LLM for a few seconds. Point at the rule "use the
 >    authors' own method, not methods cited from prior work" and the rule that the
->    quote must be copied word-for-word. This shows the prompt was designed with
->    real rules, not just "read this paper and tell me about it."
+>    quote must be copied word-for-word.
 > 5. Show the final output: one JSON object with an `answer` and `evidence` for each
 >    of the four roles (for example, the "Attention Is All You Need" paper).
-> 6. Point at the `evidence` field. Explain that it shows a real quote from the
->    paper, so the answer can be checked.
+> 6. Point at the `evidence` field, and state the result of the check you did in Q3
+>    (e.g. "I checked this quote against the paper — it matches word-for-word and
+>    supports the answer"). A checked result is stronger than just showing the
+>    field exists.
 >
 > The video does not need to explain every design choice. It needs to show that the
 > pipeline works from start to end, and that the prompt was designed with care.
 
 A:
 
-**Q3:** How do you show, in the video, that this is not just "throwing the paper at
-an LLM"?
+**Q3:** Before recording, did you check your real output? Is it actually true that
+this is not "just throwing the paper at an LLM" — not just a good way to present it?
 
-> This is worth planning ahead of time. A reviewer who only watches a short video may
-> think you just pasted the paper into a chat window. Use real facts to prevent
-> this:
-> - The prompt has a clear schema: four named roles (TechnicalMethod, Task, Dataset,
->   EvaluationMetric), each with an `answer` and an `evidence` object.
-> - The prompt has a rule to pick the authors' own method, not a method from prior
->   work.
-> - The prompt requires the quote to be word-for-word from the paper, so it can be
->   checked.
-> - Real testing found a bug: an early version of the prompt was unclear about the
->   shape of `evidence`, so the LLM returned one flat string instead of a
->   `{section, quote}` object. The prompt was then rewritten to fix this. This is a
->   short, concrete design story you can tell in a few seconds — it shows real
->   testing and iteration, not one lucky try.
+> This comes before the video, not just inside it. This is not a check you have to
+> do alone by memory — the real paper file is already in this repo:
+> `proto1/dataset/Attention Is All You Need.xml` (the TEI XML from GROBID, not
+> committed to git but present locally).
 >
-> You can show this in the video itself (Q2, step 4), and/or write one or two
-> sentences about it in the short text that goes with the video submission.
+> Steps:
+> 1. Get the real JSON your proto3 run produced for this paper (the full `answer` +
+>    `evidence.quote` for all four roles — TechnicalMethod, Task, Dataset,
+>    EvaluationMetric). You already know the section labels (TechnicalMethod →
+>    Abstract, Dataset → "Training Data and Batching", EvaluationMetric → "Machine
+>    Translation"), but the quote text itself is still needed for this check.
+> 2. For each of the four roles, check against the actual XML text:
+>    1. Does `evidence.quote` appear word-for-word in the paper?
+>    2. Does the quote actually support the `answer`?
+>    3. Is the quote about the paper's own work, not something it cites from prior
+>       work?
+>    4. Is `evidence.section` the correct section for that quote?
+> 3. Write down what you actually found — for example, "3 of 4 passed all four
+>    checks; one section label did not match" — even if it is not perfect. A real,
+>    checked result (pass or fail) is what lets you answer the question honestly.
+>    The prompt design (schema, the "authors' own method" rule, the verbatim-quote
+>    rule) explains *why* you expect the answers to be trustworthy, but the design
+>    alone is not proof — checking the actual output against the real paper is.
+>
+> Only after this check is done should you decide what to show in the video (Q2)
+> and what to say in the short text that goes with it.
 
 A:
 
@@ -123,8 +133,8 @@ disagree / Partially agree / Agree.
 >
 > Including the technical-demonstration statement is a good idea. It turns the
 > question you are worried about ("did they just prompt an LLM?") into something
-> reviewers rate directly, using what you showed in Q3 — instead of leaving it as an
-> unspoken doubt.
+> reviewers rate directly, using what you actually checked in Q3 — instead of
+> leaving it as an unspoken doubt.
 >
 > Each statement must work with the agree/disagree scale. Do not write a question
 > ("Did you understand...?"). Write a statement ("I understood...").
