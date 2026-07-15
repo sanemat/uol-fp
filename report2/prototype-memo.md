@@ -103,10 +103,13 @@ prototype (rather than, say, the preprocessing steps)?
 > Facts to use (from `proto3/memo.md` "What proto3 does" / "Why proto2's approach
 > fails"):
 > - Parsing XML and extracting section text (Stage 0-1) uses the same GROBID-based
->   approach as proto2 — already solved, not the novel part.
-> - The novel part is Stage 2: turning a full paper into one structured, evidence-
->   backed answer per role. This is what makes the output usable — a single named
->   answer instead of a list of 14-160 candidate sentences.
+>   approach as proto2 — already solved, not the core feature.
+> - The core feature being prototyped is Stage 2: turning a full paper into one
+>   structured, evidence-backed answer per role. This is what makes the output
+>   usable — a single named answer instead of a list of 14-160 candidate sentences.
+>   (Structured extraction with LLMs is not itself new — see [Dagdelen et al. 2024],
+>   [Polak and Morgan 2024] — the prototype applies it to this project's specific
+>   4-role methodology schema.)
 > - The evidence field is not decorative: it is what makes the answer checkable
 >   (see Q9's evidence-shape story) and what will make the evaluation in Section 7
 >   possible.
@@ -143,18 +146,11 @@ a filtered excerpt?
 >   gleaned from analyzing the full document." Dataset and EvaluationMetric typically
 >   appear only in the Experiment section, not Abstract or Method — sending only a
 >   subset recreates the recall gap document-level IE is meant to avoid.
-> - A typical computing paper in plain text is 4,000-20,000 tokens — within range for
->   modern long-context LLMs without chunking:
->
->   | Model | Context | Cost |
->   |---|---|---|
->   | Gemini Flash | 1M tokens | cheap API |
->   | Claude Haiku | 200k tokens | cheap API |
->   | Llama 3.1 8B Instruct | 128k tokens | free (Colab GPU) |
->
-> - Selected: Gemini (`gemini-3.5-flash`, via the `google-genai` SDK) — simplest Colab
->   setup (API key from Colab's built-in secret manager, no separate `.env`/`getpass`
->   flow, no extra API account needed).
+> - The papers used in this prototype fit within the model's context window, so the
+>   first version sends the full structured paper instead of introducing chunking or
+>   retrieval. Model used: Gemini (`gemini-3.5-flash`, via the `google-genai` SDK).
+> - Keep this short — "why full document" is the point being made here, not a
+>   comparison against other LLMs or context-window sizes.
 
 A:
 
@@ -290,10 +286,13 @@ A:
 > 2. **Human precision check** — is `answer` plausibly correct by human judgment?
 >    Catches valid answers that don't match the gold label string, and wrong answers
 >    that happen to match it.
-> 3. **Evidence check** — does `evidence.quote` appear verbatim in the paper text?
->    Does it support `answer`? Is `evidence.section` consistent with the quote's
->    actual location? Is the evidence about the authors' own work, not prior work?
->    This directly targets the authorship-attribution problem from Q3.
+> 3. **Evidence check** — in priority order (1-2 are the research-relevant checks;
+>    3-4 are grounding/implementation checks):
+>    1. Does `evidence.quote` support `answer`?
+>    2. Is the evidence about the target paper's own work, not prior work? This
+>       directly targets the authorship-attribution problem from Q3.
+>    3. Does `evidence.quote` appear verbatim in the input paper text?
+>    4. Is `evidence.section` the correct section for that quote?
 
 A:
 
