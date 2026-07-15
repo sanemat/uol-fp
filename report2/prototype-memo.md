@@ -481,3 +481,38 @@ DOI: https://doi.org/10.48550/arXiv.2310.03668
 Survey on Document-Level Information Extraction. In *Proceedings of the Workshop on
 the Future of Event Detection (FuturED)*, Miami, Florida, November 2024. Association
 for Computational Linguistics, 58–72. DOI: https://doi.org/10.18653/v1/2024.futured-1.6
+
+## Appendix
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+    }
+  },
+  "Task": {
+    "answer": "machine translation",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train."
+    }
+  },
+  "Dataset": {
+    "answer": "WMT 2014 English-German",
+    "evidence": {
+      "section": "Training Data and Batching",
+      "quote": "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "BLEU",
+    "evidence": {
+      "section": "Machine Translation",
+      "quote": "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4."
+    }
+  }
+}
+```
