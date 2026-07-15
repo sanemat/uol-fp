@@ -516,3 +516,162 @@ for Computational Linguistics, 58–72. DOI: https://doi.org/10.18653/v1/2024.fu
   }
 }
 ```
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "deep convolutional neural network",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes."
+    }
+  },
+  "Task": {
+    "answer": "object recognition",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Current approaches to object recognition make essential use of machine learning methods."
+    }
+  },
+  "Dataset": {
+    "answer": "ImageNet",
+    "evidence": {
+      "section": "The Dataset",
+      "quote": "ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "top-1 and top-5 error rates",
+    "evidence": {
+      "section": "The Dataset",
+      "quote": "On ImageNet, it is customary to report two error rates: top-1 and top-5, where the top-5 error rate is the fraction of test images for which the correct label is not among the five labels considered most probable by the model."
+    }
+  }
+}
+```
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "BERT",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers."
+    }
+  },
+  "Task": {
+    "answer": "Language model pre-training",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and  Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018) ."
+    }
+  },
+  "Dataset": {
+    "answer": "SQuAD v1.1",
+    "evidence": {
+      "section": "SQuAD v1.1",
+      "quote": "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs  (Rajpurkar et al., 2016) ."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "F1 score",
+    "evidence": {
+      "section": "SQuAD v1.1",
+      "quote": "Our single BERT model outperforms the top ensemble system in terms of F1 score."
+    }
+  }
+}
+```
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "MapReduce",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "MapReduce is a programming model and an associated implementation for processing and generating large data sets."
+    }
+  },
+  "Task": {
+    "answer": "automatic parallelization and distribution of large-scale computations",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs."
+    }
+  },
+  "Dataset": {
+    "answer": null,
+    "evidence": null
+  },
+  "EvaluationMetric": {
+    "answer": "elapsed time",
+    "evidence": {
+      "section": "Effect of Backup Tasks",
+      "quote": "The entire computation takes 1283 seconds, an increase of 44% in elapsed time."
+    }
+  }
+}
+```
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Google",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext."
+    }
+  },
+  "Task": {
+    "answer": "information retrieval",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "The Web creates new challenges for information retrieval."
+    }
+  },
+  "Dataset": {
+    "answer": "24 million pages",
+    "evidence": {
+      "section": "Anchor-test",
+      "quote": "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": null,
+    "evidence": null
+  }
+}
+```
+
+```json
+{
+  "TechnicalMethod": {
+    "answer": "deep residual learning framework",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
+    }
+  },
+  "Task": {
+    "answer": "image classification",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]."
+    }
+  },
+  "Dataset": {
+    "answer": "ImageNet 2012 classification dataset",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "top-1 and top-5 error rates",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate both top-1 and top-5 error rates."
+    }
+  }
+}
+```
