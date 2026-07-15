@@ -70,11 +70,15 @@ A typical computing paper in plain text is 4,000–20,000 tokens. Modern long-co
 
 | Model | Context | Cost |
 |---|---|---|
-| Gemini 1.5 Flash | 1M tokens | cheap API |
+| Gemini Flash | 1M tokens | cheap API |
 | Claude Haiku | 200k tokens | cheap API |
 | Llama 3.1 8B Instruct | 128k tokens | free (Colab GPU) |
 
 For the selected papers in this project, the cleaned full text is expected to fit within the context window of modern long-context LLMs. Therefore, chunking is not used in the main pipeline.
+
+**Selected: Gemini (`gemini-3.5-flash`, via the `google-genai` SDK).** Easiest to set up from Google Colab: the API key is read from Colab's built-in secret manager (`google.colab.userdata`), no separate `.env` or `getpass` flow, and no other API account is needed beyond the Google account already used for Colab.
+
+Note: `gemini-2.5-flash` was tried first but returned a 404 (`This model ... is no longer available to new users`) as of July 2026. Gemini model IDs rotate over time — if `gemini-3.5-flash` later stops working, check `https://ai.google.dev/gemini-api/docs/models` for the current stable flash-tier model ID and update `MODEL_NAME` in the notebook.
 
 ---
 
@@ -106,9 +110,9 @@ Prompt:
 ```
 You are extracting research methodology from a computing research paper.
 
-For each of the four roles below, return:
+For each of the four roles below, return an object with:
 - "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": one sentence quoted directly from the paper that supports the answer
+- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
 
 Roles:
 - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
@@ -118,13 +122,37 @@ Roles:
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both answer and evidence.
-- For each evidence, return the section heading and one sentence quoted verbatim from the paper.
-- Return only the JSON object, no explanation.
+- If a field is not present in the paper, return null for both "answer" and "evidence".
+- The "quote" must be copied verbatim from the paper text, not paraphrased.
+- Return only the JSON object, no explanation, in this exact shape:
+
+{
+  "TechnicalMethod": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "Task": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "Dataset": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "EvaluationMetric": {"answer": "...", "evidence": {"section": "...", "quote": "..."}}
+}
 
 Paper text:
 {paper_text}
 ```
+
+Note: an earlier version of this prompt said "evidence" was a single quoted sentence, but
+also told the model to "return the section heading and one sentence quoted verbatim" —
+an internally inconsistent instruction. In testing on Attention Is All You Need, Gemini
+resolved the ambiguity by returning `evidence` as one flat string with the heading
+prepended (e.g. `"## Introduction In this work we propose..."`), not the nested
+`{section, quote}` object the top-of-file example shows. The prompt above makes the
+nested shape explicit so `evidence.section` and `evidence.quote` are reliably separate
+fields for the evaluation checks below.
+
+---
+
+## Implementation status
+
+Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
+prompt to Gemini and parsing the JSON response. Not yet implemented: the 3-axis evaluation
+below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
 
 ---
 
@@ -171,7 +199,7 @@ Rationale: Related Work may help the model understand the contribution of the pa
 
 ## Open questions
 
-- **Which LLM?** Llama 3.1 8B Instruct avoids API cost but needs a Colab GPU. Claude Haiku is more reliable but requires an API key. Decide before implementation.
+- ~~**Which LLM?**~~ Resolved: Gemini (`gemini-3.5-flash`), chosen for the simplest Colab setup (see Selected note above).
 - **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
 
 ---
