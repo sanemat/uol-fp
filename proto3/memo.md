@@ -110,9 +110,9 @@ Prompt:
 ```
 You are extracting research methodology from a computing research paper.
 
-For each of the four roles below, return:
+For each of the four roles below, return an object with:
 - "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": one sentence quoted directly from the paper that supports the answer
+- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
 
 Roles:
 - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
@@ -122,13 +122,29 @@ Roles:
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both answer and evidence.
-- For each evidence, return the section heading and one sentence quoted verbatim from the paper.
-- Return only the JSON object, no explanation.
+- If a field is not present in the paper, return null for both "answer" and "evidence".
+- The "quote" must be copied verbatim from the paper text, not paraphrased.
+- Return only the JSON object, no explanation, in this exact shape:
+
+{
+  "TechnicalMethod": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "Task": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "Dataset": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
+  "EvaluationMetric": {"answer": "...", "evidence": {"section": "...", "quote": "..."}}
+}
 
 Paper text:
 {paper_text}
 ```
+
+Note: an earlier version of this prompt said "evidence" was a single quoted sentence, but
+also told the model to "return the section heading and one sentence quoted verbatim" —
+an internally inconsistent instruction. In testing on Attention Is All You Need, Gemini
+resolved the ambiguity by returning `evidence` as one flat string with the heading
+prepended (e.g. `"## Introduction In this work we propose..."`), not the nested
+`{section, quote}` object the top-of-file example shows. The prompt above makes the
+nested shape explicit so `evidence.section` and `evidence.quote` are reliably separate
+fields for the evaluation checks below.
 
 ---
 
