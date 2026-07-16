@@ -24,3 +24,6 @@ test:
 
 notebook:
 	.venv/bin/jupyter lab 3pipeline.ipynb
+
+baseline:
+	.venv/bin/jupyter lab baseline.ipynb
