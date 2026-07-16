@@ -1,0 +1,30 @@
+{
+  "TechnicalMethod": {
+    "answer": "deep residual learning framework",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
+    }
+  },
+  "Task": {
+    "answer": "image classification",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]."
+    }
+  },
+  "Dataset": {
+    "answer": "ImageNet 2012 classification dataset",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "top-1 and top-5 error rates",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate both top-1 and top-5 error rates."
+    }
+  }
+}
