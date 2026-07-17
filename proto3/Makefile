@@ -1,7 +1,7 @@
 GROBID_VERSION := 0.8.1
 GROBID_PORT := 8070
 
-.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook
+.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook baseline
 
 grobid-start:
 	docker run -d --rm -p $(GROBID_PORT):8070 --name grobid lfoppiano/grobid:$(GROBID_VERSION)
@@ -24,3 +24,6 @@ test:
 
 notebook:
 	.venv/bin/jupyter lab 3pipeline.ipynb
+
+baseline:
+	.venv/bin/jupyter lab baseline.ipynb

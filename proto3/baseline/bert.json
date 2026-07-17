@@ -1,0 +1,30 @@
+{
+  "TechnicalMethod": {
+    "answer": "BERT",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers."
+    }
+  },
+  "Task": {
+    "answer": "Language model pre-training",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and  Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018) ."
+    }
+  },
+  "Dataset": {
+    "answer": "SQuAD v1.1",
+    "evidence": {
+      "section": "SQuAD v1.1",
+      "quote": "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs  (Rajpurkar et al., 2016) ."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "F1 score",
+    "evidence": {
+      "section": "SQuAD v1.1",
+      "quote": "Our single BERT model outperforms the top ensemble system in terms of F1 score."
+    }
+  }
+}

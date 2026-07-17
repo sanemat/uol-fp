@@ -7,7 +7,7 @@ After you finish, use your answers as material for `prototype.md` (the PDF submi
 This document is about **proto3** (document-level LLM extraction) — the main
 prototype for this assignment. **proto2** (sentence-level zero-shot NLI) appears only
 as background: the previous iteration that motivated proto3 (Q3) and the comparison
-baseline for the next improvement (Q17).
+baseline for the next improvement (Q16).
 
 ---
 
@@ -42,6 +42,11 @@ or three sentences.
 > - Approach: schema-guided document-level information extraction with a long-context
 >   LLM — not "send the paper to an LLM and trust the answer": every answer carries
 >   evidence that can be checked against the source text.
+> - How this fits into the project as a whole: the overall goal (per `CLAUDE.md`) is
+>   automatically extracting research methodology from computing research papers using
+>   LLMs. proto3 is the current iteration toward that goal — proto1 is an AI-drafted
+>   reference only (not used in submissions), proto2 was the sentence-level NLI
+>   attempt, proto3 reframes the task as document-level extraction.
 
 A:
 
@@ -81,19 +86,20 @@ shape.
 > - Action: reads the full paper as one document and extracts one answer per role,
 >   using a schema-guided prompt to a long-context LLM.
 > - Output: one JSON object per paper — for each of the four roles, an `answer` plus
->   an `evidence` object with `section` and `quote`. Example (Transformer paper):
+>   an `evidence` object with `section` and `quote`. Example (Transformer paper, real
+>   output from `proto3/baseline/transformer.json`, not a mockup):
 >   ```json
 >   {
 >     "TechnicalMethod": {
 >       "answer": "Transformer",
 >       "evidence": {
->         "section": "Model Architecture",
->         "quote": "The Transformer is the first transduction model relying entirely on self-attention..."
+>         "section": "Abstract",
+>         "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
 >       }
 >     }
 >   }
 >   ```
->   (full 4-role example in the Reference section below).
+>   (full 4-role example is the first entry in the Appendix below).
 
 A:
 
@@ -135,6 +141,10 @@ order.
 > Key difference from proto2: no sentence splitting, no per-sentence threshold — the
 > LLM sees the (mostly) whole document and returns a decision, not a list of
 > candidates.
+>
+> The requirement text encourages diagrams for this section specifically — this
+> five-stage pipeline is a natural candidate to draw here, not only as a figure in
+> Section 6 (see Q13).
 
 A:
 
@@ -218,6 +228,15 @@ evidence-shape bug you found during testing.
 >   `evidence.section` and `evidence.quote` are reliably separate fields.
 > - This is worth including as evidence of real testing and iteration, not just
 >   design on paper — it directly answers "is this technically challenging?"
+> - Reproducibility: the call now passes `config=types.GenerateContentConfig(temperature=0, seed=0)`.
+>   Rationale: this is schema-guided extraction, not creative generation — the same
+>   paper should yield the same answer, so sampling diversity (the point of a
+>   non-zero temperature) is not wanted here. `seed` is an added determinism lever
+>   alongside `temperature=0`.
+> - Honest limitation: `temperature=0` and a fixed `seed` reduce but do not fully
+>   guarantee identical output on every run — some LLM serving backends, including
+>   Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so
+>   exact reproducibility is not fully guaranteed.
 
 A:
 
@@ -234,6 +253,12 @@ A:
 > - Honest limitation to mention: this is still notebook code mixing exploratory
 >   output with pipeline logic; there are no automated tests yet for the JSON-parsing
 >   or evidence-validation logic, even though `pytest` is a listed dev dependency.
+> - Second honest limitation: `proto3/baseline.ipynb` is a byte-identical duplicate of
+>   `proto3/3pipeline.ipynb` (confirmed with `diff` — no differences), used to run the
+>   pipeline once per paper via manual file upload to produce the six
+>   `proto3/baseline/*.json` outputs. Its own Colab-badge cell still links to
+>   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
+>   inconsistency to weigh against the strict typing/linting setup above.
 
 A:
 
@@ -244,14 +269,14 @@ A:
 **Q12:** What does the output look like for "Attention Is All You Need"? Show the
 full JSON and describe what it demonstrates.
 
-> Full example (from `proto3/memo.md` "What proto3 does"; full JSON with all 4 roles
-> is in the Reference section below):
+> Full example — use the real output, the first JSON block in the Appendix below
+> (`proto3/baseline/transformer.json`), not a mockup:
 > ```json
 > {
->   "TechnicalMethod": {"answer": "Transformer", "evidence": {"section": "Model Architecture", "quote": "..."}},
+>   "TechnicalMethod": {"answer": "Transformer", "evidence": {"section": "Abstract", "quote": "..."}},
 >   "Task": {"answer": "machine translation", "evidence": {"section": "Abstract", "quote": "..."}},
->   "Dataset": {"answer": "WMT 2014 English-German", "evidence": {"section": "Abstract", "quote": "..."}},
->   "EvaluationMetric": {"answer": "BLEU", "evidence": {"section": "Results", "quote": "..."}}
+>   "Dataset": {"answer": "WMT 2014 English-German", "evidence": {"section": "Training Data and Batching", "quote": "..."}},
+>   "EvaluationMetric": {"answer": "BLEU", "evidence": {"section": "Machine Translation", "quote": "..."}}
 > }
 > ```
 > Compare against proto2's output for the same paper (14 TechnicalMethod sentences, 0
@@ -299,25 +324,54 @@ A:
 **Q15:** What is the current evaluation status, and what did the initial test show?
 
 > Be honest about what has actually been done (from `proto3/memo.md` "Implementation
-> status" and the Q10 bug story):
-> - Only an initial, informal test on "Attention Is All You Need" has been run so
->   far — it surfaced the evidence-shape bug (Q10), which was then fixed by making
->   the prompt's output shape explicit.
+> status", the Q10 bug story, and `proto3/baseline/*.json`):
+> - Initial, informal testing on "Attention Is All You Need" surfaced the
+>   evidence-shape bug (Q10), fixed by making the prompt's output shape explicit.
+> - Since then, Stage 0-2 has been run on all six papers in the set (same set as
+>   proto2: Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank) — the raw
+>   answer+evidence JSON for each is saved in `proto3/baseline/*.json` (matches the
+>   six examples in the Reference/Appendix section below).
 > - The formal 3-axis evaluation (gold label match / human precision / evidence
->   check) across all six papers has **not** been run yet. Stage 0-2 are implemented
->   in `proto3/3pipeline.ipynb`; the evaluation script, the Related Work ablation, and
->   batch processing across `proto3/previouswork/` are not yet implemented.
-> - Frame this as an honest limitation: the pipeline works end-to-end on one paper,
->   but its accuracy across the full paper set is not yet measured.
+>   check) against these six outputs has **not** been run yet — there is no scoring
+>   script and no pass/fail count. The Related Work ablation and batch processing
+>   across `proto3/previouswork/` are also not yet implemented.
+> - Frame this as an honest limitation: extraction now runs end-to-end across the
+>   whole six-paper set and produces output for every paper, but its accuracy has
+>   not yet been measured against the gold labels.
+> - Informal, quick check only (axis 1, gold-label substring match, done by hand
+>   against `proto3/baseline/*.json` and the gold-label table in the Reference
+>   section below — not the formal evaluation script, and no human-precision or
+>   evidence-verification pass has been done):
+>
+>   | Paper | TM | Task | Dataset | EM | Score |
+>   |---|---|---|---|---|---|
+>   | Transformer | match | match | match | match | 4/4 |
+>   | BERT | match | no | no | match | 2/4 |
+>   | AlexNet | match | match | match | match | 4/4 |
+>   | ResNet | match | no | match | match | 3/4 |
+>   | MapReduce | match | no | no (null) | no | 1/4 |
+>   | PageRank | no | no | match | no (null) | 1/4 |
+>
+>   Total: 15/24 (62.5%). Caveats worth stating: strict substring matching
+>   penalizes near-misses (e.g. ResNet's answer "image classification" vs. gold
+>   "image recognition" — arguably close but scored as a miss here); MapReduce and
+>   PageRank both have one `null` field, which always scores as a miss under this
+>   method. Treat this as a rough indicator to write from, not a result to cite as
+>   final — the formal evaluation (Q16) is what would confirm or correct it.
+> - Timing caveat: the six `proto3/baseline/*.json` files were generated before
+>   `temperature=0`/`seed=0` were added to the Gemini call (see Q10). They were run
+>   at the SDK's default sampling settings, not the now-deterministic config. If the
+>   formal evaluation (Q16) is run against fresh output instead of these existing
+>   files, scores could shift slightly from the 15/24 above.
 
 A:
 
 **Q16:** How do you intend to improve the prototype next?
 
 > Facts to use (from `proto3/memo.md` "Evaluation" and "Ablation"):
-> - Run the 3-axis evaluation across all six papers (same set as proto2: Transformer,
->   BERT, AlexNet, ResNet, MapReduce, Google Search/PageRank) using the gold labels in
->   the Reference section below.
+> - Score the six outputs already in `proto3/baseline/*.json` against the gold labels
+>   in the Reference section below, using the 3-axis method from Q14 — the raw
+>   extraction is done (Q15); scoring it is the next step, not a re-run.
 > - Compare the result against proto2's 18/24 (75%) recall-only result from
 >   `report1/report.md` Appendix B — but note the comparison is not apples-to-apples:
 >   proto3's gold-label check is against one answer per role, not against acceptance
@@ -332,43 +386,6 @@ A:
 A:
 
 ---
-
-## Reference: Full JSON Output Example (Transformer paper)
-
-From `proto3/memo.md` "What proto3 does":
-
-```json
-{
-  "TechnicalMethod": {
-    "answer": "Transformer",
-    "evidence": {
-      "section": "Model Architecture",
-      "quote": "The Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution."
-    }
-  },
-  "Task": {
-    "answer": "machine translation",
-    "evidence": {
-      "section": "Abstract",
-      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
-    }
-  },
-  "Dataset": {
-    "answer": "WMT 2014 English-German",
-    "evidence": {
-      "section": "Abstract",
-      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
-    }
-  },
-  "EvaluationMetric": {
-    "answer": "BLEU",
-    "evidence": {
-      "section": "Results",
-      "quote": "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task."
-    }
-  }
-}
-```
 
 ## Reference: Full Extraction Prompt
 
@@ -483,6 +500,11 @@ the Future of Event Detection (FuturED)*, Miami, Florida, November 2024. Associa
 for Computational Linguistics, 58–72. DOI: https://doi.org/10.18653/v1/2024.futured-1.6
 
 ## Appendix
+
+Real pipeline output, one block per paper, same order as the gold-label table above
+(Transformer, AlexNet, BERT, MapReduce, Google Search/PageRank, ResNet) — matches
+`proto3/baseline/*.json` exactly. This is the actual Stage 0-2 output referenced by
+Q4, Q12, and Q15's informal score table, not a design mockup.
 
 ```json
 {
