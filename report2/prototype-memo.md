@@ -228,6 +228,15 @@ evidence-shape bug you found during testing.
 >   `evidence.section` and `evidence.quote` are reliably separate fields.
 > - This is worth including as evidence of real testing and iteration, not just
 >   design on paper — it directly answers "is this technically challenging?"
+> - Reproducibility: the call now passes `config=types.GenerateContentConfig(temperature=0, seed=0)`.
+>   Rationale: this is schema-guided extraction, not creative generation — the same
+>   paper should yield the same answer, so sampling diversity (the point of a
+>   non-zero temperature) is not wanted here. `seed` is an added determinism lever
+>   alongside `temperature=0`.
+> - Honest limitation: `temperature=0` and a fixed `seed` reduce but do not fully
+>   guarantee identical output on every run — some LLM serving backends, including
+>   Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so
+>   exact reproducibility is not fully guaranteed.
 
 A:
 
@@ -349,6 +358,11 @@ A:
 >   PageRank both have one `null` field, which always scores as a miss under this
 >   method. Treat this as a rough indicator to write from, not a result to cite as
 >   final — the formal evaluation (Q16) is what would confirm or correct it.
+> - Timing caveat: the six `proto3/baseline/*.json` files were generated before
+>   `temperature=0`/`seed=0` were added to the Gemini call (see Q10). They were run
+>   at the SDK's default sampling settings, not the now-deterministic config. If the
+>   formal evaluation (Q16) is run against fresh output instead of these existing
+>   files, scores could shift slightly from the 15/24 above.
 
 A:
 
