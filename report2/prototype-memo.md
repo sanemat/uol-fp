@@ -86,19 +86,20 @@ shape.
 > - Action: reads the full paper as one document and extracts one answer per role,
 >   using a schema-guided prompt to a long-context LLM.
 > - Output: one JSON object per paper — for each of the four roles, an `answer` plus
->   an `evidence` object with `section` and `quote`. Example (Transformer paper):
+>   an `evidence` object with `section` and `quote`. Example (Transformer paper, real
+>   output from `proto3/baseline/transformer.json`, not a mockup):
 >   ```json
 >   {
 >     "TechnicalMethod": {
 >       "answer": "Transformer",
 >       "evidence": {
->         "section": "Model Architecture",
->         "quote": "The Transformer is the first transduction model relying entirely on self-attention..."
+>         "section": "Abstract",
+>         "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
 >       }
 >     }
 >   }
 >   ```
->   (full 4-role example in the Reference section below).
+>   (full 4-role example is the first entry in the Appendix below).
 
 A:
 
@@ -259,14 +260,14 @@ A:
 **Q12:** What does the output look like for "Attention Is All You Need"? Show the
 full JSON and describe what it demonstrates.
 
-> Full example (from `proto3/memo.md` "What proto3 does"; full JSON with all 4 roles
-> is in the Reference section below):
+> Full example — use the real output, the first JSON block in the Appendix below
+> (`proto3/baseline/transformer.json`), not a mockup:
 > ```json
 > {
->   "TechnicalMethod": {"answer": "Transformer", "evidence": {"section": "Model Architecture", "quote": "..."}},
+>   "TechnicalMethod": {"answer": "Transformer", "evidence": {"section": "Abstract", "quote": "..."}},
 >   "Task": {"answer": "machine translation", "evidence": {"section": "Abstract", "quote": "..."}},
->   "Dataset": {"answer": "WMT 2014 English-German", "evidence": {"section": "Abstract", "quote": "..."}},
->   "EvaluationMetric": {"answer": "BLEU", "evidence": {"section": "Results", "quote": "..."}}
+>   "Dataset": {"answer": "WMT 2014 English-German", "evidence": {"section": "Training Data and Batching", "quote": "..."}},
+>   "EvaluationMetric": {"answer": "BLEU", "evidence": {"section": "Machine Translation", "quote": "..."}}
 > }
 > ```
 > Compare against proto2's output for the same paper (14 TechnicalMethod sentences, 0
@@ -371,43 +372,6 @@ A:
 A:
 
 ---
-
-## Reference: Full JSON Output Example (Transformer paper)
-
-From `proto3/memo.md` "What proto3 does":
-
-```json
-{
-  "TechnicalMethod": {
-    "answer": "Transformer",
-    "evidence": {
-      "section": "Model Architecture",
-      "quote": "The Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution."
-    }
-  },
-  "Task": {
-    "answer": "machine translation",
-    "evidence": {
-      "section": "Abstract",
-      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
-    }
-  },
-  "Dataset": {
-    "answer": "WMT 2014 English-German",
-    "evidence": {
-      "section": "Abstract",
-      "quote": "We evaluate on the WMT 2014 English-German and English-French translation tasks."
-    }
-  },
-  "EvaluationMetric": {
-    "answer": "BLEU",
-    "evidence": {
-      "section": "Results",
-      "quote": "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task."
-    }
-  }
-}
-```
 
 ## Reference: Full Extraction Prompt
 
@@ -522,6 +486,11 @@ the Future of Event Detection (FuturED)*, Miami, Florida, November 2024. Associa
 for Computational Linguistics, 58–72. DOI: https://doi.org/10.18653/v1/2024.futured-1.6
 
 ## Appendix
+
+Real pipeline output, one block per paper, same order as the gold-label table above
+(Transformer, AlexNet, BERT, MapReduce, Google Search/PageRank, ResNet) — matches
+`proto3/baseline/*.json` exactly. This is the actual Stage 0-2 output referenced by
+Q4, Q12, and Q15's informal score table, not a design mockup.
 
 ```json
 {
