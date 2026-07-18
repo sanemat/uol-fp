@@ -48,7 +48,7 @@ or three sentences.
 >   reference only (not used in submissions), proto2 was the sentence-level NLI
 >   attempt, proto3 reframes the task as document-level extraction.
 
-A: The current prototype is a document-level methodology extraction. It was developed after an earlier sentence-level zero-shot NLI prototype showed limitations in output noise and document-level context. At least one answer per role (TechnicalMethod, Task, Dataset, and EvaluationMetric) with supporting evidence.
+A: The current prototype is a document-level methodology extraction. It was developed after an earlier sentence-level zero-shot NLI prototype showed limitations in output noise and document-level context. At least one answer per role (TechnicalMethod, Task, Dataset, and EvaluationMetric) with supporting evidence. This is a schema-guided document-level information extraction approach using a long-context LLM — every answer carries evidence that can be checked against the source text, not "send the paper to an LLM and trust the answer." For example, on "Attention Is All You Need," the prototype extracts TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU". This fits into the overall project goal (automatically extracting research methodology from computing research papers using LLMs) as the current iteration: proto1 is an AI-drafted reference only, proto2 was the sentence-level NLI attempt, and proto3 reframes the task as document-level extraction.
 
 **Q3:** Why was this prototype (proto3) developed? What did the previous iteration
 (proto2) show that motivated the change?
@@ -69,7 +69,7 @@ A: The current prototype is a document-level methodology extraction. It was deve
 >   one paragraph, not a full re-description of proto2 (that belongs to a previous
 >   submission, `report1/feature-prototype.md`).
 
-A: The previous prototype clasified MapReduce as TechnicalMethod correctly. But it clasified 151 sentences to TechnicalMethod. the real question is "what is the primary TechnicalMethod?" — closer to QA/information extraction than sentence classification.
+A: The previous prototype clasified MapReduce as TechnicalMethod correctly. But it clasified 151 sentences to TechnicalMethod. the real question is "what is the primary TechnicalMethod?" — closer to QA/information extraction than sentence classification. proto2 classified every sentence into one of four roles using zero-shot NLI — this is text classification, not information extraction. It also had no way to separate the authors' own method from methods cited from prior work: for example, BERT's Introduction cites ELMo, and NLI scored the ELMo sentence 0.87 as TechnicalMethod. Its evaluation was recall-only (10/12, or 18/24 across 6 papers) — the gold term only had to appear somewhere in 100+ sentences, not be the output itself — and the 0.5 threshold used to cut sentences was arbitrary, with no principled way to reduce the list.
 
 ---
 
@@ -101,7 +101,19 @@ shape.
 >   ```
 >   (full 4-role example is the first entry in the Appendix below).
 
-A: TEI XML of one computing research paper (from GROBID) and reads the full paper as one document and extracts one answer per role using a prompt to LLM to produce one JSON object per paper.
+A: TEI XML of one computing research paper (from GROBID) and reads the full paper as one document and extracts one answer per role using a prompt to LLM to produce one JSON object per paper. Concrete output shape (Transformer paper, real output from `proto3/baseline/transformer.json`, not a mockup):
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+    }
+  }
+}
+```
+(full 4-role example is the first entry in the Appendix below.)
 
 **Q5:** Why is document-level extraction with evidence the most important feature to
 prototype (rather than, say, the preprocessing steps)?
@@ -120,7 +132,7 @@ prototype (rather than, say, the preprocessing steps)?
 >   (see Q9's evidence-shape story) and what will make the evaluation in Section 7
 >   possible.
 
-A: Parsing XML using GROBID-based approach is not the core feature. The core is evidence-based structured answer per role. This shows one output instead of a list of one hundred of candidate sentences.
+A: Parsing XML using GROBID-based approach is not the core feature. The core is evidence-based structured answer per role. This shows one output instead of a list of one hundred of candidate sentences. Structured extraction with LLMs is not itself new (see [Dagdelen et al. 2024], [Polak and Morgan 2024]) — the prototype applies it to this project's specific 4-role methodology schema. The evidence field is not decorative: it is what makes the answer checkable (see Q9) and what makes the evaluation in Section 7 possible.
 
 ---
 
@@ -146,7 +158,7 @@ order.
 > five-stage pipeline is a natural candidate to draw here, not only as a figure in
 > Section 6 (see Q13).
 
-A: Using GROBID.
+A: PDF → GROBID (Stage 0: parse sections, same as proto2) → structured TEI document (Abstract + body sections; References and Acknowledgements skipped) → Stage 1: concatenate section texts in reading order, no sentence-level filtering → Stage 2: LLM extraction with a schema-guided prompt → MethodologyProfile JSON (answer + evidence per role). The key difference from proto2 is that there is no sentence splitting and no per-sentence threshold — the LLM sees the (mostly) whole document and returns one decision per role, not a list of candidate sentences.
 
 **Q7:** Why document-level extraction, and why feed the LLM the full paper instead of
 a filtered excerpt?
@@ -162,7 +174,7 @@ a filtered excerpt?
 > - Keep this short — "why full document" is the point being made here, not a
 >   comparison against other LLMs or context-window sizes.
 
-A: To make baseline.
+A: Document-level extraction is used because a significant amount of information can only be found by analyzing the full document [Jain et al. 2020] — Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method, so sending only a filtered excerpt would recreate the same recall gap document-level extraction is meant to avoid. The papers used in this prototype fit within the model's context window, so the full structured paper is sent directly instead of introducing chunking or retrieval. The model used is Gemini (`gemini-3.5-flash`, via the `google-genai` SDK).
 
 **Q8:** How does the prompt distinguish the authors' own method from prior work, and
 how is the four-role schema enforced?
