@@ -30,6 +30,8 @@ def count_words(chunk: str) -> int:
     chunk = re.sub(r"^---+$", "", chunk, flags=re.MULTILINE)
     # Remove image syntax: ![alt](src)
     chunk = re.sub(r"!\[[^\]]*\]\([^)]*\)", "", chunk)
+    # Remove word count annotations like (1587 words, exclude: References, Appendix)
+    chunk = re.sub(r"\(\d+ words[^)]*\)", "", chunk)
     # Strip markdown formatting characters
     chunk = re.sub(r"[*_`]", "", chunk)
     # Strip heading markers (## ### etc.) but keep heading text

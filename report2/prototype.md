@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction
+# Prototype: Document-Level Methodology Extraction (1587 words, exclude: References, Appendix)
 
 ## 1. Template Statement
 
