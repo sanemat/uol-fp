@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (1030 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (884 words, exclude: References, Appendix)
 
 ## 1. Template Statement
 
@@ -12,7 +12,7 @@ proto1 is an AI-drafted reference only; proto2 was my sentence-level NLI attempt
 
 ## 3. Features Implemented
 
-The prototype takes TEI XML of one computing research paper (produced by GROBID) and reads the full paper as a single document, extracting one answer per role with a schema-guided prompt to a long-context LLM, to produce one JSON object per paper. Each role's entry has an `answer` plus an `evidence` object with `section` and `quote` (full example in Section 6).
+The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example in Section 6).
 
 Parsing the XML and extracting section text reuses proto2's GROBID-based approach — not the core feature here. The core feature is extracting one structured answer and its evidence for each role. Structured extraction with LLMs is not itself new (see [Dagdelen et al. 2024], [Polak and Morgan 2024]); I apply it to this project's four-role schema.
 
@@ -44,7 +44,7 @@ Stage 1 joins the remaining section texts in order, with no sentence splitting a
 
 Dataset and EvaluationMetric often occur in experimental sections rather than the Abstract or Method [Jain et al. 2020], so I retain the full document rather than an excerpt. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit).
 
-The four-role schema is enforced by naming all four roles explicitly and giving the exact output shape in the prompt — one JSON object per role with an `answer` and a nested `evidence` object — with the quote required verbatim, and `null` returned for an absent role rather than guessed. One rule, "use the authors' own method, not methods cited from prior work," is explained further in Section 5.
+The prompt names all four roles and specifies the required JSON structure. Quotes must be verbatim, and absent roles are returned as `null`. One rule, "use the authors' own method, not methods cited from prior work," is explained further in Section 5.
 
 ## 5. Code Explanation
 
@@ -76,9 +76,9 @@ if raw_text.startswith("```"):
 profile = json.loads(raw_text)
 ```
 
-The Markdown-fence strip exists because Gemini does not always return pure JSON. `json.loads` has no fallback if parsing fails — that path is untested. `temperature=0, seed=0` is set for determinism, since this is extraction rather than creative generation, though I am not yet using Gemini's structured-output/JSON-schema API, so parsing still depends on the model following the prompt's shape. Even at temperature zero, some serving backends can vary slightly (e.g. batching), so reproducibility is not guaranteed.
+The Markdown-fence strip exists because Gemini does not always return pure JSON. `json.loads` has no fallback if parsing fails — that path is untested. I am not yet using Gemini's structured-output/JSON-schema API. `temperature=0` and `seed=0` reduce variation, but exact reproducibility is not guaranteed.
 
-The nested-evidence design above came from testing, not the first draft: an earlier prompt asked for `evidence` as a single string but also said to return the heading and quote together — an inconsistent instruction. Gemini resolved this by prepending the heading to a flat string instead of nesting it. Stating the nested shape explicitly in the prompt fixed it.
+An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. Specifying the nested object explicitly fixed this.
 
 Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, the same setup as proto2. The notebook is organised into named stages (Setup through Stage 2c) as markdown headers. It still mixes exploratory output with pipeline logic, and there are no automated tests for the JSON-parsing or evidence-validation logic yet.
 
@@ -130,7 +130,7 @@ Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-e
 
 I evaluate on the same six papers and gold labels as proto2, on three axes. Gold label match: does `answer` contain the gold label as a substring. Human precision: is `answer` plausibly correct by human judgment. Evidence check: does `evidence.quote` support `answer`, is it about the paper's own work rather than prior work, does the quote appear verbatim in the paper, and is `evidence.section` correct.
 
-Testing on "Attention Is All You Need" surfaced the evidence-shape bug from Section 5. Since fixing it, I have run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation has not been run yet — no scoring script, no pass/fail count — and a Related Work ablation and wider batch processing are also not yet implemented.
+Testing on "Attention Is All You Need" surfaced the evidence-shape bug from Section 5. Since fixing it, I have run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation and Related Work ablation have not yet been implemented.
 
 As an informal, hand-checked gold-label match only:
 
@@ -141,9 +141,9 @@ As an informal, hand-checked gold-label match only:
 | AlexNet | match | match | match | match | 4/4 |
 | ResNet | match | no | match | match | 3/4 |
 | MapReduce | match | no | no (null) | no | 1/4 |
-| PageRank | no | no | match | no (null) | 1/4 |
+| Google Search | no | no | match | no (null) | 1/4 |
 
-Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, PageRank) always score as a miss. Some misses reflect gold-label ambiguity rather than extraction failure: BERT's Task miss is scored against benchmark names ("GLUE"/"SQuAD"), while proto3 answered with the paper's own framing ("Language model pre-training") — the schema does not distinguish a research task from a downstream benchmark from a pre-training objective. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
+Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, Google Search) always score as a miss. Some misses reflect gold-label ambiguity rather than extraction failure: BERT's Task miss is scored against benchmark names ("GLUE"/"SQuAD"), while proto3 answered with the paper's own framing ("Language model pre-training") — the schema does not distinguish a research task from a downstream benchmark from a pre-training objective. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
 
 The next step is to implement the three-axis evaluation for the six saved outputs. After that, I will test whether including Related Work changes attribution errors.
 
@@ -157,7 +157,7 @@ The next step is to implement the three-axis evaluation for the six saved output
 
 ## Appendix: Full Extraction Output for the Remaining Five Papers
 
-Real pipeline output, matching `proto3/baseline/*.json` exactly.
+Outputs from `proto3/baseline/*.json`.
 
 ```json
 {
