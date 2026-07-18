@@ -327,7 +327,7 @@ This sends the full prompt (with the paper text substituted in) to `client.model
 >   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
 >   inconsistency to weigh against the strict typing/linting setup above.
 
-A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting.
+A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. Two honest limitations: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. Also, `proto3/baseline.ipynb` is a byte-identical duplicate of `proto3/3pipeline.ipynb`, used to run the pipeline once per paper via manual file upload to produce the six `proto3/baseline/*.json` outputs — its own Colab-badge cell still links to `.../proto3/3pipeline.ipynb`, not its own filename, a small but concrete inconsistency to weigh against the strict typing/linting setup above.
 
 ---
 
@@ -395,7 +395,10 @@ This is the real output for "Attention Is All You Need," not a mockup — same f
 >   proto3's answer+evidence output (the JSON above vs. the 14/0/0/160 counts).
 > - The pipeline diagram from Q6 (PDF → GROBID → LLM → JSON) as a process figure.
 
-A:
+A: A before/after screenshot pair contrasting proto2's sentence-count output with proto3's answer+evidence output, to make the improvement in Q12 concrete.
+
+![proto3 output](<./Screenshot 2026-07-18 195120.png>)
+![proto2 output](<./Screenshot 2026-07-18 195636.png>)
 
 ---
 
