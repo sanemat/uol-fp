@@ -1,5 +1,20 @@
 # Prototype: Document-Level Methodology Extraction (884 words, exclude: References, Appendix)
 
+<style>
+@page {
+  margin: 2cm;
+}
+body {
+  font-size: 12pt;
+}
+code, pre, pre code {
+  font-size: 12pt !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+</style>
+
 ## 1. Template Statement
 
 I use Template 12.1 from the Natural Language Processing (NLP) module: identifying research methodologies used in computing research papers.
