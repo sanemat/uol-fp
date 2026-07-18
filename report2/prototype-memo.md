@@ -18,7 +18,7 @@ baseline for the next improvement (Q16).
 > Reused directly from `report1/report.md` Ch1 §2: Template 12.1 (the NLP module
 > template).
 
-A:
+A: This project addresses **Template 12.1** from the Natural Language Processing (NLP) module: Identifying research methodologies used in computing research.
 
 ---
 
