@@ -327,7 +327,7 @@ This sends the full prompt (with the paper text substituted in) to `client.model
 >   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
 >   inconsistency to weigh against the strict typing/linting setup above.
 
-A:
+A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting.
 
 ---
 
