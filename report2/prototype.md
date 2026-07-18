@@ -7,11 +7,16 @@
 body {
   font-size: 12pt;
 }
-code, pre, pre code {
+code, pre, pre code,
+pre[class*="language-"], pre[class*="language-"] code,
+code[class*="language-"] {
   font-size: 12pt !important;
   white-space: pre-wrap !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
+  overflow-x: visible !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 </style>
 
