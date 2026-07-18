@@ -158,7 +158,32 @@ order.
 > five-stage pipeline is a natural candidate to draw here, not only as a figure in
 > Section 6 (see Q13).
 
-A: PDF → GROBID (Stage 0: parse sections, same as proto2) → structured TEI document (Abstract + body sections; References and Acknowledgements skipped) → Stage 1: concatenate section texts in reading order, no sentence-level filtering → Stage 2: LLM extraction with a schema-guided prompt → MethodologyProfile JSON (answer + evidence per role). The key difference from proto2 is that there is no sentence splitting and no per-sentence threshold — the LLM sees the (mostly) whole document and returns one decision per role, not a list of candidate sentences.
+A:
+```
+PDF
+  → GROBID (Stage 0: parse sections, same as proto2)
+  → structured TEI document (Abstract + body sections, References/Acknowledgements skipped)
+  → Stage 1: concatenate section texts in reading order, no sentence-level filtering
+  → Stage 2: LLM extraction with a schema-guided prompt
+  → MethodologyProfile JSON (answer + evidence per role)
+```
+Stage 0 skips References/Acknowledgements by heading (`proto3/3pipeline.ipynb`, "Stage 0 — Parse XML"):
+```python
+SKIP_HEADINGS = {"references", "acknowledgements", "acknowledgments"}
+...
+for div in root.findall(".//tei:body//tei:div", NS):
+    heading = div.findtext("tei:head", namespaces=NS) or ""
+    if heading.lower().strip() in SKIP_HEADINGS:
+        continue
+    ...
+```
+Stage 1 just joins section texts in order, no filtering:
+```python
+document_text = ""
+for s in sections:
+    document_text += f"## {s['heading']}\n\n{s['text']}\n\n"
+```
+The key difference from proto2 is that there is no sentence splitting and no per-sentence threshold — the LLM sees the (mostly) whole document and returns one decision per role, not a list of candidate sentences.
 
 **Q7:** Why document-level extraction, and why feed the LLM the full paper instead of
 a filtered excerpt?
@@ -174,7 +199,11 @@ a filtered excerpt?
 > - Keep this short — "why full document" is the point being made here, not a
 >   comparison against other LLMs or context-window sizes.
 
-A: Document-level extraction is used because a significant amount of information can only be found by analyzing the full document [Jain et al. 2020] — Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method, so sending only a filtered excerpt would recreate the same recall gap document-level extraction is meant to avoid. The papers used in this prototype fit within the model's context window, so the full structured paper is sent directly instead of introducing chunking or retrieval. The model used is Gemini (`gemini-3.5-flash`, via the `google-genai` SDK).
+A: Document-level extraction is used because a significant amount of information can only be found by analyzing the full document [Jain et al. 2020] — Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method, so sending only a filtered excerpt would recreate the same recall gap document-level extraction is meant to avoid. The papers used in this prototype fit within the model's context window, so the full structured paper (`document_text` from Q6) is sent directly instead of introducing chunking or retrieval. Model setup (`proto3/3pipeline.ipynb`, "Stage 2 — LLM Extraction"):
+```python
+client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
+MODEL_NAME = "gemini-3.5-flash"
+```
 
 **Q8:** How does the prompt distinguish the authors' own method from prior work, and
 how is the four-role schema enforced?
