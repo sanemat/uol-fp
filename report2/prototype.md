@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (1138 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (1030 words, exclude: References, Appendix)
 
 ## 1. Template Statement
 
@@ -14,7 +14,7 @@ proto1 is an AI-drafted reference only; proto2 was my sentence-level NLI attempt
 
 The prototype takes TEI XML of one computing research paper (produced by GROBID) and reads the full paper as a single document, extracting one answer per role with a schema-guided prompt to a long-context LLM, to produce one JSON object per paper. Each role's entry has an `answer` plus an `evidence` object with `section` and `quote` (full example in Section 6).
 
-Parsing the XML and extracting section text reuses proto2's GROBID-based approach — not the core feature here. The core feature is turning a full paper into one structured, evidence-backed answer per role, which is what makes the output usable and the answer checkable. Structured extraction with LLMs is not itself new (see [Dagdelen et al. 2024], [Polak and Morgan 2024]); I apply it to this project's four-role schema.
+Parsing the XML and extracting section text reuses proto2's GROBID-based approach — not the core feature here. The core feature is extracting one structured answer and its evidence for each role. Structured extraction with LLMs is not itself new (see [Dagdelen et al. 2024], [Polak and Morgan 2024]); I apply it to this project's four-role schema.
 
 ## 4. Algorithms, Techniques and Methods
 
@@ -42,7 +42,7 @@ for div in root.findall(".//tei:body//tei:div", NS):
 
 Stage 1 joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.
 
-I feed the LLM the full paper rather than a filtered excerpt because a significant amount of information can only be found by analysing the full document [Jain et al. 2020]: Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method, so excerpting would reproduce the same recall gap. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit).
+Dataset and EvaluationMetric often occur in experimental sections rather than the Abstract or Method [Jain et al. 2020], so I retain the full document rather than an excerpt. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit).
 
 The four-role schema is enforced by naming all four roles explicitly and giving the exact output shape in the prompt — one JSON object per role with an `answer` and a nested `evidence` object — with the quote required verbatim, and `null` returned for an absent role rather than guessed. One rule, "use the authors' own method, not methods cited from prior work," is explained further in Section 5.
 
@@ -80,7 +80,7 @@ The Markdown-fence strip exists because Gemini does not always return pure JSON.
 
 The nested-evidence design above came from testing, not the first draft: an earlier prompt asked for `evidence` as a single string but also said to return the heading and quote together — an inconsistent instruction. Gemini resolved this by prepending the heading to a flat string instead of nesting it. Stating the nested shape explicitly in the prompt fixed it.
 
-Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, the same setup as proto2. The notebook is organised into named stages (Setup through Stage 2c) as markdown headers. It still mixes exploratory output with pipeline logic, and there are no automated tests for the JSON-parsing or evidence-validation logic yet, though `pytest` is listed as a dependency.
+Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, the same setup as proto2. The notebook is organised into named stages (Setup through Stage 2c) as markdown headers. It still mixes exploratory output with pipeline logic, and there are no automated tests for the JSON-parsing or evidence-validation logic yet.
 
 ## 6. Visual Representation / Demonstration
 
@@ -119,7 +119,7 @@ For "Attention Is All You Need," the full output is:
 }
 ```
 
-This is real pipeline output from `proto3/baseline/transformer.json`, not a mockup (the comparison with proto2's output for the same paper is in Section 2).
+This output is from `proto3/baseline/transformer.json` (compared with proto2's output for the same paper in Section 2).
 
 Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-evidence output:
 
@@ -128,7 +128,7 @@ Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-e
 
 ## 7. Evaluation and Improvement
 
-I evaluate on the same six papers and gold labels as proto2, on three axes: (1) gold label match — does `answer` contain the gold label as a substring, now applied to one answer per role instead of over 100 candidate sentences, much harder to pass; (2) human precision — is `answer` plausibly correct by human judgment, catching valid answers that miss the gold string and wrong answers that happen to match it; and (3) an evidence check — does `evidence.quote` support `answer`; is it about the paper's own work, not prior work; does the quote appear verbatim in the paper; and is `evidence.section` correct. This checks precision, not just recall, which proto2's recall-only score could not do.
+I evaluate on the same six papers and gold labels as proto2, on three axes. Gold label match: does `answer` contain the gold label as a substring. Human precision: is `answer` plausibly correct by human judgment. Evidence check: does `evidence.quote` support `answer`, is it about the paper's own work rather than prior work, does the quote appear verbatim in the paper, and is `evidence.section` correct.
 
 Testing on "Attention Is All You Need" surfaced the evidence-shape bug from Section 5. Since fixing it, I have run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation has not been run yet — no scoring script, no pass/fail count — and a Related Work ablation and wider batch processing are also not yet implemented.
 
@@ -143,9 +143,9 @@ As an informal, hand-checked gold-label match only:
 | MapReduce | match | no | no (null) | no | 1/4 |
 | PageRank | no | no | match | no (null) | 1/4 |
 
-Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, PageRank) always score as a miss. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
+Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, PageRank) always score as a miss. Some misses reflect gold-label ambiguity rather than extraction failure: BERT's Task miss is scored against benchmark names ("GLUE"/"SQuAD"), while proto3 answered with the paper's own framing ("Language model pre-training") — the schema does not distinguish a research task from a downstream benchmark from a pre-training objective. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
 
-Next: score the six existing outputs against the gold labels with the three-axis method above, then compare against proto2's 18/24 (75%) — noting the two scores aren't on the same basis, since proto3 checks one answer per role rather than acceptance anywhere among 100+ sentences. I also plan a Related Work ablation to check whether extra context introduces attribution noise (via `evidence.section`), and to automate the evidence verbatim check instead of doing it by hand.
+The next step is to implement the three-axis evaluation for the six saved outputs. After that, I will test whether including Related Work changes attribution errors.
 
 ## References
 
