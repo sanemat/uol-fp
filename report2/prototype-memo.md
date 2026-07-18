@@ -48,7 +48,7 @@ or three sentences.
 >   reference only (not used in submissions), proto2 was the sentence-level NLI
 >   attempt, proto3 reframes the task as document-level extraction.
 
-A:
+A: The current prototype is a document-level methodology extraction. It was developed after an earlier sentence-level zero-shot NLI prototype showed limitations in output noise and document-level context. At least one answer per role (TechnicalMethod, Task, Dataset, and EvaluationMetric) with supporting evidence.
 
 **Q3:** Why was this prototype (proto3) developed? What did the previous iteration
 (proto2) show that motivated the change?
@@ -69,7 +69,7 @@ A:
 >   one paragraph, not a full re-description of proto2 (that belongs to a previous
 >   submission, `report1/feature-prototype.md`).
 
-A:
+A: The previous prototype clasified MapReduce as TechnicalMethod correctly. But it clasified 151 sentences to TechnicalMethod. the real question is "what is the primary TechnicalMethod?" — closer to QA/information extraction than sentence classification.
 
 ---
 
