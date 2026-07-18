@@ -101,7 +101,7 @@ shape.
 >   ```
 >   (full 4-role example is the first entry in the Appendix below).
 
-A:
+A: TEI XML of one computing research paper (from GROBID) and reads the full paper as one document and extracts one answer per role using a prompt to LLM to produce one JSON object per paper.
 
 **Q5:** Why is document-level extraction with evidence the most important feature to
 prototype (rather than, say, the preprocessing steps)?
@@ -120,7 +120,7 @@ prototype (rather than, say, the preprocessing steps)?
 >   (see Q9's evidence-shape story) and what will make the evaluation in Section 7
 >   possible.
 
-A:
+A: Parsing XML using GROBID-based approach is not the core feature. The core is evidence-based structured answer per role. This shows one output instead of a list of one hundred of candidate sentences.
 
 ---
 
@@ -146,7 +146,7 @@ order.
 > five-stage pipeline is a natural candidate to draw here, not only as a figure in
 > Section 6 (see Q13).
 
-A:
+A: Using GROBID.
 
 **Q7:** Why document-level extraction, and why feed the LLM the full paper instead of
 a filtered excerpt?
@@ -162,7 +162,7 @@ a filtered excerpt?
 > - Keep this short — "why full document" is the point being made here, not a
 >   comparison against other LLMs or context-window sizes.
 
-A:
+A: To make baseline.
 
 **Q8:** How does the prompt distinguish the authors' own method from prior work, and
 how is the four-role schema enforced?
