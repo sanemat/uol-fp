@@ -27,7 +27,7 @@
     <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
-<h1 id="prototype-document-level-methodology-extraction-870-words-exclude-references-appendix-figures-tables">Prototype: Document-Level Methodology Extraction (870 words, exclude: References, Appendix, figures, tables) </h1>
+<h1 id="prototype-document-level-methodology-extraction-871-words-exclude-references-appendix-figures-tables">Prototype: Document-Level Methodology Extraction (871 words, exclude: References, Appendix, figures, tables) </h1>
 <style>
 @page {
   margin: 2cm;
@@ -91,7 +91,7 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </code></pre><p><em>Figure 3: Gemini call and response parsing from <code>proto3/3pipeline.ipynb</code> Stage 2c.</em></p>
 <p><code>response_json_schema</code>, generated from the <code>MethodologyProfile</code> Pydantic model, constrains Gemini to return the required four-role shape; <code>MethodologyProfile.model_validate_json</code> then parses it directly, with no manual JSON extraction step. <code>temperature=0</code> and <code>seed=0</code> reduce (but do not guarantee) run-to-run variation.</p>
 <p>An earlier prompt described <code>evidence</code> inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by <code>response_json_schema</code> regardless of prompt wording, so this specific output-shape bug is now prevented by schema validation.</p>
-<p>Code quality: <code>pyright</code> runs in <code>strict</code> mode and <code>ruff</code> lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.</p>
+<p>Code quality: <code>pyright</code> (<code>strict</code> mode) and <code>ruff</code> report zero issues, and a pytest test suite now covers <code>scoring.py</code>'s evaluation logic and <code>RoleExtraction</code>'s null-correlation validator (Section 5).</p>
 <h2 id="6-visual-representation--demonstration">6. Visual Representation / Demonstration </h2>
 <p>For "Attention Is All You Need" [D6], the full output is:</p>
 <pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>

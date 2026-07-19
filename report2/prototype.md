@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (870 words, exclude: References, Appendix, figures, tables)
+# Prototype: Document-Level Methodology Extraction (871 words, exclude: References, Appendix, figures, tables)
 
 <style>
 @page {
@@ -92,7 +92,7 @@ profile = MethodologyProfile.model_validate_json(response.text)
 
 An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by `response_json_schema` regardless of prompt wording, so this specific output-shape bug is now prevented by schema validation.
 
-Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.
+Code quality: `pyright` (`strict` mode) and `ruff` report zero issues, and a pytest test suite now covers `scoring.py`'s evaluation logic and `RoleExtraction`'s null-correlation validator (Section 5).
 
 ## 6. Visual Representation / Demonstration
 
