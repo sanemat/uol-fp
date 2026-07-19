@@ -122,20 +122,23 @@ Roles:
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
-- Return only the JSON object, no explanation, in this exact shape:
-
-{
-  "TechnicalMethod": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Task": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Dataset": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "EvaluationMetric": {"answer": "...", "evidence": {"section": "...", "quote": "..."}}
-}
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
 
 Paper text:
 {paper_text}
 ```
+
+The output shape (four keys, nested `evidence.section`/`evidence.quote`, `null`
+handling) is no longer described in the prompt text. It is enforced by Gemini's
+structured-output config instead: `response_mime_type="application/json"` and
+`response_schema=MethodologyProfile` (a Pydantic model), passed to
+`client.models.generate_content` via `GenerateContentConfig`. Google's SDK docs note
+that duplicating the schema in the prompt can hurt quality, so the prompt now only
+states rules the schema itself cannot express (authorship, verbatim quoting).
+`MethodologyProfile` also carries a `model_validator` that rejects a response where
+`answer` and `evidence` are not both null or both present — a correlation the plain
+JSON Schema subset Gemini accepts cannot express on its own.
 
 Note: an earlier version of this prompt said "evidence" was a single quoted sentence, but
 also told the model to "return the section heading and one sentence quoted verbatim" —
@@ -144,15 +147,24 @@ resolved the ambiguity by returning `evidence` as one flat string with the headi
 prepended (e.g. `"## Introduction In this work we propose..."`), not the nested
 `{section, quote}` object the top-of-file example shows. The prompt above makes the
 nested shape explicit so `evidence.section` and `evidence.quote` are reliably separate
-fields for the evaluation checks below.
+fields for the evaluation checks below. That nested shape is now structurally
+guaranteed by `response_schema`, not just prompt-requested, so this class of bug can no
+longer recur.
+
+Structured output guarantees syntactic validity (valid JSON, the four keys present,
+correct types, no extra keys) and the answer/evidence null-correlation above. It does
+not guarantee semantic correctness — the answer being right, the quote actually
+appearing in the paper, or the section being accurate. Those still require the
+evaluation checks below.
 
 ---
 
 ## Implementation status
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
-prompt to Gemini and parsing the JSON response. Not yet implemented: the 3-axis evaluation
-below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
+prompt to Gemini with structured output (`response_schema=MethodologyProfile`) and parsing
+the response with Pydantic. Not yet implemented: the 3-axis evaluation below, the Related
+Work ablation, and batch processing across `proto3/previouswork/`.
 
 ---
 
