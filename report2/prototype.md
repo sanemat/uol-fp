@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (765 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix)
 
 <style>
 @page {
@@ -141,7 +141,7 @@ Same six papers and gold labels as proto2, three axes:
 
 | Axis | Method | Status |
 |---|---|---|
-| 1. Gold label match | Classification-style Precision/Recall/F1 per paper-role pair: gold and answer both absent is a true negative, a hallucinated answer is a false positive, a missed answer is a false negative, a matching answer is a true positive, and a present-but-wrong answer counts as both a false positive and a false negative | Implemented |
+| 1. Gold label match | Each paper-role pair is classified as TP, FP, FN, or TN. A wrong non-null answer counts as both FP and FN. | Implemented |
 | 2. Human precision | Is `answer` plausibly correct by human judgment | Not yet implemented |
 | 3. Evidence check | Does `evidence.quote` support `answer`, is it about the paper's own work, does it appear verbatim, is `evidence.section` correct | Not yet implemented |
 
@@ -155,7 +155,7 @@ Initial testing identified and corrected a schema inconsistency (Section 5). I s
 | EvaluationMetric | 0.80 | 0.67 | 0.73 |
 | Overall | 0.68 | 0.62 | 0.65 |
 
-I then ran the pipeline itself twice more (same code, no prompt changes, across a kernel restart) to check how stable the scores are:
+I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the `temperature=0` and `seed=0` settings were added:
 
 | Role | Baseline F1 | Pipeline run 1 F1 | Pipeline run 2 F1 |
 |---|---|---|---|
@@ -166,7 +166,7 @@ I then ran the pipeline itself twice more (same code, no prompt changes, across 
 | Overall | 0.65 | 0.65 | 0.64 |
 
 Findings:
-- TechnicalMethod and Task score identically across all three runs — Task is the weakest role (F1=0.33), and because it does not change between runs, this is a genuine weakness rather than noise.
+- TechnicalMethod and Task score identically across all three runs. Task is the weakest role (F1=0.33), and its unchanged score across the three runs suggests a systematic weakness rather than run-to-run noise.
 - Dataset and EvaluationMetric change between pipeline runs despite unchanged code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility, so a single run's F1 for these two roles is one observation, not a stable score.
 
 Next steps:

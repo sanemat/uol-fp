@@ -470,20 +470,24 @@ A: The evaluation uses the same 6 papers and gold labels as proto2, checked on t
 >   | Overall | 0.65 | 0.64 |
 >
 > - Key finding: TechnicalMethod and Task score identically across baseline and both
->   pipeline runs (same TP/FP/FN/TN every time) — Task is the weakest role (F1=0.33)
->   and it is stable, so it is a real weakness, not noise. Dataset and
->   EvaluationMetric vary between the two pipeline runs despite unchanged code,
->   `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit
->   reproducibility across sessions. A single run's F1 for those two roles is
->   therefore not a stable point estimate; report it as one observed run, not as
->   "the" pipeline score.
+>   pipeline runs (same TP/FP/FN/TN every time) — Task is the weakest role (F1=0.33),
+>   and its unchanged score suggests a systematic weakness rather than run-to-run
+>   noise. Dataset and EvaluationMetric vary between the two pipeline runs despite
+>   unchanged code, `temperature=0`, and `seed=0` — Gemini does not guarantee
+>   bit-for-bit reproducibility across sessions. A single run's F1 for those two
+>   roles is therefore not a stable point estimate; report it as one observed run,
+>   not as "the" pipeline score.
+> - Note the baseline is not a like-for-like third run: `proto3/baseline/*.json` was
+>   generated before `temperature=0`/`seed=0` were added to the Gemini call, so only
+>   the two pipeline runs share identical settings — say this explicitly rather than
+>   implying three same-condition runs.
 > - The old informal 15/24 substring-match table (below) is now superseded by the
 >   formal per-role numbers above; keep it only as historical context for how the
 >   evaluation approach evolved.
 
 A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, axis 1 (gold label match) has been implemented as the classification-style Precision/Recall/F1 metric described in Q14, in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold labels and the frozen `proto3/baseline/*.json`. Axes 2 (human precision) and 3 (evidence check) are still not implemented, and neither is the Related Work ablation or batch processing across `proto3/previouswork/`.
 
-I ran the metric across all six papers against the frozen baseline, then ran the pipeline itself twice more (same code, no prompt changes, across a kernel restart) to check how stable the numbers are:
+I ran the metric across all six papers against the frozen baseline, then ran the current pipeline twice more across a kernel restart to check how stable the numbers are — though the baseline is not a like-for-like third run, since `proto3/baseline/*.json` was generated before `temperature=0` and `seed=0` were added to the Gemini call, and only the two pipeline runs share those settings:
 
 Baseline vs gold:
 
@@ -505,7 +509,7 @@ Pipeline vs gold, two runs:
 | EvaluationMetric | 0.67 | 0.50 |
 | Overall | 0.65 | 0.64 |
 
-TechnicalMethod and Task score identically across the baseline and both pipeline runs — Task is the weakest role at F1=0.33, and because it is stable across runs, this looks like a real weakness rather than noise. Dataset and EvaluationMetric, by contrast, change between the two pipeline runs despite unchanged code, `temperature=0`, and `seed=0`: Gemini does not guarantee bit-for-bit reproducibility across sessions, so a single run's F1 for those two roles is not a stable point estimate, and I report it as one observed run rather than "the" pipeline score.
+TechnicalMethod and Task score identically across the baseline and both pipeline runs — Task is the weakest role at F1=0.33, and its unchanged score across all three suggests a systematic weakness rather than run-to-run noise. Dataset and EvaluationMetric, by contrast, change between the two pipeline runs despite unchanged code, `temperature=0`, and `seed=0`: Gemini does not guarantee bit-for-bit reproducibility across sessions, so a single run's F1 for those two roles is not a stable point estimate, and I report it as one observed run rather than "the" pipeline score.
 
 For historical context, the earlier informal check (gold-label substring match by hand, before this metric existed) gave:
 
