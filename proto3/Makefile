@@ -1,7 +1,7 @@
 GROBID_VERSION := 0.8.1
 GROBID_PORT := 8070
 
-.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook baseline sync-scoring
+.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook baseline sync-generated
 
 grobid-start:
 	docker run -d --rm -p $(GROBID_PORT):8070 --name grobid lfoppiano/grobid:$(GROBID_VERSION)
@@ -22,8 +22,8 @@ format:
 test:
 	.venv/bin/pytest tests/
 
-sync-scoring:
-	.venv/bin/python sync_scoring.py
+sync-generated:
+	.venv/bin/python sync_generated.py
 
 notebook:
 	.venv/bin/jupyter lab 3pipeline.ipynb
