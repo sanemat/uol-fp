@@ -179,6 +179,10 @@ implemented, as a classification-style Precision/Recall/F1 metric scored against
 and the frozen `proto3/baseline/*.json` outputs. Not yet implemented: axes 2 and 3 of the
 evaluation below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
 
+`proto3/baseline/*.json` is the sole frozen reference (no separate `baseline.ipynb` — it only
+ever duplicated `3pipeline.ipynb`'s Stage 0-2c with no distinct method). Git history records
+what code produced it, if reproducibility is ever needed.
+
 ---
 
 ## Evaluation (3 axes)
