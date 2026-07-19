@@ -27,7 +27,7 @@
     <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
-<h1 id="prototype-document-level-methodology-extraction-773-words-exclude-references-appendix">Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix) </h1>
+<h1 id="prototype-document-level-methodology-extraction-860-words-exclude-references-appendix-figures-tables">Prototype: Document-Level Methodology Extraction (860 words, exclude: References, Appendix, figures, tables) </h1>
 <style>
 @page {
   margin: 2cm;
@@ -50,7 +50,7 @@ code[class*="language-"] {
 <h2 id="1-template-statement">1. Template Statement </h2>
 <p>I use Template 12.1 from the Natural Language Processing (NLP) module: identifying research methodologies used in computing research papers.</p>
 <h2 id="2-project-overview-and-fit">2. Project Overview and Fit </h2>
-<p>proto3 is a document-level methodology extraction pipeline, built after an earlier sentence-level zero-shot Natural Language Inference (NLI) prototype (proto2) produced too much noise and ignored document-level context. Given a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context large language model (LLM). On "Attention Is All You Need": TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU".</p>
+<p>proto3 is a document-level methodology extraction pipeline, built after an earlier sentence-level zero-shot Natural Language Inference (NLI) prototype (proto2) produced too much noise and ignored document-level context. Given a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context large language model (LLM). On "Attention Is All You Need" [D6]: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU".</p>
 <p>proto2 was my sentence-level NLI attempt; proto3 reframes the task as document-level extraction. proto2 classified every sentence rather than extracting an answer, produced 151 TechnicalMethod sentences for MapReduce alone, and had no way to separate the authors' own method from cited prior work. Its recall-only evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct.</p>
 <h2 id="3-features-implemented">3. Features Implemented </h2>
 <p>The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example in Section 6).</p>
@@ -63,34 +63,37 @@ code[class*="language-"] {
   → Stage 1: concatenate section texts in reading order, no sentence-level filtering
   → Stage 2: LLM extraction with a schema-guided prompt
   → MethodologyProfile JSON (answer + evidence per role)
-</code></pre><p>References and Acknowledgements are removed by heading match; Stage 1 then joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.</p>
+</code></pre><p><em>Figure 1: Extraction pipeline, five stages from PDF to structured JSON.</em></p>
+<p>References and Acknowledgements are removed by heading match; Stage 1 then joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.</p>
 <p>Dataset and EvaluationMetric often occur in experimental sections rather than the Abstract or Method [Jain et al. 2020], so I retain the full document rather than an excerpt. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (<code>gemini-3.5-flash</code>, via the <code>google-genai</code> software development kit).</p>
-<p>The prompt names all four roles and specifies the required JSON structure. Quotes must be verbatim, and absent roles are returned as <code>null</code>. One rule, "use the authors' own method, not methods cited from prior work," is explained further in Section 5.</p>
+<p>The prompt names all four roles and states rules the JSON schema itself cannot express: use the authors' own method, not methods cited from prior work; return null for an absent role; quotes must be verbatim. The four-role JSON structure itself is enforced separately, by passing a JSON schema generated from the Pydantic models to Gemini's structured-output config — not by describing the shape in the prompt text. This is explained further in Section 5.</p>
 <h2 id="5-code-explanation">5. Code Explanation </h2>
 <p>The prompt template (<code>proto3/3pipeline.ipynb</code>, "Stage 2b — Prompt Template"):</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
-</code></pre><p><code>evidence</code> is a nested object rather than a single string so <code>section</code> and <code>quote</code> stay separate fields for the checks in Section 7.</p>
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
+</code></pre><p><em>Figure 2: Prompt rules excerpt from <code>proto3/3pipeline.ipynb</code> Stage 2b.</em></p>
+<p>The prompt no longer describes the output shape at all — <code>evidence</code> being a nested object with separate <code>section</code> and <code>quote</code> fields (needed for the checks in Section 7) is defined once, on the <code>Evidence</code> Pydantic model, and enforced through the schema below rather than repeated in prompt text.</p>
 <p>The call and response parsing (<code>proto3/3pipeline.ipynb</code>, "Stage 2c — Call Gemini and Parse Response"):</p>
 <pre data-role="codeBlock" data-info="python" class="language-python python"><code>response <span class="token operator">=</span> client<span class="token punctuation">.</span>models<span class="token punctuation">.</span>generate_content<span class="token punctuation">(</span>
     model<span class="token operator">=</span>MODEL_NAME<span class="token punctuation">,</span>
     contents<span class="token operator">=</span>prompt<span class="token punctuation">,</span>
-    config<span class="token operator">=</span>types<span class="token punctuation">.</span>GenerateContentConfig<span class="token punctuation">(</span>temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span> seed<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    config<span class="token operator">=</span>types<span class="token punctuation">.</span>GenerateContentConfig<span class="token punctuation">(</span>
+        temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>
+        seed<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>
+        response_mime_type<span class="token operator">=</span><span class="token string">"application/json"</span><span class="token punctuation">,</span>
+        response_json_schema<span class="token operator">=</span>MethodologyProfile<span class="token punctuation">.</span>model_json_schema<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span><span class="token punctuation">,</span>
 <span class="token punctuation">)</span>
 
-raw_text <span class="token operator">=</span> response<span class="token punctuation">.</span>text<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword keyword-if">if</span> raw_text<span class="token punctuation">.</span>startswith<span class="token punctuation">(</span><span class="token string">"```"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    raw_text <span class="token operator">=</span> raw_text<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"`"</span><span class="token punctuation">)</span>
-    raw_text <span class="token operator">=</span> raw_text<span class="token punctuation">.</span>removeprefix<span class="token punctuation">(</span><span class="token string">"json"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-profile <span class="token operator">=</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>raw_text<span class="token punctuation">)</span>
-</code></pre><p>The Markdown-fence strip handles cases where Gemini wraps its JSON response in a code block; <code>temperature=0</code> and <code>seed=0</code> reduce (but do not guarantee) run-to-run variation.</p>
-<p>An earlier prompt described <code>evidence</code> inconsistently, so Gemini returned the heading and quote as one string. Specifying the nested object explicitly fixed this.</p>
+profile <span class="token operator">=</span> MethodologyProfile<span class="token punctuation">.</span>model_validate_json<span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+</code></pre><p><em>Figure 3: Gemini call and response parsing from <code>proto3/3pipeline.ipynb</code> Stage 2c.</em></p>
+<p><code>response_json_schema</code>, generated from the <code>MethodologyProfile</code> Pydantic model, tells Gemini to return exactly the four-role shape; <code>MethodologyProfile.model_validate_json</code> then parses it directly, with no manual JSON extraction step. <code>temperature=0</code> and <code>seed=0</code> reduce (but do not guarantee) run-to-run variation.</p>
+<p>An earlier prompt described <code>evidence</code> inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by <code>response_json_schema</code> regardless of prompt wording, so this class of bug cannot recur.</p>
 <p>Code quality: <code>pyright</code> runs in <code>strict</code> mode and <code>ruff</code> lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.</p>
 <h2 id="6-visual-representation--demonstration">6. Visual Representation / Demonstration </h2>
-<p>For "Attention Is All You Need," the full output is:</p>
+<p>For "Attention Is All You Need" [D6], the full output is:</p>
 <pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token string">"Transformer"</span><span class="token punctuation">,</span>
@@ -121,12 +124,16 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><p>This output is from <code>proto3/baseline/transformer.json</code> (compared with proto2's output for the same paper in Section 2).</p>
-<p>Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-evidence output:</p>
+</code></pre><p><em>Figure 4: Full extraction output for "Attention Is All You Need" [D6] (<code>proto3/baseline/transformer.json</code>).</em></p>
+<p>This output is from <code>proto3/baseline/transformer.json</code> (compared with proto2's output for the same paper in Section 2).</p>
+<p>Figures 5–6 contrast proto2's sentence-count output with proto3's answer-and-evidence output:</p>
 <p><img src="./Screenshot%202026-07-18%20195120.png" alt="proto3 output"><br>
-<img src="./Screenshot%202026-07-18%20195636.png" alt="proto2 output"></p>
+<em>Figure 5: proto3 output (screenshot).</em></p>
+<p><img src="./Screenshot%202026-07-18%20195636.png" alt="proto2 output"><br>
+<em>Figure 6: proto2 output (screenshot).</em></p>
 <h2 id="7-evaluation-and-improvement">7. Evaluation and Improvement </h2>
 <p>Same six papers and gold labels as proto2, three axes:</p>
+<p><em>Table 1: Evaluation axes and implementation status.</em></p>
 <table>
 <thead>
 <tr>
@@ -154,6 +161,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 </tbody>
 </table>
 <p>Initial testing identified and corrected a schema inconsistency (Section 5). I scored the frozen baseline (<code>proto3/baseline/*.json</code>) against gold across all six papers:</p>
+<p><em>Table 2: Baseline (frozen <code>proto3/baseline/*.json</code>) Precision/Recall/F1 vs. gold, all six papers.</em></p>
 <table>
 <thead>
 <tr>
@@ -197,6 +205,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 </tbody>
 </table>
 <p>I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the <code>temperature=0</code> and <code>seed=0</code> settings were added:</p>
+<p><em>Table 3: Baseline vs. two pipeline runs, F1 per role.</em></p>
 <table>
 <thead>
 <tr>
@@ -255,6 +264,14 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <p>[Dagdelen et al. 2024] John Dagdelen, Alexander Dunn, Sanghoon Lee, Nicholas Walker, Andrew S. Rosen, Gerbrand Ceder, Kristin A. Persson, and Anubhav Jain. 2024. Structured information extraction from scientific text with large language models. <em>Nature Communications</em> 15 (2024), 1418. DOI: <a href="https://doi.org/10.1038/s41467-024-45563-x">https://doi.org/10.1038/s41467-024-45563-x</a></p>
 <p>[Jain et al. 2020] Sarthak Jain, Madeleine Van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In <em>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</em>, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: <a href="https://doi.org/10.18653/v1/2020.acl-main.670">https://doi.org/10.18653/v1/2020.acl-main.670</a></p>
 <p>[Polak and Morgan 2024] Maciej P. Polak and Dane Morgan. 2024. Extracting accurate materials data from research papers with conversational language models and prompt engineering. <em>Nature Communications</em> 15 (2024), 1569. DOI: <a href="https://doi.org/10.1038/s41467-024-45914-8">https://doi.org/10.1038/s41467-024-45914-8</a></p>
+<h2 id="dataset-papers">Dataset Papers </h2>
+<p>The six papers used as the evaluation set (Figures 4, 7-11; Tables 4-5):</p>
+<p>[D1] Sergey Brin and Lawrence Page. 1998. The anatomy of a large-scale hypertextual web search engine. <em>Computer Networks and ISDN Systems</em>, 30(1–7), 107–117. <a href="https://doi.org/10.1016/S0169-7552(98)00110-X">https://doi.org/10.1016/S0169-7552(98)00110-X</a></p>
+<p>[D2] Jeffrey Dean and Sanjay Ghemawat. 2004. MapReduce: Simplified data processing on large clusters. In <em>Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI '04)</em>. USENIX Association, 137–150. <a href="https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters">https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters</a></p>
+<p>[D3] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of deep bidirectional transformers for language understanding. In <em>Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019)</em>, Volume 1. Minneapolis, Minnesota: Association for Computational Linguistics, 4171–4186. <a href="https://doi.org/10.18653/v1/N19-1423">https://doi.org/10.18653/v1/N19-1423</a></p>
+<p>[D4] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)</em>, 770–778. <a href="https://doi.org/10.1109/CVPR.2016.90">https://doi.org/10.1109/CVPR.2016.90</a></p>
+<p>[D5] Alex Krizhevsky, Ilya Sutskever, and Geoffrey E. Hinton. 2012. ImageNet classification with deep convolutional neural networks. In <em>Advances in Neural Information Processing Systems</em>, 25, 1097–1105. <a href="https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html">https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html</a></p>
+<p>[D6] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In <em>Advances in Neural Information Processing Systems</em>, 30, 5998–6008. <a href="https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html</a></p>
 <h2 id="appendix-full-extraction-output-for-the-remaining-five-papers">Appendix: Full Extraction Output for the Remaining Five Papers </h2>
 <p>Outputs from <code>proto3/baseline/*.json</code>.</p>
 <pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
@@ -287,7 +304,8 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
+</code></pre><p><em>Figure 7: Full extraction output for AlexNet [D5].</em></p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token string">"BERT"</span><span class="token punctuation">,</span>
     <span class="token property">"evidence"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
@@ -317,7 +335,8 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
+</code></pre><p><em>Figure 8: Full extraction output for BERT [D3].</em></p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token string">"MapReduce"</span><span class="token punctuation">,</span>
     <span class="token property">"evidence"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
@@ -344,7 +363,8 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
+</code></pre><p><em>Figure 9: Full extraction output for MapReduce [D2].</em></p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token string">"Google"</span><span class="token punctuation">,</span>
     <span class="token property">"evidence"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
@@ -371,7 +391,8 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token property">"evidence"</span><span class="token operator">:</span> <span class="token null keyword">null</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
+</code></pre><p><em>Figure 10: Full extraction output for Google Search (PageRank) [D1].</em></p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span>
   <span class="token property">"TechnicalMethod"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"answer"</span><span class="token operator">:</span> <span class="token string">"deep residual learning framework"</span><span class="token punctuation">,</span>
     <span class="token property">"evidence"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
@@ -401,7 +422,9 @@ profile <span class="token operator">=</span> json<span class="token punctuation
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre><h3 id="gold-labels-six-papers">Gold labels (six papers) </h3>
+</code></pre><p><em>Figure 11: Full extraction output for ResNet [D4].</em></p>
+<h3 id="gold-labels-six-papers">Gold labels (six papers) </h3>
+<p><em>Table 4: Gold labels used for evaluation (six papers).</em></p>
 <table>
 <thead>
 <tr>
@@ -414,42 +437,42 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 </thead>
 <tbody>
 <tr>
-<td>Transformer</td>
+<td>Transformer [D6]</td>
 <td>"Transformer"</td>
 <td>"machine translation"</td>
 <td>"WMT"</td>
 <td>"BLEU"</td>
 </tr>
 <tr>
-<td>BERT</td>
+<td>BERT [D3]</td>
 <td>"BERT"</td>
 <td>"GLUE" or "SQuAD"</td>
 <td>"BooksCorpus" or "Wikipedia"</td>
 <td>"F1" or "accuracy"</td>
 </tr>
 <tr>
-<td>AlexNet</td>
+<td>AlexNet [D5]</td>
 <td>"convolutional" (paper predates the name "AlexNet")</td>
 <td>"object recognition"</td>
 <td>"ImageNet"</td>
 <td>"top-1" or "top-5"</td>
 </tr>
 <tr>
-<td>ResNet</td>
+<td>ResNet [D4]</td>
 <td>"residual"</td>
 <td>"image recognition"</td>
 <td>"ImageNet"</td>
 <td>"top-1"</td>
 </tr>
 <tr>
-<td>MapReduce</td>
+<td>MapReduce [D2]</td>
 <td>"MapReduce"</td>
 <td>"distributed"</td>
 <td>"TeraSort"</td>
 <td>"seconds"</td>
 </tr>
 <tr>
-<td>Google Search</td>
+<td>Google Search [D1]</td>
 <td>"PageRank"</td>
 <td>"web search"</td>
 <td>"million pages"</td>
@@ -458,6 +481,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 </tbody>
 </table>
 <h3 id="proto2-background-data">proto2 background data </h3>
+<p><em>Table 5: proto2 sentence-count output per role (six papers).</em></p>
 <table>
 <thead>
 <tr>
@@ -471,7 +495,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 </thead>
 <tbody>
 <tr>
-<td>Transformer</td>
+<td>Transformer [D6]</td>
 <td>14</td>
 <td>0</td>
 <td>0</td>
@@ -479,7 +503,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <td>verbose_v1</td>
 </tr>
 <tr>
-<td>BERT</td>
+<td>BERT [D3]</td>
 <td>62</td>
 <td>23</td>
 <td>15</td>
@@ -487,7 +511,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <td>short</td>
 </tr>
 <tr>
-<td>AlexNet</td>
+<td>AlexNet [D5]</td>
 <td>51</td>
 <td>6</td>
 <td>11</td>
@@ -495,7 +519,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <td>short</td>
 </tr>
 <tr>
-<td>ResNet</td>
+<td>ResNet [D4]</td>
 <td>51</td>
 <td>6</td>
 <td>14</td>
@@ -503,7 +527,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <td>short</td>
 </tr>
 <tr>
-<td>MapReduce</td>
+<td>MapReduce [D2]</td>
 <td>151</td>
 <td>24</td>
 <td>3</td>
@@ -511,7 +535,7 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <td>short</td>
 </tr>
 <tr>
-<td>Google Search</td>
+<td>Google Search [D1]</td>
 <td>69</td>
 <td>21</td>
 <td>8</td>

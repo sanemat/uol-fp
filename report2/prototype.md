@@ -136,8 +136,8 @@ This output is from `proto3/baseline/transformer.json` (compared with proto2's o
 
 Figures 5–6 contrast proto2's sentence-count output with proto3's answer-and-evidence output:
 
-![proto3 output](<./Screenshot 2026-07-18 195120.png>)
-*Figure 5: proto3 output (screenshot).*
+![proto3 output](<./Screenshot 2026-07-19 180851.png>)
+*Figure 5: proto3 Stage 2c cell and output (screenshot).*
 
 ![proto2 output](<./Screenshot 2026-07-18 195636.png>)
 *Figure 6: proto2 output (screenshot).*

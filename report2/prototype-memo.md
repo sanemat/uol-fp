@@ -432,7 +432,7 @@ This is the real output for "Attention Is All You Need," not a mockup — same f
 
 A: A before/after screenshot pair contrasting proto2's sentence-count output with proto3's answer+evidence output, to make the improvement in Q12 concrete.
 
-![proto3 output](<./Screenshot 2026-07-18 195120.png>)
+![proto3 output](<./Screenshot 2026-07-19 180851.png>)
 ![proto2 output](<./Screenshot 2026-07-18 195636.png>)
 
 ---
