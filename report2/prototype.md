@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (884 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (792 words, exclude: References, Appendix)
 
 <style>
 @page {
@@ -28,7 +28,7 @@ I use Template 12.1 from the Natural Language Processing (NLP) module: identifyi
 
 proto3 is a document-level methodology extraction pipeline, built after an earlier sentence-level zero-shot Natural Language Inference (NLI) prototype (proto2) produced too much noise and ignored document-level context. Given a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context large language model (LLM). On "Attention Is All You Need": TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU".
 
-proto1 is an AI-drafted reference only; proto2 was my sentence-level NLI attempt; proto3 reframes the task as document-level extraction. proto2 classified every sentence rather than extracting an answer, produced 151 TechnicalMethod sentences for MapReduce alone, and had no way to separate the authors' own method from cited prior work — BERT's Introduction cites ELMo, which NLI scored 0.87 as TechnicalMethod. Its recall-only evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere among 100+ sentences, not whether the output was correct.
+proto2 was my sentence-level NLI attempt; proto3 reframes the task as document-level extraction. proto2 classified every sentence rather than extracting an answer, produced 151 TechnicalMethod sentences for MapReduce alone, and had no way to separate the authors' own method from cited prior work. Its recall-only evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct.
 
 ## 3. Features Implemented
 
@@ -49,18 +49,7 @@ PDF
   → MethodologyProfile JSON (answer + evidence per role)
 ```
 
-Stage 0 skips References and Acknowledgements by heading:
-
-```python
-SKIP_HEADINGS = {"references", "acknowledgements", "acknowledgments"}
-...
-for div in root.findall(".//tei:body//tei:div", NS):
-    heading = div.findtext("tei:head", namespaces=NS) or ""
-    if heading.lower().strip() in SKIP_HEADINGS:
-        continue
-```
-
-Stage 1 joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.
+References and Acknowledgements are removed by heading match; Stage 1 then joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.
 
 Dataset and EvaluationMetric often occur in experimental sections rather than the Abstract or Method [Jain et al. 2020], so I retain the full document rather than an excerpt. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit).
 
@@ -96,11 +85,11 @@ if raw_text.startswith("```"):
 profile = json.loads(raw_text)
 ```
 
-The Markdown-fence strip exists because Gemini does not always return pure JSON. `json.loads` has no fallback if parsing fails — that path is untested. I am not yet using Gemini's structured-output/JSON-schema API. `temperature=0` and `seed=0` reduce variation, but exact reproducibility is not guaranteed.
+The Markdown-fence strip handles cases where Gemini wraps its JSON response in a code block; `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
 
 An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. Specifying the nested object explicitly fixed this.
 
-Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, the same setup as proto2. The notebook is organised into named stages (Setup through Stage 2c) as markdown headers. It still mixes exploratory output with pipeline logic, and there are no automated tests for the JSON-parsing or evidence-validation logic yet.
+Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.
 
 ## 6. Visual Representation / Demonstration
 
@@ -150,7 +139,7 @@ Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-e
 
 I evaluate on the same six papers and gold labels as proto2, on three axes. Gold label match: does `answer` contain the gold label as a substring. Human precision: is `answer` plausibly correct by human judgment. Evidence check: does `evidence.quote` support `answer`, is it about the paper's own work rather than prior work, does the quote appear verbatim in the paper, and is `evidence.section` correct.
 
-Testing on "Attention Is All You Need" surfaced the evidence-shape bug from Section 5. Since fixing it, I have run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation and Related Work ablation have not yet been implemented.
+Initial testing identified and corrected a schema inconsistency (Section 5). I have since run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation and Related Work ablation have not yet been implemented.
 
 As an informal, hand-checked gold-label match only:
 
@@ -163,7 +152,7 @@ As an informal, hand-checked gold-label match only:
 | MapReduce | match | no | no (null) | no | 1/4 |
 | Google Search | no | no | match | no (null) | 1/4 |
 
-Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, Google Search) always score as a miss. Some misses reflect gold-label ambiguity rather than extraction failure: BERT's Task miss is scored against benchmark names ("GLUE"/"SQuAD"), while proto3 answered with the paper's own framing ("Language model pre-training") — the schema does not distinguish a research task from a downstream benchmark from a pre-training objective. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
+Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, Google Search) always score as a miss; some misses, like BERT's Task, reflect gold-label ambiguity (benchmark name vs. the paper's own task framing) rather than extraction failure. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
 
 The next step is to implement the three-axis evaluation for the six saved outputs. After that, I will test whether including Related Work changes attribution errors.
 
