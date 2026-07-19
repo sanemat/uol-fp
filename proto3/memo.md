@@ -199,6 +199,24 @@ a false positive. Implemented in `proto3/3pipeline.ipynb` Stage 3, scored agains
 labels and the frozen `proto3/baseline/*.json` outputs (baseline answers are hardcoded in the
 notebook, not fetched over the network, since the repo is not public).
 
+**Run-to-run variance observed (all 6 papers, no prompt changes, two separate pipeline runs
+across a kernel restart):**
+
+| Role | Baseline F1 | Pipeline run 1 | Pipeline run 2 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.73 | 0.80 | 0.91 |
+| EvaluationMetric | 0.73 | 0.67 | 0.50 |
+| Overall | 0.65 | 0.65 | 0.64 |
+
+TechnicalMethod and Task scored identically across baseline and both pipeline runs (same
+TP/FP/FN/TN every time). Dataset and EvaluationMetric changed between runs despite unchanged
+code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility
+across sessions. Implication for the report: a single run's F1 for Dataset/EvaluationMetric is
+not a stable point estimate; report it as one observed run, not as "the" pipeline score, and
+note the stability/instability asymmetry across roles as a finding in itself.
+
 **2. Human precision check**
 Is `answer` plausibly correct by human judgment?
 Catches cases where the answer is not in the gold labels but is still valid (or where it is wrong despite matching a substring).
