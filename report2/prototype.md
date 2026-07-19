@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix, figures, tables)
 
 <style>
 @page {
@@ -48,6 +48,7 @@ PDF
   → Stage 2: LLM extraction with a schema-guided prompt
   → MethodologyProfile JSON (answer + evidence per role)
 ```
+*Figure 1: Extraction pipeline, five stages from PDF to structured JSON.*
 
 References and Acknowledgements are removed by heading match; Stage 1 then joins the remaining section texts in order, with no sentence splitting and no per-sentence threshold.
 
@@ -65,6 +66,7 @@ Rules:
 - If a field is not present in the paper, return null for both "answer" and "evidence".
 - The "quote" must be copied verbatim from the paper text, not paraphrased.
 ```
+*Figure 2: Prompt rules excerpt from `proto3/3pipeline.ipynb` Stage 2b.*
 
 `evidence` is a nested object rather than a single string so `section` and `quote` stay separate fields for the checks in Section 7.
 
@@ -84,6 +86,7 @@ if raw_text.startswith("```"):
 
 profile = json.loads(raw_text)
 ```
+*Figure 3: Gemini call and response parsing from `proto3/3pipeline.ipynb` Stage 2c.*
 
 The Markdown-fence strip handles cases where Gemini wraps its JSON response in a code block; `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
 
@@ -127,17 +130,23 @@ For "Attention Is All You Need," the full output is:
   }
 }
 ```
+*Figure 4: Full extraction output for "Attention Is All You Need" (`proto3/baseline/transformer.json`).*
 
 This output is from `proto3/baseline/transformer.json` (compared with proto2's output for the same paper in Section 2).
 
-Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-evidence output:
+Figures 5–6 contrast proto2's sentence-count output with proto3's answer-and-evidence output:
 
 ![proto3 output](<./Screenshot 2026-07-18 195120.png>)
+*Figure 5: proto3 output (screenshot).*
+
 ![proto2 output](<./Screenshot 2026-07-18 195636.png>)
+*Figure 6: proto2 output (screenshot).*
 
 ## 7. Evaluation and Improvement
 
 Same six papers and gold labels as proto2, three axes:
+
+*Table 1: Evaluation axes and implementation status.*
 
 | Axis | Method | Status |
 |---|---|---|
@@ -146,6 +155,8 @@ Same six papers and gold labels as proto2, three axes:
 | 3. Evidence check | Does `evidence.quote` support `answer`, is it about the paper's own work, does it appear verbatim, is `evidence.section` correct | Not yet implemented |
 
 Initial testing identified and corrected a schema inconsistency (Section 5). I scored the frozen baseline (`proto3/baseline/*.json`) against gold across all six papers:
+
+*Table 2: Baseline (frozen `proto3/baseline/*.json`) Precision/Recall/F1 vs. gold, all six papers.*
 
 | Role | P | R | F1 |
 |---|---|---|---|
@@ -156,6 +167,8 @@ Initial testing identified and corrected a schema inconsistency (Section 5). I s
 | Overall | 0.68 | 0.62 | 0.65 |
 
 I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the `temperature=0` and `seed=0` settings were added:
+
+*Table 3: Baseline vs. two pipeline runs, F1 per role.*
 
 | Role | Baseline F1 | Pipeline run 1 F1 | Pipeline run 2 F1 |
 |---|---|---|---|
@@ -219,6 +232,7 @@ Outputs from `proto3/baseline/*.json`.
   }
 }
 ```
+*Figure 7: Full extraction output for AlexNet.*
 
 ```json
 {
@@ -252,6 +266,7 @@ Outputs from `proto3/baseline/*.json`.
   }
 }
 ```
+*Figure 8: Full extraction output for BERT.*
 
 ```json
 {
@@ -282,6 +297,7 @@ Outputs from `proto3/baseline/*.json`.
   }
 }
 ```
+*Figure 9: Full extraction output for MapReduce.*
 
 ```json
 {
@@ -312,6 +328,7 @@ Outputs from `proto3/baseline/*.json`.
   }
 }
 ```
+*Figure 10: Full extraction output for Google Search (PageRank).*
 
 ```json
 {
@@ -345,8 +362,11 @@ Outputs from `proto3/baseline/*.json`.
   }
 }
 ```
+*Figure 11: Full extraction output for ResNet.*
 
 ### Gold labels (six papers)
+
+*Table 4: Gold labels used for evaluation (six papers).*
 
 | Paper | Gold TechnicalMethod | Gold Task | Gold Dataset | Gold EvaluationMetric |
 |---|---|---|---|---|
@@ -358,6 +378,8 @@ Outputs from `proto3/baseline/*.json`.
 | Google Search | "PageRank" | "web search" | "million pages" | "quality" |
 
 ### proto2 background data
+
+*Table 5: proto2 sentence-count output per role (six papers).*
 
 | Paper | TM | Task | Dataset | EM | Hypothesis set |
 |---|---|---|---|---|---|

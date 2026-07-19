@@ -27,7 +27,7 @@
     <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
-<h1 id="prototype-document-level-methodology-extraction-792-words-exclude-references-appendix">Prototype: Document-Level Methodology Extraction (792 words, exclude: References, Appendix) </h1>
+<h1 id="prototype-document-level-methodology-extraction-773-words-exclude-references-appendix">Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix) </h1>
 <style>
 @page {
   margin: 2cm;
@@ -126,73 +126,131 @@ profile <span class="token operator">=</span> json<span class="token punctuation
 <p><img src="./Screenshot%202026-07-18%20195120.png" alt="proto3 output"><br>
 <img src="./Screenshot%202026-07-18%20195636.png" alt="proto2 output"></p>
 <h2 id="7-evaluation-and-improvement">7. Evaluation and Improvement </h2>
-<p>I evaluate on the same six papers and gold labels as proto2, on three axes. Gold label match: does <code>answer</code> contain the gold label as a substring. Human precision: is <code>answer</code> plausibly correct by human judgment. Evidence check: does <code>evidence.quote</code> support <code>answer</code>, is it about the paper's own work rather than prior work, does the quote appear verbatim in the paper, and is <code>evidence.section</code> correct.</p>
-<p>Initial testing identified and corrected a schema inconsistency (Section 5). I have since run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search); raw output is saved in <code>proto3/baseline/*.json</code>. The formal three-axis evaluation and Related Work ablation have not yet been implemented.</p>
-<p>As an informal, hand-checked gold-label match only:</p>
+<p>Same six papers and gold labels as proto2, three axes:</p>
 <table>
 <thead>
 <tr>
-<th>Paper</th>
-<th>TechnicalMethod</th>
-<th>Task</th>
-<th>Dataset</th>
-<th>EvaluationMetric</th>
-<th>Score</th>
+<th>Axis</th>
+<th>Method</th>
+<th>Status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Transformer</td>
-<td>match</td>
-<td>match</td>
-<td>match</td>
-<td>match</td>
-<td>4/4</td>
+<td>1. Gold label match</td>
+<td>Each paper-role pair is classified as TP, FP, FN, or TN. A wrong non-null answer counts as both FP and FN.</td>
+<td>Implemented</td>
 </tr>
 <tr>
-<td>BERT</td>
-<td>match</td>
-<td>no</td>
-<td>no</td>
-<td>match</td>
-<td>2/4</td>
+<td>2. Human precision</td>
+<td>Is <code>answer</code> plausibly correct by human judgment</td>
+<td>Not yet implemented</td>
 </tr>
 <tr>
-<td>AlexNet</td>
-<td>match</td>
-<td>match</td>
-<td>match</td>
-<td>match</td>
-<td>4/4</td>
-</tr>
-<tr>
-<td>ResNet</td>
-<td>match</td>
-<td>no</td>
-<td>match</td>
-<td>match</td>
-<td>3/4</td>
-</tr>
-<tr>
-<td>MapReduce</td>
-<td>match</td>
-<td>no</td>
-<td>no (null)</td>
-<td>no</td>
-<td>1/4</td>
-</tr>
-<tr>
-<td>Google Search</td>
-<td>no</td>
-<td>no</td>
-<td>match</td>
-<td>no (null)</td>
-<td>1/4</td>
+<td>3. Evidence check</td>
+<td>Does <code>evidence.quote</code> support <code>answer</code>, is it about the paper's own work, does it appear verbatim, is <code>evidence.section</code> correct</td>
+<td>Not yet implemented</td>
 </tr>
 </tbody>
 </table>
-<p>Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, Google Search) always score as a miss; some misses, like BERT's Task, reflect gold-label ambiguity (benchmark name vs. the paper's own task framing) rather than extraction failure. These six baseline files also predate the <code>temperature=0</code>/<code>seed=0</code> change, so scores may shift on a fresh run.</p>
-<p>The next step is to implement the three-axis evaluation for the six saved outputs. After that, I will test whether including Related Work changes attribution errors.</p>
+<p>Initial testing identified and corrected a schema inconsistency (Section 5). I scored the frozen baseline (<code>proto3/baseline/*.json</code>) against gold across all six papers:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>P</th>
+<th>R</th>
+<th>F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TechnicalMethod</td>
+<td>0.83</td>
+<td>0.83</td>
+<td>0.83</td>
+</tr>
+<tr>
+<td>Task</td>
+<td>0.33</td>
+<td>0.33</td>
+<td>0.33</td>
+</tr>
+<tr>
+<td>Dataset</td>
+<td>0.80</td>
+<td>0.67</td>
+<td>0.73</td>
+</tr>
+<tr>
+<td>EvaluationMetric</td>
+<td>0.80</td>
+<td>0.67</td>
+<td>0.73</td>
+</tr>
+<tr>
+<td>Overall</td>
+<td>0.68</td>
+<td>0.62</td>
+<td>0.65</td>
+</tr>
+</tbody>
+</table>
+<p>I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the <code>temperature=0</code> and <code>seed=0</code> settings were added:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Baseline F1</th>
+<th>Pipeline run 1 F1</th>
+<th>Pipeline run 2 F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TechnicalMethod</td>
+<td>0.83</td>
+<td>0.83</td>
+<td>0.83</td>
+</tr>
+<tr>
+<td>Task</td>
+<td>0.33</td>
+<td>0.33</td>
+<td>0.33</td>
+</tr>
+<tr>
+<td>Dataset</td>
+<td>0.73</td>
+<td>0.80</td>
+<td>0.91</td>
+</tr>
+<tr>
+<td>EvaluationMetric</td>
+<td>0.73</td>
+<td>0.67</td>
+<td>0.50</td>
+</tr>
+<tr>
+<td>Overall</td>
+<td>0.65</td>
+<td>0.65</td>
+<td>0.64</td>
+</tr>
+</tbody>
+</table>
+<p>Findings:</p>
+<ul>
+<li>TechnicalMethod and Task score identically across all three runs. Task is the weakest role (F1=0.33), and its unchanged score across the three runs suggests a systematic weakness rather than run-to-run noise.</li>
+<li>Dataset and EvaluationMetric change between pipeline runs despite unchanged code, <code>temperature=0</code>, and <code>seed=0</code> — Gemini does not guarantee bit-for-bit reproducibility, so a single run's F1 for these two roles is one observation, not a stable score.</li>
+</ul>
+<p>Next steps:</p>
+<ul>
+<li>Target Task with a prompt change, since it is the most stable weak point.</li>
+<li>Implement the human precision and evidence checks (axes 2-3).</li>
+<li>Run the pipeline several times to quantify the Dataset/EvaluationMetric variance rather than treat one run as final.</li>
+<li>Test whether including Related Work changes attribution errors.</li>
+</ul>
 <h2 id="references">References </h2>
 <p>[Dagdelen et al. 2024] John Dagdelen, Alexander Dunn, Sanghoon Lee, Nicholas Walker, Andrew S. Rosen, Gerbrand Ceder, Kristin A. Persson, and Anubhav Jain. 2024. Structured information extraction from scientific text with large language models. <em>Nature Communications</em> 15 (2024), 1418. DOI: <a href="https://doi.org/10.1038/s41467-024-45563-x">https://doi.org/10.1038/s41467-024-45563-x</a></p>
 <p>[Jain et al. 2020] Sarthak Jain, Madeleine Van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In <em>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</em>, Online, July 2020. Association for Computational Linguistics, 7506–7516. DOI: <a href="https://doi.org/10.18653/v1/2020.acl-main.670">https://doi.org/10.18653/v1/2020.acl-main.670</a></p>
