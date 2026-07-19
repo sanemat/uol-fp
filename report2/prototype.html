@@ -27,7 +27,7 @@
     <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
-<h1 id="prototype-document-level-methodology-extraction-860-words-exclude-references-appendix-figures-tables">Prototype: Document-Level Methodology Extraction (860 words, exclude: References, Appendix, figures, tables) </h1>
+<h1 id="prototype-document-level-methodology-extraction-870-words-exclude-references-appendix-figures-tables">Prototype: Document-Level Methodology Extraction (870 words, exclude: References, Appendix, figures, tables) </h1>
 <style>
 @page {
   margin: 2cm;
@@ -89,8 +89,8 @@ code[class*="language-"] {
 
 profile <span class="token operator">=</span> MethodologyProfile<span class="token punctuation">.</span>model_validate_json<span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
 </code></pre><p><em>Figure 3: Gemini call and response parsing from <code>proto3/3pipeline.ipynb</code> Stage 2c.</em></p>
-<p><code>response_json_schema</code>, generated from the <code>MethodologyProfile</code> Pydantic model, tells Gemini to return exactly the four-role shape; <code>MethodologyProfile.model_validate_json</code> then parses it directly, with no manual JSON extraction step. <code>temperature=0</code> and <code>seed=0</code> reduce (but do not guarantee) run-to-run variation.</p>
-<p>An earlier prompt described <code>evidence</code> inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by <code>response_json_schema</code> regardless of prompt wording, so this class of bug cannot recur.</p>
+<p><code>response_json_schema</code>, generated from the <code>MethodologyProfile</code> Pydantic model, constrains Gemini to return the required four-role shape; <code>MethodologyProfile.model_validate_json</code> then parses it directly, with no manual JSON extraction step. <code>temperature=0</code> and <code>seed=0</code> reduce (but do not guarantee) run-to-run variation.</p>
+<p>An earlier prompt described <code>evidence</code> inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by <code>response_json_schema</code> regardless of prompt wording, so this specific output-shape bug is now prevented by schema validation.</p>
 <p>Code quality: <code>pyright</code> runs in <code>strict</code> mode and <code>ruff</code> lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.</p>
 <h2 id="6-visual-representation--demonstration">6. Visual Representation / Demonstration </h2>
 <p>For "Attention Is All You Need" [D6], the full output is:</p>
@@ -204,7 +204,7 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </tr>
 </tbody>
 </table>
-<p>I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the <code>temperature=0</code> and <code>seed=0</code> settings were added:</p>
+<p>I then ran the current pipeline twice across a kernel restart and compared these runs with the earlier frozen baseline, although the baseline was generated before the <code>temperature=0</code> and <code>seed=0</code> settings were added:</p>
 <p><em>Table 3: Baseline vs. two pipeline runs, F1 per role.</em></p>
 <table>
 <thead>
@@ -250,7 +250,7 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </table>
 <p>Findings:</p>
 <ul>
-<li>TechnicalMethod and Task score identically across all three runs. Task is the weakest role (F1=0.33), and its unchanged score across the three runs suggests a systematic weakness rather than run-to-run noise.</li>
+<li>TechnicalMethod and Task have identical scores in the frozen baseline and both current pipeline runs. Task is the weakest role (F1=0.33), and its unchanged score in both current runs suggests a systematic weakness rather than run-to-run noise.</li>
 <li>Dataset and EvaluationMetric change between pipeline runs despite unchanged code, <code>temperature=0</code>, and <code>seed=0</code> — Gemini does not guarantee bit-for-bit reproducibility, so a single run's F1 for these two roles is one observation, not a stable score.</li>
 </ul>
 <p>Next steps:</p>

@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (860 words, exclude: References, Appendix, figures, tables)
+# Prototype: Document-Level Methodology Extraction (870 words, exclude: References, Appendix, figures, tables)
 
 <style>
 @page {
@@ -88,9 +88,9 @@ profile = MethodologyProfile.model_validate_json(response.text)
 ```
 *Figure 3: Gemini call and response parsing from `proto3/3pipeline.ipynb` Stage 2c.*
 
-`response_json_schema`, generated from the `MethodologyProfile` Pydantic model, tells Gemini to return exactly the four-role shape; `MethodologyProfile.model_validate_json` then parses it directly, with no manual JSON extraction step. `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
+`response_json_schema`, generated from the `MethodologyProfile` Pydantic model, constrains Gemini to return the required four-role shape; `MethodologyProfile.model_validate_json` then parses it directly, with no manual JSON extraction step. `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
 
-An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by `response_json_schema` regardless of prompt wording, so this class of bug cannot recur.
+An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by `response_json_schema` regardless of prompt wording, so this specific output-shape bug is now prevented by schema validation.
 
 Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.
 
@@ -166,7 +166,7 @@ Initial testing identified and corrected a schema inconsistency (Section 5). I s
 | EvaluationMetric | 0.80 | 0.67 | 0.73 |
 | Overall | 0.68 | 0.62 | 0.65 |
 
-I then ran the current pipeline twice across a kernel restart and compare these runs with the earlier frozen baseline, though the baseline was generated before the `temperature=0` and `seed=0` settings were added:
+I then ran the current pipeline twice across a kernel restart and compared these runs with the earlier frozen baseline, although the baseline was generated before the `temperature=0` and `seed=0` settings were added:
 
 *Table 3: Baseline vs. two pipeline runs, F1 per role.*
 
@@ -179,7 +179,7 @@ I then ran the current pipeline twice across a kernel restart and compare these 
 | Overall | 0.65 | 0.65 | 0.64 |
 
 Findings:
-- TechnicalMethod and Task score identically across all three runs. Task is the weakest role (F1=0.33), and its unchanged score across the three runs suggests a systematic weakness rather than run-to-run noise.
+- TechnicalMethod and Task have identical scores in the frozen baseline and both current pipeline runs. Task is the weakest role (F1=0.33), and its unchanged score in both current runs suggests a systematic weakness rather than run-to-run noise.
 - Dataset and EvaluationMetric change between pipeline runs despite unchanged code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility, so a single run's F1 for these two roles is one observation, not a stable score.
 
 Next steps:
