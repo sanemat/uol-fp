@@ -26,7 +26,7 @@ def update_notebook(new_literal: str) -> None:
     nb = json.loads(NOTEBOOK_PATH.read_text())
     for cell in nb["cells"]:
         if cell.get("id") == TARGET_CELL_ID:
-            source = cell["source"]
+            source: list[str] | str = cell["source"]
             text = "".join(source) if isinstance(source, list) else source
             if BEGIN_MARKER not in text or END_MARKER not in text:
                 raise RuntimeError(
@@ -35,7 +35,9 @@ def update_notebook(new_literal: str) -> None:
                 )
             before, _, rest = text.partition(BEGIN_MARKER)
             _, _, after = rest.partition(END_MARKER)
-            cell["source"] = f"{before}{BEGIN_MARKER}\n{new_literal}\n\n\n{END_MARKER}{after}"
+            cell["source"] = (
+                f"{before}{BEGIN_MARKER}\n{new_literal}\n\n\n{END_MARKER}{after}"
+            )
             break
     else:
         raise RuntimeError(f"Cell {TARGET_CELL_ID!r} not found in {NOTEBOOK_PATH}")

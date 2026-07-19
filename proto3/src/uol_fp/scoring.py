@@ -9,16 +9,17 @@ def normalize(s: str | None) -> str | None:
 
 def matches(gold: str, sys: str) -> bool:
     g, s = normalize(gold), normalize(sys)
+    assert g is not None and s is not None
     return g in s or s in g
 
 
 def score_role(gold: str | None, sys: str | None) -> tuple[int, int, int, int]:
     """Return (tp, fp, fn, tn) for one (paper, role) slot."""
-    if gold is None and sys is None:
-        return (0, 0, 0, 1)
-    if gold is None and sys is not None:
+    if gold is None:
+        if sys is None:
+            return (0, 0, 0, 1)
         return (0, 1, 0, 0)
-    if gold is not None and sys is None:
+    if sys is None:
         return (0, 0, 1, 0)
     if matches(gold, sys):
         return (1, 0, 0, 0)
