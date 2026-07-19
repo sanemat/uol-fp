@@ -26,14 +26,25 @@ def load_baseline_answers() -> dict[str, dict[str, str | None]]:
     return answers
 
 
+MAX_LINE_LENGTH = 88
+
+
 def render_literal(answers: dict[str, dict[str, str | None]]) -> str:
     lines = ["BASELINE_ANSWERS = {"]
     for slug, roles in answers.items():
         lines.append(f'    "{slug}": {{')
         for role in ROLES:
             value = roles[role]
-            value_repr = "None" if value is None else json.dumps(value, ensure_ascii=False)
-            lines.append(f'        "{role}": {value_repr},')
+            value_repr = (
+                "None" if value is None else json.dumps(value, ensure_ascii=False)
+            )
+            one_line = f'        "{role}": {value_repr},'
+            if len(one_line) <= MAX_LINE_LENGTH:
+                lines.append(one_line)
+            else:
+                lines.append(f'        "{role}": (')
+                lines.append(f"            {value_repr}")
+                lines.append("        ),")
         lines.append("    },")
     lines.append("}")
     return "\n".join(lines)
@@ -43,7 +54,7 @@ def update_notebook(new_literal: str) -> None:
     nb = json.loads(NOTEBOOK_PATH.read_text())
     for cell in nb["cells"]:
         if cell.get("id") == TARGET_CELL_ID:
-            source = cell["source"]
+            source: list[str] | str = cell["source"]
             text = "".join(source) if isinstance(source, list) else source
             if BEGIN_MARKER not in text or END_MARKER not in text:
                 raise RuntimeError(
@@ -52,7 +63,9 @@ def update_notebook(new_literal: str) -> None:
                 )
             before, _, rest = text.partition(BEGIN_MARKER)
             _, _, after = rest.partition(END_MARKER)
-            cell["source"] = f"{before}{BEGIN_MARKER}\n{new_literal}\n{END_MARKER}{after}"
+            cell["source"] = (
+                f"{before}{BEGIN_MARKER}\n{new_literal}\n{END_MARKER}{after}"
+            )
             break
     else:
         raise RuntimeError(f"Cell {TARGET_CELL_ID!r} not found in {NOTEBOOK_PATH}")
@@ -64,7 +77,10 @@ def main() -> None:
     answers = load_baseline_answers()
     literal = render_literal(answers)
     update_notebook(literal)
-    print(f"Updated cell {TARGET_CELL_ID} from {len(answers)} baseline file(s): {sorted(answers)}")
+    print(
+        f"Updated cell {TARGET_CELL_ID} from {len(answers)} baseline file(s): "
+        f"{sorted(answers)}"
+    )
 
 
 if __name__ == "__main__":
