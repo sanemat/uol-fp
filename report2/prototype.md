@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (792 words, exclude: References, Appendix)
+# Prototype: Document-Level Methodology Extraction (765 words, exclude: References, Appendix)
 
 <style>
 @page {
@@ -137,24 +137,43 @@ Figures 1–2 contrast proto2's sentence-count output with proto3's answer-and-e
 
 ## 7. Evaluation and Improvement
 
-I evaluate on the same six papers and gold labels as proto2, on three axes. Gold label match: does `answer` contain the gold label as a substring. Human precision: is `answer` plausibly correct by human judgment. Evidence check: does `evidence.quote` support `answer`, is it about the paper's own work rather than prior work, does the quote appear verbatim in the paper, and is `evidence.section` correct.
+Same six papers and gold labels as proto2, three axes:
 
-Initial testing identified and corrected a schema inconsistency (Section 5). I have since run Stage 0–2 on all six proto2 papers (Transformer, BERT, AlexNet, ResNet, MapReduce, Google Search); raw output is saved in `proto3/baseline/*.json`. The formal three-axis evaluation and Related Work ablation have not yet been implemented.
+| Axis | Method | Status |
+|---|---|---|
+| 1. Gold label match | Classification-style Precision/Recall/F1 per paper-role pair: gold and answer both absent is a true negative, a hallucinated answer is a false positive, a missed answer is a false negative, a matching answer is a true positive, and a present-but-wrong answer counts as both a false positive and a false negative | Implemented |
+| 2. Human precision | Is `answer` plausibly correct by human judgment | Not yet implemented |
+| 3. Evidence check | Does `evidence.quote` support `answer`, is it about the paper's own work, does it appear verbatim, is `evidence.section` correct | Not yet implemented |
 
-As an informal, hand-checked gold-label match only:
+Initial testing identified and corrected a schema inconsistency (Section 5). I scored the frozen baseline (`proto3/baseline/*.json`) against gold across all six papers:
 
-| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Score |
-|---|---|---|---|---|---|
-| Transformer | match | match | match | match | 4/4 |
-| BERT | match | no | no | match | 2/4 |
-| AlexNet | match | match | match | match | 4/4 |
-| ResNet | match | no | match | match | 3/4 |
-| MapReduce | match | no | no (null) | no | 1/4 |
-| Google Search | no | no | match | no (null) | 1/4 |
+| Role | P | R | F1 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.80 | 0.67 | 0.73 |
+| EvaluationMetric | 0.80 | 0.67 | 0.73 |
+| Overall | 0.68 | 0.62 | 0.65 |
 
-Total: 15/24 (62.5%). Substring matching penalises near misses (ResNet's "image classification" vs. gold "image recognition") and null fields (MapReduce, Google Search) always score as a miss; some misses, like BERT's Task, reflect gold-label ambiguity (benchmark name vs. the paper's own task framing) rather than extraction failure. These six baseline files also predate the `temperature=0`/`seed=0` change, so scores may shift on a fresh run.
+I then ran the pipeline itself twice more (same code, no prompt changes, across a kernel restart) to check how stable the scores are:
 
-The next step is to implement the three-axis evaluation for the six saved outputs. After that, I will test whether including Related Work changes attribution errors.
+| Role | Baseline F1 | Pipeline run 1 F1 | Pipeline run 2 F1 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.73 | 0.80 | 0.91 |
+| EvaluationMetric | 0.73 | 0.67 | 0.50 |
+| Overall | 0.65 | 0.65 | 0.64 |
+
+Findings:
+- TechnicalMethod and Task score identically across all three runs — Task is the weakest role (F1=0.33), and because it does not change between runs, this is a genuine weakness rather than noise.
+- Dataset and EvaluationMetric change between pipeline runs despite unchanged code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility, so a single run's F1 for these two roles is one observation, not a stable score.
+
+Next steps:
+- Target Task with a prompt change, since it is the most stable weak point.
+- Implement the human precision and evidence checks (axes 2-3).
+- Run the pipeline several times to quantify the Dataset/EvaluationMetric variance rather than treat one run as final.
+- Test whether including Related Work changes attribution errors.
 
 ## References
 

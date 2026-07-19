@@ -320,14 +320,15 @@ This sends the full prompt (with the paper text substituted in) to `client.model
 > - Honest limitation to mention: this is still notebook code mixing exploratory
 >   output with pipeline logic; there are no automated tests yet for the JSON-parsing
 >   or evidence-validation logic, even though `pytest` is a listed dev dependency.
-> - Second honest limitation: `proto3/baseline.ipynb` is a byte-identical duplicate of
->   `proto3/3pipeline.ipynb` (confirmed with `diff` — no differences), used to run the
->   pipeline once per paper via manual file upload to produce the six
->   `proto3/baseline/*.json` outputs. Its own Colab-badge cell still links to
->   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
->   inconsistency to weigh against the strict typing/linting setup above.
+> - Second point, now resolved: `proto3/baseline.ipynb` used to be a byte-identical
+>   duplicate of `proto3/3pipeline.ipynb` (confirmed with `diff` — no differences),
+>   kept around only to have produced the six `proto3/baseline/*.json` outputs. That
+>   file has been deleted — `proto3/baseline/*.json` is now the sole frozen artifact,
+>   and `proto3/update_baseline.py` regenerates the notebook's copy of those answers
+>   from the JSON files directly, so there is no second notebook to keep in sync by
+>   hand.
 
-A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. Two honest limitations: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. Also, `proto3/baseline.ipynb` is a byte-identical duplicate of `proto3/3pipeline.ipynb`, used to run the pipeline once per paper via manual file upload to produce the six `proto3/baseline/*.json` outputs — its own Colab-badge cell still links to `.../proto3/3pipeline.ipynb`, not its own filename, a small but concrete inconsistency to weigh against the strict typing/linting setup above.
+A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. One honest limitation remains: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. A second issue I found and fixed: `proto3/baseline.ipynb` used to be a byte-identical duplicate of `proto3/3pipeline.ipynb`, kept only to have produced the six `proto3/baseline/*.json` outputs. I deleted it — `proto3/baseline/*.json` is now the sole frozen artifact, and `proto3/update_baseline.py` regenerates the notebook's copy of those answers directly from the JSON files, so there is no second notebook to keep in sync by hand.
 
 ---
 
@@ -408,9 +409,16 @@ A: A before/after screenshot pair contrasting proto2's sentence-count output wit
 
 > Reused from `proto3/memo.md` "Evaluation (3 axes)" — same 6 papers and gold labels
 > as proto2:
-> 1. **Gold label match** — does `answer` contain the gold label as a substring? Same
->    method as proto2, but applied to one answer per role instead of 100+ sentences —
->    much harder to pass than recall over a large candidate list.
+> 1. **Gold label match — implemented as classification-style Precision/Recall/F1**
+>    — not just "does `answer` contain the gold label as a substring", but a full
+>    TP/FP/FN/TN scheme per (paper, role) slot: gold and answer both absent is a true
+>    negative (correct abstention); a hallucinated answer where gold is absent is a
+>    false positive; a missed answer is a false negative; a matching answer is a true
+>    positive; and — the important part — a present-but-wrong answer counts as both a
+>    false positive and a false negative, so a confident wrong guess costs both
+>    precision and recall rather than being free. This directly targets proto2's
+>    biggest weakness: recall-only scoring where a large candidate list could contain
+>    the gold term without the output itself being precise.
 > 2. **Human precision check** — is `answer` plausibly correct by human judgment?
 >    Catches valid answers that don't match the gold label string, and wrong answers
 >    that happen to match it.
@@ -422,54 +430,84 @@ A: A before/after screenshot pair contrasting proto2's sentence-count output wit
 >    3. Does `evidence.quote` appear verbatim in the input paper text?
 >    4. Is `evidence.section` the correct section for that quote?
 
-A: The evaluation uses the same 6 papers and gold labels as proto2, checked on three axes. First, gold label match: does `answer` contain the gold label as a substring — the same method as proto2, but now applied to one answer per role instead of over 100 candidate sentences, which is much harder to pass. Second, a human precision check: is `answer` plausibly correct by human judgment — this catches valid answers that do not match the gold string, and wrong answers that happen to match it. Third, an evidence check, in priority order: does `evidence.quote` support `answer`; is the evidence about the target paper's own work and not prior work (the authorship problem from Q3); does `evidence.quote` appear verbatim in the paper text; and is `evidence.section` the correct section for that quote. This method is appropriate because it checks precision, not just recall — proto2's recall-only score only showed the gold term appeared somewhere in the output, not that the output itself was a usable answer.
+A: The evaluation uses the same 6 papers and gold labels as proto2, checked on three axes. First, gold label match, implemented as a classification-style Precision/Recall/F1 metric: for each (paper, role) slot, gold and answer both absent is a true negative, a hallucinated answer where gold is absent is a false positive, a missed answer is a false negative, a matching answer is a true positive, and — the part that matters most — a present-but-wrong answer counts as both a false positive and a false negative, so a confident wrong guess is not free. This directly targets proto2's biggest weakness: recall-only scoring where a large candidate list could contain the gold term without the output itself being precise. Second, a human precision check: is `answer` plausibly correct by human judgment — this catches valid answers that do not match the gold string, and wrong answers that happen to match it. Third, an evidence check, in priority order: does `evidence.quote` support `answer`; is the evidence about the target paper's own work and not prior work (the authorship problem from Q3); does `evidence.quote` appear verbatim in the paper text; and is `evidence.section` the correct section for that quote.
 
 **Q15:** What is the current evaluation status, and what did the initial test show?
 
 > Be honest about what has actually been done (from `proto3/memo.md` "Implementation
-> status", the Q10 bug story, and `proto3/baseline/*.json`):
+> status" and "Evaluation (3 axes)", the Q10 bug story, and `proto3/3pipeline.ipynb`
+> Stage 3):
 > - Initial, informal testing on "Attention Is All You Need" surfaced the
 >   evidence-shape bug (Q10), fixed by making the prompt's output shape explicit.
-> - Since then, Stage 0-2 has been run on all six papers in the set (same set as
->   proto2: Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank) — the raw
->   answer+evidence JSON for each is saved in `proto3/baseline/*.json` (matches the
->   six examples in the Reference/Appendix section below).
-> - The formal 3-axis evaluation (gold label match / human precision / evidence
->   check) against these six outputs has **not** been run yet — there is no scoring
->   script and no pass/fail count. The Related Work ablation and batch processing
->   across `proto3/previouswork/` are also not yet implemented.
-> - Frame this as an honest limitation: extraction now runs end-to-end across the
->   whole six-paper set and produces output for every paper, but its accuracy has
->   not yet been measured against the gold labels.
-> - Informal, quick check only (axis 1, gold-label substring match, done by hand
->   against `proto3/baseline/*.json` and the gold-label table in the Reference
->   section below — not the formal evaluation script, and no human-precision or
->   evidence-verification pass has been done):
+> - Axis 1 (gold label match) is now implemented as the classification-style
+>   Precision/Recall/F1 metric from Q14, in `proto3/3pipeline.ipynb` Stage 3, scored
+>   against both the gold labels and the frozen `proto3/baseline/*.json`. It has been
+>   run live across all six papers, and — separately — the pipeline itself has been
+>   re-run twice on all six papers (same code, no prompt changes, across a kernel
+>   restart) to see how stable the numbers are.
+> - Axes 2 (human precision) and 3 (evidence check) are still not implemented, nor
+>   are the Related Work ablation or batch processing across `proto3/previouswork/`.
+> - Results:
 >
->   | Paper | TM | Task | Dataset | EM | Score |
->   |---|---|---|---|---|---|
->   | Transformer | match | match | match | match | 4/4 |
->   | BERT | match | no | no | match | 2/4 |
->   | AlexNet | match | match | match | match | 4/4 |
->   | ResNet | match | no | match | match | 3/4 |
->   | MapReduce | match | no | no (null) | no | 1/4 |
->   | PageRank | no | no | match | no (null) | 1/4 |
+>   Baseline (frozen `proto3/baseline/*.json`) vs gold, all 6 papers:
 >
->   Total: 15/24 (62.5%). Caveats worth stating: strict substring matching
->   penalizes near-misses (e.g. ResNet's answer "image classification" vs. gold
->   "image recognition" — arguably close but scored as a miss here); MapReduce and
->   PageRank both have one `null` field, which always scores as a miss under this
->   method. Treat this as a rough indicator to write from, not a result to cite as
->   final — the formal evaluation (Q16) is what would confirm or correct it.
-> - Timing caveat: the six `proto3/baseline/*.json` files were generated before
->   `temperature=0`/`seed=0` were added to the Gemini call (see Q10). They were run
->   at the SDK's default sampling settings, not the now-deterministic config. If the
->   formal evaluation (Q16) is run against fresh output instead of these existing
->   files, scores could shift slightly from the 15/24 above.
+>   | Role | P | R | F1 |
+>   |---|---|---|---|
+>   | TechnicalMethod | 0.83 | 0.83 | 0.83 |
+>   | Task | 0.33 | 0.33 | 0.33 |
+>   | Dataset | 0.80 | 0.67 | 0.73 |
+>   | EvaluationMetric | 0.80 | 0.67 | 0.73 |
+>   | Overall | 0.68 | 0.62 | 0.65 |
+>
+>   Pipeline vs gold, two separate runs:
+>
+>   | Role | Run 1 F1 | Run 2 F1 |
+>   |---|---|---|
+>   | TechnicalMethod | 0.83 | 0.83 |
+>   | Task | 0.33 | 0.33 |
+>   | Dataset | 0.80 | 0.91 |
+>   | EvaluationMetric | 0.67 | 0.50 |
+>   | Overall | 0.65 | 0.64 |
+>
+> - Key finding: TechnicalMethod and Task score identically across baseline and both
+>   pipeline runs (same TP/FP/FN/TN every time) — Task is the weakest role (F1=0.33)
+>   and it is stable, so it is a real weakness, not noise. Dataset and
+>   EvaluationMetric vary between the two pipeline runs despite unchanged code,
+>   `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit
+>   reproducibility across sessions. A single run's F1 for those two roles is
+>   therefore not a stable point estimate; report it as one observed run, not as
+>   "the" pipeline score.
+> - The old informal 15/24 substring-match table (below) is now superseded by the
+>   formal per-role numbers above; keep it only as historical context for how the
+>   evaluation approach evolved.
 
-A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, Stage 0–2 has been run on all six papers in the same set as proto2 (Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank); the raw answer+evidence JSON for each is saved in `proto3/baseline/*.json`. The formal 3-axis evaluation from Q14 has not been run yet — there is no scoring script and no pass/fail count, and the Related Work ablation and batch processing across `proto3/previouswork/` are not yet implemented either.
+A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, axis 1 (gold label match) has been implemented as the classification-style Precision/Recall/F1 metric described in Q14, in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold labels and the frozen `proto3/baseline/*.json`. Axes 2 (human precision) and 3 (evidence check) are still not implemented, and neither is the Related Work ablation or batch processing across `proto3/previouswork/`.
 
-As an informal, quick check only (gold-label substring match by hand, not the formal evaluation script, and no human-precision or evidence-verification pass):
+I ran the metric across all six papers against the frozen baseline, then ran the pipeline itself twice more (same code, no prompt changes, across a kernel restart) to check how stable the numbers are:
+
+Baseline vs gold:
+
+| Role | P | R | F1 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.80 | 0.67 | 0.73 |
+| EvaluationMetric | 0.80 | 0.67 | 0.73 |
+| Overall | 0.68 | 0.62 | 0.65 |
+
+Pipeline vs gold, two runs:
+
+| Role | Run 1 F1 | Run 2 F1 |
+|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 |
+| Dataset | 0.80 | 0.91 |
+| EvaluationMetric | 0.67 | 0.50 |
+| Overall | 0.65 | 0.64 |
+
+TechnicalMethod and Task score identically across the baseline and both pipeline runs — Task is the weakest role at F1=0.33, and because it is stable across runs, this looks like a real weakness rather than noise. Dataset and EvaluationMetric, by contrast, change between the two pipeline runs despite unchanged code, `temperature=0`, and `seed=0`: Gemini does not guarantee bit-for-bit reproducibility across sessions, so a single run's F1 for those two roles is not a stable point estimate, and I report it as one observed run rather than "the" pipeline score.
+
+For historical context, the earlier informal check (gold-label substring match by hand, before this metric existed) gave:
 
 | Paper | TM | Task | Dataset | EM | Score |
 |---|---|---|---|---|---|
@@ -480,14 +518,22 @@ As an informal, quick check only (gold-label substring match by hand, not the fo
 | MapReduce | match | no | no (null) | no | 1/4 |
 | PageRank | no | no | match | no (null) | 1/4 |
 
-Total: 15/24 (62.5%). Strict substring matching penalizes near misses — ResNet's answer "image classification" versus gold "image recognition" is arguably close but scored as a miss here — and MapReduce and PageRank each have one `null` field, which always scores as a miss under this method. This is a rough indicator, not a final result; the formal evaluation in Q16 would confirm or correct it. The six `proto3/baseline/*.json` files were also generated before `temperature=0`/`seed=0` were added to the Gemini call, so scores could shift slightly if the formal evaluation runs against fresh output instead of these existing files.
+Total: 15/24 (62.5%) — this is now superseded by the formal per-role Precision/Recall/F1 numbers above.
 
 **Q16:** How do you intend to improve the prototype next?
 
-> Facts to use (from `proto3/memo.md` "Evaluation" and "Ablation"):
-> - Score the six outputs already in `proto3/baseline/*.json` against the gold labels
->   in the Reference section below, using the 3-axis method from Q14 — the raw
->   extraction is done (Q15); scoring it is the next step, not a re-run.
+> Facts to use (from `proto3/memo.md` "Evaluation" and "Ablation", and Q15's results):
+> - Task is the weakest role (F1=0.33) and, unlike Dataset/EvaluationMetric, it is
+>   stable across baseline and both pipeline runs — so it is the most promising
+>   target for a prompt change, since any improvement there would be a real signal,
+>   not noise.
+> - Implement axes 2 (human precision) and 3 (evidence check) from Q14 — axis 1 alone
+>   cannot catch a wrong answer that happens to match the gold substring, or a valid
+>   answer that does not.
+> - Dataset and EvaluationMetric's run-to-run variance (Q15) is not a bug to "fix" —
+>   it reflects Gemini's own non-determinism. The right response is to quantify it
+>   (e.g. run 3-5 times and report a range or majority answer) rather than treat a
+>   single run's number as final.
 > - Compare the result against proto2's 18/24 (75%) recall-only result from
 >   `report1/report.md` Appendix B — but note the comparison is not apples-to-apples:
 >   proto3's gold-label check is against one answer per role, not against acceptance
@@ -499,7 +545,7 @@ Total: 15/24 (62.5%). Strict substring matching penalizes near misses — ResNet
 > - Automate the evidence verbatim check (string search in paper text) as part of the
 >   evaluation script, rather than checking by hand.
 
-A: The next step is to score the six outputs already in `proto3/baseline/*.json` against the gold labels using the 3-axis method from Q14 — the extraction itself is done (Q15); scoring it is what remains. The result can then be compared against proto2's 18/24 (75%) recall-only result, though the comparison is not apples-to-apples: proto3's check is against one answer per role, not acceptance anywhere in 100+ sentences, so a lower raw score could still represent a stronger result. I also plan to run the Related Work ablation (exclude vs. keep Related Work in the input text) to test whether the extra context helps or introduces attribution noise, visible through `evidence.section`, and to automate the evidence verbatim check (string search in the paper text) as part of the evaluation script instead of checking by hand.
+A: Task is the weakest role (F1=0.33) and, unlike Dataset and EvaluationMetric, it stayed exactly the same across the baseline and both pipeline runs — so it is the most promising target for a prompt change, since any improvement there would be a real signal rather than run-to-run noise. Next, I plan to implement axes 2 (human precision) and 3 (evidence check) from Q14, since axis 1 alone cannot catch a wrong answer that happens to match the gold substring, or a valid answer that does not. Dataset and EvaluationMetric's run-to-run variance is not something to "fix" — it reflects Gemini's own non-determinism — so instead of treating a single run's number as final, I plan to run the pipeline several times and report a range or majority answer for those two roles. I also plan to compare against proto2's 18/24 (75%) recall-only result, though the comparison is not apples-to-apples: proto3's check is against one answer per role, not acceptance anywhere in 100+ sentences, so a lower raw score could still represent a stronger result. Finally, I plan to run the Related Work ablation (exclude vs. keep Related Work in the input text) to test whether the extra context helps or introduces attribution noise, visible through `evidence.section`, and to automate the evidence verbatim check (string search in the paper text) as part of the evaluation script instead of checking by hand.
 
 ---
 
