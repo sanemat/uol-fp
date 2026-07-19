@@ -132,13 +132,24 @@ Paper text:
 The output shape (four keys, nested `evidence.section`/`evidence.quote`, `null`
 handling) is no longer described in the prompt text. It is enforced by Gemini's
 structured-output config instead: `response_mime_type="application/json"` and
-`response_schema=MethodologyProfile` (a Pydantic model), passed to
+`response_json_schema=MethodologyProfile.model_json_schema()`, passed to
 `client.models.generate_content` via `GenerateContentConfig`. Google's SDK docs note
 that duplicating the schema in the prompt can hurt quality, so the prompt now only
 states rules the schema itself cannot express (authorship, verbatim quoting).
 `MethodologyProfile` also carries a `model_validator` that rejects a response where
 `answer` and `evidence` are not both null or both present — a correlation the plain
 JSON Schema subset Gemini accepts cannot express on its own.
+
+Note on `response_schema` vs `response_json_schema`: the SDK's `response_schema`
+field (accepting a Pydantic model class directly) converts to Google's own `Schema`
+proto, a restricted OpenAPI 3.0 subset that does **not** support
+`additionalProperties`. Since `extra="forbid"` on the Pydantic models produces
+`additionalProperties: false` in their JSON Schema, `response_schema=MethodologyProfile`
+fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`.
+`response_json_schema` accepts a real JSON Schema dict and explicitly supports
+`additionalProperties`, so `MethodologyProfile.model_json_schema()` is passed there
+instead. `model_validate_json(response.text)` still does the Pydantic-side parsing,
+so this only changes what is sent to the API, not the class used to parse the result.
 
 Note: an earlier version of this prompt said "evidence" was a single quoted sentence, but
 also told the model to "return the section heading and one sentence quoted verbatim" —
@@ -148,8 +159,8 @@ prepended (e.g. `"## Introduction In this work we propose..."`), not the nested
 `{section, quote}` object the top-of-file example shows. The prompt above makes the
 nested shape explicit so `evidence.section` and `evidence.quote` are reliably separate
 fields for the evaluation checks below. That nested shape is now structurally
-guaranteed by `response_schema`, not just prompt-requested, so this class of bug can no
-longer recur.
+guaranteed by `response_json_schema`, not just prompt-requested, so this class of bug
+can no longer recur.
 
 Structured output guarantees syntactic validity (valid JSON, the four keys present,
 correct types, no extra keys) and the answer/evidence null-correlation above. It does
@@ -162,9 +173,9 @@ evaluation checks below.
 ## Implementation status
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
-prompt to Gemini with structured output (`response_schema=MethodologyProfile`) and parsing
-the response with Pydantic. Not yet implemented: the 3-axis evaluation below, the Related
-Work ablation, and batch processing across `proto3/previouswork/`.
+prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
+and parsing the response with Pydantic. Not yet implemented: the 3-axis evaluation below, the
+Related Work ablation, and batch processing across `proto3/previouswork/`.
 
 ---
 
