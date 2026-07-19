@@ -174,8 +174,14 @@ evaluation checks below.
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
 prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
-and parsing the response with Pydantic. Not yet implemented: the 3-axis evaluation below, the
-Related Work ablation, and batch processing across `proto3/previouswork/`.
+and parsing the response with Pydantic. Stage 3 (axis 1 of the evaluation below) is also
+implemented, as a classification-style Precision/Recall/F1 metric scored against gold labels
+and the frozen `proto3/baseline/*.json` outputs. Not yet implemented: axes 2 and 3 of the
+evaluation below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
+
+`proto3/baseline/*.json` is the sole frozen reference (no separate `baseline.ipynb` — it only
+ever duplicated `3pipeline.ipynb`'s Stage 0-2c with no distinct method). Git history records
+what code produced it, if reproducibility is ever needed.
 
 ---
 
@@ -183,10 +189,33 @@ Related Work ablation, and batch processing across `proto3/previouswork/`.
 
 Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
 
-**1. Gold label match**
-Does `answer` contain the gold label as a substring?
-Same method as proto2, but now applied to one answer per role, not 100+ sentences.
-A correct answer with one sentence is much harder to pass than recall over 151 sentences.
+**1. Gold label match — implemented**
+Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive, either direction)?
+Same match rule as proto2, but now applied to one answer per role, not 100+ sentences, and
+scored as a classification problem (TP/FP/FN/TN, `null` handled as a real value) rather than a
+plain match count. This turns the check into a real Precision/Recall/F1 number: a wrong-but-present
+answer costs both precision and recall, and a hallucinated answer where gold is `null` counts as
+a false positive. Implemented in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold
+labels and the frozen `proto3/baseline/*.json` outputs (baseline answers are hardcoded in the
+notebook, not fetched over the network, since the repo is not public).
+
+**Run-to-run variance observed (all 6 papers, no prompt changes, two separate pipeline runs
+across a kernel restart):**
+
+| Role | Baseline F1 | Pipeline run 1 | Pipeline run 2 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.73 | 0.80 | 0.91 |
+| EvaluationMetric | 0.73 | 0.67 | 0.50 |
+| Overall | 0.65 | 0.65 | 0.64 |
+
+TechnicalMethod and Task scored identically across baseline and both pipeline runs (same
+TP/FP/FN/TN every time). Dataset and EvaluationMetric changed between runs despite unchanged
+code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility
+across sessions. Implication for the report: a single run's F1 for Dataset/EvaluationMetric is
+not a stable point estimate; report it as one observed run, not as "the" pipeline score, and
+note the stability/instability asymmetry across roles as a finding in itself.
 
 **2. Human precision check**
 Is `answer` plausibly correct by human judgment?

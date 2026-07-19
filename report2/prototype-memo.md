@@ -214,16 +214,21 @@ how is the four-role schema enforced?
 > - The prompt names all four roles explicitly and gives a rule: "Use the authors'
 >   own method, not methods cited from prior work" — directly targeting proto2's
 >   biggest known failure (Q3/Q5).
-> - It specifies the exact output shape (nested JSON, one object per role with
->   `answer` and `evidence.section`/`evidence.quote`) and requires the quote to be
->   copied verbatim, not paraphrased — so the answer can be checked against the
->   source text.
-> - It tells the model to return `null` for both fields if a role is not present in
->   the paper, rather than guessing.
+> - The four-role schema is **not** enforced by prompt wording — the prompt does not
+>   describe the JSON shape at all. It is enforced by passing
+>   `response_json_schema=MethodologyProfile.model_json_schema()` (a JSON Schema
+>   generated from the `Evidence`/`RoleExtraction`/`MethodologyProfile` Pydantic
+>   models) to Gemini's structured-output config, and parsing the reply with
+>   `MethodologyProfile.model_validate_json(...)`.
+> - The prompt only states rules the schema itself cannot express: the
+>   authors'-own-work rule, and that quotes must be copied verbatim.
+> - The `null`-for-both-fields correlation (if a role is absent, `answer` and
+>   `evidence` are both `null`) is enforced by a Pydantic `model_validator` on
+>   `RoleExtraction`, not by a prompt instruction.
 > - Full prompt text is in the Reference section below — quote the relevant rule
 >   lines in your write-up rather than the whole prompt.
 
-A: The prompt names all four roles explicitly and states one rule: use the authors' own method, not methods cited from prior work. This targets proto2's biggest known failure — e.g. BERT's Introduction citing ELMo, which proto2's NLI scored 0.87 as TechnicalMethod. The four-role schema is enforced by giving the exact output shape in the prompt: one JSON object per role with an `answer` and a nested `evidence` object (`section` and `quote`), and by requiring the quote to be copied verbatim rather than paraphrased, so each answer can be checked against the source text. If a role is not present in the paper, the model is told to return `null` for both fields instead of guessing.
+A: The prompt names all four roles explicitly and states one rule: use the authors' own method, not methods cited from prior work. This targets proto2's biggest known failure — e.g. BERT's Introduction citing ELMo, which proto2's NLI scored 0.87 as TechnicalMethod. The four-role schema is not enforced by the prompt at all — the prompt text does not describe the JSON shape. It is enforced by passing `response_json_schema=MethodologyProfile.model_json_schema()`, a JSON Schema generated from the `Evidence`/`RoleExtraction`/`MethodologyProfile` Pydantic models, to Gemini's structured-output config, then parsing the reply with `MethodologyProfile.model_validate_json(...)`. The prompt is left to state only what the schema cannot express: the authors'-own-work rule and the verbatim-quote rule. Whether a role is absent (`answer` and `evidence` both `null`) is enforced by a Pydantic `model_validator` on `RoleExtraction`, not by asking the model nicely.
 
 ---
 
@@ -232,80 +237,109 @@ A: The prompt names all four roles explicitly and states one rule: use the autho
 **Q9:** Quote and explain the extraction prompt template
 (`proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template").
 
-> Actual prompt (from `proto3/memo.md`, matches the notebook's `PROMPT_TEMPLATE`
-> cell):
+> Actual prompt (current `PROMPT_TEMPLATE` cell in `proto3/3pipeline.ipynb`, "Stage
+> 2b — Prompt Template" — this replaced an older version that also spelled out the
+> JSON shape; the shape is now carried by the schema instead, see Q8):
 > ```
-> For each of the four roles below, return an object with:
-> - "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-> - "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+> You are extracting research methodology from a computing research paper.
+>
+> For each of the four roles below, identify the answer and its supporting evidence.
+>
+> Roles:
+> - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
+> - Task: the research task or problem being addressed
+> - Dataset: the dataset used for training or evaluation
+> - EvaluationMetric: the metric used to report results
 >
 > Rules:
 > - Use the authors' own method, not methods cited from prior work.
-> - If a field is not present in the paper, return null for both "answer" and "evidence".
-> - The "quote" must be copied verbatim from the paper text, not paraphrased.
+> - Return null when a role is not present in the paper.
+> - Evidence quotes must be copied verbatim from the paper, not paraphrased.
+>
+> Paper text:
+> {paper_text}
 > ```
-> Explain: why `answer` is constrained to "shortest identifying term" (avoids the
-> proto2 problem of getting whole sentences back instead of a usable label); why
-> `evidence` is a nested object rather than a single string — this was not the
-> original design (see Q10's bug story) — and why the verbatim-quote rule matters for
-> the evidence check in Section 7.
+> Explain: the prompt no longer says anything about `answer` being a "shortest
+> identifying term" or about `evidence` being a nested object — those constraints
+> now live on the Pydantic models (`RoleExtraction.answer`'s `Field(description=...)`,
+> and the `Evidence` model's `section`/`quote` fields) and are enforced through
+> `response_json_schema`, not prompt wording (see Q8). The prompt keeps only what the
+> schema can't express: the authorship rule, and the verbatim-quote rule, which
+> matters for the evidence check in Section 7.
 
-A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
+A: Quote (current `PROMPT_TEMPLATE` cell, `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
 ```
-For each of the four roles below, return an object with:
-- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+You are extracting research methodology from a computing research paper.
+
+For each of the four roles below, identify the answer and its supporting evidence.
+
+Roles:
+- TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
+- Task: the research task or problem being addressed
+- Dataset: the dataset used for training or evaluation
+- EvaluationMetric: the metric used to report results
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
+
+Paper text:
+{paper_text}
 ```
-`answer` is constrained to the shortest identifying term so the model returns a usable label ("Transformer") instead of a full sentence — this was proto2's core problem, where the "answer" was really 151 candidate sentences. `evidence` is a nested object rather than a single string so `section` and `quote` stay separate fields; this was not the first design (see Q10) — an earlier version asked for a single string and Gemini merged the heading and quote together, which is not checkable. The verbatim-quote rule matters because Section 7's evidence check needs to confirm the quote appears in the paper text word-for-word, not paraphrased text that cannot be searched for.
+This prompt no longer says anything about `answer` being a "shortest identifying term" or about `evidence` being a nested object — an earlier version of the prompt did, but those constraints now live on the Pydantic models instead (`RoleExtraction.answer`'s `Field(description=...)` for the label constraint, the `Evidence` model's `section`/`quote` fields for the nested shape) and are enforced through `response_json_schema` (Q8), not prompt wording. The prompt keeps only what the schema itself cannot express: the authors'-own-work rule, which targets proto2's authorship-attribution failure, and the verbatim-quote rule, which matters because Section 7's evidence check needs to confirm the quote appears in the paper text word-for-word, not paraphrased text that cannot be searched for.
 
 **Q10:** Quote and explain the Gemini call and response parsing
 (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"), including the
 evidence-shape bug you found during testing.
 
-> Facts to use (from `proto3/memo.md`, note under the prompt):
-> - The call sends `PROMPT_TEMPLATE` (with the paper text substituted in) to
->   `client.models.generate_content` and parses the JSON response with `json.loads`.
-> - Bug found during actual testing on "Attention Is All You Need": an earlier prompt
->   version said "evidence" was a single quoted sentence but also said to "return the
->   section heading and one sentence quoted verbatim" — an internally inconsistent
->   instruction. Gemini resolved the ambiguity by returning `evidence` as one flat
->   string with the heading prepended (e.g. `"## Introduction In this work we
->   propose..."`), not the nested `{section, quote}` object the design intended.
-> - Fix: the prompt was rewritten to make the nested shape explicit (see Q9), so
->   `evidence.section` and `evidence.quote` are reliably separate fields.
+> Facts to use (from `proto3/3pipeline.ipynb` Stage 2c, current state):
+> - The call sends `prompt` to `client.models.generate_content` with
+>   `response_mime_type="application/json"` and
+>   `response_json_schema=MethodologyProfile.model_json_schema()` in
+>   `GenerateContentConfig` — Gemini's structured-output mode, not free-form
+>   generation. The reply is parsed directly with
+>   `MethodologyProfile.model_validate_json(response.text)`: no manual JSON
+>   extraction, no markdown-fence handling, no `json.loads`.
+> - Bug found during actual testing on "Attention Is All You Need," **before**
+>   structured output was added: an earlier prompt version said "evidence" was a
+>   single quoted sentence but also said to "return the section heading and one
+>   sentence quoted verbatim" — an internally inconsistent instruction. Gemini
+>   resolved the ambiguity by returning `evidence` as one flat string with the
+>   heading prepended (e.g. `"## Introduction In this work we propose..."`), not the
+>   nested `{section, quote}` object the design intended.
+> - At the time, the fix was to rewrite the prompt to make the nested shape explicit.
+>   Today that fix is superseded: the nested shape is structurally guaranteed by
+>   `response_json_schema` (built from the `Evidence` Pydantic model) regardless of
+>   what the prompt says, so this class of bug can no longer recur.
 > - This is worth including as evidence of real testing and iteration, not just
 >   design on paper — it directly answers "is this technically challenging?"
-> - Reproducibility: the call now passes `config=types.GenerateContentConfig(temperature=0, seed=0)`.
->   Rationale: this is schema-guided extraction, not creative generation — the same
->   paper should yield the same answer, so sampling diversity (the point of a
->   non-zero temperature) is not wanted here. `seed` is an added determinism lever
->   alongside `temperature=0`.
+> - Reproducibility: the call still passes `temperature=0, seed=0` alongside the
+>   schema config. Rationale: this is schema-guided extraction, not creative
+>   generation — the same paper should yield the same answer, so sampling diversity
+>   is not wanted here. `seed` is an added determinism lever alongside `temperature=0`.
 > - Honest limitation: `temperature=0` and a fixed `seed` reduce but do not fully
 >   guarantee identical output on every run — some LLM serving backends, including
 >   Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so
->   exact reproducibility is not fully guaranteed.
+>   exact reproducibility is not fully guaranteed. Section 7's two pipeline runs
+>   confirm this empirically (Dataset/EvaluationMetric scores differ between runs).
 
 A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"):
 ```python
 response = client.models.generate_content(
     model=MODEL_NAME,
     contents=prompt,
-    config=types.GenerateContentConfig(temperature=0, seed=0),
+    config=types.GenerateContentConfig(
+        temperature=0,
+        seed=0,
+        response_mime_type="application/json",
+        response_json_schema=MethodologyProfile.model_json_schema(),
+    ),
 )
 
-raw_text = response.text.strip()
-if raw_text.startswith("```"):
-    raw_text = raw_text.strip("`")
-    raw_text = raw_text.removeprefix("json").strip()
-
-profile = json.loads(raw_text)
+profile = MethodologyProfile.model_validate_json(response.text)
 ```
-This sends the full prompt (with the paper text substituted in) to `client.models.generate_content` and parses the response with `json.loads` after stripping any Markdown code fence Gemini adds around the JSON. `config=types.GenerateContentConfig(temperature=0, seed=0)` was added after testing — this is schema-guided extraction, not creative generation, so sampling diversity is not wanted, and a fixed seed is a second determinism lever alongside temperature 0. Even with both set, some LLM serving backends, including Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so exact reproducibility is not fully guaranteed. During testing on "Attention Is All You Need," an earlier prompt version asked for "evidence" as a single quoted sentence but also said to return the section heading and the quote together — an internally inconsistent instruction. Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended (e.g. `"## Introduction In this work we propose..."`), not the nested `{section, quote}` object the design intended. The fix was to rewrite the prompt to make the nested shape explicit (Q9), after which `evidence.section` and `evidence.quote` came back as reliably separate fields.
+This sends the full prompt (with the paper text substituted in) to `client.models.generate_content` in Gemini's structured-output mode: `response_mime_type="application/json"` plus `response_json_schema=MethodologyProfile.model_json_schema()` constrain Gemini to return the required four-role shape, and `MethodologyProfile.model_validate_json(response.text)` parses it directly — no manual JSON extraction or markdown-fence handling needed. `temperature=0, seed=0` were added after testing — this is schema-guided extraction, not creative generation, so sampling diversity is not wanted, and a fixed seed is a second determinism lever alongside temperature 0. Even with both set, some LLM serving backends, including Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so exact reproducibility is not fully guaranteed — Section 7's two pipeline runs confirm this empirically. During earlier testing on "Attention Is All You Need," before structured output was added, an earlier prompt version asked for "evidence" as a single quoted sentence but also said to return the section heading and the quote together — an internally inconsistent instruction. Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended (e.g. `"## Introduction In this work we propose..."`), not the nested `{section, quote}` object the design intended. At the time, the fix was to rewrite the prompt to make the nested shape explicit; today that fix is superseded, since the nested shape is structurally guaranteed by `response_json_schema` regardless of prompt wording, so this specific output-shape bug is now prevented by schema validation.
 
 **Q11:** Is the code clear and readable? Is it high quality? Give concrete evidence.
 
@@ -320,14 +354,15 @@ This sends the full prompt (with the paper text substituted in) to `client.model
 > - Honest limitation to mention: this is still notebook code mixing exploratory
 >   output with pipeline logic; there are no automated tests yet for the JSON-parsing
 >   or evidence-validation logic, even though `pytest` is a listed dev dependency.
-> - Second honest limitation: `proto3/baseline.ipynb` is a byte-identical duplicate of
->   `proto3/3pipeline.ipynb` (confirmed with `diff` — no differences), used to run the
->   pipeline once per paper via manual file upload to produce the six
->   `proto3/baseline/*.json` outputs. Its own Colab-badge cell still links to
->   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
->   inconsistency to weigh against the strict typing/linting setup above.
+> - Second point, now resolved: `proto3/baseline.ipynb` used to be a byte-identical
+>   duplicate of `proto3/3pipeline.ipynb` (confirmed with `diff` — no differences),
+>   kept around only to have produced the six `proto3/baseline/*.json` outputs. That
+>   file has been deleted — `proto3/baseline/*.json` is now the sole frozen artifact,
+>   and `proto3/update_baseline.py` regenerates the notebook's copy of those answers
+>   from the JSON files directly, so there is no second notebook to keep in sync by
+>   hand.
 
-A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. Two honest limitations: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. Also, `proto3/baseline.ipynb` is a byte-identical duplicate of `proto3/3pipeline.ipynb`, used to run the pipeline once per paper via manual file upload to produce the six `proto3/baseline/*.json` outputs — its own Colab-badge cell still links to `.../proto3/3pipeline.ipynb`, not its own filename, a small but concrete inconsistency to weigh against the strict typing/linting setup above.
+A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. One honest limitation remains: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. A second issue I found and fixed: `proto3/baseline.ipynb` used to be a byte-identical duplicate of `proto3/3pipeline.ipynb`, kept only to have produced the six `proto3/baseline/*.json` outputs. I deleted it — `proto3/baseline/*.json` is now the sole frozen artifact, and `proto3/update_baseline.py` regenerates the notebook's copy of those answers directly from the JSON files, so there is no second notebook to keep in sync by hand.
 
 ---
 
@@ -397,7 +432,7 @@ This is the real output for "Attention Is All You Need," not a mockup — same f
 
 A: A before/after screenshot pair contrasting proto2's sentence-count output with proto3's answer+evidence output, to make the improvement in Q12 concrete.
 
-![proto3 output](<./Screenshot 2026-07-18 195120.png>)
+![proto3 output](<./Screenshot 2026-07-19 180851.png>)
 ![proto2 output](<./Screenshot 2026-07-18 195636.png>)
 
 ---
@@ -408,9 +443,16 @@ A: A before/after screenshot pair contrasting proto2's sentence-count output wit
 
 > Reused from `proto3/memo.md` "Evaluation (3 axes)" — same 6 papers and gold labels
 > as proto2:
-> 1. **Gold label match** — does `answer` contain the gold label as a substring? Same
->    method as proto2, but applied to one answer per role instead of 100+ sentences —
->    much harder to pass than recall over a large candidate list.
+> 1. **Gold label match — implemented as classification-style Precision/Recall/F1**
+>    — not just "does `answer` contain the gold label as a substring", but a full
+>    TP/FP/FN/TN scheme per (paper, role) slot: gold and answer both absent is a true
+>    negative (correct abstention); a hallucinated answer where gold is absent is a
+>    false positive; a missed answer is a false negative; a matching answer is a true
+>    positive; and — the important part — a present-but-wrong answer counts as both a
+>    false positive and a false negative, so a confident wrong guess costs both
+>    precision and recall rather than being free. This directly targets proto2's
+>    biggest weakness: recall-only scoring where a large candidate list could contain
+>    the gold term without the output itself being precise.
 > 2. **Human precision check** — is `answer` plausibly correct by human judgment?
 >    Catches valid answers that don't match the gold label string, and wrong answers
 >    that happen to match it.
@@ -422,54 +464,88 @@ A: A before/after screenshot pair contrasting proto2's sentence-count output wit
 >    3. Does `evidence.quote` appear verbatim in the input paper text?
 >    4. Is `evidence.section` the correct section for that quote?
 
-A: The evaluation uses the same 6 papers and gold labels as proto2, checked on three axes. First, gold label match: does `answer` contain the gold label as a substring — the same method as proto2, but now applied to one answer per role instead of over 100 candidate sentences, which is much harder to pass. Second, a human precision check: is `answer` plausibly correct by human judgment — this catches valid answers that do not match the gold string, and wrong answers that happen to match it. Third, an evidence check, in priority order: does `evidence.quote` support `answer`; is the evidence about the target paper's own work and not prior work (the authorship problem from Q3); does `evidence.quote` appear verbatim in the paper text; and is `evidence.section` the correct section for that quote. This method is appropriate because it checks precision, not just recall — proto2's recall-only score only showed the gold term appeared somewhere in the output, not that the output itself was a usable answer.
+A: The evaluation uses the same 6 papers and gold labels as proto2, checked on three axes. First, gold label match, implemented as a classification-style Precision/Recall/F1 metric: for each (paper, role) slot, gold and answer both absent is a true negative, a hallucinated answer where gold is absent is a false positive, a missed answer is a false negative, a matching answer is a true positive, and — the part that matters most — a present-but-wrong answer counts as both a false positive and a false negative, so a confident wrong guess is not free. This directly targets proto2's biggest weakness: recall-only scoring where a large candidate list could contain the gold term without the output itself being precise. Second, a human precision check: is `answer` plausibly correct by human judgment — this catches valid answers that do not match the gold string, and wrong answers that happen to match it. Third, an evidence check, in priority order: does `evidence.quote` support `answer`; is the evidence about the target paper's own work and not prior work (the authorship problem from Q3); does `evidence.quote` appear verbatim in the paper text; and is `evidence.section` the correct section for that quote.
 
 **Q15:** What is the current evaluation status, and what did the initial test show?
 
 > Be honest about what has actually been done (from `proto3/memo.md` "Implementation
-> status", the Q10 bug story, and `proto3/baseline/*.json`):
+> status" and "Evaluation (3 axes)", the Q10 bug story, and `proto3/3pipeline.ipynb`
+> Stage 3):
 > - Initial, informal testing on "Attention Is All You Need" surfaced the
 >   evidence-shape bug (Q10), fixed by making the prompt's output shape explicit.
-> - Since then, Stage 0-2 has been run on all six papers in the set (same set as
->   proto2: Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank) — the raw
->   answer+evidence JSON for each is saved in `proto3/baseline/*.json` (matches the
->   six examples in the Reference/Appendix section below).
-> - The formal 3-axis evaluation (gold label match / human precision / evidence
->   check) against these six outputs has **not** been run yet — there is no scoring
->   script and no pass/fail count. The Related Work ablation and batch processing
->   across `proto3/previouswork/` are also not yet implemented.
-> - Frame this as an honest limitation: extraction now runs end-to-end across the
->   whole six-paper set and produces output for every paper, but its accuracy has
->   not yet been measured against the gold labels.
-> - Informal, quick check only (axis 1, gold-label substring match, done by hand
->   against `proto3/baseline/*.json` and the gold-label table in the Reference
->   section below — not the formal evaluation script, and no human-precision or
->   evidence-verification pass has been done):
+> - Axis 1 (gold label match) is now implemented as the classification-style
+>   Precision/Recall/F1 metric from Q14, in `proto3/3pipeline.ipynb` Stage 3, scored
+>   against both the gold labels and the frozen `proto3/baseline/*.json`. It has been
+>   run live across all six papers, and — separately — the pipeline itself has been
+>   re-run twice on all six papers (same code, no prompt changes, across a kernel
+>   restart) to see how stable the numbers are.
+> - Axes 2 (human precision) and 3 (evidence check) are still not implemented, nor
+>   are the Related Work ablation or batch processing across `proto3/previouswork/`.
+> - Results:
 >
->   | Paper | TM | Task | Dataset | EM | Score |
->   |---|---|---|---|---|---|
->   | Transformer | match | match | match | match | 4/4 |
->   | BERT | match | no | no | match | 2/4 |
->   | AlexNet | match | match | match | match | 4/4 |
->   | ResNet | match | no | match | match | 3/4 |
->   | MapReduce | match | no | no (null) | no | 1/4 |
->   | PageRank | no | no | match | no (null) | 1/4 |
+>   Baseline (frozen `proto3/baseline/*.json`) vs gold, all 6 papers:
 >
->   Total: 15/24 (62.5%). Caveats worth stating: strict substring matching
->   penalizes near-misses (e.g. ResNet's answer "image classification" vs. gold
->   "image recognition" — arguably close but scored as a miss here); MapReduce and
->   PageRank both have one `null` field, which always scores as a miss under this
->   method. Treat this as a rough indicator to write from, not a result to cite as
->   final — the formal evaluation (Q16) is what would confirm or correct it.
-> - Timing caveat: the six `proto3/baseline/*.json` files were generated before
->   `temperature=0`/`seed=0` were added to the Gemini call (see Q10). They were run
->   at the SDK's default sampling settings, not the now-deterministic config. If the
->   formal evaluation (Q16) is run against fresh output instead of these existing
->   files, scores could shift slightly from the 15/24 above.
+>   | Role | P | R | F1 |
+>   |---|---|---|---|
+>   | TechnicalMethod | 0.83 | 0.83 | 0.83 |
+>   | Task | 0.33 | 0.33 | 0.33 |
+>   | Dataset | 0.80 | 0.67 | 0.73 |
+>   | EvaluationMetric | 0.80 | 0.67 | 0.73 |
+>   | Overall | 0.68 | 0.62 | 0.65 |
+>
+>   Pipeline vs gold, two separate runs:
+>
+>   | Role | Run 1 F1 | Run 2 F1 |
+>   |---|---|---|
+>   | TechnicalMethod | 0.83 | 0.83 |
+>   | Task | 0.33 | 0.33 |
+>   | Dataset | 0.80 | 0.91 |
+>   | EvaluationMetric | 0.67 | 0.50 |
+>   | Overall | 0.65 | 0.64 |
+>
+> - Key finding: TechnicalMethod and Task score identically across baseline and both
+>   pipeline runs (same TP/FP/FN/TN every time) — Task is the weakest role (F1=0.33),
+>   and its unchanged score suggests a systematic weakness rather than run-to-run
+>   noise. Dataset and EvaluationMetric vary between the two pipeline runs despite
+>   unchanged code, `temperature=0`, and `seed=0` — Gemini does not guarantee
+>   bit-for-bit reproducibility across sessions. A single run's F1 for those two
+>   roles is therefore not a stable point estimate; report it as one observed run,
+>   not as "the" pipeline score.
+> - Note the baseline is not a like-for-like third run: `proto3/baseline/*.json` was
+>   generated before `temperature=0`/`seed=0` were added to the Gemini call, so only
+>   the two pipeline runs share identical settings — say this explicitly rather than
+>   implying three same-condition runs.
+> - The old informal 15/24 substring-match table (below) is now superseded by the
+>   formal per-role numbers above; keep it only as historical context for how the
+>   evaluation approach evolved.
 
-A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, Stage 0–2 has been run on all six papers in the same set as proto2 (Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank); the raw answer+evidence JSON for each is saved in `proto3/baseline/*.json`. The formal 3-axis evaluation from Q14 has not been run yet — there is no scoring script and no pass/fail count, and the Related Work ablation and batch processing across `proto3/previouswork/` are not yet implemented either.
+A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, axis 1 (gold label match) has been implemented as the classification-style Precision/Recall/F1 metric described in Q14, in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold labels and the frozen `proto3/baseline/*.json`. Axes 2 (human precision) and 3 (evidence check) are still not implemented, and neither is the Related Work ablation or batch processing across `proto3/previouswork/`.
 
-As an informal, quick check only (gold-label substring match by hand, not the formal evaluation script, and no human-precision or evidence-verification pass):
+I ran the metric across all six papers against the frozen baseline, then ran the current pipeline twice more across a kernel restart to check how stable the numbers are — though the baseline is not a like-for-like third run, since `proto3/baseline/*.json` was generated before `temperature=0` and `seed=0` were added to the Gemini call, and only the two pipeline runs share those settings:
+
+Baseline vs gold:
+
+| Role | P | R | F1 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 | 0.33 |
+| Dataset | 0.80 | 0.67 | 0.73 |
+| EvaluationMetric | 0.80 | 0.67 | 0.73 |
+| Overall | 0.68 | 0.62 | 0.65 |
+
+Pipeline vs gold, two runs:
+
+| Role | Run 1 F1 | Run 2 F1 |
+|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 |
+| Task | 0.33 | 0.33 |
+| Dataset | 0.80 | 0.91 |
+| EvaluationMetric | 0.67 | 0.50 |
+| Overall | 0.65 | 0.64 |
+
+TechnicalMethod and Task score identically across the baseline and both pipeline runs — Task is the weakest role at F1=0.33, and its unchanged score in both current runs suggests a systematic weakness rather than run-to-run noise. Dataset and EvaluationMetric, by contrast, change between the two pipeline runs despite unchanged code, `temperature=0`, and `seed=0`: Gemini does not guarantee bit-for-bit reproducibility across sessions, so a single run's F1 for those two roles is not a stable point estimate, and I report it as one observed run rather than "the" pipeline score.
+
+For historical context, the earlier informal check (gold-label substring match by hand, before this metric existed) gave:
 
 | Paper | TM | Task | Dataset | EM | Score |
 |---|---|---|---|---|---|
@@ -480,14 +556,22 @@ As an informal, quick check only (gold-label substring match by hand, not the fo
 | MapReduce | match | no | no (null) | no | 1/4 |
 | PageRank | no | no | match | no (null) | 1/4 |
 
-Total: 15/24 (62.5%). Strict substring matching penalizes near misses — ResNet's answer "image classification" versus gold "image recognition" is arguably close but scored as a miss here — and MapReduce and PageRank each have one `null` field, which always scores as a miss under this method. This is a rough indicator, not a final result; the formal evaluation in Q16 would confirm or correct it. The six `proto3/baseline/*.json` files were also generated before `temperature=0`/`seed=0` were added to the Gemini call, so scores could shift slightly if the formal evaluation runs against fresh output instead of these existing files.
+Total: 15/24 (62.5%) — this is now superseded by the formal per-role Precision/Recall/F1 numbers above.
 
 **Q16:** How do you intend to improve the prototype next?
 
-> Facts to use (from `proto3/memo.md` "Evaluation" and "Ablation"):
-> - Score the six outputs already in `proto3/baseline/*.json` against the gold labels
->   in the Reference section below, using the 3-axis method from Q14 — the raw
->   extraction is done (Q15); scoring it is the next step, not a re-run.
+> Facts to use (from `proto3/memo.md` "Evaluation" and "Ablation", and Q15's results):
+> - Task is the weakest role (F1=0.33) and, unlike Dataset/EvaluationMetric, it is
+>   stable across baseline and both pipeline runs — so it is the most promising
+>   target for a prompt change, since any improvement there would be a real signal,
+>   not noise.
+> - Implement axes 2 (human precision) and 3 (evidence check) from Q14 — axis 1 alone
+>   cannot catch a wrong answer that happens to match the gold substring, or a valid
+>   answer that does not.
+> - Dataset and EvaluationMetric's run-to-run variance (Q15) is not a bug to "fix" —
+>   it reflects Gemini's own non-determinism. The right response is to quantify it
+>   (e.g. run 3-5 times and report a range or majority answer) rather than treat a
+>   single run's number as final.
 > - Compare the result against proto2's 18/24 (75%) recall-only result from
 >   `report1/report.md` Appendix B — but note the comparison is not apples-to-apples:
 >   proto3's gold-label check is against one answer per role, not against acceptance
@@ -499,20 +583,24 @@ Total: 15/24 (62.5%). Strict substring matching penalizes near misses — ResNet
 > - Automate the evidence verbatim check (string search in paper text) as part of the
 >   evaluation script, rather than checking by hand.
 
-A: The next step is to score the six outputs already in `proto3/baseline/*.json` against the gold labels using the 3-axis method from Q14 — the extraction itself is done (Q15); scoring it is what remains. The result can then be compared against proto2's 18/24 (75%) recall-only result, though the comparison is not apples-to-apples: proto3's check is against one answer per role, not acceptance anywhere in 100+ sentences, so a lower raw score could still represent a stronger result. I also plan to run the Related Work ablation (exclude vs. keep Related Work in the input text) to test whether the extra context helps or introduces attribution noise, visible through `evidence.section`, and to automate the evidence verbatim check (string search in the paper text) as part of the evaluation script instead of checking by hand.
+A: Task is the weakest role (F1=0.33) and, unlike Dataset and EvaluationMetric, it stayed exactly the same across the baseline and both pipeline runs — so it is the most promising target for a prompt change, since any improvement there would be a real signal rather than run-to-run noise. Next, I plan to implement axes 2 (human precision) and 3 (evidence check) from Q14, since axis 1 alone cannot catch a wrong answer that happens to match the gold substring, or a valid answer that does not. Dataset and EvaluationMetric's run-to-run variance is not something to "fix" — it reflects Gemini's own non-determinism — so instead of treating a single run's number as final, I plan to run the pipeline several times and report a range or majority answer for those two roles. I also plan to compare against proto2's 18/24 (75%) recall-only result, though the comparison is not apples-to-apples: proto3's check is against one answer per role, not acceptance anywhere in 100+ sentences, so a lower raw score could still represent a stronger result. Finally, I plan to run the Related Work ablation (exclude vs. keep Related Work in the input text) to test whether the extra context helps or introduces attribution noise, visible through `evidence.section`, and to automate the evidence verbatim check (string search in the paper text) as part of the evaluation script instead of checking by hand.
 
 ---
 
 ## Reference: Full Extraction Prompt
 
-From `proto3/memo.md` "Stage 2 — LLM extraction":
+Current `PROMPT_TEMPLATE` cell, `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template".
+This is deliberately shorter than an earlier version: it no longer specifies the JSON
+output shape (four keys, nested `evidence.section`/`evidence.quote`, `null` handling)
+in the prompt text — that shape is now enforced by passing
+`response_json_schema=MethodologyProfile.model_json_schema()` to Gemini's
+structured-output config (Q8, Q10), so the prompt only needs to state rules the
+schema itself cannot express.
 
 ```
 You are extracting research methodology from a computing research paper.
 
-For each of the four roles below, return an object with:
-- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+For each of the four roles below, identify the answer and its supporting evidence.
 
 Roles:
 - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
@@ -522,16 +610,8 @@ Roles:
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
-- Return only the JSON object, no explanation, in this exact shape:
-
-{
-  "TechnicalMethod": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Task": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Dataset": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "EvaluationMetric": {"answer": "...", "evidence": {"section": "...", "quote": "..."}}
-}
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
 
 Paper text:
 {paper_text}
@@ -813,3 +893,20 @@ Q4, Q12, and Q15's informal score table, not a design mockup.
   }
 }
 ```
+
+---
+
+## Dataset Papers
+
+[D1] Sergey Brin and Lawrence Page. 1998. The anatomy of a large-scale hypertextual web search engine. *Computer Networks and ISDN Systems*, 30(1–7), 107–117. https://doi.org/10.1016/S0169-7552(98)00110-X
+
+[D2] Jeffrey Dean and Sanjay Ghemawat. 2004. MapReduce: Simplified data processing on large clusters. In *Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI '04)*. USENIX Association, 137–150. https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters
+
+[D3] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of deep bidirectional transformers for language understanding. In *Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019)*, Volume 1. Minneapolis, Minnesota: Association for Computational Linguistics, 4171–4186. https://doi.org/10.18653/v1/N19-1423
+
+[D4] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)*, 770–778. https://doi.org/10.1109/CVPR.2016.90
+
+[D5] Alex Krizhevsky, Ilya Sutskever, and Geoffrey E. Hinton. 2012. ImageNet classification with deep convolutional neural networks. In *Advances in Neural Information Processing Systems*, 25, 1097–1105. https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html
+
+[D6] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In *Advances in Neural Information Processing Systems*, 30, 5998–6008. https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html
+

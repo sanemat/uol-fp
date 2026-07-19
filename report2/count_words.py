@@ -6,9 +6,12 @@ Excluded from count:
   - Markdown table rows (lines starting and ending with |)
   - Horizontal rules (---)
   - Heading markers (## etc.), formatting characters (*_`)
+  - Figure/Table captions (lines like "*Figure 1: ...*" or "Table 2: ...")
 
 References and Appendix do not count toward the word limit, per the
 assignment's own carve-out for "additional pages of images or references."
+Figure/Table captions are excluded on the same basis: they describe images,
+code listings, and tables rather than contributing report prose.
 
 Usage:
     python3 report2/count_words.py
@@ -26,6 +29,8 @@ def count_words(chunk: str) -> int:
     chunk = re.sub(r"```.*?```", "", chunk, flags=re.DOTALL)
     # Remove markdown table rows
     chunk = re.sub(r"^\|.*\|$", "", chunk, flags=re.MULTILINE)
+    # Remove figure/table captions, e.g. "*Figure 1: ...*" or "Table 2: ..."
+    chunk = re.sub(r"^\*?(Figure|Table) \d+:.*$", "", chunk, flags=re.MULTILINE)
     # Remove horizontal rules
     chunk = re.sub(r"^---+$", "", chunk, flags=re.MULTILINE)
     # Remove image syntax: ![alt](src)
