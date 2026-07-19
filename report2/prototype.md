@@ -1,4 +1,4 @@
-# Prototype: Document-Level Methodology Extraction (773 words, exclude: References, Appendix, figures, tables)
+# Prototype: Document-Level Methodology Extraction (858 words, exclude: References, Appendix, figures, tables)
 
 <style>
 @page {
@@ -54,7 +54,7 @@ References and Acknowledgements are removed by heading match; Stage 1 then joins
 
 Dataset and EvaluationMetric often occur in experimental sections rather than the Abstract or Method [Jain et al. 2020], so I retain the full document rather than an excerpt. The papers I use fit within the model's context window, so I send the full structured paper directly rather than introducing chunking or retrieval. I use Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit).
 
-The prompt names all four roles and specifies the required JSON structure. Quotes must be verbatim, and absent roles are returned as `null`. One rule, "use the authors' own method, not methods cited from prior work," is explained further in Section 5.
+The prompt names all four roles and states rules the JSON schema itself cannot express: use the authors' own method, not methods cited from prior work; return null for an absent role; quotes must be verbatim. The four-role JSON structure itself is enforced separately, by passing a JSON schema generated from the Pydantic models to Gemini's structured-output config — not by describing the shape in the prompt text. This is explained further in Section 5.
 
 ## 5. Code Explanation
 
@@ -63,12 +63,12 @@ The prompt template (`proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
 ```
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
 ```
 *Figure 2: Prompt rules excerpt from `proto3/3pipeline.ipynb` Stage 2b.*
 
-`evidence` is a nested object rather than a single string so `section` and `quote` stay separate fields for the checks in Section 7.
+The prompt no longer describes the output shape at all — `evidence` being a nested object with separate `section` and `quote` fields (needed for the checks in Section 7) is defined once, on the `Evidence` Pydantic model, and enforced through the schema below rather than repeated in prompt text.
 
 The call and response parsing (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"):
 
@@ -76,21 +76,21 @@ The call and response parsing (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemi
 response = client.models.generate_content(
     model=MODEL_NAME,
     contents=prompt,
-    config=types.GenerateContentConfig(temperature=0, seed=0),
+    config=types.GenerateContentConfig(
+        temperature=0,
+        seed=0,
+        response_mime_type="application/json",
+        response_json_schema=MethodologyProfile.model_json_schema(),
+    ),
 )
 
-raw_text = response.text.strip()
-if raw_text.startswith("```"):
-    raw_text = raw_text.strip("`")
-    raw_text = raw_text.removeprefix("json").strip()
-
-profile = json.loads(raw_text)
+profile = MethodologyProfile.model_validate_json(response.text)
 ```
 *Figure 3: Gemini call and response parsing from `proto3/3pipeline.ipynb` Stage 2c.*
 
-The Markdown-fence strip handles cases where Gemini wraps its JSON response in a code block; `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
+`response_json_schema`, generated from the `MethodologyProfile` Pydantic model, tells Gemini to return exactly the four-role shape; `MethodologyProfile.model_validate_json` then parses it directly, with no manual JSON extraction step. `temperature=0` and `seed=0` reduce (but do not guarantee) run-to-run variation.
 
-An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. Specifying the nested object explicitly fixed this.
+An earlier prompt described `evidence` inconsistently, so Gemini returned the heading and quote as one string. At the time this was patched by making the prompt's nested shape explicit; today the nested shape is guaranteed by `response_json_schema` regardless of prompt wording, so this class of bug cannot recur.
 
 Code quality: `pyright` runs in `strict` mode and `ruff` lints and formats, but there are no automated tests yet for the JSON-parsing or evidence-validation logic.
 

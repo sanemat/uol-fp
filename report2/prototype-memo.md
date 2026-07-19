@@ -214,16 +214,21 @@ how is the four-role schema enforced?
 > - The prompt names all four roles explicitly and gives a rule: "Use the authors'
 >   own method, not methods cited from prior work" — directly targeting proto2's
 >   biggest known failure (Q3/Q5).
-> - It specifies the exact output shape (nested JSON, one object per role with
->   `answer` and `evidence.section`/`evidence.quote`) and requires the quote to be
->   copied verbatim, not paraphrased — so the answer can be checked against the
->   source text.
-> - It tells the model to return `null` for both fields if a role is not present in
->   the paper, rather than guessing.
+> - The four-role schema is **not** enforced by prompt wording — the prompt does not
+>   describe the JSON shape at all. It is enforced by passing
+>   `response_json_schema=MethodologyProfile.model_json_schema()` (a JSON Schema
+>   generated from the `Evidence`/`RoleExtraction`/`MethodologyProfile` Pydantic
+>   models) to Gemini's structured-output config, and parsing the reply with
+>   `MethodologyProfile.model_validate_json(...)`.
+> - The prompt only states rules the schema itself cannot express: the
+>   authors'-own-work rule, and that quotes must be copied verbatim.
+> - The `null`-for-both-fields correlation (if a role is absent, `answer` and
+>   `evidence` are both `null`) is enforced by a Pydantic `model_validator` on
+>   `RoleExtraction`, not by a prompt instruction.
 > - Full prompt text is in the Reference section below — quote the relevant rule
 >   lines in your write-up rather than the whole prompt.
 
-A: The prompt names all four roles explicitly and states one rule: use the authors' own method, not methods cited from prior work. This targets proto2's biggest known failure — e.g. BERT's Introduction citing ELMo, which proto2's NLI scored 0.87 as TechnicalMethod. The four-role schema is enforced by giving the exact output shape in the prompt: one JSON object per role with an `answer` and a nested `evidence` object (`section` and `quote`), and by requiring the quote to be copied verbatim rather than paraphrased, so each answer can be checked against the source text. If a role is not present in the paper, the model is told to return `null` for both fields instead of guessing.
+A: The prompt names all four roles explicitly and states one rule: use the authors' own method, not methods cited from prior work. This targets proto2's biggest known failure — e.g. BERT's Introduction citing ELMo, which proto2's NLI scored 0.87 as TechnicalMethod. The four-role schema is not enforced by the prompt at all — the prompt text does not describe the JSON shape. It is enforced by passing `response_json_schema=MethodologyProfile.model_json_schema()`, a JSON Schema generated from the `Evidence`/`RoleExtraction`/`MethodologyProfile` Pydantic models, to Gemini's structured-output config, then parsing the reply with `MethodologyProfile.model_validate_json(...)`. The prompt is left to state only what the schema cannot express: the authors'-own-work rule and the verbatim-quote rule. Whether a role is absent (`answer` and `evidence` both `null`) is enforced by a Pydantic `model_validator` on `RoleExtraction`, not by asking the model nicely.
 
 ---
 
@@ -232,80 +237,109 @@ A: The prompt names all four roles explicitly and states one rule: use the autho
 **Q9:** Quote and explain the extraction prompt template
 (`proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template").
 
-> Actual prompt (from `proto3/memo.md`, matches the notebook's `PROMPT_TEMPLATE`
-> cell):
+> Actual prompt (current `PROMPT_TEMPLATE` cell in `proto3/3pipeline.ipynb`, "Stage
+> 2b — Prompt Template" — this replaced an older version that also spelled out the
+> JSON shape; the shape is now carried by the schema instead, see Q8):
 > ```
-> For each of the four roles below, return an object with:
-> - "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-> - "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+> You are extracting research methodology from a computing research paper.
+>
+> For each of the four roles below, identify the answer and its supporting evidence.
+>
+> Roles:
+> - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
+> - Task: the research task or problem being addressed
+> - Dataset: the dataset used for training or evaluation
+> - EvaluationMetric: the metric used to report results
 >
 > Rules:
 > - Use the authors' own method, not methods cited from prior work.
-> - If a field is not present in the paper, return null for both "answer" and "evidence".
-> - The "quote" must be copied verbatim from the paper text, not paraphrased.
+> - Return null when a role is not present in the paper.
+> - Evidence quotes must be copied verbatim from the paper, not paraphrased.
+>
+> Paper text:
+> {paper_text}
 > ```
-> Explain: why `answer` is constrained to "shortest identifying term" (avoids the
-> proto2 problem of getting whole sentences back instead of a usable label); why
-> `evidence` is a nested object rather than a single string — this was not the
-> original design (see Q10's bug story) — and why the verbatim-quote rule matters for
-> the evidence check in Section 7.
+> Explain: the prompt no longer says anything about `answer` being a "shortest
+> identifying term" or about `evidence` being a nested object — those constraints
+> now live on the Pydantic models (`RoleExtraction.answer`'s `Field(description=...)`,
+> and the `Evidence` model's `section`/`quote` fields) and are enforced through
+> `response_json_schema`, not prompt wording (see Q8). The prompt keeps only what the
+> schema can't express: the authorship rule, and the verbatim-quote rule, which
+> matters for the evidence check in Section 7.
 
-A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
+A: Quote (current `PROMPT_TEMPLATE` cell, `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
 ```
-For each of the four roles below, return an object with:
-- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+You are extracting research methodology from a computing research paper.
+
+For each of the four roles below, identify the answer and its supporting evidence.
+
+Roles:
+- TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
+- Task: the research task or problem being addressed
+- Dataset: the dataset used for training or evaluation
+- EvaluationMetric: the metric used to report results
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
+
+Paper text:
+{paper_text}
 ```
-`answer` is constrained to the shortest identifying term so the model returns a usable label ("Transformer") instead of a full sentence — this was proto2's core problem, where the "answer" was really 151 candidate sentences. `evidence` is a nested object rather than a single string so `section` and `quote` stay separate fields; this was not the first design (see Q10) — an earlier version asked for a single string and Gemini merged the heading and quote together, which is not checkable. The verbatim-quote rule matters because Section 7's evidence check needs to confirm the quote appears in the paper text word-for-word, not paraphrased text that cannot be searched for.
+This prompt no longer says anything about `answer` being a "shortest identifying term" or about `evidence` being a nested object — an earlier version of the prompt did, but those constraints now live on the Pydantic models instead (`RoleExtraction.answer`'s `Field(description=...)` for the label constraint, the `Evidence` model's `section`/`quote` fields for the nested shape) and are enforced through `response_json_schema` (Q8), not prompt wording. The prompt keeps only what the schema itself cannot express: the authors'-own-work rule, which targets proto2's authorship-attribution failure, and the verbatim-quote rule, which matters because Section 7's evidence check needs to confirm the quote appears in the paper text word-for-word, not paraphrased text that cannot be searched for.
 
 **Q10:** Quote and explain the Gemini call and response parsing
 (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"), including the
 evidence-shape bug you found during testing.
 
-> Facts to use (from `proto3/memo.md`, note under the prompt):
-> - The call sends `PROMPT_TEMPLATE` (with the paper text substituted in) to
->   `client.models.generate_content` and parses the JSON response with `json.loads`.
-> - Bug found during actual testing on "Attention Is All You Need": an earlier prompt
->   version said "evidence" was a single quoted sentence but also said to "return the
->   section heading and one sentence quoted verbatim" — an internally inconsistent
->   instruction. Gemini resolved the ambiguity by returning `evidence` as one flat
->   string with the heading prepended (e.g. `"## Introduction In this work we
->   propose..."`), not the nested `{section, quote}` object the design intended.
-> - Fix: the prompt was rewritten to make the nested shape explicit (see Q9), so
->   `evidence.section` and `evidence.quote` are reliably separate fields.
+> Facts to use (from `proto3/3pipeline.ipynb` Stage 2c, current state):
+> - The call sends `prompt` to `client.models.generate_content` with
+>   `response_mime_type="application/json"` and
+>   `response_json_schema=MethodologyProfile.model_json_schema()` in
+>   `GenerateContentConfig` — Gemini's structured-output mode, not free-form
+>   generation. The reply is parsed directly with
+>   `MethodologyProfile.model_validate_json(response.text)`: no manual JSON
+>   extraction, no markdown-fence handling, no `json.loads`.
+> - Bug found during actual testing on "Attention Is All You Need," **before**
+>   structured output was added: an earlier prompt version said "evidence" was a
+>   single quoted sentence but also said to "return the section heading and one
+>   sentence quoted verbatim" — an internally inconsistent instruction. Gemini
+>   resolved the ambiguity by returning `evidence` as one flat string with the
+>   heading prepended (e.g. `"## Introduction In this work we propose..."`), not the
+>   nested `{section, quote}` object the design intended.
+> - At the time, the fix was to rewrite the prompt to make the nested shape explicit.
+>   Today that fix is superseded: the nested shape is structurally guaranteed by
+>   `response_json_schema` (built from the `Evidence` Pydantic model) regardless of
+>   what the prompt says, so this class of bug can no longer recur.
 > - This is worth including as evidence of real testing and iteration, not just
 >   design on paper — it directly answers "is this technically challenging?"
-> - Reproducibility: the call now passes `config=types.GenerateContentConfig(temperature=0, seed=0)`.
->   Rationale: this is schema-guided extraction, not creative generation — the same
->   paper should yield the same answer, so sampling diversity (the point of a
->   non-zero temperature) is not wanted here. `seed` is an added determinism lever
->   alongside `temperature=0`.
+> - Reproducibility: the call still passes `temperature=0, seed=0` alongside the
+>   schema config. Rationale: this is schema-guided extraction, not creative
+>   generation — the same paper should yield the same answer, so sampling diversity
+>   is not wanted here. `seed` is an added determinism lever alongside `temperature=0`.
 > - Honest limitation: `temperature=0` and a fixed `seed` reduce but do not fully
 >   guarantee identical output on every run — some LLM serving backends, including
 >   Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so
->   exact reproducibility is not fully guaranteed.
+>   exact reproducibility is not fully guaranteed. Section 7's two pipeline runs
+>   confirm this empirically (Dataset/EvaluationMetric scores differ between runs).
 
 A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"):
 ```python
 response = client.models.generate_content(
     model=MODEL_NAME,
     contents=prompt,
-    config=types.GenerateContentConfig(temperature=0, seed=0),
+    config=types.GenerateContentConfig(
+        temperature=0,
+        seed=0,
+        response_mime_type="application/json",
+        response_json_schema=MethodologyProfile.model_json_schema(),
+    ),
 )
 
-raw_text = response.text.strip()
-if raw_text.startswith("```"):
-    raw_text = raw_text.strip("`")
-    raw_text = raw_text.removeprefix("json").strip()
-
-profile = json.loads(raw_text)
+profile = MethodologyProfile.model_validate_json(response.text)
 ```
-This sends the full prompt (with the paper text substituted in) to `client.models.generate_content` and parses the response with `json.loads` after stripping any Markdown code fence Gemini adds around the JSON. `config=types.GenerateContentConfig(temperature=0, seed=0)` was added after testing — this is schema-guided extraction, not creative generation, so sampling diversity is not wanted, and a fixed seed is a second determinism lever alongside temperature 0. Even with both set, some LLM serving backends, including Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so exact reproducibility is not fully guaranteed. During testing on "Attention Is All You Need," an earlier prompt version asked for "evidence" as a single quoted sentence but also said to return the section heading and the quote together — an internally inconsistent instruction. Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended (e.g. `"## Introduction In this work we propose..."`), not the nested `{section, quote}` object the design intended. The fix was to rewrite the prompt to make the nested shape explicit (Q9), after which `evidence.section` and `evidence.quote` came back as reliably separate fields.
+This sends the full prompt (with the paper text substituted in) to `client.models.generate_content` in Gemini's structured-output mode: `response_mime_type="application/json"` plus `response_json_schema=MethodologyProfile.model_json_schema()` tell Gemini to return exactly the four-role shape, and `MethodologyProfile.model_validate_json(response.text)` parses it directly — no manual JSON extraction or markdown-fence handling needed. `temperature=0, seed=0` were added after testing — this is schema-guided extraction, not creative generation, so sampling diversity is not wanted, and a fixed seed is a second determinism lever alongside temperature 0. Even with both set, some LLM serving backends, including Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so exact reproducibility is not fully guaranteed — Section 7's two pipeline runs confirm this empirically. During earlier testing on "Attention Is All You Need," before structured output was added, an earlier prompt version asked for "evidence" as a single quoted sentence but also said to return the section heading and the quote together — an internally inconsistent instruction. Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended (e.g. `"## Introduction In this work we propose..."`), not the nested `{section, quote}` object the design intended. At the time, the fix was to rewrite the prompt to make the nested shape explicit; today that fix is superseded, since the nested shape is structurally guaranteed by `response_json_schema` regardless of prompt wording, so this class of bug cannot recur.
 
 **Q11:** Is the code clear and readable? Is it high quality? Give concrete evidence.
 
@@ -555,14 +589,18 @@ A: Task is the weakest role (F1=0.33) and, unlike Dataset and EvaluationMetric, 
 
 ## Reference: Full Extraction Prompt
 
-From `proto3/memo.md` "Stage 2 — LLM extraction":
+Current `PROMPT_TEMPLATE` cell, `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template".
+This is deliberately shorter than an earlier version: it no longer specifies the JSON
+output shape (four keys, nested `evidence.section`/`evidence.quote`, `null` handling)
+in the prompt text — that shape is now enforced by passing
+`response_json_schema=MethodologyProfile.model_json_schema()` to Gemini's
+structured-output config (Q8, Q10), so the prompt only needs to state rules the
+schema itself cannot express.
 
 ```
 You are extracting research methodology from a computing research paper.
 
-For each of the four roles below, return an object with:
-- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
-- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+For each of the four roles below, identify the answer and its supporting evidence.
 
 Roles:
 - TechnicalMethod: the main method, model, algorithm, or system proposed by the authors
@@ -572,16 +610,8 @@ Roles:
 
 Rules:
 - Use the authors' own method, not methods cited from prior work.
-- If a field is not present in the paper, return null for both "answer" and "evidence".
-- The "quote" must be copied verbatim from the paper text, not paraphrased.
-- Return only the JSON object, no explanation, in this exact shape:
-
-{
-  "TechnicalMethod": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Task": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "Dataset": {"answer": "...", "evidence": {"section": "...", "quote": "..."}},
-  "EvaluationMetric": {"answer": "...", "evidence": {"section": "...", "quote": "..."}}
-}
+- Return null when a role is not present in the paper.
+- Evidence quotes must be copied verbatim from the paper, not paraphrased.
 
 Paper text:
 {paper_text}
