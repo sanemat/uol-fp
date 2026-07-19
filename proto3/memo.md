@@ -174,8 +174,10 @@ evaluation checks below.
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
 prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
-and parsing the response with Pydantic. Not yet implemented: the 3-axis evaluation below, the
-Related Work ablation, and batch processing across `proto3/previouswork/`.
+and parsing the response with Pydantic. Stage 3 (axis 1 of the evaluation below) is also
+implemented, as a classification-style Precision/Recall/F1 metric scored against gold labels
+and the frozen `proto3/baseline/*.json` outputs. Not yet implemented: axes 2 and 3 of the
+evaluation below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
 
 ---
 
@@ -183,10 +185,15 @@ Related Work ablation, and batch processing across `proto3/previouswork/`.
 
 Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
 
-**1. Gold label match**
-Does `answer` contain the gold label as a substring?
-Same method as proto2, but now applied to one answer per role, not 100+ sentences.
-A correct answer with one sentence is much harder to pass than recall over 151 sentences.
+**1. Gold label match — implemented**
+Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive, either direction)?
+Same match rule as proto2, but now applied to one answer per role, not 100+ sentences, and
+scored as a classification problem (TP/FP/FN/TN, `null` handled as a real value) rather than a
+plain match count. This turns the check into a real Precision/Recall/F1 number: a wrong-but-present
+answer costs both precision and recall, and a hallucinated answer where gold is `null` counts as
+a false positive. Implemented in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold
+labels and the frozen `proto3/baseline/*.json` outputs (baseline answers are hardcoded in the
+notebook, not fetched over the network, since the repo is not public).
 
 **2. Human precision check**
 Is `answer` plausibly correct by human judgment?
