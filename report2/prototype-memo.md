@@ -18,7 +18,7 @@ baseline for the next improvement (Q16).
 > Reused directly from `report1/report.md` Ch1 §2: Template 12.1 (the NLP module
 > template).
 
-A:
+A: This project addresses **Template 12.1** from the Natural Language Processing (NLP) module: Identifying research methodologies used in computing research.
 
 ---
 
@@ -48,7 +48,7 @@ or three sentences.
 >   reference only (not used in submissions), proto2 was the sentence-level NLI
 >   attempt, proto3 reframes the task as document-level extraction.
 
-A:
+A: The current prototype is a document-level methodology extraction. It was developed after an earlier sentence-level zero-shot NLI prototype showed limitations in output noise and document-level context. At least one answer per role (TechnicalMethod, Task, Dataset, and EvaluationMetric) with supporting evidence. This is a schema-guided document-level information extraction approach using a long-context LLM — every answer carries evidence that can be checked against the source text, not "send the paper to an LLM and trust the answer." For example, on "Attention Is All You Need," the prototype extracts TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU". This fits into the overall project goal (automatically extracting research methodology from computing research papers using LLMs) as the current iteration: proto1 is an AI-drafted reference only, proto2 was the sentence-level NLI attempt, and proto3 reframes the task as document-level extraction.
 
 **Q3:** Why was this prototype (proto3) developed? What did the previous iteration
 (proto2) show that motivated the change?
@@ -69,7 +69,7 @@ A:
 >   one paragraph, not a full re-description of proto2 (that belongs to a previous
 >   submission, `report1/feature-prototype.md`).
 
-A:
+A: The previous prototype clasified MapReduce as TechnicalMethod correctly. But it clasified 151 sentences to TechnicalMethod. the real question is "what is the primary TechnicalMethod?" — closer to QA/information extraction than sentence classification. proto2 classified every sentence into one of four roles using zero-shot NLI — this is text classification, not information extraction. It also had no way to separate the authors' own method from methods cited from prior work: for example, BERT's Introduction cites ELMo, and NLI scored the ELMo sentence 0.87 as TechnicalMethod. Its evaluation was recall-only (10/12, or 18/24 across 6 papers) — the gold term only had to appear somewhere in 100+ sentences, not be the output itself — and the 0.5 threshold used to cut sentences was arbitrary, with no principled way to reduce the list.
 
 ---
 
@@ -101,7 +101,19 @@ shape.
 >   ```
 >   (full 4-role example is the first entry in the Appendix below).
 
-A:
+A: TEI XML of one computing research paper (from GROBID) and reads the full paper as one document and extracts one answer per role using a prompt to LLM to produce one JSON object per paper. Concrete output shape (Transformer paper, real output from `proto3/baseline/transformer.json`, not a mockup):
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+    }
+  }
+}
+```
+(full 4-role example is the first entry in the Appendix below.)
 
 **Q5:** Why is document-level extraction with evidence the most important feature to
 prototype (rather than, say, the preprocessing steps)?
@@ -120,7 +132,7 @@ prototype (rather than, say, the preprocessing steps)?
 >   (see Q9's evidence-shape story) and what will make the evaluation in Section 7
 >   possible.
 
-A:
+A: Parsing XML using GROBID-based approach is not the core feature. The core is evidence-based structured answer per role. This shows one output instead of a list of one hundred of candidate sentences. Structured extraction with LLMs is not itself new (see [Dagdelen et al. 2024], [Polak and Morgan 2024]) — the prototype applies it to this project's specific 4-role methodology schema. The evidence field is not decorative: it is what makes the answer checkable (see Q9) and what makes the evaluation in Section 7 possible.
 
 ---
 
@@ -147,6 +159,31 @@ order.
 > Section 6 (see Q13).
 
 A:
+```
+PDF
+  → GROBID (Stage 0: parse sections, same as proto2)
+  → structured TEI document (Abstract + body sections, References/Acknowledgements skipped)
+  → Stage 1: concatenate section texts in reading order, no sentence-level filtering
+  → Stage 2: LLM extraction with a schema-guided prompt
+  → MethodologyProfile JSON (answer + evidence per role)
+```
+Stage 0 skips References/Acknowledgements by heading (`proto3/3pipeline.ipynb`, "Stage 0 — Parse XML"):
+```python
+SKIP_HEADINGS = {"references", "acknowledgements", "acknowledgments"}
+...
+for div in root.findall(".//tei:body//tei:div", NS):
+    heading = div.findtext("tei:head", namespaces=NS) or ""
+    if heading.lower().strip() in SKIP_HEADINGS:
+        continue
+    ...
+```
+Stage 1 just joins section texts in order, no filtering:
+```python
+document_text = ""
+for s in sections:
+    document_text += f"## {s['heading']}\n\n{s['text']}\n\n"
+```
+The key difference from proto2 is that there is no sentence splitting and no per-sentence threshold — the LLM sees the (mostly) whole document and returns one decision per role, not a list of candidate sentences.
 
 **Q7:** Why document-level extraction, and why feed the LLM the full paper instead of
 a filtered excerpt?
@@ -162,7 +199,11 @@ a filtered excerpt?
 > - Keep this short — "why full document" is the point being made here, not a
 >   comparison against other LLMs or context-window sizes.
 
-A:
+A: Document-level extraction is used because a significant amount of information can only be found by analyzing the full document [Jain et al. 2020] — Dataset and EvaluationMetric typically appear only in the Experiment section, not the Abstract or Method, so sending only a filtered excerpt would recreate the same recall gap document-level extraction is meant to avoid. The papers used in this prototype fit within the model's context window, so the full structured paper (`document_text` from Q6) is sent directly instead of introducing chunking or retrieval. Model setup (`proto3/3pipeline.ipynb`, "Stage 2 — LLM Extraction"):
+```python
+client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
+MODEL_NAME = "gemini-3.5-flash"
+```
 
 **Q8:** How does the prompt distinguish the authors' own method from prior work, and
 how is the four-role schema enforced?
@@ -182,7 +223,7 @@ how is the four-role schema enforced?
 > - Full prompt text is in the Reference section below — quote the relevant rule
 >   lines in your write-up rather than the whole prompt.
 
-A:
+A: The prompt names all four roles explicitly and states one rule: use the authors' own method, not methods cited from prior work. This targets proto2's biggest known failure — e.g. BERT's Introduction citing ELMo, which proto2's NLI scored 0.87 as TechnicalMethod. The four-role schema is enforced by giving the exact output shape in the prompt: one JSON object per role with an `answer` and a nested `evidence` object (`section` and `quote`), and by requiring the quote to be copied verbatim rather than paraphrased, so each answer can be checked against the source text. If a role is not present in the paper, the model is told to return `null` for both fields instead of guessing.
 
 ---
 
@@ -209,7 +250,18 @@ A:
 > original design (see Q10's bug story) — and why the verbatim-quote rule matters for
 > the evidence check in Section 7.
 
-A:
+A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template"):
+```
+For each of the four roles below, return an object with:
+- "answer": the shortest identifying term (e.g. "Transformer", not "a novel attention-based model")
+- "evidence": an object with "section" (the section heading) and "quote" (one sentence quoted verbatim from the paper that supports the answer)
+
+Rules:
+- Use the authors' own method, not methods cited from prior work.
+- If a field is not present in the paper, return null for both "answer" and "evidence".
+- The "quote" must be copied verbatim from the paper text, not paraphrased.
+```
+`answer` is constrained to the shortest identifying term so the model returns a usable label ("Transformer") instead of a full sentence — this was proto2's core problem, where the "answer" was really 151 candidate sentences. `evidence` is a nested object rather than a single string so `section` and `quote` stay separate fields; this was not the first design (see Q10) — an earlier version asked for a single string and Gemini merged the heading and quote together, which is not checkable. The verbatim-quote rule matters because Section 7's evidence check needs to confirm the quote appears in the paper text word-for-word, not paraphrased text that cannot be searched for.
 
 **Q10:** Quote and explain the Gemini call and response parsing
 (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"), including the
@@ -238,7 +290,22 @@ evidence-shape bug you found during testing.
 >   Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so
 >   exact reproducibility is not fully guaranteed.
 
-A:
+A: Quote (from `proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response"):
+```python
+response = client.models.generate_content(
+    model=MODEL_NAME,
+    contents=prompt,
+    config=types.GenerateContentConfig(temperature=0, seed=0),
+)
+
+raw_text = response.text.strip()
+if raw_text.startswith("```"):
+    raw_text = raw_text.strip("`")
+    raw_text = raw_text.removeprefix("json").strip()
+
+profile = json.loads(raw_text)
+```
+This sends the full prompt (with the paper text substituted in) to `client.models.generate_content` and parses the response with `json.loads` after stripping any Markdown code fence Gemini adds around the JSON. `config=types.GenerateContentConfig(temperature=0, seed=0)` was added after testing — this is schema-guided extraction, not creative generation, so sampling diversity is not wanted, and a fixed seed is a second determinism lever alongside temperature 0. Even with both set, some LLM serving backends, including Gemini's, can still vary slightly at temperature 0 (e.g. batching effects), so exact reproducibility is not fully guaranteed. During testing on "Attention Is All You Need," an earlier prompt version asked for "evidence" as a single quoted sentence but also said to return the section heading and the quote together — an internally inconsistent instruction. Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended (e.g. `"## Introduction In this work we propose..."`), not the nested `{section, quote}` object the design intended. The fix was to rewrite the prompt to make the nested shape explicit (Q9), after which `evidence.section` and `evidence.quote` came back as reliably separate fields.
 
 **Q11:** Is the code clear and readable? Is it high quality? Give concrete evidence.
 
@@ -260,7 +327,7 @@ A:
 >   `.../proto3/3pipeline.ipynb`, not its own filename — a small but concrete
 >   inconsistency to weigh against the strict typing/linting setup above.
 
-A:
+A: I use `pyright` in `strict` type-checking mode and `ruff` for linting (`select = ["E", "F", "I"]`) and formatting — the same strict setup as proto2, now applied to this new pipeline. The notebook is organized into named, ordered stages (Setup → Data Models → Stage 0 → Stage 1 → Stage 2 → Stage 2b → Stage 2c) as markdown headers, so the pipeline structure is visible directly in the table of contents. Two honest limitations: this is still notebook code mixing exploratory output with pipeline logic, and there are no automated tests yet for the JSON-parsing or evidence-validation logic, even though `pytest` is a listed dev dependency. Also, `proto3/baseline.ipynb` is a byte-identical duplicate of `proto3/3pipeline.ipynb`, used to run the pipeline once per paper via manual file upload to produce the six `proto3/baseline/*.json` outputs — its own Colab-badge cell still links to `.../proto3/3pipeline.ipynb`, not its own filename, a small but concrete inconsistency to weigh against the strict typing/linting setup above.
 
 ---
 
@@ -283,7 +350,40 @@ full JSON and describe what it demonstrates.
 > Task, 0 Dataset, 160 EvaluationMetric sentences — see Reference section) to make the
 > improvement concrete: one checkable answer per role instead of a pile of sentences.
 
-A:
+A: Full JSON (from `proto3/baseline/transformer.json`, real output, not a mockup):
+```json
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+    }
+  },
+  "Task": {
+    "answer": "machine translation",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train."
+    }
+  },
+  "Dataset": {
+    "answer": "WMT 2014 English-German",
+    "evidence": {
+      "section": "Training Data and Batching",
+      "quote": "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "BLEU",
+    "evidence": {
+      "section": "Machine Translation",
+      "quote": "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4."
+    }
+  }
+}
+```
+This is the real output for "Attention Is All You Need," not a mockup — same file as `proto3/baseline/transformer.json`. Each of the four roles has one named answer plus a checkable evidence quote and its section. Compared to proto2's output for the same paper (14 TechnicalMethod sentences, 0 Task, 0 Dataset, 160 EvaluationMetric sentences), this is one answer per role instead of a pile of candidate sentences, each with a specific place in the paper to verify it against.
 
 **Q13:** What screenshot(s) or figure(s) will you include?
 
@@ -295,7 +395,10 @@ A:
 >   proto3's answer+evidence output (the JSON above vs. the 14/0/0/160 counts).
 > - The pipeline diagram from Q6 (PDF → GROBID → LLM → JSON) as a process figure.
 
-A:
+A: A before/after screenshot pair contrasting proto2's sentence-count output with proto3's answer+evidence output, to make the improvement in Q12 concrete.
+
+![proto3 output](<./Screenshot 2026-07-18 195120.png>)
+![proto2 output](<./Screenshot 2026-07-18 195636.png>)
 
 ---
 
@@ -319,7 +422,7 @@ A:
 >    3. Does `evidence.quote` appear verbatim in the input paper text?
 >    4. Is `evidence.section` the correct section for that quote?
 
-A:
+A: The evaluation uses the same 6 papers and gold labels as proto2, checked on three axes. First, gold label match: does `answer` contain the gold label as a substring — the same method as proto2, but now applied to one answer per role instead of over 100 candidate sentences, which is much harder to pass. Second, a human precision check: is `answer` plausibly correct by human judgment — this catches valid answers that do not match the gold string, and wrong answers that happen to match it. Third, an evidence check, in priority order: does `evidence.quote` support `answer`; is the evidence about the target paper's own work and not prior work (the authorship problem from Q3); does `evidence.quote` appear verbatim in the paper text; and is `evidence.section` the correct section for that quote. This method is appropriate because it checks precision, not just recall — proto2's recall-only score only showed the gold term appeared somewhere in the output, not that the output itself was a usable answer.
 
 **Q15:** What is the current evaluation status, and what did the initial test show?
 
@@ -364,7 +467,20 @@ A:
 >   formal evaluation (Q16) is run against fresh output instead of these existing
 >   files, scores could shift slightly from the 15/24 above.
 
-A:
+A: Initial, informal testing on "Attention Is All You Need" surfaced the evidence-shape bug (Q10), fixed by making the prompt's output shape explicit. Since then, Stage 0–2 has been run on all six papers in the same set as proto2 (Transformer, BERT, AlexNet, ResNet, MapReduce, PageRank); the raw answer+evidence JSON for each is saved in `proto3/baseline/*.json`. The formal 3-axis evaluation from Q14 has not been run yet — there is no scoring script and no pass/fail count, and the Related Work ablation and batch processing across `proto3/previouswork/` are not yet implemented either.
+
+As an informal, quick check only (gold-label substring match by hand, not the formal evaluation script, and no human-precision or evidence-verification pass):
+
+| Paper | TM | Task | Dataset | EM | Score |
+|---|---|---|---|---|---|
+| Transformer | match | match | match | match | 4/4 |
+| BERT | match | no | no | match | 2/4 |
+| AlexNet | match | match | match | match | 4/4 |
+| ResNet | match | no | match | match | 3/4 |
+| MapReduce | match | no | no (null) | no | 1/4 |
+| PageRank | no | no | match | no (null) | 1/4 |
+
+Total: 15/24 (62.5%). Strict substring matching penalizes near misses — ResNet's answer "image classification" versus gold "image recognition" is arguably close but scored as a miss here — and MapReduce and PageRank each have one `null` field, which always scores as a miss under this method. This is a rough indicator, not a final result; the formal evaluation in Q16 would confirm or correct it. The six `proto3/baseline/*.json` files were also generated before `temperature=0`/`seed=0` were added to the Gemini call, so scores could shift slightly if the formal evaluation runs against fresh output instead of these existing files.
 
 **Q16:** How do you intend to improve the prototype next?
 
@@ -383,7 +499,7 @@ A:
 > - Automate the evidence verbatim check (string search in paper text) as part of the
 >   evaluation script, rather than checking by hand.
 
-A:
+A: The next step is to score the six outputs already in `proto3/baseline/*.json` against the gold labels using the 3-axis method from Q14 — the extraction itself is done (Q15); scoring it is what remains. The result can then be compared against proto2's 18/24 (75%) recall-only result, though the comparison is not apples-to-apples: proto3's check is against one answer per role, not acceptance anywhere in 100+ sentences, so a lower raw score could still represent a stronger result. I also plan to run the Related Work ablation (exclude vs. keep Related Work in the input text) to test whether the extra context helps or introduces attribution noise, visible through `evidence.section`, and to automate the evidence verbatim check (string search in the paper text) as part of the evaluation script instead of checking by hand.
 
 ---
 
