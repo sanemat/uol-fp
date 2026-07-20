@@ -174,10 +174,17 @@ evaluation checks below.
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
 prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
-and parsing the response with Pydantic. Stage 3 (axis 1 of the evaluation below) is also
-implemented, as a classification-style Precision/Recall/F1 metric scored against gold labels
-and the frozen `proto3/baseline/*.json` outputs. Not yet implemented: axes 2 and 3 of the
-evaluation below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
+and parsing the response with Pydantic. Stage 3's gold-label match (P/R/F1 against
+`GOLD_LABELS` and the frozen `proto3/baseline/*.json` outputs) is also implemented and tested.
+Not yet implemented, in priority order: a real (≥5-run) variance study with logged outputs,
+confidence intervals on the P/R/F1 estimates, a consolidated manual review pass (including a
+quote-in-source check, folded into that manual pass rather than a separate script), and (lower
+priority) the Related Work ablation. See "Evaluation plan" below.
+
+Correction: an earlier version of this file said "batch processing across
+`proto3/previouswork/`" was pending. That was a misunderstanding — that directory holds
+background/survey PDFs used for the literature review, not additional target papers. Retracted,
+not a to-do.
 
 `proto3/baseline/*.json` is the sole frozen reference (no separate `baseline.ipynb` — it only
 ever duplicated `3pipeline.ipynb`'s Stage 0-2c with no distinct method). Git history records
@@ -185,22 +192,167 @@ what code produced it, if reproducibility is ever needed.
 
 ---
 
-## Evaluation (3 axes)
+## Evaluation plan
 
-Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
+Reconsidered from scratch (2026-07-20) — the earlier "3 axes" list below was a brainstorm
+("maybe do this"), not a decision. This replaces it with a prioritized plan, given a ~3-week
+budget before report3 is due. Same 6 papers and gold labels as proto2 throughout (6 papers × 4
+roles = 24 items; `GOLD_LABELS` hardcoded in the notebook, no separate file).
 
-**1. Gold label match — implemented**
-Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive, either direction)?
-Same match rule as proto2, but now applied to one answer per role, not 100+ sentences, and
-scored as a classification problem (TP/FP/FN/TN, `null` handled as a real value) rather than a
-plain match count. This turns the check into a real Precision/Recall/F1 number: a wrong-but-present
-answer costs both precision and recall, and a hallucinated answer where gold is `null` counts as
-a false positive. Implemented in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold
-labels and the frozen `proto3/baseline/*.json` outputs (baseline answers are hardcoded in the
-notebook, not fetched over the network, since the repo is not public).
+**What's actually implemented today: only gold-label match (below).** Everything else in this
+section is planned, not done.
 
-**Run-to-run variance observed (all 6 papers, no prompt changes, two separate pipeline runs
-across a kernel restart):**
+### Gold label match — implemented and tested
+
+Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive,
+either direction)? Scored as a classification problem (TP/FP/FN/TN, `null` handled as a real
+value): a wrong-but-present answer costs both precision and recall; a hallucinated answer where
+gold is `null` is a false positive. Implemented in `proto3/src/uol_fp/scoring.py` (13 passing
+tests), scored in `3pipeline.ipynb` Stage 3 against `GOLD_LABELS` and the frozen
+`proto3/baseline/*.json` outputs.
+
+Current per-role F1 (baseline outputs):
+
+| Role | TP | FP | FN | TN | P | R | F1 |
+|---|---|---|---|---|---|---|---|
+| TechnicalMethod | 5 | 1 | 1 | 0 | 0.83 | 0.83 | 0.83 |
+| Task | 2 | 4 | 4 | 0 | 0.33 | 0.33 | 0.33 |
+| Dataset | 4 | 1 | 2 | 0 | 0.80 | 0.67 | 0.73 |
+| EvaluationMetric | 4 | 1 | 2 | 0 | 0.80 | 0.67 | 0.73 |
+| **Micro** (pool tp/fp/fn) | 15 | 7 | 9 | — | 0.68 | 0.62 | **0.65** |
+| **Macro** (mean of 4 F1s) | — | — | — | — | — | — | **0.655** |
+
+**Micro vs macro decision: report both, headline macro.** The 4 roles are fixed, equally
+mandatory fields of one schema, not a frequency distribution — a user needs all four, not
+"whichever role has more support," so macro (equal weight per role) matches how the tool is
+actually used. State explicitly that micro (0.65) and macro (0.655) are close here only because
+every role happens to have n=6 in the current 6-paper set — a coincidence of this dataset, not
+a property of the method. Don't let a single "Overall" number imply uniform performance: Task
+(0.33) is less than half of TechnicalMethod (0.83).
+
+**Sample size decision: keep n=6, state it honestly with real numbers, don't try to grow the
+corpus for statistical power.** Wilson 95% CIs at n=6: TechnicalMethod recall 0.83 → **[0.44,
+0.97]**; Task recall 0.33 → **[0.10, 0.70]** — these substantially overlap, which undercuts any
+claim that TechnicalMethod is reliably "solved" while Task is reliably "broken." Meaningfully
+tightening these intervals would need ~30-40 gold-labeled papers per role, not the 6-10 reachable
+in 3 weeks with no second annotator to check labels against — poor ROI. Report the CI numbers
+directly instead of a vague "small sample" caveat.
+
+**Correction (2026-07-20): Wilson CI applies to Precision and Recall only, not F1.** Precision
+(`TP/(TP+FP)`) and Recall (`TP/(TP+FN)`) are each a simple proportion (successes / trials), which
+is exactly what a Wilson interval is for. F1 is the harmonic mean of the two — not a proportion —
+so a Wilson interval on F1 directly is not statistically meaningful. Report Wilson 95% CI on P and
+R for all 4 roles; report F1 as a point estimate only, with a one-line note that a proper F1
+interval would need paper-level bootstrap resampling, which isn't worth adding at n=6 given the
+deadline. The two CIs already computed above (TechnicalMethod/Task recall) are exactly this —
+recall CIs — and can be used as-is; just don't extend the same treatment to the F1 column.
+
+**Known measurement-instrument artifact, not just a model failure:** MapReduce's Task slot —
+gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale
+computations"` — fails the substring rule (`"distributed"` is not a literal substring of
+`"distribution"`) despite being arguably correct. Task's low F1 (0.33) is partly a property of
+the blunt substring-match rule, not purely a pipeline failure. Worth stating in the report to
+separate "the pipeline is wrong" from "the metric is blunt."
+
+### Priority for what to add next (given ~3 weeks total for the whole report, not just Evaluation)
+
+**Reprioritized 2026-07-20, deadline-focused, per direct review.** Three corrections to the
+earlier version of this list: (1) the proto2→proto3 synthesis is writing, not an experiment, and
+report3's own requirement ("extend the evaluation to cover the whole project, not only the
+feature prototype") makes it mandatory — moved into P0. (2) Wilson CI applies to Precision and
+Recall only, not F1 (see "Sample size decision" correction above) — fixed below. (3) **Do not
+serialize the whole report behind P0/P1.** Introduction, Literature Review, Design, and
+Implementation don't depend on unfinished experiment results — draft them now, in parallel,
+roughly one chapter per day. Only parts of the Evaluation chapter genuinely have to wait on data.
+
+**P0 (~4-4.5 days) — mandatory, do all 5:**
+1. **Run-logging infrastructure + 5 full runs (0.5-1 day).** The single existing "run-to-run
+   variance" table below rests on n=2 reruns that were never logged to disk (only an ephemeral
+   in-Colab-kernel dict) — not a defensible variance claim. Log every Stage-2 run to
+   `proto3/results/runs/run_<n>.json`, run ≥5 times. If only 3-4 runs are reached before time runs
+   out, say so explicitly rather than implying a fuller study.
+2. **Aggregation + confidence intervals (0.5 day).** Wilson 95% CI on Precision and Recall for all
+   4 roles (already computed above for 2 roles' recall; extend to all 4, add Precision). F1 stays
+   a point estimate only — no CI on F1 (see correction above).
+3. **24-slot manual review (1-1.5 days)** (replaces the old separate "human check" and "evidence
+   support/authorship check" — same person reading the same 6 papers once, not three times): per
+   (paper, role) — plausibly correct? evidence supports answer? authors' own work, not prior
+   work? **Does the quote actually appear in the source text?** (folded in here rather than a
+   separate script — the reviewer is already reading the source to judge support/authorship, so
+   checking the quote costs nothing extra at this scale; a dedicated automated verbatim-check
+   script was considered and dropped as mostly redundant with this pass for only 24 slots. Note
+   it's a weaker check than it sounds either way — a verbatim-real quote can still be the *wrong*
+   evidence, e.g. a genuine Related Work sentence cited as the paper's own method; that's exactly
+   what "evidence supports answer" and "authors' own work" above are for.) Include the
+   MapReduce/Task example above as a concrete illustration. Note: this pass has the same
+   single-annotator bias as the gold labels themselves — say so once, don't present it as more
+   objective.
+4. **proto2 → proto3 "fixed / not fixed" synthesis (near-free, folds into figures item's 0.5 day).**
+   Map proto2's three named failure modes (output volume, authorship attribution, recall-only
+   scoring) onto what items 1-3 actually found — this is what makes the Evaluation chapter cover
+   "the whole project," not just proto3. Not an experiment: the skeleton (which failure mode maps
+   to which check) can be drafted right now, before items 1-3 even finish, then filled in with
+   real numbers once they do.
+5. **Submission figures (0.5 day, combined with item 4):** Stage 2c JSON output screenshot, Stage
+   3 P/R/F1 table, ideally a proto2-vs-proto3 output comparison (14/0/0/160 sentences vs one
+   answer per role, already drafted in `report2/prototype-memo.md` Q12).
+
+**P1 (~1-1.5 days) — one item only, tightly scoped, do not let it re-expand:**
+6. **Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent role-specific
+   calls per paper instead of 1 joint call (see "Architecture reconsideration" below), scored with
+   the existing `scoring.py` unchanged. Scope limits, explicit: one run each (or B vs the existing
+   frozen baseline A), per-role F1 comparison only — **no consolidation pass, and no repeated-run
+   variance study for variant B.** Either of those would balloon this back into a multi-day
+   project; if there's appetite for them, they belong in Further Work (see "Architecture
+   reconsideration"), not here. Promoted ahead of the ablation because it directly targets Task's
+   known weakness (F1 0.33, the lowest of the 4 roles) rather than a general robustness check.
+
+**Cut first, in this order, if time runs short (do not attempt out of order):**
+1. **Related Work ablation** — a clean controlled experiment, but doesn't improve Task (the
+   project's weakest role), so it's the first thing to drop. "Not run, deferred to further work"
+   is a legitimate, planned answer for report3.
+2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study of schema fit.
+3. A diagnostic (not a shipped metric change) on whether relaxed/stemmed matching would change the
+   Task conclusion.
+4. A diagnostic (not a shipped schema change) hand-recomputing what EvaluationMetric's P/R/F1
+   would be for AlexNet/ResNet if scored as multi-valued (see "Multi-valued roles" below).
+
+**Bottom line: treat "P0 + the decomposed pilot (P1)" as the real completion line for the
+experiment/evaluation work.** Effort table for that work only (not the writing):
+
+| Task | Estimate |
+|---|---|
+| Run-logging implementation + 5 runs | 0.5-1 day |
+| Aggregation + CI | 0.5 day |
+| 24-slot manual review | 1-1.5 days |
+| Figures + proto2→proto3 table | 0.5 day |
+| Decomposed pilot | 1-1.5 days |
+| **Total** | **~4-5 days** |
+
+Out of ~21 days total, that leaves ~16-17 days for writing all 6 chapters (~9500 words) plus
+citation hunting and revisions — comfortable if drafting starts now in parallel, tight if writing
+is left until all experiments finish.
+
+**Explicitly out of scope — defer to the Conclusion's "further work," don't attempt in 3 weeks:**
+growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
+second annotator exists on this solo project); a full multi-model comparison (Gemini vs Claude
+Haiku vs Llama 3.1 — belongs in the Design chapter's model-choice discussion, not Evaluation);
+any variance claim stronger than what the actual run count supports; **the consolidation pass
+(variant C) and the full A/B/C three-way comparison** (see "Architecture reconsideration" below)
+— designing and debugging a consolidation prompt plus a 5th call per paper is real new scope that
+competes directly with the ~16-17 days needed to write all 6 chapters; report3's "work need not be
+complete" allowance covers stating this as a planned next step instead; **the full multi-valued
+schema implementation** (schema, prompt, gold re-annotation, new scoring function, rerun/rescore —
+see "Multi-valued roles" below) — same reasoning, same allowance.
+
+**Risks to state in the report regardless of how much of P1/P2 gets reached:** the substring-match
+rule has construct-validity problems independent of pipeline quality (can both under- and
+over-credit, see MapReduce example); the frozen baseline JSON is not "ground truth" — it's one
+earlier frozen sample, equally subject to non-determinism as any other run, and is already
+correctly distinct from `GOLD_LABELS` in the code (keep that distinction equally clear in prose).
+
+**Original n=2 observation (superseded by the P0 variance study above once it exists — kept here
+for the raw numbers, not as the final claim):**
 
 | Role | Baseline F1 | Pipeline run 1 | Pipeline run 2 |
 |---|---|---|---|
@@ -208,27 +360,162 @@ across a kernel restart):**
 | Task | 0.33 | 0.33 | 0.33 |
 | Dataset | 0.73 | 0.80 | 0.91 |
 | EvaluationMetric | 0.73 | 0.67 | 0.50 |
-| Overall | 0.65 | 0.65 | 0.64 |
+| Overall (micro) | 0.65 | 0.65 | 0.64 |
 
-TechnicalMethod and Task scored identically across baseline and both pipeline runs (same
-TP/FP/FN/TN every time). Dataset and EvaluationMetric changed between runs despite unchanged
-code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility
-across sessions. Implication for the report: a single run's F1 for Dataset/EvaluationMetric is
-not a stable point estimate; report it as one observed run, not as "the" pipeline score, and
-note the stability/instability asymmetry across roles as a finding in itself.
+TechnicalMethod and Task scored identically across baseline and both pipeline runs. Dataset and
+EvaluationMetric changed between runs despite unchanged code, `temperature=0`, and `seed=0` —
+Gemini does not guarantee bit-for-bit reproducibility across sessions. This asymmetry (2 roles
+stable, 2 roles not) is itself worth investigating in the real variance study (P0 item 1), not
+just noting anecdotally.
 
-**2. Human precision check**
-Is `answer` plausibly correct by human judgment?
-Catches cases where the answer is not in the gold labels but is still valid (or where it is wrong despite matching a substring).
+---
 
-**3. Evidence check**
-For each returned answer:
-- Does `evidence.quote` appear verbatim in the paper text?
-- Does `evidence.quote` support `answer`?
-- Is `evidence.section` consistent with the quote's actual location in the paper?
-- Is the evidence about the authors' own work, not prior work?
+## Architecture reconsideration: joint vs decomposed extraction (2026-07-20)
 
-The `section` field makes Related Work attribution visible without needing to exclude that section entirely. If the LLM cites a Related Work sentence as evidence for TechnicalMethod, the error is detectable. This check catches hallucination (fabricated evidence) and attribution errors.
+**Current design (variant A, implemented): joint extraction.** One prompt, one Gemini call per
+paper, returns all 4 roles at once (Stage 2, see "Pipeline" above). Justified originally by Jain
+et al./SciREX's document-level argument: extraction can exploit cross-role relationships within
+one context — e.g. recognizing "Transformer"/"WMT"/"BLEU" together in the same sentence
+("We evaluate the Transformer on WMT using BLEU") links TechnicalMethod, Dataset, and
+EvaluationMetric jointly, which four fully-independent extractors would each see in isolation.
+
+**Proposed alternative, not yet implemented:**
+
+- **Variant B — decomposed extraction.** 4 independent calls per paper, one per role, each with
+  a role-specific prompt naming that role's specific failure pattern (e.g. TechnicalMethod:
+  "distinguish the primary method from components and prior work"; Dataset: "do not return
+  datasets mentioned only in prior work"). Justified by Khot et al. 2022 ("Decomposed Prompting":
+  arXiv:2210.02406) — decomposing a complex task into independently-optimizable subtasks can beat
+  a single joint few-shot prompt on several reasoning tasks.
+- **Variant C — decomposed + consolidation.** Variant B's 4 outputs, plus their evidence, passed
+  to a 5th call: "Are these four outputs mutually consistent with the evidence? Do not introduce
+  new values. Correct only contradictions or role confusion." Aims to recover the cross-role
+  relationship joint extraction has natively, without needing one prompt to do everything.
+
+**Why the 4 roles genuinely differ in what they ask the model to judge** (motivates
+per-role-tailored prompts under B/C):
+
+| Role | Core judgment |
+|---|---|
+| TechnicalMethod | Primary method vs. component vs. prior work |
+| Task | What problem the paper is actually solving |
+| Dataset | What data was actually used, not just mentioned |
+| EvaluationMetric | What metric was actually used to report results |
+
+**Predicted outcome (a hypothesis to test empirically, not a settled finding — no paper
+directly shows 4-role methodology extraction specifically favors decomposition; the literature
+supports both directions for different reasons):**
+
+```
+per-role extraction accuracy:      B or C > A
+cross-role consistency:            C > A > B
+```
+
+**Status and priority:** this design rationale (the table above, the two citations, the A/B/C
+framing) is written up now for report3's Design chapter at zero implementation cost — it shows
+the current joint design was a considered choice. Variant B (decomposed only) is the sole P1 item
+above — promoted ahead of the Related Work ablation (now first on the cut list) because it targets
+Task's known weakness (F1 0.33) directly. Scope is tightly capped: A vs B, one run each, per-role
+F1 only — no consolidation pass, no repeated-run variance study for B. Variant C (consolidation)
+and the full 3-way A/B/C comparison are explicitly out of scope for report3 (see the out-of-scope
+list above) — real new prompt-design and debugging work, deferred to further work after report3,
+not attempted under the current time budget.
+
+If variant B is actually run: reuse `scoring.py` unchanged (each independent call still produces
+one `RoleExtraction`, scored the same way as today); the interesting comparison is per-role F1,
+A vs B, especially for Task and Dataset (the two roles most likely to benefit from a role-specific
+failure-pattern instruction).
+
+---
+
+## Multi-valued roles: which fields need more than one answer (2026-07-20)
+
+Every role currently has exactly one answer (or null). Reconsidered from scratch, using only real
+evidence already in this project's own data — not applied uniformly to all 4 roles.
+
+**Per-role evidence:**
+
+- **EvaluationMetric — strongest case, upgrade.** The *current, live* frozen baseline outputs for
+  two independent papers already squash two distinct metrics into one string:
+  `alexnet.json` and `resnet.json` both answer `"top-1 and top-5 error rates"`. Both papers really
+  do report two error rates side by side. `report1/report.md`'s earlier Table 6 also had BERT's
+  EvaluationMetric as `"accuracy / F1"`, later refined to `"F1"` alone for scoring tractability —
+  not because BERT stopped reporting both.
+- **Dataset — real case, upgrade.** BERT's Table 6 gold was `"BooksCorpus / Wikipedia"` (also
+  refined away later); BERT genuinely pretrains on both corpora. Transformer's own paper covers two
+  WMT language pairs (English-German and English-French) even though the current single-valued
+  baseline answer only names one — today's single answer already under-counts what the source
+  supports.
+- **Task — weak, do NOT upgrade.** The one candidate case (BERT's old "GLUE / SQuAD") was refined
+  away and doesn't appear in the current `GOLD_LABELS`. MapReduce's "and"-joined Task answer
+  ("automatic parallelization and distribution of large-scale computations") is this memo's own
+  already-diagnosed **measurement-instrument artifact** of blunt substring matching (see
+  "Evaluation plan" above), not genuine multiplicity. Upgrading Task's schema to patch this would
+  conflate two different problems and risks the model padding lists to match a schema that doesn't
+  reflect a real property of the role.
+- **TechnicalMethod — stays singular.** Zero multi-value evidence across all 6 baselines, and this
+  project's own design rationale ("Why proto2's approach fails" above) already deliberately
+  reframes the task as "what is THE primary TechnicalMethod" — a considered stance, not an
+  oversight to revisit.
+
+**Schema design, if ever implemented:** keep `SingleRoleExtraction` (today's `RoleExtraction`,
+renamed) for TechnicalMethod/Task. New `MultiRoleExtraction` for Dataset/EvaluationMetric:
+`answers: list[RoleAnswer]` (max 3 items), where `RoleAnswer = {answer: str, evidence: Evidence}`
+— **each item carries its own evidence, not one shared quote for the whole list.** A shared quote
+can't verbatim-support two different answers (BERT's BooksCorpus/Wikipedia likely appear in
+different sentences), and shared evidence would make the P0 "quote-in-source" check ambiguous
+about which answer it's meant to justify — every individual answer stays independently falsifiable,
+same as today, just applied N times. Give `MultiRoleExtraction` a `primary` property
+(`answers[0]` or `None`) so any code that still wants a single scalar doesn't need special-casing.
+
+**Prompt design: ranked list ("primary first"), not a numeric threshold/confidence field.** This
+project has already measured real LLM non-determinism (the Dataset/EvaluationMetric F1 drift
+between reruns noted above) — a verbalized confidence score would add a second, even less
+validated instability axis, with no budgeted calibration study to trust it. Relative ranking is a
+better-supported LLM capability than calibrated absolute scoring, and `answers[0]` doubles as "the
+primary value" for free. **Enforce the item cap via schema (`max_length`), not prompt wording
+alone** — this project already learned that exact lesson once: an earlier prompt-only shape
+description was ambiguous and Gemini returned a structurally different (flat-string) evidence
+shape than intended; the fix was moving the guarantee into `response_json_schema`, not relying on
+prompt text.
+
+**Gold label changes needed, if ever implemented (4 cells only):**
+
+| Paper | Role | Current gold | Proposed gold |
+|---|---|---|---|
+| bert | Dataset | `"BooksCorpus"` | `["BooksCorpus", "Wikipedia"]` |
+| transformer | Dataset | `"WMT"` | `["WMT 2014 English-German", "WMT 2014 English-French"]` |
+| alexnet | EvaluationMetric | `"top-5"` | `["top-1 error rate", "top-5 error rate"]` |
+| resnet | EvaluationMetric | `"top-1"` | `["top-1 error rate", "top-5 error rate"]` |
+
+Everything else unchanged.
+
+**Scoring approach, if ever implemented:** add a parallel `score_role_multi` (greedy substring
+matching, generalizing `score_role`'s tp/fp/fn/tn semantics to N items) rather than rewriting the
+existing tested `score_role` — for length ≤1 on both sides it reduces to exactly today's four
+cases, so it's an extension, not a replacement, and the existing 13 tests and headline numbers
+stay intact. Once Dataset/EvaluationMetric can contribute more than 1 tp/fp/fn per paper, those
+two roles' totals are no longer bounded by n=6 the way TechnicalMethod/Task's are — worth a one-
+line callout in "Evaluation plan"'s micro/macro discussion if this ever ships.
+
+**Status: write-up only for report3, not implemented.** This is a third scope addition on top of
+P0 (~3-3.5 days) and P1 (~2.5-3 days), and full implementation (schema, prompt, gold
+re-annotation, new scoring function, rerunning + rescoring 6 papers, redoing the P0 items for the
+affected roles since they were computed against the single-valued schema) is not small. ROI is
+also weak relative to what's already prioritized: Dataset and EvaluationMetric are already the
+second-best-performing roles (F1 0.73 each), while Task — not touched by this change — is the
+worst (F1 0.33) and is already the top P1 priority via the decomposed-extraction pilot above.
+Complements, does not replace or compete with, the decomposed-extraction pilot or the ablation.
+
+**Optional near-free diagnostic (P2, ~0.25-0.5 day, only if P0+P1 finish with slack):** by hand,
+without touching any code, recompute what EvaluationMetric's P/R/F1 would be for just AlexNet and
+ResNet if scored as multi-valued using the answers already sitting in the frozen baseline JSON.
+Same tier as the existing Task-substring-matching diagnostic already in the P2 list above.
+
+**Full implementation (schema, prompt, gold re-annotation, scoring, rerun) is out of scope for
+report3** — add to the out-of-scope list above, alongside variant C (consolidation) and the full
+A/B/C comparison: real new scope competing with the ~14-15 days needed to write all 6 chapters,
+not needed to prove report3's core claims.
 
 ---
 
@@ -239,6 +526,11 @@ This project uses a long-context LLM as a schema-guided document-level informati
 ---
 
 ## Ablation
+
+**Status: first item on the cut list (2026-07-20) — see "Evaluation plan" above.** Demoted from P1
+because it's a clean controlled experiment but doesn't improve Task, the project's weakest role
+(F1 0.33) — the decomposed-extraction pilot targets that directly and is P1 instead. Not required
+to prove report3's core claims; "not run, deferred to further work" is a legitimate answer.
 
 **Related Work inclusion**
 
@@ -252,7 +544,16 @@ Rationale: Related Work may help the model understand the contribution of the pa
 ## Open questions
 
 - ~~**Which LLM?**~~ Resolved: Gemini (`gemini-3.5-flash`), chosen for the simplest Colab setup (see Selected note above).
-- **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
+- ~~**Evidence verbatim check**: automatic or manual, separate script or not?~~ Resolved: no
+  separate script — a verbatim match only proves instruction-following, not evidence quality, so
+  it's folded into the manual review pass (P0 item 3) as one more thing to check while already
+  reading the source text, rather than built as standalone tooling.
+- ~~**Still open: how much of P1/P2 is reachable?**~~ Resolved 2026-07-20: proto2→proto3 synthesis
+  is now P0 (mandatory, not optional — it's writing, not an experiment). P1 is just the
+  decomposed-extraction pilot, tightly scoped. Everything else (ablation, HCI case study, relaxed-
+  matching diagnostic, multi-valued diagnostic) is an explicitly ordered cut list, dropped in that
+  order if P0+P1 don't leave enough time to write all 6 chapters — see "Priority for what to add
+  next" above.
 
 ---
 
