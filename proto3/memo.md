@@ -269,10 +269,17 @@ separate "the pipeline is wrong" from "the metric is blunt."
    the same single-annotator bias as the gold labels themselves — say so once, don't present it
    as more objective.
 
-**P1 (~2 days) — only if P0 finishes with time to spare:**
-4. Related Work ablation (see below) — the one item here that's a genuine controlled experiment,
-   not a QA check, but not required to prove the core claims of report3.
-5. Explicit proto2 → proto3 "fixed / not fixed" synthesis against proto2's three named failure
+**P1 (~2.5-3 days total, three items competing for it) — only if P0 finishes with time to spare;
+if only one item fits, do #4 first, not the ablation:**
+4. **Decomposed-extraction pilot (variant B vs A)** — see "Architecture reconsideration" below.
+   4 independent role-specific calls per paper instead of 1 joint call, scored with the existing
+   `scoring.py` unchanged. ~1-1.5 days. Promoted ahead of the ablation because it directly
+   targets Task's known weakness (F1 0.33, the lowest of the 4 roles) rather than a general
+   robustness check, and is more central to "technical challenge"/"critical evaluation" than the
+   ablation.
+5. Related Work ablation (see below) — the one item here that's a genuine controlled experiment,
+   not a QA check, but not required to prove the core claims of report3. ~1-1.5 days.
+6. Explicit proto2 → proto3 "fixed / not fixed" synthesis against proto2's three named failure
    modes (output volume, authorship attribution, recall-only scoring) — near-free once the P0
    data exists, mostly a writing task.
 
@@ -284,7 +291,11 @@ change) on whether relaxed/stemmed matching would change the Task conclusion.
 growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
 second annotator exists on this solo project); a full multi-model comparison (Gemini vs Claude
 Haiku vs Llama 3.1 — belongs in the Design chapter's model-choice discussion, not Evaluation);
-any variance claim stronger than what the actual run count supports.
+any variance claim stronger than what the actual run count supports; **the consolidation pass
+(variant C) and the full A/B/C three-way comparison** (see "Architecture reconsideration" below)
+— designing and debugging a consolidation prompt plus a 5th call per paper is real new scope that
+competes directly with the ~14-15 days needed to write all 6 chapters; report3's "work need not be
+complete" allowance covers stating this as a planned next step instead.
 
 **Risks to state in the report regardless of how much of P1/P2 gets reached:** the substring-match
 rule has construct-validity problems independent of pipeline quality (can both under- and
@@ -308,6 +319,62 @@ EvaluationMetric changed between runs despite unchanged code, `temperature=0`, a
 Gemini does not guarantee bit-for-bit reproducibility across sessions. This asymmetry (2 roles
 stable, 2 roles not) is itself worth investigating in the real variance study (P0 item 1), not
 just noting anecdotally.
+
+---
+
+## Architecture reconsideration: joint vs decomposed extraction (2026-07-20)
+
+**Current design (variant A, implemented): joint extraction.** One prompt, one Gemini call per
+paper, returns all 4 roles at once (Stage 2, see "Pipeline" above). Justified originally by Jain
+et al./SciREX's document-level argument: extraction can exploit cross-role relationships within
+one context — e.g. recognizing "Transformer"/"WMT"/"BLEU" together in the same sentence
+("We evaluate the Transformer on WMT using BLEU") links TechnicalMethod, Dataset, and
+EvaluationMetric jointly, which four fully-independent extractors would each see in isolation.
+
+**Proposed alternative, not yet implemented:**
+
+- **Variant B — decomposed extraction.** 4 independent calls per paper, one per role, each with
+  a role-specific prompt naming that role's specific failure pattern (e.g. TechnicalMethod:
+  "distinguish the primary method from components and prior work"; Dataset: "do not return
+  datasets mentioned only in prior work"). Justified by Khot et al. 2022 ("Decomposed Prompting":
+  arXiv:2210.02406) — decomposing a complex task into independently-optimizable subtasks can beat
+  a single joint few-shot prompt on several reasoning tasks.
+- **Variant C — decomposed + consolidation.** Variant B's 4 outputs, plus their evidence, passed
+  to a 5th call: "Are these four outputs mutually consistent with the evidence? Do not introduce
+  new values. Correct only contradictions or role confusion." Aims to recover the cross-role
+  relationship joint extraction has natively, without needing one prompt to do everything.
+
+**Why the 4 roles genuinely differ in what they ask the model to judge** (motivates
+per-role-tailored prompts under B/C):
+
+| Role | Core judgment |
+|---|---|
+| TechnicalMethod | Primary method vs. component vs. prior work |
+| Task | What problem the paper is actually solving |
+| Dataset | What data was actually used, not just mentioned |
+| EvaluationMetric | What metric was actually used to report results |
+
+**Predicted outcome (a hypothesis to test empirically, not a settled finding — no paper
+directly shows 4-role methodology extraction specifically favors decomposition; the literature
+supports both directions for different reasons):**
+
+```
+per-role extraction accuracy:      B or C > A
+cross-role consistency:            C > A > B
+```
+
+**Status and priority:** this design rationale (the table above, the two citations, the A/B/C
+framing) is written up now for report3's Design chapter at zero implementation cost — it shows
+the current joint design was a considered choice. Variant B (decomposed only) is P1 item 4 above
+— promoted ahead of the Related Work ablation because it targets Task's known weakness (F1 0.33)
+directly. Variant C (consolidation) and the full 3-way A/B/C comparison are explicitly out of
+scope for report3 (see the out-of-scope list above) — real new prompt-design and debugging work,
+deferred to further work after report3, not attempted under the current time budget.
+
+If variant B is actually run: reuse `scoring.py` unchanged (each independent call still produces
+one `RoleExtraction`, scored the same way as today); the interesting comparison is per-role F1,
+A vs B, especially for Task and Dataset (the two roles most likely to benefit from a role-specific
+failure-pattern instruction).
 
 ---
 

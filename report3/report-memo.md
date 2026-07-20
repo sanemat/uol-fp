@@ -185,6 +185,20 @@ extraction, and how does it directly answer proto2's known failures?
 > problem; (c) the four-role schema is enforced by `response_json_schema`
 > (Pydantic-generated JSON Schema), not by prompt wording — a design choice, not an
 > accident.
+>
+> **Also worth discussing as a forward design consideration (not yet fully
+> implemented):** whether extraction should stay joint (current: 1 call → 4
+> roles) or move to decomposed extraction (4 independent role-specific calls,
+> optionally + a consolidation pass). See `proto3/memo.md` "Architecture
+> reconsideration" for the full argument: Khot et al. 2022 (decomposed prompting
+> can beat one joint few-shot prompt by letting each subtask's prompt be
+> optimized separately) vs. Jain et al./SciREX's document-level argument (joint
+> handling can exploit cross-role relationships in one sentence, e.g.
+> "Transformer"/"WMT"/"BLEU" together). Frame this as a considered choice, not an
+> unexamined default — state clearly that the decomposed-only pilot (no
+> consolidation) is a P1 stretch item for this report (results, if run, belong in
+> Q22, not here), and the consolidation variant plus full comparison are deferred
+> to further work (Q24).
 
 A:
 
@@ -423,6 +437,12 @@ the current prototype?
 > Q19–Q21 actually found, not just onto the design rationale in Chapter 3 — that
 > mapping is what makes this "whole project" evaluation rather than a
 > proto3-only one.
+>
+> **If the decomposed-extraction pilot (variant B, see Q9 and `proto3/memo.md`
+> "Architecture reconsideration") was run:** report per-role F1, A (joint) vs B
+> (decomposed), as the most direct attempt so far at fixing Task's known
+> weakness — this is a stronger technical-challenge/critical-evaluation signal
+> than the Related Work ablation alone. If not run, say so and point to Q24.
 
 A:
 
@@ -452,6 +472,16 @@ A:
 > whether the 4-role schema and document-level extraction generalize better than
 > proto2's sentence classification did — proto2 already showed systems papers fit
 > this schema worse.
+>
+> **Also explicitly deferred here (see `proto3/memo.md` "Architecture
+> reconsideration"):** the consolidation pass (variant C — a 5th call checking
+> variant B's 4 role-specific outputs for mutual consistency against their
+> evidence) and the full 3-way A/B/C comparison (joint vs decomposed vs
+> decomposed+consolidation). State the predicted-outcome hypothesis (per-role
+> accuracy: B or C > A; cross-role consistency: C > A > B) as the concrete next
+> experiment for after report3, not as a finding — no paper directly shows this
+> 4-role methodology-extraction task favors decomposition, so this is a genuine
+> open question this project is positioned to test.
 
 A:
 
