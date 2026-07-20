@@ -1,0 +1,27 @@
+{
+  "TechnicalMethod": {
+    "answer": "MapReduce",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "MapReduce is a programming model and an associated implementation for processing and generating large data sets."
+    }
+  },
+  "Task": {
+    "answer": "automatic parallelization and distribution of large-scale computations",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs."
+    }
+  },
+  "Dataset": {
+    "answer": null,
+    "evidence": null
+  },
+  "EvaluationMetric": {
+    "answer": "elapsed time",
+    "evidence": {
+      "section": "Effect of Backup Tasks",
+      "quote": "The entire computation takes 1283 seconds, an increase of 44% in elapsed time."
+    }
+  }
+}
