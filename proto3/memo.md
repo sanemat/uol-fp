@@ -285,7 +285,9 @@ if only one item fits, do #4 first, not the ablation:**
 
 **P2 / optional stretch:** one unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case
 study of schema fit, not added to the 24-slot statistics; a diagnostic (not a shipped metric
-change) on whether relaxed/stemmed matching would change the Task conclusion.
+change) on whether relaxed/stemmed matching would change the Task conclusion; a diagnostic (not a
+shipped schema change) hand-recomputing what EvaluationMetric's P/R/F1 would be for AlexNet/ResNet
+if scored as multi-valued (see "Multi-valued roles" below) using data already in the baseline JSON.
 
 **Explicitly out of scope — defer to the Conclusion's "further work," don't attempt in 3 weeks:**
 growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
@@ -295,7 +297,9 @@ any variance claim stronger than what the actual run count supports; **the conso
 (variant C) and the full A/B/C three-way comparison** (see "Architecture reconsideration" below)
 — designing and debugging a consolidation prompt plus a 5th call per paper is real new scope that
 competes directly with the ~14-15 days needed to write all 6 chapters; report3's "work need not be
-complete" allowance covers stating this as a planned next step instead.
+complete" allowance covers stating this as a planned next step instead; **the full multi-valued
+schema implementation** (schema, prompt, gold re-annotation, new scoring function, rerun/rescore —
+see "Multi-valued roles" below) — same reasoning, same allowance.
 
 **Risks to state in the report regardless of how much of P1/P2 gets reached:** the substring-match
 rule has construct-validity problems independent of pipeline quality (can both under- and
@@ -375,6 +379,97 @@ If variant B is actually run: reuse `scoring.py` unchanged (each independent cal
 one `RoleExtraction`, scored the same way as today); the interesting comparison is per-role F1,
 A vs B, especially for Task and Dataset (the two roles most likely to benefit from a role-specific
 failure-pattern instruction).
+
+---
+
+## Multi-valued roles: which fields need more than one answer (2026-07-20)
+
+Every role currently has exactly one answer (or null). Reconsidered from scratch, using only real
+evidence already in this project's own data — not applied uniformly to all 4 roles.
+
+**Per-role evidence:**
+
+- **EvaluationMetric — strongest case, upgrade.** The *current, live* frozen baseline outputs for
+  two independent papers already squash two distinct metrics into one string:
+  `alexnet.json` and `resnet.json` both answer `"top-1 and top-5 error rates"`. Both papers really
+  do report two error rates side by side. `report1/report.md`'s earlier Table 6 also had BERT's
+  EvaluationMetric as `"accuracy / F1"`, later refined to `"F1"` alone for scoring tractability —
+  not because BERT stopped reporting both.
+- **Dataset — real case, upgrade.** BERT's Table 6 gold was `"BooksCorpus / Wikipedia"` (also
+  refined away later); BERT genuinely pretrains on both corpora. Transformer's own paper covers two
+  WMT language pairs (English-German and English-French) even though the current single-valued
+  baseline answer only names one — today's single answer already under-counts what the source
+  supports.
+- **Task — weak, do NOT upgrade.** The one candidate case (BERT's old "GLUE / SQuAD") was refined
+  away and doesn't appear in the current `GOLD_LABELS`. MapReduce's "and"-joined Task answer
+  ("automatic parallelization and distribution of large-scale computations") is this memo's own
+  already-diagnosed **measurement-instrument artifact** of blunt substring matching (see
+  "Evaluation plan" above), not genuine multiplicity. Upgrading Task's schema to patch this would
+  conflate two different problems and risks the model padding lists to match a schema that doesn't
+  reflect a real property of the role.
+- **TechnicalMethod — stays singular.** Zero multi-value evidence across all 6 baselines, and this
+  project's own design rationale ("Why proto2's approach fails" above) already deliberately
+  reframes the task as "what is THE primary TechnicalMethod" — a considered stance, not an
+  oversight to revisit.
+
+**Schema design, if ever implemented:** keep `SingleRoleExtraction` (today's `RoleExtraction`,
+renamed) for TechnicalMethod/Task. New `MultiRoleExtraction` for Dataset/EvaluationMetric:
+`answers: list[RoleAnswer]` (max 3 items), where `RoleAnswer = {answer: str, evidence: Evidence}`
+— **each item carries its own evidence, not one shared quote for the whole list.** A shared quote
+can't verbatim-support two different answers (BERT's BooksCorpus/Wikipedia likely appear in
+different sentences), and shared evidence would make the P0 "quote-in-source" check ambiguous
+about which answer it's meant to justify — every individual answer stays independently falsifiable,
+same as today, just applied N times. Give `MultiRoleExtraction` a `primary` property
+(`answers[0]` or `None`) so any code that still wants a single scalar doesn't need special-casing.
+
+**Prompt design: ranked list ("primary first"), not a numeric threshold/confidence field.** This
+project has already measured real LLM non-determinism (the Dataset/EvaluationMetric F1 drift
+between reruns noted above) — a verbalized confidence score would add a second, even less
+validated instability axis, with no budgeted calibration study to trust it. Relative ranking is a
+better-supported LLM capability than calibrated absolute scoring, and `answers[0]` doubles as "the
+primary value" for free. **Enforce the item cap via schema (`max_length`), not prompt wording
+alone** — this project already learned that exact lesson once: an earlier prompt-only shape
+description was ambiguous and Gemini returned a structurally different (flat-string) evidence
+shape than intended; the fix was moving the guarantee into `response_json_schema`, not relying on
+prompt text.
+
+**Gold label changes needed, if ever implemented (4 cells only):**
+
+| Paper | Role | Current gold | Proposed gold |
+|---|---|---|---|
+| bert | Dataset | `"BooksCorpus"` | `["BooksCorpus", "Wikipedia"]` |
+| transformer | Dataset | `"WMT"` | `["WMT 2014 English-German", "WMT 2014 English-French"]` |
+| alexnet | EvaluationMetric | `"top-5"` | `["top-1 error rate", "top-5 error rate"]` |
+| resnet | EvaluationMetric | `"top-1"` | `["top-1 error rate", "top-5 error rate"]` |
+
+Everything else unchanged.
+
+**Scoring approach, if ever implemented:** add a parallel `score_role_multi` (greedy substring
+matching, generalizing `score_role`'s tp/fp/fn/tn semantics to N items) rather than rewriting the
+existing tested `score_role` — for length ≤1 on both sides it reduces to exactly today's four
+cases, so it's an extension, not a replacement, and the existing 13 tests and headline numbers
+stay intact. Once Dataset/EvaluationMetric can contribute more than 1 tp/fp/fn per paper, those
+two roles' totals are no longer bounded by n=6 the way TechnicalMethod/Task's are — worth a one-
+line callout in "Evaluation plan"'s micro/macro discussion if this ever ships.
+
+**Status: write-up only for report3, not implemented.** This is a third scope addition on top of
+P0 (~3-3.5 days) and P1 (~2.5-3 days), and full implementation (schema, prompt, gold
+re-annotation, new scoring function, rerunning + rescoring 6 papers, redoing the P0 items for the
+affected roles since they were computed against the single-valued schema) is not small. ROI is
+also weak relative to what's already prioritized: Dataset and EvaluationMetric are already the
+second-best-performing roles (F1 0.73 each), while Task — not touched by this change — is the
+worst (F1 0.33) and is already the top P1 priority via the decomposed-extraction pilot above.
+Complements, does not replace or compete with, the decomposed-extraction pilot or the ablation.
+
+**Optional near-free diagnostic (P2, ~0.25-0.5 day, only if P0+P1 finish with slack):** by hand,
+without touching any code, recompute what EvaluationMetric's P/R/F1 would be for just AlexNet and
+ResNet if scored as multi-valued using the answers already sitting in the frozen baseline JSON.
+Same tier as the existing Task-substring-matching diagnostic already in the P2 list above.
+
+**Full implementation (schema, prompt, gold re-annotation, scoring, rerun) is out of scope for
+report3** — add to the out-of-scope list above, alongside variant C (consolidation) and the full
+A/B/C comparison: real new scope competing with the ~14-15 days needed to write all 6 chapters,
+not needed to prove report3's core claims.
 
 ---
 

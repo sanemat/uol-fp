@@ -199,6 +199,21 @@ extraction, and how does it directly answer proto2's known failures?
 > consolidation) is a P1 stretch item for this report (results, if run, belong in
 > Q22, not here), and the consolidation variant plus full comparison are deferred
 > to further work (Q24).
+>
+> **A second forward design consideration (also not yet implemented):** whether
+> every role should stay single-valued, or whether some should allow multiple
+> answers. See `proto3/memo.md` "Multi-valued roles" for the evidence-based
+> case: Dataset and EvaluationMetric show real multi-value evidence in this
+> project's own data (e.g. AlexNet/ResNet's *current* baseline answers already
+> squash "top-1 and top-5 error rates" into one string), while Task and
+> TechnicalMethod don't (Task's one candidate case was already refined away and
+> is better explained as a substring-matching artifact, and TechnicalMethod is
+> deliberately singular by design). Discuss the schema shape (per-item evidence,
+> not one shared quote for a list — ties back to (c) above) and the choice of a
+> ranked "primary first" list over a numeric confidence/threshold field (this
+> project's own measured LLM non-determinism argues against trusting a second,
+> uncalibrated confidence axis). State clearly this is write-up only for
+> report3, not implemented — full implementation is deferred to Q24.
 
 A:
 
@@ -396,6 +411,13 @@ A:
 > artifact, not purely a model failure. This separates "the pipeline is wrong"
 > from "the metric is blunt," which is exactly the kind of critical-analysis point
 > the grading criteria reward.
+>
+> **A second instance of the same "metric is blunt" pattern, if the optional P2
+> diagnostic was run** (see `proto3/memo.md` "Multi-valued roles"): AlexNet's and
+> ResNet's baseline EvaluationMetric answers already say "top-1 and top-5 error
+> rates" verbatim — hand-recompute what P/R/F1 would be for these two papers if
+> scored as multi-valued instead of against a single gold string, and report the
+> difference. If not run, skip this — it's optional, not required.
 
 A:
 
@@ -482,6 +504,15 @@ A:
 > experiment for after report3, not as a finding — no paper directly shows this
 > 4-role methodology-extraction task favors decomposition, so this is a genuine
 > open question this project is positioned to test.
+>
+> **Also deferred here (see `proto3/memo.md` "Multi-valued roles"):** the full
+> multi-valued schema implementation for Dataset/EvaluationMetric — new
+> `MultiRoleExtraction` type (per-item evidence, ranked list capped at 3 items),
+> gold-label re-annotation for 4 cells (bert/transformer Dataset, alexnet/resnet
+> EvaluationMetric), a parallel `score_role_multi` scoring function, and
+> rerunning + rescoring all 6 papers. State as a concrete next step with the
+> evidence already gathered (Q9), not as something still to be investigated from
+> scratch.
 
 A:
 
