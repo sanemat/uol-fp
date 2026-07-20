@@ -174,10 +174,17 @@ evaluation checks below.
 
 Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), through sending the
 prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
-and parsing the response with Pydantic. Stage 3 (axis 1 of the evaluation below) is also
-implemented, as a classification-style Precision/Recall/F1 metric scored against gold labels
-and the frozen `proto3/baseline/*.json` outputs. Not yet implemented: axes 2 and 3 of the
-evaluation below, the Related Work ablation, and batch processing across `proto3/previouswork/`.
+and parsing the response with Pydantic. Stage 3's gold-label match (P/R/F1 against
+`GOLD_LABELS` and the frozen `proto3/baseline/*.json` outputs) is also implemented and tested.
+Not yet implemented, in priority order: a real (≥5-run) variance study with logged outputs,
+confidence intervals on the P/R/F1 estimates, a consolidated manual review pass (including a
+quote-in-source check, folded into that manual pass rather than a separate script), and (lower
+priority) the Related Work ablation. See "Evaluation plan" below.
+
+Correction: an earlier version of this file said "batch processing across
+`proto3/previouswork/`" was pending. That was a misunderstanding — that directory holds
+background/survey PDFs used for the literature review, not additional target papers. Retracted,
+not a to-do.
 
 `proto3/baseline/*.json` is the sole frozen reference (no separate `baseline.ipynb` — it only
 ever duplicated `3pipeline.ipynb`'s Stage 0-2c with no distinct method). Git history records
@@ -185,22 +192,108 @@ what code produced it, if reproducibility is ever needed.
 
 ---
 
-## Evaluation (3 axes)
+## Evaluation plan
 
-Same 6 papers as proto2. Gold labels: same as proto2 (6 papers × 4 roles = 24 items).
+Reconsidered from scratch (2026-07-20) — the earlier "3 axes" list below was a brainstorm
+("maybe do this"), not a decision. This replaces it with a prioritized plan, given a ~3-week
+budget before report3 is due. Same 6 papers and gold labels as proto2 throughout (6 papers × 4
+roles = 24 items; `GOLD_LABELS` hardcoded in the notebook, no separate file).
 
-**1. Gold label match — implemented**
-Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive, either direction)?
-Same match rule as proto2, but now applied to one answer per role, not 100+ sentences, and
-scored as a classification problem (TP/FP/FN/TN, `null` handled as a real value) rather than a
-plain match count. This turns the check into a real Precision/Recall/F1 number: a wrong-but-present
-answer costs both precision and recall, and a hallucinated answer where gold is `null` counts as
-a false positive. Implemented in `proto3/3pipeline.ipynb` Stage 3, scored against both the gold
-labels and the frozen `proto3/baseline/*.json` outputs (baseline answers are hardcoded in the
-notebook, not fetched over the network, since the repo is not public).
+**What's actually implemented today: only gold-label match (below).** Everything else in this
+section is planned, not done.
 
-**Run-to-run variance observed (all 6 papers, no prompt changes, two separate pipeline runs
-across a kernel restart):**
+### Gold label match — implemented and tested
+
+Does `answer` contain the gold label as a substring (normalized, case/whitespace-insensitive,
+either direction)? Scored as a classification problem (TP/FP/FN/TN, `null` handled as a real
+value): a wrong-but-present answer costs both precision and recall; a hallucinated answer where
+gold is `null` is a false positive. Implemented in `proto3/src/uol_fp/scoring.py` (13 passing
+tests), scored in `3pipeline.ipynb` Stage 3 against `GOLD_LABELS` and the frozen
+`proto3/baseline/*.json` outputs.
+
+Current per-role F1 (baseline outputs):
+
+| Role | TP | FP | FN | TN | P | R | F1 |
+|---|---|---|---|---|---|---|---|
+| TechnicalMethod | 5 | 1 | 1 | 0 | 0.83 | 0.83 | 0.83 |
+| Task | 2 | 4 | 4 | 0 | 0.33 | 0.33 | 0.33 |
+| Dataset | 4 | 1 | 2 | 0 | 0.80 | 0.67 | 0.73 |
+| EvaluationMetric | 4 | 1 | 2 | 0 | 0.80 | 0.67 | 0.73 |
+| **Micro** (pool tp/fp/fn) | 15 | 7 | 9 | — | 0.68 | 0.62 | **0.65** |
+| **Macro** (mean of 4 F1s) | — | — | — | — | — | — | **0.655** |
+
+**Micro vs macro decision: report both, headline macro.** The 4 roles are fixed, equally
+mandatory fields of one schema, not a frequency distribution — a user needs all four, not
+"whichever role has more support," so macro (equal weight per role) matches how the tool is
+actually used. State explicitly that micro (0.65) and macro (0.655) are close here only because
+every role happens to have n=6 in the current 6-paper set — a coincidence of this dataset, not
+a property of the method. Don't let a single "Overall" number imply uniform performance: Task
+(0.33) is less than half of TechnicalMethod (0.83).
+
+**Sample size decision: keep n=6, state it honestly with real numbers, don't try to grow the
+corpus for statistical power.** Wilson 95% CIs at n=6: TechnicalMethod recall 0.83 → **[0.44,
+0.97]**; Task recall 0.33 → **[0.10, 0.70]** — these substantially overlap, which undercuts any
+claim that TechnicalMethod is reliably "solved" while Task is reliably "broken." Meaningfully
+tightening these intervals would need ~30-40 gold-labeled papers per role, not the 6-10 reachable
+in 3 weeks with no second annotator to check labels against — poor ROI. Report the CI numbers
+directly instead of a vague "small sample" caveat.
+
+**Known measurement-instrument artifact, not just a model failure:** MapReduce's Task slot —
+gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale
+computations"` — fails the substring rule (`"distributed"` is not a literal substring of
+`"distribution"`) despite being arguably correct. Task's low F1 (0.33) is partly a property of
+the blunt substring-match rule, not purely a pipeline failure. Worth stating in the report to
+separate "the pipeline is wrong" from "the metric is blunt."
+
+### Priority for what to add next (given ~3 weeks total for the whole report, not just Evaluation)
+
+**P0 (~3-3.5 days) — do these:**
+1. **Real variance study.** The single existing "run-to-run variance" table below rests on n=2
+   reruns that were never logged to disk (only an ephemeral in-Colab-kernel dict) — not a
+   defensible variance claim. Log every Stage-2 run to `proto3/results/runs/run_<n>.json`, run
+   ≥5 times, report per-role mean/range F1. If only 3-4 runs are reached before time runs out,
+   say so explicitly rather than implying a fuller study.
+2. **Confidence intervals** on the P/R/F1 estimates (Wilson interval) — already computed above
+   for 2 roles; extend to all 4 and report alongside the aggregate table.
+3. **One consolidated manual review pass** (replaces the old separate "human check" and
+   "evidence support/authorship check" — same person reading the same 6 papers once, not three
+   times): per (paper, role) — plausibly correct? evidence supports answer? authors' own work,
+   not prior work? **Does the quote actually appear in the source text?** (folded in here rather
+   than a separate script — the reviewer is already reading the source to judge support/
+   authorship, so checking the quote is real costs nothing extra at this scale; a dedicated
+   automated verbatim-check script was considered and dropped as mostly redundant with this pass
+   for only 24 slots. Note it's a weaker check than it sounds either way — a verbatim-real quote
+   can still be the *wrong* evidence, e.g. a genuine Related Work sentence cited as the paper's
+   own method; that's exactly what "evidence supports answer" and "authors' own work" above are
+   for.) Include the MapReduce/Task example above as a concrete illustration. Note: this pass has
+   the same single-annotator bias as the gold labels themselves — say so once, don't present it
+   as more objective.
+
+**P1 (~2 days) — only if P0 finishes with time to spare:**
+4. Related Work ablation (see below) — the one item here that's a genuine controlled experiment,
+   not a QA check, but not required to prove the core claims of report3.
+5. Explicit proto2 → proto3 "fixed / not fixed" synthesis against proto2's three named failure
+   modes (output volume, authorship attribution, recall-only scoring) — near-free once the P0
+   data exists, mostly a writing task.
+
+**P2 / optional stretch:** one unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case
+study of schema fit, not added to the 24-slot statistics; a diagnostic (not a shipped metric
+change) on whether relaxed/stemmed matching would change the Task conclusion.
+
+**Explicitly out of scope — defer to the Conclusion's "further work," don't attempt in 3 weeks:**
+growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
+second annotator exists on this solo project); a full multi-model comparison (Gemini vs Claude
+Haiku vs Llama 3.1 — belongs in the Design chapter's model-choice discussion, not Evaluation);
+any variance claim stronger than what the actual run count supports.
+
+**Risks to state in the report regardless of how much of P1/P2 gets reached:** the substring-match
+rule has construct-validity problems independent of pipeline quality (can both under- and
+over-credit, see MapReduce example); the frozen baseline JSON is not "ground truth" — it's one
+earlier frozen sample, equally subject to non-determinism as any other run, and is already
+correctly distinct from `GOLD_LABELS` in the code (keep that distinction equally clear in prose).
+
+**Original n=2 observation (superseded by the P0 variance study above once it exists — kept here
+for the raw numbers, not as the final claim):**
 
 | Role | Baseline F1 | Pipeline run 1 | Pipeline run 2 |
 |---|---|---|---|
@@ -208,27 +301,13 @@ across a kernel restart):**
 | Task | 0.33 | 0.33 | 0.33 |
 | Dataset | 0.73 | 0.80 | 0.91 |
 | EvaluationMetric | 0.73 | 0.67 | 0.50 |
-| Overall | 0.65 | 0.65 | 0.64 |
+| Overall (micro) | 0.65 | 0.65 | 0.64 |
 
-TechnicalMethod and Task scored identically across baseline and both pipeline runs (same
-TP/FP/FN/TN every time). Dataset and EvaluationMetric changed between runs despite unchanged
-code, `temperature=0`, and `seed=0` — Gemini does not guarantee bit-for-bit reproducibility
-across sessions. Implication for the report: a single run's F1 for Dataset/EvaluationMetric is
-not a stable point estimate; report it as one observed run, not as "the" pipeline score, and
-note the stability/instability asymmetry across roles as a finding in itself.
-
-**2. Human precision check**
-Is `answer` plausibly correct by human judgment?
-Catches cases where the answer is not in the gold labels but is still valid (or where it is wrong despite matching a substring).
-
-**3. Evidence check**
-For each returned answer:
-- Does `evidence.quote` appear verbatim in the paper text?
-- Does `evidence.quote` support `answer`?
-- Is `evidence.section` consistent with the quote's actual location in the paper?
-- Is the evidence about the authors' own work, not prior work?
-
-The `section` field makes Related Work attribution visible without needing to exclude that section entirely. If the LLM cites a Related Work sentence as evidence for TechnicalMethod, the error is detectable. This check catches hallucination (fabricated evidence) and attribution errors.
+TechnicalMethod and Task scored identically across baseline and both pipeline runs. Dataset and
+EvaluationMetric changed between runs despite unchanged code, `temperature=0`, and `seed=0` —
+Gemini does not guarantee bit-for-bit reproducibility across sessions. This asymmetry (2 roles
+stable, 2 roles not) is itself worth investigating in the real variance study (P0 item 1), not
+just noting anecdotally.
 
 ---
 
@@ -239,6 +318,9 @@ This project uses a long-context LLM as a schema-guided document-level informati
 ---
 
 ## Ablation
+
+**Status: P1 (optional) — see "Evaluation plan" above.** Not required to prove report3's core
+claims; attempt only if the P0 evaluation items finish with time to spare.
 
 **Related Work inclusion**
 
@@ -252,7 +334,13 @@ Rationale: Related Work may help the model understand the contribution of the pa
 ## Open questions
 
 - ~~**Which LLM?**~~ Resolved: Gemini (`gemini-3.5-flash`), chosen for the simplest Colab setup (see Selected note above).
-- **Evidence verbatim check**: automatic (string search in paper text) or manual? Automatic is feasible; implement as part of the evaluation script.
+- ~~**Evidence verbatim check**: automatic or manual, separate script or not?~~ Resolved: no
+  separate script — a verbatim match only proves instruction-following, not evidence quality, so
+  it's folded into the manual review pass (P0 item 3) as one more thing to check while already
+  reading the source text, rather than built as standalone tooling.
+- **Still open:** how much of P1/P2 (ablation, proto2→proto3 synthesis, HCI case study) is
+  reachable depends on how long the P0 items (variance study, CIs, manual review) actually take —
+  re-assess after P0 is done, don't commit to P1 scope in advance.
 
 ---
 
