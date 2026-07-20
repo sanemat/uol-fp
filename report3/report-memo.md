@@ -17,44 +17,75 @@ report's evaluation to the whole project, not just proto3.
 under-run at least one chapter limit — decide where when drafting, don't aim to
 max out every section.
 
+**Don't serialize the whole report behind the checklist below.** Introduction,
+Literature Review, Design, and Implementation (Q1–Q17) don't depend on unfinished
+experiment results — draft them now, in parallel with the checklist, roughly one
+chapter per day. Only parts of the Evaluation chapter (Q19–Q22) genuinely have to
+wait on data.
+
 ---
 
 ## Before You Can Answer These
 
 Some answers below need work that is not "keep implementing the pipeline" — it's
-data collection, a decision, or a manual check. Do these first, or the Evaluation
-and Implementation chapters will be thin:
+data collection, a decision, or a manual check.
 
-The Evaluation chapter's plan was rethought from scratch on 2026-07-20 — see
-`proto3/memo.md` "Evaluation plan" for the full reasoning. Only gold-label match
-(P/R/F1) is real, tested code today; everything else below is new work, prioritized
-against a ~3-week budget so Evaluation doesn't quietly eat the time meant for the
-other 5 chapters (~3-3.5 days for P0, ~2 more for P1, rest is stretch/optional):
+Reprioritized 2026-07-20 per direct review: the proto2→proto3 synthesis moved from
+P1 to P0 (it's writing, not an experiment, and report3 requires the Evaluation
+chapter to cover "the whole project," not just proto3 — see `proto3/memo.md`
+"Priority for what to add next" for the full reasoning). Wilson CI applies to
+Precision and Recall only, not F1 (a Wilson interval is for a proportion; F1 is a
+harmonic mean, not a proportion — F1 stays a point estimate). Effort for the
+items below only (not the writing): ~4-4.5 days for P0, ~1-1.5 days for P1 — treat
+"P0 + P1" as the real completion line for experiment work.
 
-**P0 — do these first:**
-1. **Log a real variance study to disk.** The existing "2 reruns" variance note is
-   not backed by any committed artifact (only an ephemeral in-Colab dict) — log
-   every Stage-2 run to `proto3/results/runs/run_<n>.json`, run ≥5 times, report
-   per-role mean/range F1 honestly (say so if only 3-4 runs are reached).
-2. **Compute confidence intervals** (Wilson interval) on the P/R/F1 estimates —
-   already computed for 2 roles in `proto3/memo.md` (TechnicalMethod recall CI
-   [0.44, 0.97], Task recall CI [0.10, 0.70] — these overlap). Extend to all 4 roles.
-3. **Run one consolidated manual review pass** over all 6 papers × 4 roles (not
-   three separate passes) — plausibly correct? evidence supports answer? authors'
-   own work, not prior work? **Does the quote actually appear in the source text?**
-   (No separate script for this — a verbatim match only proves the LLM followed
-   the "copy verbatim" instruction, not that the evidence is good evidence, e.g. a
-   real Related Work sentence could still be wrongly cited as the paper's own
-   method — so it's cheaper and just as informative to check while already
-   reading the source for support/authorship, rather than building standalone
-   tooling for 24 slots.)
+**P0 — mandatory, all 5:**
+1. **Log a real variance study to disk (0.5-1 day).** The existing "2 reruns"
+   variance note is not backed by any committed artifact (only an ephemeral
+   in-Colab dict) — log every Stage-2 run to `proto3/results/runs/run_<n>.json`,
+   run ≥5 times, report per-role mean/range F1 honestly (say so if only 3-4 runs
+   are reached).
+2. **Compute confidence intervals (0.5 day).** Wilson interval on **Precision and
+   Recall only** (already computed for 2 roles' recall in `proto3/memo.md`:
+   TechnicalMethod [0.44, 0.97], Task [0.10, 0.70] — these overlap). Extend to all
+   4 roles' P and R. **F1 stays a point estimate — no Wilson CI on F1** (it's a
+   harmonic mean, not a proportion; a proper F1 interval would need paper-level
+   bootstrap, not worth it at n=6 given the deadline).
+3. **Run one consolidated manual review pass (1-1.5 days)** over all 6 papers × 4
+   roles (not three separate passes) — plausibly correct? evidence supports
+   answer? authors' own work, not prior work? **Does the quote actually appear in
+   the source text?** (No separate script for this — a verbatim match only
+   proves the LLM followed the "copy verbatim" instruction, not that the
+   evidence is good evidence, e.g. a real Related Work sentence could still be
+   wrongly cited as the paper's own method — so it's cheaper and just as
+   informative to check while already reading the source for support/authorship,
+   rather than building standalone tooling for 24 slots.)
+4. **Write the proto2 → proto3 "fixed / not fixed" synthesis** (near-free, folds
+   into item 5's 0.5 day) — map proto2's three named failure modes (output
+   volume, authorship attribution, recall-only scoring) onto what items 1-3
+   actually found. Draft the skeleton now, before 1-3 even finish; fill in real
+   numbers once they do.
+5. **Collect screenshots/graphs (0.5 day, combined with item 4)** for the
+   Implementation and Evaluation chapters' required visuals: the Stage 2c JSON
+   output, the Stage 3 P/R/F1 table (word limits exclude figures — free space,
+   not a cost).
 
-**P1 — only if P0 finishes with time to spare:**
-4. **Related Work ablation** — exclude Related Work, rerun Stages 0–2, recompute
-   Stage 3 metrics, compare against main-setting numbers. Genuinely optional for
-   report3, not required to prove the core claims.
-5. **Write the proto2 → proto3 "fixed / not fixed" synthesis** — near-free once
-   the P0 data exists.
+**P1 — one item only, tightly scoped, do not let it re-expand (1-1.5 days):**
+6. **Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
+   role-specific calls instead of 1 joint call, scored with existing `scoring.py`
+   unchanged. Scope limits, explicit: one run each (or B vs the existing frozen
+   baseline), per-role F1 comparison only — **no consolidation pass, no
+   repeated-run variance study for B.** Either would balloon this back into a
+   multi-day project.
+
+**Cut first, in this order, if time runs short:**
+1. Related Work ablation — doesn't improve Task (the weakest role), so it's first
+   to drop. "Not run, deferred to further work" is a legitimate answer.
+2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study.
+3. A diagnostic on whether relaxed/stemmed matching would change the Task
+   conclusion.
+4. A diagnostic hand-recomputing what EvaluationMetric's P/R/F1 would be for
+   AlexNet/ResNet if scored as multi-valued.
 
 **Correction, not a to-do:** the earlier note about "batch processing across
 `proto3/previouswork/`" was a misunderstanding — that directory holds
@@ -62,9 +93,6 @@ background/survey PDFs for the literature review, not additional target papers.
 Don't act on it; it's retracted in `proto3/memo.md`.
 
 **Also still needed, regardless of the above:**
-6. **Collect screenshots/graphs** for the Implementation and Evaluation chapters'
-   required visuals: the Stage 2c JSON output, and the Stage 3 P/R/F1 table (word
-   limits exclude figures, so this is free space, not a cost).
 7. **Find full bibliographic entries** for any sources named in proto3 material
    but not yet in `report1/report.md`'s reference list — e.g. Dagdelen et al. 2024
    and Polak and Morgan 2024, mentioned in `report2/prototype-memo.md` Q5 without
@@ -258,12 +286,15 @@ versus how results are reported in Chapter 5?
 > `report1/report.md` Ch3 §6 ("Test and Evaluation") described the *plan* for
 > proto2's evaluation (substring gold-label match, ≥10/12 success threshold). This
 > chapter's revision should describe the *plan* from `proto3/memo.md` "Evaluation
-> plan" (rethought from scratch on 2026-07-20, prioritized P0/P1/P2 against a
-> ~3-week budget): gold-label match as classification P/R/F1 with confidence
-> intervals (done), a logged variance study and a consolidated manual review pass
-> covering plausibility/support/authorship/quote-in-source in one read (P0, in
-> progress), and the Related Work ablation (P1, optional). Keep the actual
-> *results* for Chapter 5 — this section is about what was planned and why it's
+> plan" (reprioritized 2026-07-20, deadline-focused): gold-label match as
+> classification, with Wilson confidence intervals on P/R (F1 as a point estimate
+> only, no CI), a logged variance study, and a consolidated manual review
+> pass covering plausibility/support/authorship/quote-in-source in one read, plus
+> the proto2→proto3 synthesis (all P0, mandatory); the decomposed-extraction pilot
+> (P1, tightly scoped: variant A vs B only, no consolidation); and the Related
+> Work ablation (first on the cut list — demoted because it doesn't address
+> Task, the weakest role). Keep the actual *results* for Chapter 5 — this section
+> is about what was planned and why it's
 > appropriate (including why micro/macro averaging, the n=6 sample size, and
 > dropping a standalone evidence-verbatim script in favour of folding it into the
 > manual review were each decided the way they were), not what was found.
@@ -274,9 +305,11 @@ A:
 
 > `report1/report.md` Table 5 is the precedent format (Period / Main task /
 > Output). Update it: preliminary report and proto2 are "Done"; proto3 Stages 0–2
-> and the gold-label-match evaluation are "Done"; the P0 items (variance study,
-> evidence check, confidence intervals, manual review) are "In progress"; the P1
-> Related Work ablation is "Optional / time-permitting."
+> and the gold-label-match evaluation are "Done"; the 5 P0 items (variance study,
+> confidence intervals on P/R, manual review, proto2→proto3 synthesis, figures)
+> are "In progress, mandatory"; the P1 decomposed-extraction pilot (tightly
+> scoped) is "In progress, one item only"; the Related Work ablation is "Cut
+> first if time runs short."
 
 A:
 
@@ -386,13 +419,18 @@ averaging and sample size handled?
 > schema fields, not a frequency distribution — a user needs all four), but show
 > both and note they're close here (0.65 vs 0.655) only because every role happens
 > to have n=6 in this dataset — a coincidence, not a property of the method. On
-> sample size: state the Wilson 95% CIs directly rather than a vague "small
-> sample" caveat — TechnicalMethod recall 0.83 → CI [0.44, 0.97]; Task recall 0.33
-> → CI [0.10, 0.70]. These substantially overlap: don't claim TechnicalMethod is
-> reliably "solved" while Task is reliably "broken." Also explain the decision not
-> to grow the corpus: tightening these intervals meaningfully would need ~30-40
-> gold-labeled papers per role, not the 6-10 reachable in 3 weeks with no second
-> annotator — poor ROI, so n=6 stays and is reported honestly instead.
+> sample size: state Wilson 95% CIs on **Precision and Recall** directly rather
+> than a vague "small sample" caveat — TechnicalMethod recall 0.83 → CI [0.44,
+> 0.97]; Task recall 0.33 → CI [0.10, 0.70]. These substantially overlap: don't
+> claim TechnicalMethod is reliably "solved" while Task is reliably "broken."
+> **Don't put a Wilson CI on F1** — it's a harmonic mean of P and R, not a
+> proportion, so a Wilson interval on it directly isn't statistically meaningful;
+> report F1 as a point estimate, with a one-line note that a proper F1 interval
+> would need paper-level bootstrap resampling, not worth it at n=6 given the
+> deadline. Also explain the decision not to grow the corpus: tightening the P/R
+> intervals meaningfully would need ~30-40 gold-labeled papers per role, not the
+> 6-10 reachable in 3 weeks with no second annotator — poor ROI, so n=6 stays and
+> is reported honestly instead.
 
 A:
 
@@ -435,9 +473,11 @@ check), and what is the status of the Related Work ablation?
 > distinct finding from "the quote was fabricated." Note the single-annotator bias
 > in this pass applies equally to the gold labels themselves — say so once, don't
 > present the manual review as more objective. For the ablation: state its status
-> honestly — it is P1/optional for report3, not required to prove the core
-> claims, so "not run, deferred to further work" is a legitimate, planned answer,
-> not a gap to apologize for.
+> honestly — it's first on the cut list for report3 (demoted from P1 because it
+> doesn't address Task, the project's weakest role, the way the decomposed-
+> extraction pilot does), not required to prove the core claims, so "not run,
+> deferred to further work" is a legitimate, planned answer, not a gap to
+> apologize for.
 
 A:
 

@@ -238,6 +238,15 @@ tightening these intervals would need ~30-40 gold-labeled papers per role, not t
 in 3 weeks with no second annotator to check labels against — poor ROI. Report the CI numbers
 directly instead of a vague "small sample" caveat.
 
+**Correction (2026-07-20): Wilson CI applies to Precision and Recall only, not F1.** Precision
+(`TP/(TP+FP)`) and Recall (`TP/(TP+FN)`) are each a simple proportion (successes / trials), which
+is exactly what a Wilson interval is for. F1 is the harmonic mean of the two — not a proportion —
+so a Wilson interval on F1 directly is not statistically meaningful. Report Wilson 95% CI on P and
+R for all 4 roles; report F1 as a point estimate only, with a one-line note that a proper F1
+interval would need paper-level bootstrap resampling, which isn't worth adding at n=6 given the
+deadline. The two CIs already computed above (TechnicalMethod/Task recall) are exactly this —
+recall CIs — and can be used as-is; just don't extend the same treatment to the F1 column.
+
 **Known measurement-instrument artifact, not just a model failure:** MapReduce's Task slot —
 gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale
 computations"` — fails the substring rule (`"distributed"` is not a literal substring of
@@ -247,47 +256,82 @@ separate "the pipeline is wrong" from "the metric is blunt."
 
 ### Priority for what to add next (given ~3 weeks total for the whole report, not just Evaluation)
 
-**P0 (~3-3.5 days) — do these:**
-1. **Real variance study.** The single existing "run-to-run variance" table below rests on n=2
-   reruns that were never logged to disk (only an ephemeral in-Colab-kernel dict) — not a
-   defensible variance claim. Log every Stage-2 run to `proto3/results/runs/run_<n>.json`, run
-   ≥5 times, report per-role mean/range F1. If only 3-4 runs are reached before time runs out,
-   say so explicitly rather than implying a fuller study.
-2. **Confidence intervals** on the P/R/F1 estimates (Wilson interval) — already computed above
-   for 2 roles; extend to all 4 and report alongside the aggregate table.
-3. **One consolidated manual review pass** (replaces the old separate "human check" and
-   "evidence support/authorship check" — same person reading the same 6 papers once, not three
-   times): per (paper, role) — plausibly correct? evidence supports answer? authors' own work,
-   not prior work? **Does the quote actually appear in the source text?** (folded in here rather
-   than a separate script — the reviewer is already reading the source to judge support/
-   authorship, so checking the quote is real costs nothing extra at this scale; a dedicated
-   automated verbatim-check script was considered and dropped as mostly redundant with this pass
-   for only 24 slots. Note it's a weaker check than it sounds either way — a verbatim-real quote
-   can still be the *wrong* evidence, e.g. a genuine Related Work sentence cited as the paper's
-   own method; that's exactly what "evidence supports answer" and "authors' own work" above are
-   for.) Include the MapReduce/Task example above as a concrete illustration. Note: this pass has
-   the same single-annotator bias as the gold labels themselves — say so once, don't present it
-   as more objective.
+**Reprioritized 2026-07-20, deadline-focused, per direct review.** Three corrections to the
+earlier version of this list: (1) the proto2→proto3 synthesis is writing, not an experiment, and
+report3's own requirement ("extend the evaluation to cover the whole project, not only the
+feature prototype") makes it mandatory — moved into P0. (2) Wilson CI applies to Precision and
+Recall only, not F1 (see "Sample size decision" correction above) — fixed below. (3) **Do not
+serialize the whole report behind P0/P1.** Introduction, Literature Review, Design, and
+Implementation don't depend on unfinished experiment results — draft them now, in parallel,
+roughly one chapter per day. Only parts of the Evaluation chapter genuinely have to wait on data.
 
-**P1 (~2.5-3 days total, three items competing for it) — only if P0 finishes with time to spare;
-if only one item fits, do #4 first, not the ablation:**
-4. **Decomposed-extraction pilot (variant B vs A)** — see "Architecture reconsideration" below.
-   4 independent role-specific calls per paper instead of 1 joint call, scored with the existing
-   `scoring.py` unchanged. ~1-1.5 days. Promoted ahead of the ablation because it directly
-   targets Task's known weakness (F1 0.33, the lowest of the 4 roles) rather than a general
-   robustness check, and is more central to "technical challenge"/"critical evaluation" than the
-   ablation.
-5. Related Work ablation (see below) — the one item here that's a genuine controlled experiment,
-   not a QA check, but not required to prove the core claims of report3. ~1-1.5 days.
-6. Explicit proto2 → proto3 "fixed / not fixed" synthesis against proto2's three named failure
-   modes (output volume, authorship attribution, recall-only scoring) — near-free once the P0
-   data exists, mostly a writing task.
+**P0 (~4-4.5 days) — mandatory, do all 5:**
+1. **Run-logging infrastructure + 5 full runs (0.5-1 day).** The single existing "run-to-run
+   variance" table below rests on n=2 reruns that were never logged to disk (only an ephemeral
+   in-Colab-kernel dict) — not a defensible variance claim. Log every Stage-2 run to
+   `proto3/results/runs/run_<n>.json`, run ≥5 times. If only 3-4 runs are reached before time runs
+   out, say so explicitly rather than implying a fuller study.
+2. **Aggregation + confidence intervals (0.5 day).** Wilson 95% CI on Precision and Recall for all
+   4 roles (already computed above for 2 roles' recall; extend to all 4, add Precision). F1 stays
+   a point estimate only — no CI on F1 (see correction above).
+3. **24-slot manual review (1-1.5 days)** (replaces the old separate "human check" and "evidence
+   support/authorship check" — same person reading the same 6 papers once, not three times): per
+   (paper, role) — plausibly correct? evidence supports answer? authors' own work, not prior
+   work? **Does the quote actually appear in the source text?** (folded in here rather than a
+   separate script — the reviewer is already reading the source to judge support/authorship, so
+   checking the quote costs nothing extra at this scale; a dedicated automated verbatim-check
+   script was considered and dropped as mostly redundant with this pass for only 24 slots. Note
+   it's a weaker check than it sounds either way — a verbatim-real quote can still be the *wrong*
+   evidence, e.g. a genuine Related Work sentence cited as the paper's own method; that's exactly
+   what "evidence supports answer" and "authors' own work" above are for.) Include the
+   MapReduce/Task example above as a concrete illustration. Note: this pass has the same
+   single-annotator bias as the gold labels themselves — say so once, don't present it as more
+   objective.
+4. **proto2 → proto3 "fixed / not fixed" synthesis (near-free, folds into figures item's 0.5 day).**
+   Map proto2's three named failure modes (output volume, authorship attribution, recall-only
+   scoring) onto what items 1-3 actually found — this is what makes the Evaluation chapter cover
+   "the whole project," not just proto3. Not an experiment: the skeleton (which failure mode maps
+   to which check) can be drafted right now, before items 1-3 even finish, then filled in with
+   real numbers once they do.
+5. **Submission figures (0.5 day, combined with item 4):** Stage 2c JSON output screenshot, Stage
+   3 P/R/F1 table, ideally a proto2-vs-proto3 output comparison (14/0/0/160 sentences vs one
+   answer per role, already drafted in `report2/prototype-memo.md` Q12).
 
-**P2 / optional stretch:** one unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case
-study of schema fit, not added to the 24-slot statistics; a diagnostic (not a shipped metric
-change) on whether relaxed/stemmed matching would change the Task conclusion; a diagnostic (not a
-shipped schema change) hand-recomputing what EvaluationMetric's P/R/F1 would be for AlexNet/ResNet
-if scored as multi-valued (see "Multi-valued roles" below) using data already in the baseline JSON.
+**P1 (~1-1.5 days) — one item only, tightly scoped, do not let it re-expand:**
+6. **Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent role-specific
+   calls per paper instead of 1 joint call (see "Architecture reconsideration" below), scored with
+   the existing `scoring.py` unchanged. Scope limits, explicit: one run each (or B vs the existing
+   frozen baseline A), per-role F1 comparison only — **no consolidation pass, and no repeated-run
+   variance study for variant B.** Either of those would balloon this back into a multi-day
+   project; if there's appetite for them, they belong in Further Work (see "Architecture
+   reconsideration"), not here. Promoted ahead of the ablation because it directly targets Task's
+   known weakness (F1 0.33, the lowest of the 4 roles) rather than a general robustness check.
+
+**Cut first, in this order, if time runs short (do not attempt out of order):**
+1. **Related Work ablation** — a clean controlled experiment, but doesn't improve Task (the
+   project's weakest role), so it's the first thing to drop. "Not run, deferred to further work"
+   is a legitimate, planned answer for report3.
+2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study of schema fit.
+3. A diagnostic (not a shipped metric change) on whether relaxed/stemmed matching would change the
+   Task conclusion.
+4. A diagnostic (not a shipped schema change) hand-recomputing what EvaluationMetric's P/R/F1
+   would be for AlexNet/ResNet if scored as multi-valued (see "Multi-valued roles" below).
+
+**Bottom line: treat "P0 + the decomposed pilot (P1)" as the real completion line for the
+experiment/evaluation work.** Effort table for that work only (not the writing):
+
+| Task | Estimate |
+|---|---|
+| Run-logging implementation + 5 runs | 0.5-1 day |
+| Aggregation + CI | 0.5 day |
+| 24-slot manual review | 1-1.5 days |
+| Figures + proto2→proto3 table | 0.5 day |
+| Decomposed pilot | 1-1.5 days |
+| **Total** | **~4-5 days** |
+
+Out of ~21 days total, that leaves ~16-17 days for writing all 6 chapters (~9500 words) plus
+citation hunting and revisions — comfortable if drafting starts now in parallel, tight if writing
+is left until all experiments finish.
 
 **Explicitly out of scope — defer to the Conclusion's "further work," don't attempt in 3 weeks:**
 growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
@@ -296,7 +340,7 @@ Haiku vs Llama 3.1 — belongs in the Design chapter's model-choice discussion, 
 any variance claim stronger than what the actual run count supports; **the consolidation pass
 (variant C) and the full A/B/C three-way comparison** (see "Architecture reconsideration" below)
 — designing and debugging a consolidation prompt plus a 5th call per paper is real new scope that
-competes directly with the ~14-15 days needed to write all 6 chapters; report3's "work need not be
+competes directly with the ~16-17 days needed to write all 6 chapters; report3's "work need not be
 complete" allowance covers stating this as a planned next step instead; **the full multi-valued
 schema implementation** (schema, prompt, gold re-annotation, new scoring function, rerun/rescore —
 see "Multi-valued roles" below) — same reasoning, same allowance.
@@ -369,11 +413,13 @@ cross-role consistency:            C > A > B
 
 **Status and priority:** this design rationale (the table above, the two citations, the A/B/C
 framing) is written up now for report3's Design chapter at zero implementation cost — it shows
-the current joint design was a considered choice. Variant B (decomposed only) is P1 item 4 above
-— promoted ahead of the Related Work ablation because it targets Task's known weakness (F1 0.33)
-directly. Variant C (consolidation) and the full 3-way A/B/C comparison are explicitly out of
-scope for report3 (see the out-of-scope list above) — real new prompt-design and debugging work,
-deferred to further work after report3, not attempted under the current time budget.
+the current joint design was a considered choice. Variant B (decomposed only) is the sole P1 item
+above — promoted ahead of the Related Work ablation (now first on the cut list) because it targets
+Task's known weakness (F1 0.33) directly. Scope is tightly capped: A vs B, one run each, per-role
+F1 only — no consolidation pass, no repeated-run variance study for B. Variant C (consolidation)
+and the full 3-way A/B/C comparison are explicitly out of scope for report3 (see the out-of-scope
+list above) — real new prompt-design and debugging work, deferred to further work after report3,
+not attempted under the current time budget.
 
 If variant B is actually run: reuse `scoring.py` unchanged (each independent call still produces
 one `RoleExtraction`, scored the same way as today); the interesting comparison is per-role F1,
@@ -481,8 +527,10 @@ This project uses a long-context LLM as a schema-guided document-level informati
 
 ## Ablation
 
-**Status: P1 (optional) — see "Evaluation plan" above.** Not required to prove report3's core
-claims; attempt only if the P0 evaluation items finish with time to spare.
+**Status: first item on the cut list (2026-07-20) — see "Evaluation plan" above.** Demoted from P1
+because it's a clean controlled experiment but doesn't improve Task, the project's weakest role
+(F1 0.33) — the decomposed-extraction pilot targets that directly and is P1 instead. Not required
+to prove report3's core claims; "not run, deferred to further work" is a legitimate answer.
 
 **Related Work inclusion**
 
@@ -500,9 +548,12 @@ Rationale: Related Work may help the model understand the contribution of the pa
   separate script — a verbatim match only proves instruction-following, not evidence quality, so
   it's folded into the manual review pass (P0 item 3) as one more thing to check while already
   reading the source text, rather than built as standalone tooling.
-- **Still open:** how much of P1/P2 (ablation, proto2→proto3 synthesis, HCI case study) is
-  reachable depends on how long the P0 items (variance study, CIs, manual review) actually take —
-  re-assess after P0 is done, don't commit to P1 scope in advance.
+- ~~**Still open: how much of P1/P2 is reachable?**~~ Resolved 2026-07-20: proto2→proto3 synthesis
+  is now P0 (mandatory, not optional — it's writing, not an experiment). P1 is just the
+  decomposed-extraction pilot, tightly scoped. Everything else (ablation, HCI case study, relaxed-
+  matching diagnostic, multi-valued diagnostic) is an explicitly ordered cut list, dropped in that
+  order if P0+P1 don't leave enough time to write all 6 chapters — see "Priority for what to add
+  next" above.
 
 ---
 
