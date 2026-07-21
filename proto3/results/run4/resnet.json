@@ -1,0 +1,30 @@
+{
+  "TechnicalMethod": {
+    "answer": "deep residual learning framework",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
+    }
+  },
+  "Task": {
+    "answer": "classification task",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "This result won the 1st place on the ILSVRC 2015 classification task."
+    }
+  },
+  "Dataset": {
+    "answer": "ImageNet classification dataset",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "On the ImageNet classification dataset  [35] , we obtain excellent results by extremely deep residual nets."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "top-1 and top-5 error rates",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate both top-1 and top-5 error rates."
+    }
+  }
+}
