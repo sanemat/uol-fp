@@ -1,0 +1,30 @@
+{
+  "TechnicalMethod": {
+    "answer": "Google",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext."
+    }
+  },
+  "Task": {
+    "answer": "information retrieval",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "The Web creates new challenges for information retrieval."
+    }
+  },
+  "Dataset": {
+    "answer": "crawl of 24 million pages",
+    "evidence": {
+      "section": "Anchor-test",
+      "quote": "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "precision",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "Because of this, as the collection size grows, we need tools that have very high precision (number of relevant documents returned, say in the top tens of results)."
+    }
+  }
+}

@@ -1,0 +1,18 @@
+Recorded: ['alexnet', 'bert', 'mapreduce', 'pagerank', 'resnet', 'transformer']
+
+Baseline vs gold (all 6 papers):
+Role                TP  FP  FN  TN      P     R    F1
+TechnicalMethod      5   1   1   0   0.83  0.83  0.83
+Task                 2   4   4   0   0.33  0.33  0.33
+Dataset              4   1   2   0   0.80  0.67  0.73
+EvaluationMetric     4   1   2   0   0.80  0.67  0.73
+Overall             15   7   9   0   0.68  0.62  0.65
+
+Pipeline vs gold (all 6 papers):
+Role                TP  FP  FN  TN      P     R    F1
+TechnicalMethod      5   1   1   0   0.83  0.83  0.83
+Task                 2   4   4   0   0.33  0.33  0.33
+Dataset              5   0   1   0   1.00  0.83  0.91
+EvaluationMetric     4   2   2   0   0.67  0.67  0.67
+Overall             16   7   8   0   0.70  0.67  0.68
+
