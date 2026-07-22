@@ -39,18 +39,27 @@ harmonic mean, not a proportion — F1 stays a point estimate). Effort for the
 items below only (not the writing): ~4-4.5 days for P0, ~1-1.5 days for P1 — treat
 "P0 + P1" as the real completion line for experiment work.
 
+**Update 2026-07-22:** P0 items 1 and 2 (run-logging + 5 runs, aggregation + CI)
+are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 item 6
+(~1-1.5 days).
+
 **P0 — mandatory, all 5:**
-1. **Log a real variance study to disk (0.5-1 day).** The existing "2 reruns"
-   variance note is not backed by any committed artifact (only an ephemeral
-   in-Colab dict) — log every Stage-2 run to `proto3/results/runs/run_<n>.json`,
-   run ≥5 times, report per-role mean/range F1 honestly (say so if only 3-4 runs
-   are reached).
-2. **Compute confidence intervals (0.5 day).** Wilson interval on **Precision and
-   Recall only** (already computed for 2 roles' recall in `proto3/memo.md`:
-   TechnicalMethod [0.44, 0.97], Task [0.10, 0.70] — these overlap). Extend to all
-   4 roles' P and R. **F1 stays a point estimate — no Wilson CI on F1** (it's a
-   harmonic mean, not a proportion; a proper F1 interval would need paper-level
-   bootstrap, not worth it at n=6 given the deadline).
+1. ~~**Log a real variance study to disk (0.5-1 day).**~~ **Done (2026-07-22).** 5
+   full runs logged to `proto3/results/run{1..5}/*.json`, scored and aggregated by
+   the new `proto3/aggregate_runs.py` → `proto3/results/aggregate.json`. Per-role
+   F1 mean/min/max/range is in `proto3/memo.md` "Run-logging + variance study" —
+   use directly for Q20.
+2. ~~**Compute confidence intervals (0.5 day).**~~ **Done (2026-07-22).** Wilson
+   interval on **Precision and Recall only**, computed on tp/fp/fn pooled across
+   the 5 runs (n=30 trials/role), for all 4 roles — see `proto3/memo.md` same
+   section. This supersedes the old n=6 baseline-only CI (TechnicalMethod recall
+   [0.44, 0.97], Task recall [0.10, 0.70] — these overlapped) with a tighter
+   pooled estimate where TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no
+   longer overlap — report both figures and the caveat that the 30 pooled trials
+   are 5 repeats of the same 6 papers, not 30 independent papers. **F1 stays a
+   point estimate — no Wilson CI on F1** (it's a harmonic mean, not a proportion;
+   a proper F1 interval would need paper-level bootstrap, not worth it given the
+   deadline).
 3. **Run one consolidated manual review pass (1-1.5 days)** over all 6 papers × 4
    roles (not three separate passes) — plausibly correct? evidence supports
    answer? authors' own work, not prior work? **Does the quote actually appear in
@@ -298,6 +307,15 @@ versus how results are reported in Chapter 5?
 > appropriate (including why micro/macro averaging, the n=6 sample size, and
 > dropping a standalone evidence-verbatim script in favour of folding it into the
 > manual review were each decided the way they were), not what was found.
+>
+> **Addendum (2026-07-22):** now that the 5-run variance study exists, the plan
+> section can also justify the pooled-CI design choice made while implementing it
+> — pool tp/fp/fn across the 5 runs (n=30 trials/role) rather than compute a
+> separate CI per run, because the point was a tighter estimate from real repeated
+> measurement, not 5 independent per-run snapshots; and state the trade-off up
+> front (non-independent trials, interval narrower than a true 30-paper sample)
+> rather than let Chapter 5 discover it. This is still about the *design decision*,
+> not the resulting numbers — the numbers themselves belong in Q20.
 
 A:
 
@@ -431,16 +449,56 @@ averaging and sample size handled?
 > intervals meaningfully would need ~30-40 gold-labeled papers per role, not the
 > 6-10 reachable in 3 weeks with no second annotator — poor ROI, so n=6 stays and
 > is reported honestly instead.
+>
+> **Update 2026-07-22:** the n=6 CIs above are for the single frozen baseline
+> sample. A second, tighter CI now exists from the 5 real pipeline runs (pooled
+> across runs, n=30 trials/role) — keep that one for Q20, not here, so this
+> section stays about the baseline gold-label-match result specifically. Don't
+> duplicate the pooled numbers in both places; cross-reference instead.
 
 A:
 
 **Q20:** What did the variance study find, and what does it actually prove?
 
-> Fill in once P0 item 1 is run (see `proto3/memo.md` "Evaluation plan"). If not
-> finished by the time you write this, say exactly how far you got (e.g. "3 of 5
-> planned runs completed") rather than implying a fuller study than was done — the
-> requirement doc's "we don't expect completed work at this stage" note covers
-> this, as long as it's stated honestly.
+> **Done (2026-07-22)** — 5 full runs, logged to `proto3/results/run{1..5}/*.json`
+> and aggregated by `proto3/aggregate_runs.py` (see `proto3/memo.md` "Run-logging +
+> variance study" for the full write-up; numbers also in
+> `proto3/results/aggregate.json`). Use the real numbers below, not a placeholder.
+>
+> **Per-role F1 across 5 runs:**
+>
+> | Role | F1 mean | F1 min | F1 max | F1 range |
+> |---|---|---|---|---|
+> | TechnicalMethod | 0.83 | 0.83 | 0.83 | 0.00 |
+> | Task | 0.33 | 0.33 | 0.33 | 0.00 |
+> | Dataset | 0.91 | 0.91 | 0.91 | 0.00 |
+> | EvaluationMetric | 0.57 | 0.33 | 0.67 | 0.33 |
+>
+> Three of four roles were perfectly stable across 5 real repetitions — stronger
+> evidence than the earlier n=2 anecdote, which showed both Dataset and
+> EvaluationMetric moving. At n=5, Dataset turned out stable and only
+> EvaluationMetric is not (0.33–0.67 across runs, unchanged code/`temperature=0`/
+> `seed=0`), narrowing the non-determinism finding rather than just repeating it.
+>
+> **Pooled Wilson 95% CI on P/R, n=30 trials/role** (tp/fp/fn summed across the 5
+> runs):
+>
+> | Role | P | P 95% CI | R | R 95% CI |
+> |---|---|---|---|---|
+> | TechnicalMethod | 0.83 | [0.66, 0.93] | 0.83 | [0.66, 0.93] |
+> | Task | 0.33 | [0.19, 0.51] | 0.33 | [0.19, 0.51] |
+> | Dataset | 1.00 | [0.87, 1.00] | 0.83 | [0.66, 0.93] |
+> | EvaluationMetric | 0.57 | [0.39, 0.73] | 0.57 | [0.39, 0.73] |
+>
+> State the caveat plainly: these 30 trials/role are 5 repeats of the same 6
+> papers, not 30 independent papers, so the interval is narrower than a true
+> 30-independent-paper sample would give — don't present it as if it were.
+> Even so, it's worth reporting as a finding, not just a caveat: TechnicalMethod
+> [0.66, 0.93] and Task [0.19, 0.51] no longer overlap, unlike the n=6 baseline
+> CIs in Q19 ([0.44, 0.97] vs [0.10, 0.70], which did overlap). Five real
+> repetitions give more grounds to say TechnicalMethod reliably outperforms Task
+> than the single n=6 snapshot alone supported — while still stopping short of
+> calling either "solved" or "broken" outright.
 >
 > Also worth including regardless of results: MapReduce's Task slot (gold
 > `"distributed"`, system answer `"automatic parallelization and distribution of
@@ -487,10 +545,11 @@ the current prototype?
 
 > Achievements: moved from proto2's recall-only substring check (10/12, then
 > 18/24 across 6 papers) to proto3's classification P/R/F1 with confidence
-> intervals; every answer is evidence-backed and (once Q20's check is run)
-> verifiably checkable against the source text, addressing proto2's
-> authorship-attribution failure concretely rather than by design claim alone.
-> Weaknesses: Task F1 is low (0.33, partly a metric artifact per Q20); only 6
+> intervals, now backed by 5 real repeated runs, not a single snapshot (Q20); every
+> answer is evidence-backed and (once Q21's manual review is run) verifiably
+> checkable against the source text, addressing proto2's authorship-attribution
+> failure concretely rather than by design claim alone. Weaknesses: Task F1 is low
+> (0.33, stable across all 5 runs, and partly a metric artifact per Q20); only 6
 > papers, all ML-benchmark-shaped (proto2 already showed systems papers like
 > MapReduce and PageRank fit the 4-role schema worse — note this as an open
 > generalization question, not resolved). Write the explicit proto2 → proto3
@@ -499,6 +558,13 @@ the current prototype?
 > Q19–Q21 actually found, not just onto the design rationale in Chapter 3 — that
 > mapping is what makes this "whole project" evaluation rather than a
 > proto3-only one.
+>
+> **Worth citing from Q20 here specifically:** the pooled 5-run CIs for
+> TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlap, unlike the
+> single-baseline n=6 CIs in Q19. That's a genuine strengthening of the
+> "TechnicalMethod works, Task doesn't" claim over the preliminary report — cite it
+> as evidence the evaluation itself matured across the project, not only the
+> pipeline.
 >
 > **If the decomposed-extraction pilot (variant B, see Q9 and `proto3/memo.md`
 > "Architecture reconsideration") was run:** report per-role F1, A (joint) vs B

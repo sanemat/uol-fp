@@ -176,8 +176,12 @@ Stage 0–2 are implemented in `proto3/3pipeline.ipynb` (Colab notebook), throug
 prompt to Gemini with structured output (`response_json_schema=MethodologyProfile.model_json_schema()`)
 and parsing the response with Pydantic. Stage 3's gold-label match (P/R/F1 against
 `GOLD_LABELS` and the frozen `proto3/baseline/*.json` outputs) is also implemented and tested.
-Not yet implemented, in priority order: a real (≥5-run) variance study with logged outputs,
-confidence intervals on the P/R/F1 estimates, a consolidated manual review pass (including a
+Done as of 2026-07-22: a real 5-run variance study, logged to `proto3/results/run{1..5}/*.json`
+and aggregated by `proto3/aggregate_runs.py` (`proto3/results/aggregate.json`), including pooled
+Wilson 95% CIs on Precision and Recall for all 4 roles. See "Run-logging + variance study" under
+"Evaluation plan" below.
+
+Not yet implemented, in priority order: a consolidated manual review pass (including a
 quote-in-source check, folded into that manual pass rather than a separate script), and (lower
 priority) the Related Work ablation. See "Evaluation plan" below.
 
@@ -199,8 +203,9 @@ Reconsidered from scratch (2026-07-20) — the earlier "3 axes" list below was a
 budget before report3 is due. Same 6 papers and gold labels as proto2 throughout (6 papers × 4
 roles = 24 items; `GOLD_LABELS` hardcoded in the notebook, no separate file).
 
-**What's actually implemented today: only gold-label match (below).** Everything else in this
-section is planned, not done.
+**What's actually implemented today: gold-label match, and (2026-07-22) the 5-run variance study
+with pooled Wilson CIs (below).** The manual review pass and the Related Work ablation are still
+planned, not done.
 
 ### Gold label match — implemented and tested
 
@@ -254,6 +259,51 @@ computations"` — fails the substring rule (`"distributed"` is not a literal su
 the blunt substring-match rule, not purely a pipeline failure. Worth stating in the report to
 separate "the pipeline is wrong" from "the metric is blunt."
 
+### Run-logging + variance study — implemented and tested (2026-07-22)
+
+5 full Stage-2 runs, logged to `proto3/results/run{1..5}/*.json` (6 papers each), scored against
+`GOLD_LABELS` by `proto3/aggregate_runs.py` (reuses `scoring.py`'s `score_profile` and
+`precision_recall_f1`, unchanged). Output written to `proto3/results/aggregate.json`; console
+report cross-checked against each run's pre-existing `run.txt` capture (exact match — confirms the
+JSON-based recomputation agrees with the earlier console output).
+
+**Per-role F1 across the 5 runs:**
+
+| Role | F1 mean | F1 min | F1 max | F1 range |
+|---|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | 0.83 | 0.00 |
+| Task | 0.33 | 0.33 | 0.33 | 0.00 |
+| Dataset | 0.91 | 0.91 | 0.91 | 0.00 |
+| EvaluationMetric | 0.57 | 0.33 | 0.67 | 0.33 |
+
+TechnicalMethod, Task, and Dataset scored identically on every one of the 5 runs — zero variance
+across 5 real repetitions, not just the earlier n=2 anecdote. EvaluationMetric is the only role
+that moved (F1 ranged 0.33–0.67 across runs; 3 of 5 runs landed at 0.67, one at 0.50, one at 0.33),
+confirming the earlier n=2 observation that Gemini does not guarantee bit-for-bit reproducibility,
+and narrowing the instability to one role rather than two (the earlier n=2 table also showed
+Dataset moving; at n=5, Dataset is stable and only EvaluationMetric is not).
+
+**Pooled Wilson 95% CI on Precision and Recall, all 4 roles** (tp/fp/fn summed across the 5 runs,
+n=30 trials/role):
+
+| Role | TP | FP | FN | P | P 95% CI | R | R 95% CI |
+|---|---|---|---|---|---|---|---|
+| TechnicalMethod | 25 | 5 | 5 | 0.83 | [0.66, 0.93] | 0.83 | [0.66, 0.93] |
+| Task | 10 | 20 | 20 | 0.33 | [0.19, 0.51] | 0.33 | [0.19, 0.51] |
+| Dataset | 25 | 0 | 5 | 1.00 | [0.87, 1.00] | 0.83 | [0.66, 0.93] |
+| EvaluationMetric | 17 | 13 | 13 | 0.57 | [0.39, 0.73] | 0.57 | [0.39, 0.73] |
+
+**Caveat, stated honestly:** the 30 trials/role pooled here are 5 repetitions of the same 6
+papers, not 30 independent papers — so these intervals are narrower than a true 30-independent-
+sample would give, and should not be presented as if they were. They still supersede the earlier
+n=6 single-baseline CIs (TechnicalMethod recall [0.44, 0.97], Task recall [0.10, 0.70]) with a
+tighter estimate backed by real repeated measurement, and the report should show both: the
+looser, more defensible n=6-independent-paper figure and the tighter, non-independent n=30-pooled
+figure, explaining what each does and doesn't prove. Even with the tighter pooled interval,
+TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] still don't overlap here — unlike at n=6 — which
+is itself worth reporting as a finding: 5 real repetitions give enough evidence to say
+TechnicalMethod outperforms Task with more confidence than the n=6 snapshot alone supported.
+
 ### Priority for what to add next (given ~3 weeks total for the whole report, not just Evaluation)
 
 **Reprioritized 2026-07-20, deadline-focused, per direct review.** Three corrections to the
@@ -266,14 +316,12 @@ Implementation don't depend on unfinished experiment results — draft them now,
 roughly one chapter per day. Only parts of the Evaluation chapter genuinely have to wait on data.
 
 **P0 (~4-4.5 days) — mandatory, do all 5:**
-1. **Run-logging infrastructure + 5 full runs (0.5-1 day).** The single existing "run-to-run
-   variance" table below rests on n=2 reruns that were never logged to disk (only an ephemeral
-   in-Colab-kernel dict) — not a defensible variance claim. Log every Stage-2 run to
-   `proto3/results/runs/run_<n>.json`, run ≥5 times. If only 3-4 runs are reached before time runs
-   out, say so explicitly rather than implying a fuller study.
-2. **Aggregation + confidence intervals (0.5 day).** Wilson 95% CI on Precision and Recall for all
-   4 roles (already computed above for 2 roles' recall; extend to all 4, add Precision). F1 stays
-   a point estimate only — no CI on F1 (see correction above).
+1. ~~**Run-logging infrastructure + 5 full runs (0.5-1 day).**~~ **Done (2026-07-22).** 5 runs
+   logged to `proto3/results/run{1..5}/*.json`. See "Run-logging + variance study" above.
+2. ~~**Aggregation + confidence intervals (0.5 day).**~~ **Done (2026-07-22).** Pooled Wilson 95%
+   CI on Precision and Recall for all 4 roles, via `proto3/aggregate_runs.py` →
+   `proto3/results/aggregate.json`. F1 stays a point estimate only — no CI on F1 (see correction
+   above). See "Run-logging + variance study" above.
 3. **24-slot manual review (1-1.5 days)** (replaces the old separate "human check" and "evidence
    support/authorship check" — same person reading the same 6 papers once, not three times): per
    (paper, role) — plausibly correct? evidence supports answer? authors' own work, not prior
@@ -322,12 +370,12 @@ experiment/evaluation work.** Effort table for that work only (not the writing):
 
 | Task | Estimate |
 |---|---|
-| Run-logging implementation + 5 runs | 0.5-1 day |
-| Aggregation + CI | 0.5 day |
+| Run-logging implementation + 5 runs | Done |
+| Aggregation + CI | Done |
 | 24-slot manual review | 1-1.5 days |
 | Figures + proto2→proto3 table | 0.5 day |
 | Decomposed pilot | 1-1.5 days |
-| **Total** | **~4-5 days** |
+| **Total remaining** | **~3-3.5 days** |
 
 Out of ~21 days total, that leaves ~16-17 days for writing all 6 chapters (~9500 words) plus
 citation hunting and revisions — comfortable if drafting starts now in parallel, tight if writing
@@ -351,22 +399,11 @@ over-credit, see MapReduce example); the frozen baseline JSON is not "ground tru
 earlier frozen sample, equally subject to non-determinism as any other run, and is already
 correctly distinct from `GOLD_LABELS` in the code (keep that distinction equally clear in prose).
 
-**Original n=2 observation (superseded by the P0 variance study above once it exists — kept here
-for the raw numbers, not as the final claim):**
-
-| Role | Baseline F1 | Pipeline run 1 | Pipeline run 2 |
-|---|---|---|---|
-| TechnicalMethod | 0.83 | 0.83 | 0.83 |
-| Task | 0.33 | 0.33 | 0.33 |
-| Dataset | 0.73 | 0.80 | 0.91 |
-| EvaluationMetric | 0.73 | 0.67 | 0.50 |
-| Overall (micro) | 0.65 | 0.65 | 0.64 |
-
-TechnicalMethod and Task scored identically across baseline and both pipeline runs. Dataset and
-EvaluationMetric changed between runs despite unchanged code, `temperature=0`, and `seed=0` —
-Gemini does not guarantee bit-for-bit reproducibility across sessions. This asymmetry (2 roles
-stable, 2 roles not) is itself worth investigating in the real variance study (P0 item 1), not
-just noting anecdotally.
+**Original n=2 observation — superseded, see "Run-logging + variance study" above for the real
+5-run numbers.** (Kept as a one-line historical note: the n=2 anecdote first flagged that Dataset
+and EvaluationMetric moved between runs despite unchanged code, `temperature=0`, and `seed=0`; the
+5-run study confirmed non-determinism but narrowed it to EvaluationMetric alone — Dataset was
+stable across all 5 real runs.)
 
 ---
 
