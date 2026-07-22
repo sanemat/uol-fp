@@ -1,7 +1,7 @@
 GROBID_VERSION := 0.8.1
 GROBID_PORT := 8070
 
-.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook baseline sync-generated
+.PHONY: grobid-start grobid-stop grobid-wait lint format test notebook baseline sync-generated aggregate
 
 grobid-start:
 	docker run -d --rm -p $(GROBID_PORT):8070 --name grobid lfoppiano/grobid:$(GROBID_VERSION)
@@ -24,6 +24,9 @@ test:
 
 sync-generated:
 	.venv/bin/python sync_generated.py
+
+aggregate:
+	.venv/bin/python aggregate_runs.py
 
 notebook:
 	.venv/bin/jupyter lab 3pipeline.ipynb
