@@ -251,6 +251,14 @@ extraction, and how does it directly answer proto2's known failures?
 > project's own measured LLM non-determinism argues against trusting a second,
 > uncalibrated confidence axis). State clearly this is write-up only for
 > report3, not implemented — full implementation is deferred to Q24.
+>
+> **Independent corroboration:** an informal cross-check with Google NotebookLM
+> (each paper re-extracted independently, `notebooks/*.md`) found the same
+> multi-valued pattern for BERT, ResNet, and Transformer's Dataset/EvaluationMetric
+> without being told the schema was single-valued — see `proto3/memo.md`
+> "NotebookLM cross-check" for the full comparison. Worth citing as a second,
+> independent source alongside this project's own data, with the caveat that it
+> is one informal AI-based pass, not a formal inter-annotator study.
 
 A:
 
@@ -508,6 +516,19 @@ A:
 > from "the metric is blunt," which is exactly the kind of critical-analysis point
 > the grading criteria reward.
 >
+> **Two more concrete cases, found via the NotebookLM cross-check** (see
+> `proto3/memo.md` "NotebookLM cross-check"): (a) MapReduce's Dataset slot
+> (gold `"TeraSort"`) answered `null` in every one of the 5 runs — a genuine
+> recall miss, not an absent-data case, since NotebookLM independently found the
+> dataset description (two ~1TB grep/sort benchmarks) in the same source text.
+> This is a different failure mode from the Task case above: "answer never
+> produced" rather than "answer present but scored wrong." (b) Pagerank's
+> EvaluationMetric slot (gold `"quality"`) answered `"precision"` in every one
+> of the 5 runs — scored wrong by substring match, but the paper's text supports
+> both terms, and NotebookLM's independent extraction also names Precision —
+> a second instance of the "metric is blunt" pattern, this time pointing at the
+> gold label choice rather than the pipeline's answer.
+>
 > **A second instance of the same "metric is blunt" pattern, if the optional P2
 > diagnostic was run** (see `proto3/memo.md` "Multi-valued roles"): AlexNet's and
 > ResNet's baseline EvaluationMetric answers already say "top-1 and top-5 error
@@ -530,7 +551,11 @@ check), and what is the status of the Related Work ablation?
 > *wrong* evidence (e.g. attributed to the wrong section or to prior work) as a
 > distinct finding from "the quote was fabricated." Note the single-annotator bias
 > in this pass applies equally to the gold labels themselves — say so once, don't
-> present the manual review as more objective. For the ablation: state its status
+> present the manual review as more objective. Mention the informal NotebookLM
+> cross-check (`proto3/memo.md` "NotebookLM cross-check") as a distinct, non-human
+> data point that ran alongside this manual review, not instead of it — it is one
+> AI tool's single pass, not a formal inter-annotator study, so it narrows rather
+> than replaces the "no second annotator" limitation. For the ablation: state its status
 > honestly — it's first on the cut list for report3 (demoted from P1 because it
 > doesn't address Task, the project's weakest role, the way the decomposed-
 > extraction pilot does), not required to prove the core claims, so "not run,
@@ -552,7 +577,12 @@ the current prototype?
 > (0.33, stable across all 5 runs, and partly a metric artifact per Q20); only 6
 > papers, all ML-benchmark-shaped (proto2 already showed systems papers like
 > MapReduce and PageRank fit the 4-role schema worse — note this as an open
-> generalization question, not resolved). Write the explicit proto2 → proto3
+> generalization question, not resolved). Also name MapReduce's Dataset slot
+> (stable `null` across all 5 runs, gold `"TeraSort"`) as a concrete weakness,
+> externally corroborated by the NotebookLM cross-check (Q20, `proto3/memo.md`
+> "NotebookLM cross-check") — the dataset description is confirmed present in the
+> source text, so this is a genuine model recall failure, distinct from the
+> gold-label-artifact cases. Write the explicit proto2 → proto3
 > "fixed / not fixed" synthesis here: map each of proto2's three named failure
 > modes (output volume, authorship attribution, recall-only scoring) onto what
 > Q19–Q21 actually found, not just onto the design rationale in Chapter 3 — that
@@ -594,7 +624,10 @@ A:
 > From `proto3/memo.md`'s explicit out-of-scope list: growing the gold-label
 > corpus (shown to be poor ROI at any scale reachable in 3 weeks — say why, using
 > the Wilson CI math from Q19, rather than just "no time"), a formal
-> inter-annotator-agreement study (no second annotator exists), a full
+> inter-annotator-agreement study with a human annotator (none exists on this
+> solo project — the informal NotebookLM cross-check in Q20/Q21 narrows this gap
+> but does not close it, since it's one AI tool's single pass with no annotation
+> protocol, not a substitute for a human second annotator), a full
 > multi-model comparison, and the Related Work ablation if it wasn't reached.
 > Also worth raising: testing on non-ML-benchmark papers (systems, HCI) to see
 > whether the 4-role schema and document-level extraction generalize better than
