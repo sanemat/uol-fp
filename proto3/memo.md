@@ -241,7 +241,8 @@ corpus for statistical power.** Wilson 95% CIs at n=6: TechnicalMethod recall 0.
 claim that TechnicalMethod is reliably "solved" while Task is reliably "broken." Meaningfully
 tightening these intervals would need ~30-40 gold-labeled papers per role, not the 6-10 reachable
 in 3 weeks with no second annotator to check labels against — poor ROI. Report the CI numbers
-directly instead of a vague "small sample" caveat.
+directly instead of a vague "small sample" caveat. (An informal AI-based cross-check exists — see
+"NotebookLM cross-check" below — but it is not a substitute for a second human annotator.)
 
 **Correction (2026-07-20): Wilson CI applies to Precision and Recall only, not F1.** Precision
 (`TP/(TP+FP)`) and Recall (`TP/(TP+FN)`) are each a simple proportion (successes / trials), which
@@ -383,7 +384,9 @@ is left until all experiments finish.
 
 **Explicitly out of scope — defer to the Conclusion's "further work," don't attempt in 3 weeks:**
 growing the gold-label corpus for statistical power; a formal inter-annotator-agreement study (no
-second annotator exists on this solo project); a full multi-model comparison (Gemini vs Claude
+second human annotator exists on this solo project — an informal AI-based cross-check exists, see
+"NotebookLM cross-check" below, but it narrows rather than closes this gap); a full multi-model
+comparison (Gemini vs Claude
 Haiku vs Llama 3.1 — belongs in the Design chapter's model-choice discussion, not Evaluation);
 any variance claim stronger than what the actual run count supports; **the consolidation pass
 (variant C) and the full A/B/C three-way comparison** (see "Architecture reconsideration" below)
@@ -553,6 +556,52 @@ Same tier as the existing Task-substring-matching diagnostic already in the P2 l
 report3** — add to the out-of-scope list above, alongside variant C (consolidation) and the full
 A/B/C comparison: real new scope competing with the ~14-15 days needed to write all 6 chapters,
 not needed to prove report3's core claims.
+
+---
+
+## NotebookLM cross-check (2026-07-25)
+
+Each of the 6 papers was run independently through Google NotebookLM, asked for the same
+TechnicalMethod/Task/Dataset/EvaluationMetric extraction the proto3 pipeline performs, with
+output saved to `notebooks/<paper>.md`. Compared against `proto3/baseline/*.json` (and, for
+two cells below, all 5 real runs in `proto3/results/run{1..5}/`).
+
+**Purpose and status:** an informal, single-pass cross-check with one AI tool — no annotation
+protocol, no disagreement adjudication, no human second annotator. It narrows but does not
+close the "no second annotator" gap noted above and in "Evaluation plan" — do not present it
+as a formal inter-annotator-agreement study.
+
+**Findings:**
+
+1. **TechnicalMethod: stable agreement across all 6 papers**, exact or near-exact
+   (e.g. "Google", "BERT", "Transformer", "MapReduce" match on both sides). Independent
+   corroboration that this is the strongest role.
+2. **Multi-valued pattern, independently corroborated.** For BERT, ResNet, and Transformer,
+   the single-valued baseline picked one Dataset/EvaluationMetric value where NotebookLM
+   (unconstrained) listed several real ones from the same source text — e.g. BERT Dataset:
+   baseline `"SQuAD v1.1"` vs NotebookLM's BooksCorpus/Wikipedia (pre-training) plus
+   GLUE/SQuAD v1.1+v2.0/SWAG/CoNLL-2003 (evaluation); Transformer Dataset: baseline
+   `"WMT 2014 English-German"` vs NotebookLM's addition of WMT 2014 English-French and the WSJ
+   Penn Treebank; ResNet Dataset/EvaluationMetric similarly broader (+ CIFAR-10/PASCAL
+   VOC/COCO, + mAP). This is a second, independent source pointing at the same gap already
+   reasoned about from this project's own data in "Multi-valued roles" above.
+3. **MapReduce Dataset — genuine recall miss, not absence.** Gold label is `"TeraSort"`
+   (`proto3/aggregate_runs.py` `GOLD_LABELS`). The pipeline answered `null` in the frozen
+   baseline **and in all 5 real runs** (`proto3/results/run{1..5}/mapreduce.json`). NotebookLM
+   independently found the dataset description in the source text (two ~1TB grep/sort
+   benchmark datasets, $10^{10}$ 100-byte records) — confirming the answer is present in the
+   paper, so this is a model recall failure, not a case where the source lacks the
+   information. Distinct from the already-documented MapReduce **Task** substring-artifact
+   above ("answer present but scored wrong by a blunt metric") — this is "answer never
+   produced at all."
+4. **Pagerank EvaluationMetric — second instance of the "metric is blunt" pattern.** Gold
+   label is `"quality"`. The pipeline consistently answered `"precision"` across all 5 real
+   runs — not a substring match against `"quality"`, so scored wrong. The paper's own text
+   supports both terms ("we need tools that have very high precision..." and "The most
+   important measure of a search engine is the quality of its search results"), and
+   NotebookLM's independent extraction also names Precision as one of the metrics. This
+   suggests the gold label choice, not the model, is the weak point here — a second, parallel
+   example to the MapReduce Task case of the same measurement-instrument-artifact pattern.
 
 ---
 
