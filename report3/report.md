@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5750 words, excluding tables, figures, references, and appendices)
+# Report (5517 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -183,7 +183,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## Chapter 3: Design (1063 words)
+## Chapter 3: Design (971 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (Table 1, Chapter 1).
 
@@ -199,7 +199,7 @@ Two further design considerations are not yet implemented.
 
 First, whether extraction should stay joint (the current design: one call returns all four roles) or move to decomposed extraction (four independent role-specific calls, optionally followed by a consolidation pass). Khot et al. [14] show that decomposing a complex task into independently-optimizable subtasks can beat a single joint few-shot prompt on several reasoning tasks, while Jain et al.'s [5] document-level argument (Chapter 2) favours joint handling, since it can exploit cross-role relationships appearing in one sentence (e.g. "Transformer"/"WMT"/"BLEU" together). A decomposed-only pilot (variant B vs the joint baseline, one run each, no consolidation) is a stretch item for this report; results, if run, belong in Chapter 5, and the consolidation variant plus a full comparison are deferred to further work (Chapter 6).
 
-Second, whether every role should stay single-valued, or whether some should allow multiple answers. My own data gives an evidence-based case for Dataset and EvaluationMetric only: the current baseline answers for AlexNet and ResNet already squash two error rates into one string ("top-1 and top-5 error rates"), which is real multi-value evidence that Task and TechnicalMethod do not share. This is not new to proto3 either: BERT's own gold EvaluationMetric label already lists both "accuracy" and "F1" as acceptable (Appendix B, Table B1), since the paper genuinely reports both, and only one is used per scoring run to keep the substring-match evaluation tractable. A multi-valued design would keep per-item evidence rather than one shared quote for a whole list, and use a ranked "primary first" list rather than a numeric confidence field, since this project's own measured LLM non-determinism (Chapter 5) argues against trusting a second, uncalibrated confidence axis. An informal cross-check with Google NotebookLM, run independently on each paper without being told the schema was single-valued, found the same multi-valued pattern for BERT, ResNet, and Transformer: for BERT, the single-valued baseline names "SQuAD v1.1" as Dataset, while NotebookLM listed BooksCorpus and Wikipedia for pre-training plus GLUE, SQuAD v1.1/v2.0, SWAG, and CoNLL-2003 for evaluation, all present in the same source text; for Transformer, NotebookLM added WMT 2014 English-French and the WSJ Penn Treebank alongside the baseline's WMT 2014 English-German; ResNet's Dataset and EvaluationMetric were similarly broader (adding CIFAR-10, PASCAL VOC, COCO, and mAP). This is a second, independent data point, though only one informal AI-based pass, not a formal inter-annotator study. This discussion is write-up only for this report; full implementation is deferred to Chapter 6.
+Second, whether every role should stay single-valued, or whether some should allow multiple answers. The baseline already shows that Dataset and EvaluationMetric can be naturally multi-valued: AlexNet and ResNet both report top-1 and top-5 error rates squashed into one string, and BERT's own gold EvaluationMetric label lists both "accuracy" and "F1" as acceptable (Appendix B, Table B1), since the paper genuinely reports both. An informal NotebookLM cross-check, run independently on each paper without being told the schema was single-valued, produced similarly multi-valued outputs for BERT, ResNet, and Transformer — for example, BERT's single-valued Dataset answer is "SQuAD v1.1," while NotebookLM listed BooksCorpus, Wikipedia, GLUE, and SQuAD v1.1/v2.0 from the same source text. Task and TechnicalMethod show no such pattern. Forcing Dataset and EvaluationMetric into one string loses information; a multi-valued design would need per-item evidence rather than one shared quote per list, and a ranked "primary first" order rather than a numeric confidence field, since this project's own measured non-determinism (Chapter 5) argues against a second, uncalibrated confidence axis. This discussion is write-up only for this report; full implementation is deferred to Chapter 6.
 
 ### 3. Model Choice
 
@@ -254,7 +254,7 @@ Table 5: Work plan summary.
 
 ---
 
-## Chapter 4: Implementation (774 words)
+## Chapter 4: Implementation (728 words)
 
 proto1 was an AI-drafted reference implementation only, not used directly, per this module's constraint on AI assistance for CM3060 submissions. proto2 was my own sentence-level zero-shot natural language inference (NLI) classifier: it classified every sentence in a paper into one of the four roles, producing a list of candidate sentences per role rather than one answer. proto3 reframes the task as document-level extraction: given a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context LLM. On "Attention Is All You Need" [D6], for example: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU", each backed by its own quote and section.
 
@@ -332,7 +332,7 @@ profile = MethodologyProfile.model_validate_json(response.text)
 
 An earlier prompt version described the `evidence` field inconsistently — it asked for "evidence" as a single quoted sentence, but also said to return the section heading and the quote together. Testing on "Attention Is All You Need" showed how Gemini resolved that ambiguity: it returned `evidence` as one flat string with the heading prepended, e.g. `"## Introduction In this work we propose..."`, instead of the nested `{section, quote}` object the design intended. At the time I fixed this by rewriting the prompt to make the nested shape explicit; today the nested shape is guaranteed by the schema regardless of prompt wording, so this specific bug class is now structurally prevented rather than patched.
 
-Third, `response_schema` and `response_json_schema` are not interchangeable. The SDK's `response_schema` field takes a Pydantic model class directly and converts it to Google's own `Schema` proto, a restricted OpenAPI 3.0 subset that does not support `additionalProperties`. Because `extra="forbid"` on the Pydantic models produces `additionalProperties: false` in their JSON Schema, `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`. `response_json_schema` accepts a real JSON Schema dict instead, which does support `additionalProperties`, so `MethodologyProfile.model_json_schema()` is passed there; `model_validate_json` still does the Pydantic-side parsing, so only what is sent to the API changes, not how the result is read.
+Third, `response_schema` and `response_json_schema` are not interchangeable. `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`, because it converts to Google's own `Schema` proto, which does not support `additionalProperties`, and Pydantic's `extra="forbid"` produces exactly that field. `response_json_schema` accepts a real JSON Schema dict instead, so `MethodologyProfile.model_json_schema()` is passed there.
 
 Fourth, code quality: `pyright` in strict mode and `ruff` report zero issues, and a pytest suite in `proto3/tests/` covers `scoring.py`'s evaluation logic and the `model_validator`'s null-correlation check, with `proto3/sync_generated.py` keeping notebook cells in sync with the installable `proto3/src/uol_fp/` modules. `proto3/baseline.ipynb` used to be a byte-identical duplicate of `3pipeline.ipynb`, kept only because it had produced the six `proto3/baseline/*.json` files; it has since been deleted, so there is no second notebook to keep in sync by hand.
 
@@ -400,7 +400,7 @@ Table 6: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1397 words)
+## Chapter 5: Evaluation (1338 words)
 
 ### 1. Evaluation Method
 
@@ -457,11 +457,11 @@ Pooling true/false positive/negative counts across the five runs gives a tighter
 
 Table 9: Pooled Wilson 95% confidence intervals, n=30 trials per role (5 runs × 6 papers).
 
-These 30 trials per role are five repeats of the same six papers, not 30 independent papers, so the interval is narrower than a true 30-independent-paper sample would give. Even so: TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlap, unlike the n=6 baseline intervals in Section 2 above ([0.44, 0.97] vs [0.10, 0.70], which did overlap). Five real repetitions give more grounds to say TechnicalMethod reliably outperforms Task than the single n=6 snapshot alone supported.
+These 30 trials per role are five repeats of the same six papers, not 30 independent papers, so the interval is narrower than a true 30-independent-paper sample would give. TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlap, unlike the n=6 baseline intervals in Section 2 above ([0.44, 0.97] vs [0.10, 0.70], which did overlap). Across the five runs, TechnicalMethod consistently outperformed Task.
 
-One case is worth including regardless of the numbers: MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct — Task's low F1 is partly a measurement-instrument artifact, not purely a model failure.
+MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct — Task's low F1 is partly a measurement-instrument artifact, not purely a model failure.
 
-The same cross-check found two further concrete cases, this time where NotebookLM disagreed with the pipeline. MapReduce's Dataset slot (gold `"TeraSort"`) answered `null` in every one of the five runs — a genuine recall miss, since NotebookLM independently found the dataset description (two roughly 1 terabyte grep/sort benchmarks) in the same source text. Pagerank's EvaluationMetric slot (gold `"quality"`) answered `"precision"` in every one of the five runs — scored wrong by substring match, but the paper's text supports both terms, and NotebookLM's independent extraction also names precision.
+MapReduce's Dataset slot (gold `"TeraSort"`) answered `null` in every one of the five runs — a genuine recall miss, since NotebookLM independently found the dataset description (two roughly 1 terabyte grep/sort benchmarks) in the same source text. Pagerank's EvaluationMetric slot (gold `"quality"`) answered `"precision"` in every one of the five runs — scored wrong by substring match, but the paper's text supports both terms, and NotebookLM's independent extraction also names precision.
 
 ### 4. Manual Review and the Related Work Ablation
 
@@ -483,15 +483,15 @@ Mapping proto2's three named failure modes onto what proto3 actually measured, a
 
 Table 10: proto2 → proto3 synthesis.
 
-Achievements: I moved from proto2's recall-only substring check to proto3's classification-based Precision/Recall/F1 with confidence intervals, now backed by five real repeated runs rather than a single snapshot. Every answer is evidence-backed, and the pooled five-run confidence intervals show TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlapping, unlike the single-baseline n=6 intervals in Section 2 — a genuine strengthening of the "TechnicalMethod works, Task doesn't" claim over the preliminary report.
+Achievements: I moved from proto2's recall-only substring check to proto3's classification-based Precision/Recall/F1 with confidence intervals, now backed by five real repeated runs rather than a single snapshot. Every answer is evidence-backed, and the pooled five-run confidence intervals show TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlapping, unlike the single-baseline n=6 intervals in Section 2.
 
-Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a metric artifact per Section 3). The dataset is only six papers, all ML-benchmark-shaped — proto2 already showed systems papers like MapReduce and Google Search fit the four-role schema worse, an open generalization question. A concrete weakness worth naming directly: MapReduce's Dataset slot answered `null` across all five runs (gold `"TeraSort"`), externally corroborated by the NotebookLM cross-check, which confirms the dataset description is present in the source text — a genuine model recall failure, distinct from the gold-label-artifact cases elsewhere in the results.
+Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a metric artifact per Section 3). The dataset is only six papers, all ML-benchmark-shaped — proto2 already showed systems papers like MapReduce and Google Search fit the four-role schema worse, an open generalization question. MapReduce's Dataset slot answered `null` across all five runs (gold `"TeraSort"`), externally corroborated by the NotebookLM cross-check, which confirms the dataset description is present in the source text — a genuine model recall failure, distinct from the gold-label-artifact cases elsewhere in the results.
 
 **FILL IT LATER** (only if I run the decomposed-extraction pilot, variant B, before the deadline) — report per-role F1, A (joint) vs B (decomposed); the most direct attempt so far at fixing Task's known weakness, and a stronger technical-challenge signal than the Related Work ablation alone. If not run, this stays deferred to Chapter 6.
 
 ---
 
-## Chapter 6: Conclusion (514 words)
+## Chapter 6: Conclusion (478 words)
 
 ### Summary
 
@@ -501,7 +501,7 @@ This project automatically extracts research methodology — technical method, t
 
 Several items are deliberately left for further work rather than attempted in the time available. Growing the gold-label corpus remains a poor use of remaining time at any scale reachable in three weeks, for the reasons given in Chapter 3. A formal inter-annotator-agreement study with a second human annotator does not exist on this solo project; the informal NotebookLM cross-check in Chapter 5 narrows this gap but does not close it, since it is one AI tool's single pass with no annotation protocol. A full multi-model comparison (Gemini vs Claude Haiku vs Llama 3.1) and the Related Work ablation, if not reached, are also left for later. Testing on non-ML-benchmark papers — systems, human-computer interaction (HCI) — would show whether the four-role schema and document-level extraction generalize better than proto2's sentence classification did, since proto2 already showed systems papers fit this schema worse.
 
-Two design considerations from Chapter 3 are concrete next steps rather than open-ended ideas. First, the consolidation pass (variant C: a fifth call checking the decomposed pilot's four role-specific outputs for mutual consistency against their evidence) and the full three-way comparison of joint (A), decomposed (B), and decomposed-plus-consolidation (C) extraction. My hypothesis is that per-role accuracy follows B or C > A, and cross-role consistency follows C > A > B — the next experiment to run after this report. No paper directly shows that this four-role methodology-extraction task favours decomposition, so it is a genuine open question this project is positioned to test. Second, the full multi-valued schema implementation for Dataset and EvaluationMetric: a new `MultiRoleExtraction` type with per-item evidence and a ranked list capped at three items, gold-label re-annotation for the four cells already identified (BERT/Transformer Dataset, AlexNet/ResNet EvaluationMetric), a parallel `score_role_multi` scoring function, and rerunning and rescoring all six papers. I already gathered the supporting evidence for this in Chapter 3; what remains is implementation.
+The consolidation pass from Chapter 3 (variant C: a fifth call checking the decomposed pilot's four role-specific outputs for mutual consistency against their evidence) and the full three-way comparison of joint (A), decomposed (B), and decomposed-plus-consolidation (C) extraction are the next experiment to run. My hypothesis is that per-role accuracy follows B or C > A, and cross-role consistency follows C > A > B, but no paper directly shows that this four-role methodology-extraction task favours decomposition, so it remains untested. The multi-valued schema for Dataset and EvaluationMetric also remains to be implemented: a new `MultiRoleExtraction` type with per-item evidence and a ranked list capped at three items, gold-label re-annotation for the four cells already identified (BERT/Transformer Dataset, AlexNet/ResNet EvaluationMetric), a parallel `score_role_multi` scoring function, and rerunning and rescoring all six papers.
 
 ### Broader Theme
 
