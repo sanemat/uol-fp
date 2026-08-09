@@ -544,10 +544,9 @@ iterations, and what does proto3 do concretely?
 > `proto3/baseline/transformer.json` example already quoted in
 > `report2/prototype-memo.md` Q4/Q12.
 
-A: proto1 is an AI-drafted reference implementation, used only as a
-starting point, not directly in any submission. proto2 was my own
-sentence-level zero-shot natural language inference (NLI) classifier: it
-classified every sentence in a paper into one of the four roles, producing
+A: proto2 was my own sentence-level zero-shot natural language inference
+(NLI) classifier: it classified every sentence in a paper into one of the
+four roles, producing
 a list of candidate sentences per role rather than one answer. proto3
 reframes the task as document-level extraction: given a computing paper,
 it extracts one answer per role — TechnicalMethod, Task, Dataset,
@@ -1020,10 +1019,9 @@ run, keep the pointer to Q24 as-is.
 
 A: This project automatically extracts research methodology — technical
 method, task, dataset, and evaluation metric — from computing research
-papers using large language models. I built it across three iterations:
-proto1, an AI-drafted reference not used directly; proto2, my own
-sentence-level zero-shot NLI classifier, which worked but produced too much
-unusable output and could not separate authors' own methods from cited
+papers using large language models. I built two implemented iterations:
+proto2, my own sentence-level zero-shot NLI classifier, which worked but
+produced too much unusable output and could not separate authors' own methods from cited
 prior work; and proto3, the current document-level, schema-guided
 extraction pipeline, which returns one evidence-backed answer per role per
 paper. As of this draft, Stages 0-2 are implemented, the gold-label-match
