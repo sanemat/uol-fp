@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5517 words, excluding tables, figures, references, and appendices)
+# Report (5403 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -183,7 +183,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## Chapter 3: Design (971 words)
+## Chapter 3: Design (918 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (Table 1, Chapter 1).
 
@@ -235,7 +235,7 @@ Compared with proto2's pipeline (PDF → GROBID → TEI XML → section filterin
 
 proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I redesigned this: I score gold-label match as a classification problem (true positive, false positive, false negative), report Precision, Recall, and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful; a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
 
-I kept the sample at six papers rather than growing it: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in three weeks with no second annotator, so growing the corpus was a poor use of the remaining time. I planned a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text, instead of three separate passes or a standalone verbatim-check script — a script would only prove the LLM followed the copy-verbatim instruction, not that the evidence itself is good evidence, and a human reviewer already has to read the source to judge support and authorship, so checking the quote there costs nothing extra.
+I kept the sample at six papers rather than growing it: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in three weeks with no second annotator, so growing the corpus was a poor use of the remaining time. I planned a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
 
 Once the five-run variance study existed, I also had to decide how to compute its confidence interval. I pooled the true/false positive/negative counts across the five runs (30 trials per role) rather than computing five separate per-run intervals, because the goal was a tighter estimate from real repeated measurement, not five independent snapshots. These 30 trials are five repeats of the same six papers, not 30 independent papers, so the interval is narrower than a true 30-paper sample would give.
 
@@ -400,7 +400,7 @@ Table 6: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1338 words)
+## Chapter 5: Evaluation (1286 words)
 
 ### 1. Evaluation Method
 
@@ -408,7 +408,7 @@ I evaluate gold-label match as a classification problem — Precision, Recall, a
 
 Precision/Recall/F1 (P/R/F1) is more appropriate than proto2's recall-only substring check, because a present-but-wrong answer now costs both precision and recall, instead of being free the way it was when any accepted sentence containing the gold term counted as a hit, regardless of how many other sentences were also returned.
 
-I also changed how the evaluation itself is organized. An earlier plan bundled a free mechanical check together with two expensive human-judgment checks under one label, with no priority between them. On reflection, even the "free" mechanical check — an automated script comparing each evidence quote against the source text verbatim — was not worth building separately: a verbatim match only proves the LLM followed the copy-verbatim instruction, not that the evidence is good evidence (a real, verbatim quote from a Related Work sentence could still be the wrong evidence for a paper's own methodology). The human reviewer already has to read the source to judge support and authorship, so checking whether the quote appears there costs nothing extra once folded into that same pass.
+The manual review folds the evidence-verbatim check into the same pass as support and authorship, rather than a separate automated script: a verbatim match only proves the LLM followed the copy-verbatim instruction, not that the evidence is good evidence (a real, verbatim quote from a Related Work sentence could still be the wrong evidence for a paper's own methodology), and the reviewer already has to read the source to judge support and authorship.
 
 ### 2. Gold-Label-Match Results
 
@@ -491,7 +491,7 @@ Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a me
 
 ---
 
-## Chapter 6: Conclusion (478 words)
+## Chapter 6: Conclusion (469 words)
 
 ### Summary
 
@@ -499,7 +499,7 @@ This project automatically extracts research methodology — technical method, t
 
 ### Further Work
 
-Several items are deliberately left for further work rather than attempted in the time available. Growing the gold-label corpus remains a poor use of remaining time at any scale reachable in three weeks, for the reasons given in Chapter 3. A formal inter-annotator-agreement study with a second human annotator does not exist on this solo project; the informal NotebookLM cross-check in Chapter 5 narrows this gap but does not close it, since it is one AI tool's single pass with no annotation protocol. A full multi-model comparison (Gemini vs Claude Haiku vs Llama 3.1) and the Related Work ablation, if not reached, are also left for later. Testing on non-ML-benchmark papers — systems, human-computer interaction (HCI) — would show whether the four-role schema and document-level extraction generalize better than proto2's sentence classification did, since proto2 already showed systems papers fit this schema worse.
+Several items remain for further work. Growing the gold-label corpus remains a poor use of remaining time at any scale reachable in three weeks, for the reasons given in Chapter 3. A formal inter-annotator-agreement study with a second human annotator does not exist on this solo project; the informal NotebookLM cross-check in Chapter 5 narrows this gap but does not close it, since it is one AI tool's single pass with no annotation protocol. A full multi-model comparison (Gemini vs Claude Haiku vs Llama 3.1) and the Related Work ablation, if not reached, are also left for later. Testing on non-ML-benchmark papers — systems, human-computer interaction (HCI) — would show whether the four-role schema and document-level extraction generalize better than proto2's sentence classification did, since proto2 already showed systems papers fit this schema worse.
 
 The consolidation pass from Chapter 3 (variant C: a fifth call checking the decomposed pilot's four role-specific outputs for mutual consistency against their evidence) and the full three-way comparison of joint (A), decomposed (B), and decomposed-plus-consolidation (C) extraction are the next experiment to run. My hypothesis is that per-role accuracy follows B or C > A, and cross-role consistency follows C > A > B, but no paper directly shows that this four-role methodology-extraction task favours decomposition, so it remains untested. The multi-valued schema for Dataset and EvaluationMetric also remains to be implemented: a new `MultiRoleExtraction` type with per-item evidence and a ranked list capped at three items, gold-label re-annotation for the four cells already identified (BERT/Transformer Dataset, AlexNet/ResNet EvaluationMetric), a parallel `score_role_multi` scoring function, and rerunning and rescoring all six papers.
 
