@@ -680,6 +680,43 @@ as the clearest single illustration of what changed between prototypes.
 Must extend the preliminary report's evaluation to the **whole project**, not just
 the current prototype — the requirement doc says this explicitly.
 
+**Addendum (2026-08-09), after review of the assembled `report3/report.md`
+draft:** the chapter's thinness isn't from missing analysis — baseline
+P/R/F1, Wilson CI, the 5-run variance study, the proto2 → proto3 synthesis,
+and the MapReduce/Pagerank error cases are all already there. What's
+actually missing is the one axis proto3's own value proposition depends on:
+whether the evidence-backed, inspectable output actually holds up — the
+thing Chapter 1 promises the reader ("a user can check the quoted evidence
+against the source paper"). That's exactly what the manual review (Q21)
+measures: does evidence support the answer, is authorship correctly
+attributed, does the quote actually appear in the source. Until Q21 is
+filled in, this chapter answers "how accurate and stable is this?" but not
+"is the thing that makes this different from proto2 — checkable evidence —
+actually trustworthy?" **Priority: manual review > decomposed pilot >
+Related Work ablation.** The decomposed pilot is a nice-to-have — this
+chapter works without it. It does not work without the manual review.
+
+Once the manual review is done, also make the evaluation's own coverage
+explicit rather than implicit — a reader currently has to assemble what was
+tested themselves. State directly (in Q18 or at the start of Q22) that this
+evaluation examined four things: extraction accuracy, stability across
+runs, evidence quality, and authorship attribution. A mapping table like
+this is useful for both the reader and future-you:
+
+| Question | Evidence in this report |
+|---|---|
+| Did proto3 fix proto2's output-volume problem? | Yes — one answer per role, by construction |
+| Is the extraction itself correct? | P/R/F1 per role, Wilson CI (Q19) |
+| Is the output stable across runs? | 5-run variance study (Q20) |
+| Is the evidence trustworthy? | Manual review (Q21) |
+| Does it avoid misattributing prior work? | Manual review (Q21) |
+| Is the schema itself right? | Multi-valued-roles finding (Q9) |
+| Does it generalise beyond ML-benchmark papers? | Still weak — open question (Q22) |
+
+This costs no new experiments — it makes the coverage already achieved
+legible, which is exactly what "evaluation display good coverage of
+appropriate issues" rewards.
+
 **Q18:** What is the evaluation method, and why is it appropriate?
 
 > From `proto3/memo.md` "Evaluation plan" (rethought from scratch, not the old
@@ -1075,6 +1112,37 @@ run, keep the pointer to Q24 as-is.
 ---
 
 ## 6. Conclusion (max 1000 words)
+
+**Addendum (2026-08-09), after review of the assembled `report3/report.md`
+draft:** this chapter isn't short on remaining work to describe — it's short
+on landing what the project actually found. The current Summary/Further
+Work/Broader Theme structure reports what was built and what's next, but
+Q23's opening ("This project automatically extracts research
+methodology...") is a summary of what was done, not of what was learned.
+Once the manual review (Q21) lands, restructure this chapter's opening
+around three questions instead:
+
+1. **Did it work?** The honest answer is "partially": TechnicalMethod
+   extraction and output usability improved clearly over proto2; Task
+   accuracy and schema generality to non-ML-benchmark papers remain
+   unresolved.
+2. **What did the project actually teach us?** The hardest problem was not
+   producing structured JSON — schema conformance is solved by
+   `response_json_schema` (Q16, Q25) — but deciding what the four roles mean
+   consistently across different kinds of computing papers. MapReduce and
+   Google Search struggle not only because of LLM limitations but because
+   Task/Dataset/EvaluationMetric, as a schema, comes from ML-benchmark
+   structure and doesn't map cleanly onto systems research.
+3. **Did it meet the original user need?** Return to Chapter 1's goal —
+   support the first pass of a literature review. proto2's output was too
+   voluminous to serve that purpose; proto3's one-answer-per-role-plus-
+   evidence format is a clear improvement, but Task's low accuracy and the
+   still-unimplemented multi-valued roles (Q9) mean a user still needs to
+   verify results by hand, not trust them outright.
+
+This ties Introduction → Design → Evaluation → Conclusion into one argument,
+and needs no new experiments — only the manual review results from Chapter 5
+to fill in points 1 and 3 concretely.
 
 **Q23:** Short summary — what is this project, and what has been built?
 
