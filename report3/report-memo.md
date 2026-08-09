@@ -183,16 +183,22 @@ summary and further work.
 A: The core review carries over unchanged. Oates [9] and Pilkington &
 Pretorius [10] give the vocabulary and formal structure for research
 methodology. Jain et al. [5] (SciREX) motivate the four-role schema
-(Dataset, Metric, Task, Method) directly. Ghosh et al. [2, 3] and Färber et
-al. [1] show narrower, supervised extraction approaches that this project's
-zero-shot and later LLM-based approaches respond to. Yin et al. [11]
-motivate classification without labeled training data. Together, this
-literature positions the problem this project addresses — extracting
-methodology from computing papers without an annotated corpus for this
-specific four-role schema — and that framing does not change just because
-the extraction method moved from sentence-level natural language inference
-(NLI) to a document-level large language model (LLM): the underlying gap is
-the same for both approaches.
+(Dataset, Metric, Task, Method) directly — their 438 annotated papers were
+drawn from a pool of 1,170 ML-conference articles on Papers with Code, which
+quantifies how narrow the ML-benchmark scope of that corpus actually is.
+Ghosh et al. [2, 3] and Färber et al. [1] show narrower, supervised
+extraction approaches that this project's zero-shot and later LLM-based
+approaches respond to. Yin et al. [11] motivate classification without
+labeled training data. Even with the short-label hypothesis set that worked
+best in proto2, classification errors remained concrete: on the Transformer
+paper, "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German
+translation task" was classified as Task rather than EvaluationMetric.
+Together, this literature positions the problem this project addresses —
+extracting methodology from computing papers without an annotated corpus for
+this specific four-role schema — and that framing does not change just
+because the extraction method moved from sentence-level natural language
+inference (NLI) to a document-level large language model (LLM): the
+underlying gap is the same for both approaches.
 
 **Q5:** What needs to change or be added, now that proto3 replaces sentence-level
 NLI with document-level LLM extraction?
@@ -237,7 +243,15 @@ level NLI classification produced too many candidate sentences to be
 usable — 151 TechnicalMethod sentences for the MapReduce paper alone — and
 the recall-only substring evaluation (18/24 across six papers) only checked
 whether a gold term appeared somewhere in the output, not whether the
-output was correct. proto2 also had no mechanism to separate the authors'
+output was correct. With 100+ accepted sentences in some roles, a substring
+match is nearly certain to succeed somewhere in the list, which inflates the
+apparent recall without saying anything about precision. Targeted ablations
+show the same output-volume problem concretely: excluding Related Work by
+heading cut BERT's TechnicalMethod count from 67 to 62 sentences, and
+excluding the whole Introduction cut it further to 54 — but that also
+removed sentences that correctly described BERT's own method, so exclusion
+traded recall for precision rather than solving the underlying problem.
+proto2 also had no mechanism to separate the authors'
 own method from a method cited from prior work: a sentence describing ELMo
 in BERT's Introduction scored 0.87 as TechnicalMethod, even though ELMo is
 prior work, not BERT's own method. Chapter 2 of `report1/report.md` already
@@ -355,16 +369,27 @@ already squash two error rates into one string ("top-1 and top-5 error
 rates"), which is real multi-value evidence that Task and TechnicalMethod
 do not share (Task's one candidate case is better explained as a
 substring-matching artifact, and TechnicalMethod is deliberately singular
-by design). A multi-valued design would keep per-item evidence rather than
-one shared quote for a whole list, and use a ranked "primary first" list
-rather than a numeric confidence field, since this project's own measured
-non-determinism argues against trusting a second, uncalibrated confidence
-axis. An informal cross-check with Google NotebookLM, run independently on
-each paper without being told the schema was single-valued, found the same
-multi-valued pattern for BERT, ResNet, and Transformer's Dataset and
-EvaluationMetric fields — a second, independent data point, though only one
-informal AI-based pass, not a formal inter-annotator study. This discussion
-is write-up only for report3; full implementation is deferred to Q24.
+by design). BERT's own gold EvaluationMetric label already lists both
+"accuracy" and "F1" as acceptable, since the paper genuinely reports both —
+a second, independent piece of multi-value evidence from this project's own
+earlier work, not just the informal NotebookLM pass below. A multi-valued
+design would keep per-item evidence rather than one shared quote for a
+whole list, and use a ranked "primary first" list rather than a numeric
+confidence field, since this project's own measured non-determinism argues
+against trusting a second, uncalibrated confidence axis. An informal
+cross-check with Google NotebookLM, run independently on each paper without
+being told the schema was single-valued, found the same multi-valued
+pattern for BERT, ResNet, and Transformer's Dataset and EvaluationMetric
+fields: for BERT, the single-valued baseline names "SQuAD v1.1" as Dataset,
+while NotebookLM listed BooksCorpus and Wikipedia for pre-training plus
+GLUE, SQuAD v1.1/v2.0, SWAG, and CoNLL-2003 for evaluation, all present in
+the same source text; for Transformer, NotebookLM added WMT 2014
+English-French and the WSJ Penn Treebank alongside the baseline's WMT 2014
+English-German; ResNet's Dataset and EvaluationMetric were similarly broader
+(adding CIFAR-10, PASCAL VOC, COCO, and mAP) — a second, independent data
+point, though only one informal AI-based pass, not a formal inter-annotator
+study. This discussion is write-up only for report3; full implementation is
+deferred to Q24.
 
 **Q10:** What model was chosen, and what were the alternatives?
 
@@ -593,7 +618,7 @@ Abstract or Method, so I keep the full document rather than an excerpt.
 > words total for the whole chapter) — pick the 2-3 most technically interesting
 > details rather than everything in the precedent memo.
 
-A: Three details are the most technically interesting, given the tight word
+A: Four details are the most technically interesting, given the tight word
 budget. First, the prompt states only what the JSON schema itself cannot
 express: use the authors' own method, not a method cited from prior work;
 return null when a role is absent; copy evidence quotes verbatim.
@@ -603,16 +628,30 @@ models instead of the prompt text. Second, the Gemini call uses
 `response_json_schema` together with `temperature=0` and `seed=0`, and
 parses the reply directly with `MethodologyProfile.model_validate_json(...)`,
 with no manual JSON-extraction step. An earlier prompt version described
-the `evidence` field inconsistently, so Gemini returned the section heading
-and quote as one flat string instead of the nested object the design
-intended; at the time I fixed this by rewriting the prompt, but today the
-nested shape is guaranteed by the schema regardless of prompt wording, so
-this specific bug class is now structurally prevented rather than patched.
-Third, code quality: `pyright` in strict mode and `ruff` report zero
-issues, and a pytest suite in `proto3/tests/` covers `scoring.py`'s
-evaluation logic and the `model_validator`'s null-correlation check, with
-`proto3/sync_generated.py` keeping notebook cells in sync with the
-installable `proto3/src/uol_fp/` modules.
+the `evidence` field inconsistently — it asked for "evidence" as a single
+quoted sentence, but also said to return the section heading and the quote
+together. Testing on "Attention Is All You Need" showed how Gemini resolved
+that ambiguity: it returned `evidence` as one flat string with the heading
+prepended, e.g. `"## Introduction In this work we propose..."`, instead of
+the nested object the design intended; at the time I fixed this by
+rewriting the prompt, but today the nested shape is guaranteed by the
+schema regardless of prompt wording, so this specific bug class is now
+structurally prevented rather than patched. Third, `response_schema` and
+`response_json_schema` are not interchangeable:
+`response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ...
+Unknown name "additional_properties"`, because it converts to Google's own
+`Schema` proto, which does not support `additionalProperties`, and
+Pydantic's `extra="forbid"` produces exactly that field.
+`response_json_schema` accepts a real JSON Schema dict instead, so
+`MethodologyProfile.model_json_schema()` is passed there. Fourth, code
+quality: `pyright` in strict mode and `ruff` report zero issues, and a
+pytest suite in `proto3/tests/` covers `scoring.py`'s evaluation logic and
+the `model_validator`'s null-correlation check, with `proto3/sync_generated.py`
+keeping notebook cells in sync with the installable `proto3/src/uol_fp/`
+modules. `proto3/baseline.ipynb` used to be a byte-identical duplicate of
+`3pipeline.ipynb`, kept only because it had produced the six
+`proto3/baseline/*.json` files; it has since been deleted, so there is no
+second notebook to keep in sync by hand.
 
 **Q17:** What visual representation(s) of results will you include?
 
@@ -761,6 +800,15 @@ second, tighter interval exists from five real pipeline runs, pooled across
 runs (n=30 trials per role) — I report that one in Q20, not here, so this
 section stays about the baseline gold-label-match result specifically.
 
+One gold label also carries a specific evaluator-influence caveat worth
+stating plainly: AlexNet's TechnicalMethod gold label was changed from
+"AlexNet" to "convolutional" after running the pipeline and inspecting its
+output, since the 2012 paper predates the name "AlexNet" and never uses it.
+Adjusting a gold label after seeing model output is a real limitation on how
+strongly this result generalises, and it is one instance of the broader
+single-annotator problem already noted (Q21): I wrote both the gold labels
+and, later, the answers being checked against them.
+
 **Q20:** What did the variance study find, and what does it actually prove?
 
 > **Done (2026-07-22)** — 5 full runs, logged to `proto3/results/run{1..5}/*.json`
@@ -847,7 +895,15 @@ stronger evidence than an earlier two-run anecdote, which had shown both
 Dataset and EvaluationMetric moving. At n=5, Dataset turned out stable, and
 only EvaluationMetric is not (F1 ranged 0.33-0.67 across runs, with
 unchanged code, `temperature=0`, and `seed=0`), which narrows the
-non-determinism finding rather than just repeating it.
+non-determinism finding rather than just repeating it. The frozen baseline
+behind Q19's P/R/F1 table is not a like-for-like sixth run alongside these
+five: it was generated before `temperature=0` and `seed=0` were added to the
+Gemini call, so only the five logged runs share identical settings.
+
+An informal cross-check with Google NotebookLM, run independently on each
+paper, found stable agreement on TechnicalMethod across all six papers —
+exact or near-exact matches including "Google", "BERT", "Transformer", and
+"MapReduce" — independent corroboration that this is the strongest role.
 
 Pooling true/false positive/negative counts across the five runs gives a
 tighter Wilson 95% confidence interval on Precision and Recall (n=30
@@ -915,14 +971,26 @@ check), and what is the status of the Related Work ablation?
 > deferred to further work" is a legitimate, planned answer, not a gap to
 > apologize for.
 
-A: **FILL IT LATER** — run the consolidated manual review pass myself
-(human judgment, one read per paper × role): plausibly correct? evidence
-supports the answer? authors' own work, not prior work? does the quote
-appear verbatim in the source? Note any case where a real, verbatim quote
-is still the *wrong* evidence (e.g. wrong section, or prior work) as a
-distinct finding from a fabricated quote. State the single-annotator bias
-applies equally to the gold labels (I wrote both). Cite the informal
-NotebookLM cross-check (Q20) alongside this, not instead of it.
+A: The review template (`proto3/manual_review.md`) is already built, with
+each paper's answer, section, and quote staged next to four judgment
+columns (plausible? evidence supports? authors' own work? quote in
+source?) — it already stages some specific open questions rather than
+starting from a blank page: BERT's Task quote cites prior work by name, so
+the review needs to decide whether pre-training is BERT's own contribution
+or just motivation; ResNet's Task quote cites bracketed prior work for "a
+series of breakthroughs," raising the same question of whether the sentence
+establishes the paper's own task or credits others'.
+
+**FILL IT LATER** — run the consolidated manual review pass myself
+(human judgment, one read per paper × role) to fill in those four judgment
+columns for all 24 slots, including the two questions above: plausibly
+correct? evidence supports the answer? authors' own work, not prior work?
+does the quote appear verbatim in the source? Note any case where a real,
+verbatim quote is still the *wrong* evidence (e.g. wrong section, or prior
+work) as a distinct finding from a fabricated quote. State the
+single-annotator bias applies equally to the gold labels (I wrote both).
+Cite the informal NotebookLM cross-check (Q20) alongside this, not instead
+of it.
 
 The Related Work ablation is first on the cut list for report3, demoted
 from P1 because it does not address Task, the project's weakest role, the
