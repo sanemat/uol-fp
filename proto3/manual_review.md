@@ -50,10 +50,10 @@ Gold: TechnicalMethod=`PageRank`, Task=`web search`, Dataset=`million pages`, Ev
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | Google | Abstract | "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext." | | | | | |
-| Task | information retrieval | Introduction | "The Web creates new challenges for information retrieval." | | | | | |
-| Dataset | 24 million pages | Anchor-test | "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed." | | | | | |
-| EvaluationMetric | *(null)* | — | — | | | | | See "Null slots" above — real runs answer `"precision"` every time (5/5), and NotebookLM independently names Precision too. Judge whether this is a real miss. |
+| TechnicalMethod | Google | Abstract | "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext." |No | No | Yes |Yes |Google is the proposed system, not the technical method. |
+| Task | information retrieval | Introduction | "The Web creates new challenges for information retrieval." | No | No | No | Yes | Information retrieval is the broader problem domain, not the task performed by the proposed system.|
+| Dataset | 24 million pages | Anchor-test | "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed." | Yes | Yes | Yes | Yes | |
+| EvaluationMetric | *(null)* | — | — | | | | | See "Null slots" above — real runs answer `"precision"` every time (5/5), and NotebookLM independently names Precision too. Judge whether this is a real miss. The paper reports quantitative evaluation measures such as query response time, storage efficiency, and indexing speed. Precision is discussed as a search-quality criterion but not formally measured. Gold "quality" is likely too vague / mislabeled. Precision is discussed as an important search-quality criterion, but it is not actually measured or reported as an experimental metric. |
 
 ## AlexNet (`proto1/dataset/alexnet_NIPS-2012-imagenet-classification-with-deep-convolutional-neural-networks-Paper.pdf`)
 
