@@ -72,10 +72,10 @@ Gold: TechnicalMethod=`BERT`, Task=`GLUE`, Dataset=`BooksCorpus`, EvaluationMetr
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | BERT | Abstract | "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers." | | | | | |
-| Task | Language model pre-training | Introduction | "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018)." | | | | | Watch this one for "authors' own work" — the quote cites prior work by name. Is pre-training itself BERT's contribution, or just motivation? |
-| Dataset | SQuAD v1.1 | SQuAD v1.1 | "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016)." | | | | | Answer is one of several valid datasets (see Q9 multi-valued discussion) — judge plausibility as "a correct dataset," not "the only one." |
-| EvaluationMetric | F1 score | SQuAD v1.1 | "Our single BERT model outperforms the top ensemble system in terms of F1 score." | | | | | Same multi-valued caveat as Dataset above. |
+| TechnicalMethod | BERT | Abstract | "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers." | Yes | Yes | Yes |Yes | |
+| Task | Language model pre-training | Introduction | "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018)." |Yes | No | No | Yes | Watch this one for "authors' own work" — the quote cites prior work by name. Is pre-training itself BERT's contribution, or just motivation? Gold "GLUE" is a benchmark suite rather than a task; "language model pre-training" is role-plausible, but the quoted sentence describes prior work rather than BERT's own contribution. |
+| Dataset | SQuAD v1.1 | SQuAD v1.1 | "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016)." | Yes | No | No | Yes | Answer is one of several valid datasets (see Q9 multi-valued discussion) — judge plausibility as "a correct dataset," not "the only one." Valid dataset, but one of several. BooksCorpus and Wikipedia are used for pre-training; SQuAD is one of several downstream evaluation datasets. |
+| EvaluationMetric | F1 score | SQuAD v1.1 | "Our single BERT model outperforms the top ensemble system in terms of F1 score." | Yes | Yes | No | Yes | Same multi-valued caveat as Dataset above. Valid but incomplete: F1 is one of several evaluation metrics used across BERT's downstream tasks; others include accuracy, Spearman correlation, EM, and GLUE task scores. |
 
 ## MapReduce (`proto1/dataset/MapReduce Simplified Data Processing on Large Clusters.pdf`)
 
@@ -119,3 +119,13 @@ Roll the results up for Q21 in `report3/report-memo.md`:
 - Any case where quote-in-source passed but evidence-supports or authors'-own-work failed — call these out explicitly (Q21's hint already asks for this).
 - Resolution on the two null slots: real miss or genuine absence.
 - One line on the single-annotator bias, per the note above.
+
+One interesting finding is that simply asking an LLM to extract information from a paper may not be enough.
+
+The LLM can find words that appear in the paper, but it may choose the wrong role. For example, "Google" appears in the PageRank paper, but it is the name of the system, not really the technical method. A quote can also be real but still be weak evidence for the answer.
+
+Another problem is that some papers have more than one correct answer. BERT uses several datasets and several evaluation metrics. Choosing only one can be technically correct but still give an incomplete picture of the paper.
+
+There is also a problem with the gold labels. Some gold answers may be too simple or even use the wrong category. This means that evaluating the LLM against the gold labels alone may give a misleading result.
+
+NotebookLM seems useful because it can summarize information across the whole paper and find multiple relevant values. However, human review is still useful for checking whether the schema itself makes sense and whether the gold labels are good enough.
