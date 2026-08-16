@@ -94,10 +94,10 @@ Gold: TechnicalMethod=`residual`, Task=`image recognition`, Dataset=`ImageNet`, 
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | deep residual learning framework | Introduction | "In this paper, we address the degradation problem by introducing a deep residual learning framework." | | | | | |
-| Task | image classification | Introduction | "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]." | | | | | Quote cites bracketed prior work `[21, 49, 39]` for the breakthroughs — check whether the sentence is establishing the paper's own task or crediting others'. |
-| Dataset | ImageNet 2012 classification dataset | ImageNet Classification | "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes." | | | | | Multi-valued caveat, as BERT above (CIFAR-10/PASCAL VOC/COCO also used). |
-| EvaluationMetric | top-1 and top-5 error rates | ImageNet Classification | "We evaluate both top-1 and top-5 error rates." | | | | | |
+| TechnicalMethod | deep residual learning framework | Introduction | "In this paper, we address the degradation problem by introducing a deep residual learning framework." | Yes|Yes |Yes |Yes | |
+| Task | image classification | Introduction | "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]." |Yes |Yes | No | No | Quote cites bracketed prior work `[21, 49, 39]` for the breakthroughs — check whether the sentence is establishing the paper's own task or crediting others'. |
+| Dataset | ImageNet 2012 classification dataset | ImageNet Classification | "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes." | Yes | Yes |Yes |Yes | Multi-valued caveat, as BERT above (CIFAR-10/PASCAL VOC/COCO also used). |
+| EvaluationMetric | top-1 and top-5 error rates | ImageNet Classification | "We evaluate both top-1 and top-5 error rates." |Yes |Yes |Yes |Yes | |
 
 ## Transformer (`proto1/dataset/Attention Is All You Need.pdf`)
 
