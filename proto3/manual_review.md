@@ -105,10 +105,10 @@ Gold: TechnicalMethod=`Transformer`, Task=`machine translation`, Dataset=`WMT`, 
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | Transformer | Abstract | "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely." | | | | | |
-| Task | machine translation | Abstract | "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train." | | | | | |
-| Dataset | WMT 2014 English-German | Training Data and Batching | "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs." | | | | | Multi-valued caveat, as BERT/ResNet above (also WMT En-Fr, WSJ Penn Treebank). |
-| EvaluationMetric | BLEU | Machine Translation | "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4." | | | | | |
+| TechnicalMethod | Transformer | Abstract | "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely." |Yes |Yes |Yes |Yes | |
+| Task | machine translation | Abstract | "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train." |Yes |Yes |Yes |Yes | |
+| Dataset | WMT 2014 English-German | Training Data and Batching | "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs." |Yes |Yes |Yes | | Multi-valued caveat, as BERT/ResNet above (also WMT En-Fr, WSJ Penn Treebank). Valid extraction, but incomplete under a single-value schema: the paper uses multiple datasets (WMT En-De, WMT En-Fr, and WSJ Penn Treebank).|
+| EvaluationMetric | BLEU | Machine Translation | "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4." |Yes |Yes |Yes |Yes | |
 
 ---
 
