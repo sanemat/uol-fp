@@ -84,16 +84,17 @@ done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
    not a cost).
 
 **P1 — one item only, tightly scoped, do not let it re-expand (1-1.5 days):**
-6. **Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
+6. ~~**Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
    role-specific calls instead of 1 joint call, scored with existing `scoring.py`
    unchanged. Scope limits, explicit: one run each (or B vs the existing frozen
    baseline), per-role F1 comparison only — **no consolidation pass, no
    repeated-run variance study for B.** Either would balloon this back into a
-   multi-day project.
+   multi-day project.~~ **Cut (2026-08-16).** Not run — deferred to further
+   work (Chapter 6 / Q24).
 
 **Cut first, in this order, if time runs short:**
-1. Related Work ablation — doesn't improve Task (the weakest role), so it's first
-   to drop. "Not run, deferred to further work" is a legitimate answer.
+1. ~~Related Work ablation — doesn't improve Task (the weakest role), so it's first
+   to drop.~~ **Cut (2026-08-16).** Not run, deferred to further work.
 2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study.
 3. A diagnostic on whether relaxed/stemmed matching would change the Task
    conclusion.
@@ -548,8 +549,8 @@ A:
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run variance study, pooled confidence intervals | Done |
 | July-August (P0) | Consolidated manual review pass; proto2→proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
-| August (P1) | Decomposed-extraction pilot, variant A vs B only | Per-role F1 comparison | In progress, one item only |
-| August | Related Work ablation | — | Cut first if time runs short |
+| August (P1) | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
+| August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever P0/P1 items complete in time | Final submission | Not started |
 
 ---
@@ -1159,11 +1160,9 @@ NotebookLM cross-check, which confirms the dataset description is present
 in the source text — a genuine model recall failure, distinct from the
 gold-label-artifact cases elsewhere in the results.
 
-**FILL IT LATER** (only if I run the decomposed-extraction pilot, variant B,
-before the deadline) — report per-role F1, A (joint) vs B (decomposed); the
-most direct attempt so far at fixing Task's known weakness, and a stronger
-technical-challenge signal than the Related Work ablation alone. If not
-run, keep the pointer to Q24 as-is.
+The decomposed-extraction pilot (variant B) was not run — cut, per the
+checklist above. It stays deferred to further work (Q24), same as the
+Related Work ablation.
 
 ---
 
@@ -1218,8 +1217,8 @@ prior work; and proto3, the current document-level, schema-guided
 extraction pipeline, which returns one evidence-backed answer per role per
 paper. As of this draft, Stages 0-2 are implemented, the gold-label-match
 evaluation is done with confidence intervals and a 5-run variance study,
-the consolidated manual review is done, and the Related Work
-ablation is optional and deferred.
+the consolidated manual review is done, and the decomposed-extraction
+pilot and the Related Work ablation were both cut, not run.
 
 **Q24:** What further work remains?
 
@@ -1338,6 +1337,7 @@ starting point — don't retype them here. Add:
 - `report1/report.md`'s References ([1]-[11]) and Dataset Papers ([D1]-[D6])
   lists are complete and ready to reuse verbatim as report3's starting
   point — confirmed by reading the file directly.
-- **FILL IT LATER** — update the Appendix-style material (work plan
-  roadmap, extended per-paper evaluation tables) once the manual review
-  (Q21) and, if reached, the Related Work ablation are run.
+- The manual review (Q21) is done — Appendix-style material updated
+  accordingly (Table 10, work plan). The decomposed-extraction pilot and
+  the Related Work ablation were both cut, not run — no further
+  Appendix-style update needed for either.

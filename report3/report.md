@@ -246,8 +246,8 @@ Once the five-run variance study existed, I also had to decide how to compute it
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run variance study, pooled confidence intervals | Done |
 | July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
-| August | Decomposed-extraction pilot, variant A vs B only | Per-role F1 comparison | In progress, one item only |
-| August | Related Work ablation | — | Cut first if time runs short |
+| August | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
+| August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever items complete in time | Final submission | Not started |
 
 Table 5: Work plan summary.
@@ -504,7 +504,7 @@ Achievements: I moved from proto2's recall-only substring check to proto3's clas
 
 Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a metric artifact per Section 3). The dataset is only six papers, all ML-benchmark-shaped — proto2 already showed systems papers like MapReduce and Google Search fit the four-role schema worse, an open generalization question. MapReduce's Dataset slot answered `null` across all five runs (gold `"TeraSort"`), externally corroborated by the NotebookLM cross-check, which confirms the dataset description is present in the source text — a genuine model recall failure, distinct from the gold-label-artifact cases elsewhere in the results.
 
-**FILL IT LATER** (only if I run the decomposed-extraction pilot, variant B, before the deadline) — report per-role F1, A (joint) vs B (decomposed); the most direct attempt so far at fixing Task's known weakness, and a stronger technical-challenge signal than the Related Work ablation alone. If not run, this stays deferred to Chapter 6.
+The decomposed-extraction pilot (variant B) was not run — cut, along with the Related Work ablation, and both stay deferred to further work (Chapter 6).
 
 ---
 
@@ -520,7 +520,7 @@ This project automatically extracts research methodology — technical method, t
 
 **Did it meet the original user need?** Returning to Chapter 1's goal — support the first pass of a literature review — proto2's output was too voluminous to serve that purpose; proto3's one-answer-per-role-plus-evidence format is a clear improvement, but Task's low accuracy and the still-unimplemented multi-valued roles (Chapter 3) mean a user still needs to verify results by hand, not trust them outright.
 
-As of this draft, Stages 0-2 are implemented, the gold-label-match evaluation is done with confidence intervals and a 5-run variance study, the consolidated manual review is done, and the Related Work ablation is optional and deferred.
+As of this draft, Stages 0-2 are implemented, the gold-label-match evaluation is done with confidence intervals and a 5-run variance study, the consolidated manual review is done, and the decomposed-extraction pilot and the Related Work ablation were both cut, not run.
 
 ### Further Work
 
@@ -800,6 +800,4 @@ Table B1: Gold labels used for evaluation (six papers).
 
 Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (`report1/report.md` Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).
 
-The manual review (Chapter 5, Section 4) is now done — see Table 10 there for the per-check breakdown.
-
-**FILL IT LATER** — update this appendix (extended per-paper P/R/F1 breakdown, and any figures from the decomposed-extraction pilot) if the decomposed-extraction pilot or the Related Work ablation are run.
+The manual review (Chapter 5, Section 4) is now done — see Table 10 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.
