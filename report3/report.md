@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (5403 words, excluding tables, figures, references, and appendices)
+# Report (5827 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -400,7 +400,7 @@ Table 6: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1286 words)
+## Chapter 5: Evaluation (1558 words)
 
 ### 1. Evaluation Method
 
@@ -467,7 +467,24 @@ MapReduce's Dataset slot (gold `"TeraSort"`) answered `null` in every one of the
 
 The review template is already built, with each paper's answer, section, and quote staged next to four judgment columns (plausible? evidence supports? authors' own work? quote in source?) — it stages some specific open questions rather than starting from a blank page: BERT's Task quote cites prior work by name, so the review needs to decide whether pre-training is BERT's own contribution or just motivation; ResNet's Task quote cites bracketed prior work for "a series of breakthroughs," raising the same question of whether the sentence establishes the paper's own task or credits others'.
 
-**FILL IT LATER** — run the consolidated manual review pass myself (human judgment, one read per paper × role) to fill in those four judgment columns for all 24 slots, including the two questions above. Note any case where a real, verbatim quote is still the *wrong* evidence (e.g. wrong section, or prior work) as a distinct finding from a fabricated quote. State that the single-annotator bias applies equally to the gold labels (I wrote both). Cite the informal NotebookLM cross-check (Section 3 above) alongside this, not instead of it.
+All 24 slots are scored. Two are null (Pagerank/EvaluationMetric, MapReduce/Dataset), judged separately below; across the other 22 scored slots:
+
+| Check | Failures (of 22) | Slots |
+|---|---|---|
+| Plausible? | 2 | Pagerank/TechnicalMethod, Pagerank/Task |
+| Evidence supports? | 5 | Pagerank/TechnicalMethod, Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset |
+| Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
+| Quote in source? | 1 | ResNet/Task |
+
+Table 10: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in `proto3/manual_review.md`, so it is excluded from this count.)
+
+Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the *wrong* evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers this chapter's own open question from Section 2: the quote "cites bracketed prior work `[21, 49, 39]` for the breakthroughs," crediting prior work rather than establishing the paper's own task — the one slot where quote-in-source and authorship fail together, rather than the "verbatim but wrong" pattern above.
+
+On the two null slots: MapReduce's Dataset is a real miss, not a genuine absence — the paper "uses large benchmark datasets for grep and sort experiments (about 1 TB each)," which NotebookLM independently found in the source text (Section 3 above). Pagerank's EvaluationMetric is more ambiguous and leans toward the gold label being the problem: precision "is discussed as an important search-quality criterion, but it is not actually measured or reported as an experimental metric" — gold `"quality"` is likely too vague or mislabeled.
+
+BERT's Dataset and EvaluationMetric failures also confirm the multi-valued-roles finding from Chapter 3 directly: choosing only one of several correct answers can be technically correct but still gives an incomplete picture. Some gold answers may also be too simple or use the wrong category, so evaluating against gold labels alone can give a misleading result.
+
+This pass has the same single-annotator bias as the gold labels it checks against — the same problem already noted in Section 2: I wrote both the gold labels and, later, the answers being checked against them. I do not present this review as more objective than the gold labels themselves.
 
 The Related Work ablation is first on the cut list for this report, demoted from a higher priority because it does not address Task, the project's weakest role, the way the decomposed-extraction pilot does. It is not required to prove the core claims, so it stays deferred to further work.
 
@@ -478,10 +495,10 @@ Mapping proto2's three named failure modes onto what proto3 actually measured, a
 | proto2 failure mode | proto3 status | Evidence |
 |---|---|---|
 | Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One answer per role, every paper, by construction of Stage 2's schema-guided extraction |
-| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Fixed by design, not yet independently verified | The authors'-own-work rule targets this directly; verifiable checking is pending the manual review above |
+| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Fixed by design, partially verified | The authors'-own-work rule targets this directly; the manual review above found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study |
 
-Table 10: proto2 → proto3 synthesis.
+Table 11: proto2 → proto3 synthesis.
 
 Achievements: I moved from proto2's recall-only substring check to proto3's classification-based Precision/Recall/F1 with confidence intervals, now backed by five real repeated runs rather than a single snapshot. Every answer is evidence-backed, and the pooled five-run confidence intervals show TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlapping, unlike the single-baseline n=6 intervals in Section 2.
 
@@ -491,11 +508,19 @@ Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a me
 
 ---
 
-## Chapter 6: Conclusion (469 words)
+## Chapter 6: Conclusion (621 words)
 
 ### Summary
 
-This project automatically extracts research methodology — technical method, task, dataset, and evaluation metric — from computing research papers using large language models. I built two implemented iterations: proto2, my own sentence-level zero-shot NLI classifier, which worked but produced too much unusable output and could not separate authors' own methods from cited prior work; and proto3, the current document-level, schema-guided extraction pipeline, which returns one evidence-backed answer per role per paper. As of this draft, Stages 0-2 are implemented, the gold-label-match evaluation is done with confidence intervals and a 5-run variance study, the consolidated manual review is in progress, and the Related Work ablation is optional and deferred.
+This project automatically extracts research methodology — technical method, task, dataset, and evaluation metric — from computing research papers using large language models. I built two implemented iterations: proto2, my own sentence-level zero-shot NLI classifier, which worked but produced too much unusable output and could not separate authors' own methods from cited prior work; and proto3, the current document-level, schema-guided extraction pipeline, which returns one evidence-backed answer per role per paper.
+
+**Did it work?** Partially: TechnicalMethod extraction and output usability improved clearly over proto2; Task accuracy and schema generality to non-ML-benchmark papers remain unresolved.
+
+**What did the project actually teach us?** The hardest problem was not producing structured JSON — schema conformance is solved by `response_json_schema` (Chapter 4) — but deciding what the four roles mean consistently across different kinds of computing papers. MapReduce and Google Search struggle not only because of LLM limitations but because Task/Dataset/EvaluationMetric, as a schema, comes from ML-benchmark structure and doesn't map cleanly onto systems research.
+
+**Did it meet the original user need?** Returning to Chapter 1's goal — support the first pass of a literature review — proto2's output was too voluminous to serve that purpose; proto3's one-answer-per-role-plus-evidence format is a clear improvement, but Task's low accuracy and the still-unimplemented multi-valued roles (Chapter 3) mean a user still needs to verify results by hand, not trust them outright.
+
+As of this draft, Stages 0-2 are implemented, the gold-label-match evaluation is done with confidence intervals and a 5-run variance study, the consolidated manual review is done, and the Related Work ablation is optional and deferred.
 
 ### Further Work
 
@@ -505,7 +530,7 @@ The consolidation pass from Chapter 3 (variant C: a fifth call checking the deco
 
 ### Broader Theme
 
-One broader theme worth raising is the tension between structured-output guarantees and semantic correctness. `response_json_schema` guarantees that Gemini's reply is syntactically valid and has the right shape — the schema-conformance problem is solved. It does not guarantee the *content* is correct: an answer can be syntactically well-formed and still wrong, as the "metric is blunt" cases in Chapter 5 and the planned manual review show. This distinction between schema conformance and semantic correctness is not specific to this project — it applies to LLM-based structured extraction generally.
+One broader theme worth raising is the tension between structured-output guarantees and semantic correctness. `response_json_schema` guarantees that Gemini's reply is syntactically valid and has the right shape — the schema-conformance problem is solved. It does not guarantee the *content* is correct: an answer can be syntactically well-formed and still wrong, as the "metric is blunt" cases and the manual review in Chapter 5 show. This distinction between schema conformance and semantic correctness is not specific to this project — it applies to LLM-based structured extraction generally.
 
 ---
 
@@ -775,4 +800,6 @@ Table B1: Gold labels used for evaluation (six papers).
 
 Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (`report1/report.md` Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).
 
-**FILL IT LATER** — update this appendix (extended per-paper P/R/F1 breakdown, and any figures from the decomposed-extraction pilot) once the manual review (Chapter 5, Section 4) and, if reached, the Related Work ablation are run.
+The manual review (Chapter 5, Section 4) is now done — see Table 10 there for the per-check breakdown.
+
+**FILL IT LATER** — update this appendix (extended per-paper P/R/F1 breakdown, and any figures from the decomposed-extraction pilot) if the decomposed-extraction pilot or the Related Work ablation are run.
