@@ -61,10 +61,10 @@ Gold: TechnicalMethod=`convolutional`, Task=`object recognition`, Dataset=`Image
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | deep convolutional neural network | Abstract | "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes." | | | | | |
-| Task | object recognition | Introduction | "Current approaches to object recognition make essential use of machine learning methods." | | | | | |
-| Dataset | ImageNet | The Dataset | "ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories." | | | | | |
-| EvaluationMetric | top-1 and top-5 error rates | The Dataset | "On ImageNet, it is customary to report two error rates: top-1 and top-5, where the top-5 error rate is the fraction of test images for which the correct label is not among the five labels considered most probable by the model." | | | | | |
+| TechnicalMethod | deep convolutional neural network | Abstract | "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes." | Yes | Yes| Yes| Yes | |
+| Task | object recognition | Introduction | "Current approaches to object recognition make essential use of machine learning methods." | Yes | No | No | Yes | to classify ... into the 1000 different classes. The quote does not directly prove that this is AlexNet’s own task. |
+| Dataset | ImageNet | The Dataset | "ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories." | Yes | Yes | Yes | Yes | |
+| EvaluationMetric | top-1 and top-5 error rates | The Dataset | "On ImageNet, it is customary to report two error rates: top-1 and top-5, where the top-5 error rate is the fraction of test images for which the correct label is not among the five labels considered most probable by the model." | Yes | Yes | Yes | Yes | |
 
 ## BERT (`proto1/dataset/BERT Pre-training of Deep Bidirectional Transformers for Language Understanding.pdf`)
 
