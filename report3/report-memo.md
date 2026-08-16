@@ -43,6 +43,9 @@ items below only (not the writing): ~4-4.5 days for P0, ~1-1.5 days for P1 — t
 are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 item 6
 (~1-1.5 days).
 
+**Update 2026-08-16:** P0 item 3 (consolidated manual review pass) is also
+done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
+
 **P0 — mandatory, all 5:**
 1. ~~**Log a real variance study to disk (0.5-1 day).**~~ **Done (2026-07-22).** 5
    full runs logged to `proto3/results/run{1..5}/*.json`, scored and aggregated by
@@ -60,7 +63,7 @@ are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 it
    point estimate — no Wilson CI on F1** (it's a harmonic mean, not a proportion;
    a proper F1 interval would need paper-level bootstrap, not worth it given the
    deadline).
-3. **Run one consolidated manual review pass (1-1.5 days)** over all 6 papers × 4
+3. ~~**Run one consolidated manual review pass (1-1.5 days)** over all 6 papers × 4
    roles (not three separate passes) — plausibly correct? evidence supports
    answer? authors' own work, not prior work? **Does the quote actually appear in
    the source text?** (No separate script for this — a verbatim match only
@@ -68,7 +71,8 @@ are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 it
    evidence is good evidence, e.g. a real Related Work sentence could still be
    wrongly cited as the paper's own method — so it's cheaper and just as
    informative to check while already reading the source for support/authorship,
-   rather than building standalone tooling for 24 slots.)
+   rather than building standalone tooling for 24 slots.)~~ **Done
+   (2026-08-16).** All 24 slots scored in `proto3/manual_review.md` — see Q21.
 4. **Write the proto2 → proto3 "fixed / not fixed" synthesis** (near-free, folds
    into item 5's 0.5 day) — map proto2's three named failure modes (output
    volume, authorship attribution, recall-only scoring) onto what items 1-3
@@ -80,16 +84,17 @@ are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 it
    not a cost).
 
 **P1 — one item only, tightly scoped, do not let it re-expand (1-1.5 days):**
-6. **Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
+6. ~~**Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
    role-specific calls instead of 1 joint call, scored with existing `scoring.py`
    unchanged. Scope limits, explicit: one run each (or B vs the existing frozen
    baseline), per-role F1 comparison only — **no consolidation pass, no
    repeated-run variance study for B.** Either would balloon this back into a
-   multi-day project.
+   multi-day project.~~ **Cut (2026-08-16).** Not run — deferred to further
+   work (Chapter 6 / Q24).
 
 **Cut first, in this order, if time runs short:**
-1. Related Work ablation — doesn't improve Task (the weakest role), so it's first
-   to drop. "Not run, deferred to further work" is a legitimate answer.
+1. ~~Related Work ablation — doesn't improve Task (the weakest role), so it's first
+   to drop.~~ **Cut (2026-08-16).** Not run, deferred to further work.
 2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study.
 3. A diagnostic on whether relaxed/stemmed matching would change the Task
    conclusion.
@@ -544,8 +549,8 @@ A:
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run variance study, pooled confidence intervals | Done |
 | July-August (P0) | Consolidated manual review pass; proto2→proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
-| August (P1) | Decomposed-extraction pilot, variant A vs B only | Per-role F1 comparison | In progress, one item only |
-| August | Related Work ablation | — | Cut first if time runs short |
+| August (P1) | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
+| August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever P0/P1 items complete in time | Final submission | Not started |
 
 ---
@@ -1018,16 +1023,68 @@ or just motivation; ResNet's Task quote cites bracketed prior work for "a
 series of breakthroughs," raising the same question of whether the sentence
 establishes the paper's own task or credits others'.
 
-**FILL IT LATER** — run the consolidated manual review pass myself
-(human judgment, one read per paper × role) to fill in those four judgment
-columns for all 24 slots, including the two questions above: plausibly
-correct? evidence supports the answer? authors' own work, not prior work?
-does the quote appear verbatim in the source? Note any case where a real,
-verbatim quote is still the *wrong* evidence (e.g. wrong section, or prior
-work) as a distinct finding from a fabricated quote. State the
-single-annotator bias applies equally to the gold labels (I wrote both).
-Cite the informal NotebookLM cross-check (Q20) alongside this, not instead
-of it.
+All 24 slots are scored in `proto3/manual_review.md`. Two are null
+(Pagerank/EvaluationMetric, MapReduce/Dataset) and judged separately below;
+tallying the four judgment columns across the other 22 scored slots:
+
+| Check | Failures (of 22) | Slots |
+|---|---|---|
+| Plausible? | 2 | Pagerank/TechnicalMethod, Pagerank/Task |
+| Evidence supports? | 5 | Pagerank/TechnicalMethod, Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset |
+| Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
+| Quote in source? | 1 | ResNet/Task |
+
+(Transformer/Dataset's quote-in-source cell is still blank in
+`proto3/manual_review.md` — not filled in yet, so it's excluded from this
+count rather than assumed either way.)
+
+Six slots pass the quote-in-source check but still fail on evidence-support
+or authorship — a real, verbatim quote that is still the *wrong* evidence,
+distinct from a fabricated quote:
+
+- Pagerank/TechnicalMethod: "Google is the proposed system, not the
+  technical method."
+- Pagerank/Task: "Information retrieval is the broader problem domain, not
+  the task performed by the proposed system."
+- AlexNet/Task: "The quote does not directly prove that this is AlexNet's
+  own task."
+- BERT/Task: "the quoted sentence describes prior work rather than BERT's
+  own contribution."
+- BERT/Dataset: "Valid dataset, but one of several. BooksCorpus and
+  Wikipedia are used for pre-training; SQuAD is one of several downstream
+  evaluation datasets."
+- BERT/EvaluationMetric: "F1 is one of several evaluation metrics used
+  across BERT's downstream tasks; others include accuracy, Spearman
+  correlation, EM, and GLUE task scores."
+
+ResNet/Task is the opposite pattern — quote-in-source *and* authorship both
+fail together: the quote "cites bracketed prior work `[21, 49, 39]` for the
+breakthroughs," crediting prior work rather than establishing the paper's
+own task.
+
+On the two null slots: MapReduce/Dataset is a real miss, not a genuine
+absence — "the paper uses large benchmark datasets for grep and sort
+experiments (about 1 TB each)," which NotebookLM independently found in the
+source text (Q20). Pagerank/EvaluationMetric is more ambiguous and leans
+toward the gold label itself being the problem: "Precision is discussed as
+an important search-quality criterion, but it is not actually measured or
+reported as an experimental metric" — gold `"quality"` is likely too vague
+or mislabeled.
+
+Two further points from the review, in my own words in
+`proto3/manual_review.md`: some papers have more than one correct answer —
+BERT uses several datasets and several evaluation metrics, so choosing only
+one can be technically correct but still give an incomplete picture. And
+some gold answers may be too simple or use the wrong category, which means
+evaluating against the gold labels alone can give a misleading result.
+NotebookLM is useful for summarizing across the whole paper and surfacing
+multiple relevant values, but human review is still needed to judge whether
+the schema itself makes sense and whether the gold labels are good enough.
+
+This pass has the same single-annotator bias as the gold labels it checks
+against — the broader problem already noted in Q19: I wrote both the gold
+labels and, later, the answers being checked against them. I don't present
+this review as more objective than the gold labels themselves.
 
 The Related Work ablation is first on the cut list for report3, demoted
 from P1 because it does not address Task, the project's weakest role, the
@@ -1079,7 +1136,7 @@ measured, across the whole project rather than proto3 alone:
 | proto2 failure mode | proto3 status | Evidence |
 |---|---|---|
 | Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One answer per role, every paper, by construction of Stage 2's schema-guided extraction |
-| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Fixed by design, not yet independently verified | The authors'-own-work rule targets this directly; verifiable checking is pending the manual review (Q21) |
+| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Fixed by design, partially verified | The authors'-own-work rule targets this directly; the manual review (Q21) found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study (Q19-Q20) |
 
 Achievements: I moved from proto2's recall-only substring check to proto3's
@@ -1103,11 +1160,9 @@ NotebookLM cross-check, which confirms the dataset description is present
 in the source text — a genuine model recall failure, distinct from the
 gold-label-artifact cases elsewhere in the results.
 
-**FILL IT LATER** (only if I run the decomposed-extraction pilot, variant B,
-before the deadline) — report per-role F1, A (joint) vs B (decomposed); the
-most direct attempt so far at fixing Task's known weakness, and a stronger
-technical-challenge signal than the Related Work ablation alone. If not
-run, keep the pointer to Q24 as-is.
+The decomposed-extraction pilot (variant B) was not run — cut, per the
+checklist above. It stays deferred to further work (Q24), same as the
+Related Work ablation.
 
 ---
 
@@ -1162,8 +1217,8 @@ prior work; and proto3, the current document-level, schema-guided
 extraction pipeline, which returns one evidence-backed answer per role per
 paper. As of this draft, Stages 0-2 are implemented, the gold-label-match
 evaluation is done with confidence intervals and a 5-run variance study,
-the consolidated manual review is in progress, and the Related Work
-ablation is optional and deferred.
+the consolidated manual review is done, and the decomposed-extraction
+pilot and the Related Work ablation were both cut, not run.
 
 **Q24:** What further work remains?
 
@@ -1246,7 +1301,7 @@ guarantees and semantic correctness. `response_json_schema` guarantees
 that Gemini's reply is syntactically valid and has the right shape — the
 schema-conformance problem is solved. It does not guarantee the *content*
 is correct: an answer can be syntactically well-formed and still wrong, as
-the "metric is blunt" cases in Q20 and the planned manual review (Q21)
+the "metric is blunt" cases in Q20 and the manual review (Q21)
 show. This distinction between schema conformance and semantic correctness
 is not specific to this project; it applies to LLM-based structured
 extraction generally, and I think it is worth stating explicitly rather
@@ -1282,6 +1337,7 @@ starting point — don't retype them here. Add:
 - `report1/report.md`'s References ([1]-[11]) and Dataset Papers ([D1]-[D6])
   lists are complete and ready to reuse verbatim as report3's starting
   point — confirmed by reading the file directly.
-- **FILL IT LATER** — update the Appendix-style material (work plan
-  roadmap, extended per-paper evaluation tables) once the manual review
-  (Q21) and, if reached, the Related Work ablation are run.
+- The manual review (Q21) is done — Appendix-style material updated
+  accordingly (Table 10, work plan). The decomposed-extraction pilot and
+  the Related Work ablation were both cut, not run — no further
+  Appendix-style update needed for either.

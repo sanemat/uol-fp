@@ -50,10 +50,10 @@ Gold: TechnicalMethod=`PageRank`, Task=`web search`, Dataset=`million pages`, Ev
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | Google | Abstract | "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext." | | | | | |
-| Task | information retrieval | Introduction | "The Web creates new challenges for information retrieval." | | | | | |
-| Dataset | 24 million pages | Anchor-test | "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed." | | | | | |
-| EvaluationMetric | *(null)* | — | — | | | | | See "Null slots" above — real runs answer `"precision"` every time (5/5), and NotebookLM independently names Precision too. Judge whether this is a real miss. |
+| TechnicalMethod | Google | Abstract | "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext." |No | No | Yes |Yes |Google is the proposed system, not the technical method. |
+| Task | information retrieval | Introduction | "The Web creates new challenges for information retrieval." | No | No | No | Yes | Information retrieval is the broader problem domain, not the task performed by the proposed system.|
+| Dataset | 24 million pages | Anchor-test | "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed." | Yes | Yes | Yes | Yes | |
+| EvaluationMetric | *(null)* | — | — | | | | | See "Null slots" above — real runs answer `"precision"` every time (5/5), and NotebookLM independently names Precision too. Judge whether this is a real miss. The paper reports quantitative evaluation measures such as query response time, storage efficiency, and indexing speed. Precision is discussed as a search-quality criterion but not formally measured. Gold "quality" is likely too vague / mislabeled. Precision is discussed as an important search-quality criterion, but it is not actually measured or reported as an experimental metric. |
 
 ## AlexNet (`proto1/dataset/alexnet_NIPS-2012-imagenet-classification-with-deep-convolutional-neural-networks-Paper.pdf`)
 
@@ -61,10 +61,10 @@ Gold: TechnicalMethod=`convolutional`, Task=`object recognition`, Dataset=`Image
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | deep convolutional neural network | Abstract | "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes." | | | | | |
-| Task | object recognition | Introduction | "Current approaches to object recognition make essential use of machine learning methods." | | | | | |
-| Dataset | ImageNet | The Dataset | "ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories." | | | | | |
-| EvaluationMetric | top-1 and top-5 error rates | The Dataset | "On ImageNet, it is customary to report two error rates: top-1 and top-5, where the top-5 error rate is the fraction of test images for which the correct label is not among the five labels considered most probable by the model." | | | | | |
+| TechnicalMethod | deep convolutional neural network | Abstract | "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes." | Yes | Yes| Yes| Yes | |
+| Task | object recognition | Introduction | "Current approaches to object recognition make essential use of machine learning methods." | Yes | No | No | Yes | to classify ... into the 1000 different classes. The quote does not directly prove that this is AlexNet’s own task. |
+| Dataset | ImageNet | The Dataset | "ImageNet is a dataset of over 15 million labeled high-resolution images belonging to roughly 22,000 categories." | Yes | Yes | Yes | Yes | |
+| EvaluationMetric | top-1 and top-5 error rates | The Dataset | "On ImageNet, it is customary to report two error rates: top-1 and top-5, where the top-5 error rate is the fraction of test images for which the correct label is not among the five labels considered most probable by the model." | Yes | Yes | Yes | Yes | |
 
 ## BERT (`proto1/dataset/BERT Pre-training of Deep Bidirectional Transformers for Language Understanding.pdf`)
 
@@ -72,10 +72,10 @@ Gold: TechnicalMethod=`BERT`, Task=`GLUE`, Dataset=`BooksCorpus`, EvaluationMetr
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | BERT | Abstract | "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers." | | | | | |
-| Task | Language model pre-training | Introduction | "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018)." | | | | | Watch this one for "authors' own work" — the quote cites prior work by name. Is pre-training itself BERT's contribution, or just motivation? |
-| Dataset | SQuAD v1.1 | SQuAD v1.1 | "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016)." | | | | | Answer is one of several valid datasets (see Q9 multi-valued discussion) — judge plausibility as "a correct dataset," not "the only one." |
-| EvaluationMetric | F1 score | SQuAD v1.1 | "Our single BERT model outperforms the top ensemble system in terms of F1 score." | | | | | Same multi-valued caveat as Dataset above. |
+| TechnicalMethod | BERT | Abstract | "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers." | Yes | Yes | Yes |Yes | |
+| Task | Language model pre-training | Introduction | "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018)." |Yes | No | No | Yes | Watch this one for "authors' own work" — the quote cites prior work by name. Is pre-training itself BERT's contribution, or just motivation? Gold "GLUE" is a benchmark suite rather than a task; "language model pre-training" is role-plausible, but the quoted sentence describes prior work rather than BERT's own contribution. |
+| Dataset | SQuAD v1.1 | SQuAD v1.1 | "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs (Rajpurkar et al., 2016)." | Yes | No | No | Yes | Answer is one of several valid datasets (see Q9 multi-valued discussion) — judge plausibility as "a correct dataset," not "the only one." Valid dataset, but one of several. BooksCorpus and Wikipedia are used for pre-training; SQuAD is one of several downstream evaluation datasets. |
+| EvaluationMetric | F1 score | SQuAD v1.1 | "Our single BERT model outperforms the top ensemble system in terms of F1 score." | Yes | Yes | No | Yes | Same multi-valued caveat as Dataset above. Valid but incomplete: F1 is one of several evaluation metrics used across BERT's downstream tasks; others include accuracy, Spearman correlation, EM, and GLUE task scores. |
 
 ## MapReduce (`proto1/dataset/MapReduce Simplified Data Processing on Large Clusters.pdf`)
 
@@ -83,10 +83,10 @@ Gold: TechnicalMethod=`MapReduce`, Task=`distributed`, Dataset=`TeraSort`, Evalu
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | MapReduce | Abstract | "MapReduce is a programming model and an associated implementation for processing and generating large data sets." | | | | | |
-| Task | automatic parallelization and distribution of large-scale computations | Introduction | "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs." | | | | | Already known: fails substring match against gold `"distributed"` despite being arguably correct — the "metric is blunt" example already slated for Q20. |
-| Dataset | *(null)* | — | — | | | | | See "Null slots" above — null in the baseline **and all 5 real runs**, but NotebookLM independently found "two ~1TB datasets (grep, sort benchmarks)" in the text. Judge whether this is a real miss. |
-| EvaluationMetric | elapsed time | Effect of Backup Tasks | "The entire computation takes 1283 seconds, an increase of 44% in elapsed time." | | | | | |
+| TechnicalMethod | MapReduce | Abstract | "MapReduce is a programming model and an associated implementation for processing and generating large data sets." |Yes | Yes| Yes|Yes | |
+| Task | automatic parallelization and distribution of large-scale computations | Introduction | "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs." | Yes|Yes | Yes | Yes | Already known: fails substring match against gold `"distributed"` despite being arguably correct — the "metric is blunt" example already slated for Q20. |
+| Dataset | *(null)* | — | — | missed | N/A | N/A | N/A | See "Null slots" above — null in the baseline **and all 5 real runs**, but NotebookLM independently found "two ~1TB datasets (grep, sort benchmarks)" in the text. Judge whether this is a real miss. Missed extraction: the paper uses large benchmark datasets for grep and sort experiments (about 1 TB each). |
+| EvaluationMetric | elapsed time | Effect of Backup Tasks | "The entire computation takes 1283 seconds, an increase of 44% in elapsed time." |Yes |Yes |Yes |Yes |Valid but incomplete: elapsed time is one of several performance measures reported in the paper. |
 
 ## ResNet (`proto1/dataset/resnet_Deep_Residual_Learning_for_Image_Recognition.pdf`)
 
@@ -94,10 +94,10 @@ Gold: TechnicalMethod=`residual`, Task=`image recognition`, Dataset=`ImageNet`, 
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | deep residual learning framework | Introduction | "In this paper, we address the degradation problem by introducing a deep residual learning framework." | | | | | |
-| Task | image classification | Introduction | "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]." | | | | | Quote cites bracketed prior work `[21, 49, 39]` for the breakthroughs — check whether the sentence is establishing the paper's own task or crediting others'. |
-| Dataset | ImageNet 2012 classification dataset | ImageNet Classification | "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes." | | | | | Multi-valued caveat, as BERT above (CIFAR-10/PASCAL VOC/COCO also used). |
-| EvaluationMetric | top-1 and top-5 error rates | ImageNet Classification | "We evaluate both top-1 and top-5 error rates." | | | | | |
+| TechnicalMethod | deep residual learning framework | Introduction | "In this paper, we address the degradation problem by introducing a deep residual learning framework." | Yes|Yes |Yes |Yes | |
+| Task | image classification | Introduction | "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]." |Yes |Yes | No | No | Quote cites bracketed prior work `[21, 49, 39]` for the breakthroughs — check whether the sentence is establishing the paper's own task or crediting others'. |
+| Dataset | ImageNet 2012 classification dataset | ImageNet Classification | "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes." | Yes | Yes |Yes |Yes | Multi-valued caveat, as BERT above (CIFAR-10/PASCAL VOC/COCO also used). |
+| EvaluationMetric | top-1 and top-5 error rates | ImageNet Classification | "We evaluate both top-1 and top-5 error rates." |Yes |Yes |Yes |Yes | |
 
 ## Transformer (`proto1/dataset/Attention Is All You Need.pdf`)
 
@@ -105,10 +105,10 @@ Gold: TechnicalMethod=`Transformer`, Task=`machine translation`, Dataset=`WMT`, 
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | Transformer | Abstract | "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely." | | | | | |
-| Task | machine translation | Abstract | "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train." | | | | | |
-| Dataset | WMT 2014 English-German | Training Data and Batching | "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs." | | | | | Multi-valued caveat, as BERT/ResNet above (also WMT En-Fr, WSJ Penn Treebank). |
-| EvaluationMetric | BLEU | Machine Translation | "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4." | | | | | |
+| TechnicalMethod | Transformer | Abstract | "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely." |Yes |Yes |Yes |Yes | |
+| Task | machine translation | Abstract | "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train." |Yes |Yes |Yes |Yes | |
+| Dataset | WMT 2014 English-German | Training Data and Batching | "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs." |Yes |Yes |Yes | | Multi-valued caveat, as BERT/ResNet above (also WMT En-Fr, WSJ Penn Treebank). Valid extraction, but incomplete under a single-value schema: the paper uses multiple datasets (WMT En-De, WMT En-Fr, and WSJ Penn Treebank).|
+| EvaluationMetric | BLEU | Machine Translation | "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4." |Yes |Yes |Yes |Yes | |
 
 ---
 
@@ -119,3 +119,13 @@ Roll the results up for Q21 in `report3/report-memo.md`:
 - Any case where quote-in-source passed but evidence-supports or authors'-own-work failed — call these out explicitly (Q21's hint already asks for this).
 - Resolution on the two null slots: real miss or genuine absence.
 - One line on the single-annotator bias, per the note above.
+
+One interesting finding is that simply asking an LLM to extract information from a paper may not be enough.
+
+The LLM can find words that appear in the paper, but it may choose the wrong role. For example, "Google" appears in the PageRank paper, but it is the name of the system, not really the technical method. A quote can also be real but still be weak evidence for the answer.
+
+Another problem is that some papers have more than one correct answer. BERT uses several datasets and several evaluation metrics. Choosing only one can be technically correct but still give an incomplete picture of the paper.
+
+There is also a problem with the gold labels. Some gold answers may be too simple or even use the wrong category. This means that evaluating the LLM against the gold labels alone may give a misleading result.
+
+NotebookLM seems useful because it can summarize information across the whole paper and find multiple relevant values. However, human review is still useful for checking whether the schema itself makes sense and whether the gold labels are good enough.
