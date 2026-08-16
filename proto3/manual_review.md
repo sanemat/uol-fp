@@ -83,10 +83,10 @@ Gold: TechnicalMethod=`MapReduce`, Task=`distributed`, Dataset=`TeraSort`, Evalu
 
 | Role | Answer | Section | Quote | Plausible? | Evidence supports? | Authors' own? | Quote in source? | Notes |
 |---|---|---|---|---|---|---|---|---|
-| TechnicalMethod | MapReduce | Abstract | "MapReduce is a programming model and an associated implementation for processing and generating large data sets." | | | | | |
-| Task | automatic parallelization and distribution of large-scale computations | Introduction | "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs." | | | | | Already known: fails substring match against gold `"distributed"` despite being arguably correct — the "metric is blunt" example already slated for Q20. |
-| Dataset | *(null)* | — | — | | | | | See "Null slots" above — null in the baseline **and all 5 real runs**, but NotebookLM independently found "two ~1TB datasets (grep, sort benchmarks)" in the text. Judge whether this is a real miss. |
-| EvaluationMetric | elapsed time | Effect of Backup Tasks | "The entire computation takes 1283 seconds, an increase of 44% in elapsed time." | | | | | |
+| TechnicalMethod | MapReduce | Abstract | "MapReduce is a programming model and an associated implementation for processing and generating large data sets." |Yes | Yes| Yes|Yes | |
+| Task | automatic parallelization and distribution of large-scale computations | Introduction | "The major contributions of this work are a simple and powerful interface that enables automatic parallelization and distribution of large-scale computations, combined with an implementation of this interface that achieves high performance on large clusters of commodity PCs." | Yes|Yes | Yes | Yes | Already known: fails substring match against gold `"distributed"` despite being arguably correct — the "metric is blunt" example already slated for Q20. |
+| Dataset | *(null)* | — | — | missed | N/A | N/A | N/A | See "Null slots" above — null in the baseline **and all 5 real runs**, but NotebookLM independently found "two ~1TB datasets (grep, sort benchmarks)" in the text. Judge whether this is a real miss. Missed extraction: the paper uses large benchmark datasets for grep and sort experiments (about 1 TB each). |
+| EvaluationMetric | elapsed time | Effect of Backup Tasks | "The entire computation takes 1283 seconds, an increase of 44% in elapsed time." |Yes |Yes |Yes |Yes |Valid but incomplete: elapsed time is one of several performance measures reported in the paper. |
 
 ## ResNet (`proto1/dataset/resnet_Deep_Residual_Learning_for_Image_Recognition.pdf`)
 
