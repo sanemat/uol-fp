@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6138 words, excluding tables, figures, references, and appendices)
+# Report (6122 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -441,7 +441,7 @@ Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1654 words)
+## Chapter 5: Evaluation (1638 words)
 
 ### 1. Evaluation Method
 
