@@ -279,11 +279,11 @@ This revision addresses each written comment directly:
 | 2 (area of study / previous work) | Relies heavily on the same small group of sources; no need to find similar projects, a literature review can be built around the methods and tools used; use academic language, avoid "I test" style narration | Chapter 2 adds two new sources (Dagdelen et al., Polak and Morgan) on LLM-based structured extraction, the method proto3 itself uses, and cites Khot et al. on decomposed prompting for the Chapter 3 architecture discussion — new material grounded in what this project does, not a search for similar projects. The whole report also moves to a formal academic register (Q1's cross-reference to the updated house style) |
 | 4 (citations and references) | In-text numbering starts from `[7]`, not `[1]`; mixes author names with numbered citations | References renumbered by order of first appearance, starting at `[1]`; every reference-list entry is now cited at least once in the body text (see Chapter 3/4 for the added GROBID citation) |
 | 5 (concept justified by domain/users) | Needs a thorough analysis of the target domain and users | Chapter 3 §1 adds a user-need / system-requirement / evaluation-coverage table connecting each user need to a concrete design decision and how it is measured |
-| 6 (design explanation) | No proper diagram showing data flow, component interaction, failure handling, and the user interface; key technologies and methods section needs more detail | Figure 2 is replaced with a box/failure-path diagram showing GROBID-parse failure, empty-section handling, low-confidence/no-match handling, and where the JSON output reaches the user; Chapter 3 §3 already details the model choice and Chapter 4 §2-3 detail the schema-guided extraction technique |
+| 6 (design explanation) | No proper diagram showing data flow, component interaction, failure handling, and the user interface; key technologies and methods section needs more detail | Figure 2 is replaced with a box/failure-path diagram showing GROBID-parse failure, empty-section handling, the no-supported-answer case, and where the JSON output reaches the user; Chapter 3 §3 already details the model choice and Chapter 4 §2-3 detail the schema-guided extraction technique |
 | 8 (workplan detail) | Plan should show task durations, dependencies, risks, contingency time | Table 5 (Chapter 3 §6) is extended with duration, dependencies, risk, and contingency columns for the remaining work |
 | 9 (workplan feasibility) | Lacks a comprehensive task breakdown | Same table extension as rubric 8 — the remaining chain is broken into the concrete tasks still ahead rather than broad monthly periods |
 | 10 (evaluation strategy) | Prototype evaluation used only a small number of papers and counted one matching word as a correct result | Chapter 5 now scores gold-label match as classification (Precision/Recall/F1) with Wilson confidence intervals, backed by a 5-run variance study and a consolidated manual review (Q19-Q21) — the corpus stays at six papers, with the reasoning for not growing it stated explicitly in Q19 |
-| Overall assignment feedback | Literature review repeats points and needs a more critical comparison between studies; design is easy to follow, but diagrams, threshold choice, and the sentence-level classification assumption need justification; next evaluation should use fixed gold labels, more papers, precision and recall | Chapter 2 §6's synthesis table and study-vs-study comparisons address the first point; Chapter 3 now states directly that proto3 has no per-sentence threshold to justify (extraction is not per-sentence) and that the sentence-level circularity concern does not apply once extraction is document-level; the evaluation redesign (rubric 10 row above) addresses the last point |
+| Overall assignment feedback | Literature review repeats points and needs a more critical comparison between studies; design is easy to follow, but diagrams, threshold choice, and the sentence-level classification assumption need justification; next evaluation should use fixed gold labels, more papers, precision and recall | Chapter 2 §6's synthesis table and study-vs-study comparisons address the first point; Chapter 3 now states directly that proto3 has no per-sentence threshold to justify (extraction is not per-sentence) and that the sentence-level circularity concern does not apply once extraction is document-level; of the evaluation redesign, fixed gold labels and Precision/Recall are addressed directly (Q19-Q20), but growing the paper count beyond six is a scope decision this revision does not implement — Q19 states the reason (the Wilson-interval math shows meaningfully tightening the CIs would need 30-40 gold-labeled papers per role) rather than claiming the point is resolved |
 
 ---
 
@@ -491,7 +491,7 @@ TEI validation ──empty/invalid section──▶ section skipped, logged
 Stage 1: concatenate sections (reading order)
   │
   ▼
-Stage 2: schema-guided LLM extraction ──low-confidence/no match──▶ role = null (not fabricated)
+Stage 2: schema-guided LLM extraction ──no supported answer in text──▶ role = null (not fabricated)
   │ ok
   ▼
 MethodologyProfile JSON (answer + evidence per role)
@@ -582,9 +582,9 @@ weakest role.
 Once the five-run variance study existed, I also had to decide how to
 compute its confidence interval. I pooled the true/false positive/negative
 counts across the five runs (30 trials per role) rather than computing five
-separate per-run intervals, because the goal was a tighter estimate from
-real repeated measurement, not five independent snapshots. I state the
-trade-off directly: these 30 trials are five repeats of the same six
+separate per-run intervals, because the goal was to characterize run-to-run
+non-determinism using real repeated measurement, not to sharpen a
+paper-level population estimate. I state the trade-off directly: these 30 trials are five repeats of the same six
 papers, not 30 independent papers, so the interval is narrower than a true
 30-paper sample would give. This is a design decision about how the
 evaluation was built; the resulting numbers belong in Q20.
@@ -910,8 +910,9 @@ role, not the 6-10 reachable in three weeks with no second annotator, so
 n=6 stays, reported honestly rather than hidden behind a vague caveat.
 
 These confidence intervals are for the single frozen baseline sample. A
-second, tighter interval exists from five real pipeline runs, pooled across
-runs (n=30 trials per role) — I report that one in Q20, not here, so this
+second interval exists from five real pipeline runs, pooled across runs
+(n=30 trials per role) — it reflects run-to-run non-determinism rather than
+a sharper paper-level estimate, and I report it in Q20, not here, so this
 section stays about the baseline gold-label-match result specifically.
 
 One gold label also carries a specific evaluator-influence caveat worth
@@ -1020,8 +1021,8 @@ exact or near-exact matches including "Google", "BERT", "Transformer", and
 "MapReduce" — independent corroboration that this is the strongest role.
 
 Pooling true/false positive/negative counts across the five runs gives a
-tighter Wilson 95% confidence interval on Precision and Recall (n=30
-trials per role):
+numerically narrower Wilson 95% confidence interval on Precision and Recall
+(n=30 trials per role):
 
 | Role | P | P 95% CI | R | R 95% CI |
 |---|---|---|---|---|
@@ -1031,10 +1032,14 @@ trials per role):
 | EvaluationMetric | 0.57 | [0.39, 0.73] | 0.57 | [0.39, 0.73] |
 
 I state the caveat plainly: these 30 trials per role are five repeats of
-the same six papers, not 30 independent papers, so the interval is
-narrower than a true 30-independent-paper sample would give — I do not
-present it as if it were. Even so, it is worth reporting as a finding, not
-only a caveat: TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer
+the same six papers, not 30 independent papers. The n=6 baseline interval
+in Q19 reflects paper-level uncertainty (how results might vary across a
+different sample of papers), while this pooled interval instead reflects
+run-to-run non-determinism (how the same six papers' results vary when the
+pipeline is simply run again) — the two intervals answer different
+questions, and the pooled one should not be read as a more precise
+estimate of paper-level accuracy; I do not present it as if it were. Even
+with that distinction, the pooled result is worth reporting: TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer
 overlap, unlike the n=6 baseline intervals in Q19 ([0.44, 0.97] vs [0.10,
 0.70], which did overlap). Five real repetitions give more grounds to say
 TechnicalMethod reliably outperforms Task than the single n=6 snapshot
@@ -1208,7 +1213,7 @@ measured, across the whole project rather than proto3 alone:
 | proto2 failure mode | proto3 status | Evidence |
 |---|---|---|
 | Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One answer per role, every paper, by construction of Stage 2's schema-guided extraction |
-| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Fixed by design, partially verified | The authors'-own-work rule targets this directly; the manual review (Q21) found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
+| No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Addressed by design, but not reliably solved | The authors'-own-work rule targets this directly; the manual review (Q21) found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study (Q19-Q20) |
 
 Achievements: I moved from proto2's recall-only substring check to proto3's
@@ -1222,10 +1227,11 @@ preliminary report, evidence that the evaluation itself matured across the
 project, not only the pipeline.
 
 Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly
-a metric artifact per Q20's MapReduce case). The dataset is only six
-papers, all ML-benchmark-shaped — proto2 already showed systems papers like
-MapReduce and Google Search fit the four-role schema worse, and I treat
-this as an open generalization question, not a resolved one. A concrete
+a metric artifact per Q20's MapReduce case). The four-role schema itself is
+ML-benchmark-shaped, inherited from SciREX's ML-conference corpus (Q4); of
+the six papers, two are systems papers (MapReduce, Google Search), and
+proto2 already showed these fit the schema worse than the four ML papers,
+an open generalization question, not a resolved one. A concrete
 weakness worth naming directly: MapReduce's Dataset slot answered `null`
 across all five runs (gold `"TeraSort"`), externally corroborated by the
 NotebookLM cross-check, which confirms the dataset description is present
