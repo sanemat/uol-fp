@@ -81,7 +81,7 @@ h3 {
   box-sizing: border-box;
 }
 </style>
-<h1 id="report-6138-words-excluding-tables-figures-references-and-appendices">Report (6138 words, excluding tables, figures, references, and appendices) </h1>
+<h1 id="report-6122-words-excluding-tables-figures-references-and-appendices">Report (6122 words, excluding tables, figures, references, and appendices) </h1>
 <h2 id="chapter-1-introduction-471-words">Chapter 1: Introduction (471 words) </h2>
 <p>When computing researchers do a literature review, they often need to read many papers and find each paper's method, task, dataset, and evaluation metric. Reading many papers this way is slow and manual. I treat these four items as a methodology profile that a reader can extract automatically, to support the first pass of a literature review, not to replace reading the paper.</p>
 <p>Consider "Attention Is All You Need" [D6]:</p>
@@ -415,7 +415,7 @@ User-facing output: role table + quoted evidence (Table 1 / Figure 6)
 <td>July-August</td>
 <td>Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters</td>
 <td>Draft Report 3 material</td>
-<td>In progress, mandatory</td>
+<td>Done</td>
 </tr>
 <tr>
 <td>August</td>
@@ -597,7 +597,7 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </table>
 <p>Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Transformer paper.</p>
 <hr>
-<h2 id="chapter-5-evaluation-1654-words">Chapter 5: Evaluation (1654 words) </h2>
+<h2 id="chapter-5-evaluation-1638-words">Chapter 5: Evaluation (1638 words) </h2>
 <h3 id="1-evaluation-method">1. Evaluation Method </h3>
 <p>I evaluate gold-label match as a classification problem — Precision, Recall, and F1 per role, with Wilson 95% confidence intervals on Precision and Recall — backed by a logged 5-run variance study and a consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text, all in a single read. The Related Work ablation runs only if time allows.</p>
 <p>Precision/Recall/F1 (P/R/F1) is more appropriate than proto2's recall-only substring check, because a present-but-wrong answer now costs both precision and recall, instead of being free the way it was when any accepted sentence containing the gold term counted as a hit, regardless of how many other sentences were also returned.</p>
@@ -747,7 +747,7 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </tr>
 </tbody>
 </table>
-<p>Table 11: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in <code>proto3/manual_review.md</code>, so it is excluded from this count.)</p>
+<p>Table 11: Manual review failure counts by check type, 22 scored slots.</p>
 <p>Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the <em>wrong</em> evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers this chapter's own open question from Section 2: the quote "cites bracketed prior work <code>[21, 49, 39]</code> for the breakthroughs," crediting prior work rather than establishing the paper's own task — the one slot where quote-in-source and authorship fail together, rather than the "verbatim but wrong" pattern above.</p>
 <p>On the two null slots: MapReduce's Dataset is a real miss, not a genuine absence — the paper "uses large benchmark datasets for grep and sort experiments (about 1 TB each)," which NotebookLM independently found in the source text (Section 3 above). Pagerank's EvaluationMetric is more ambiguous and leans toward the gold label being the problem: precision "is discussed as an important search-quality criterion, but it is not actually measured or reported as an experimental metric" — gold <code>"quality"</code> is likely too vague or mislabeled.</p>
 <p>BERT's Dataset and EvaluationMetric failures also confirm the multi-valued-roles finding from Chapter 3 directly: choosing only one of several correct answers can be technically correct but still gives an incomplete picture. Some gold answers may also be too simple or use the wrong category, so evaluating against gold labels alone can give a misleading result.</p>
@@ -1108,7 +1108,78 @@ profile <span class="token operator">=</span> MethodologyProfile<span class="tok
 </tr>
 </tbody>
 </table>
-<p>Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (<code>report1/report.md</code> Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).</p>
+<p>Table B2: proto2 sentence-count output per role (six papers). See Table B3 for the per-paper pass/fail breakdown.</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>TechnicalMethod</th>
+<th>Task</th>
+<th>Dataset</th>
+<th>EvaluationMetric</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer</td>
+<td>○</td>
+<td>✗</td>
+<td>○</td>
+<td>✗</td>
+<td>2/4</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>4/4</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>4/4</td>
+</tr>
+<tr>
+<td>ResNet</td>
+<td>○</td>
+<td>✗</td>
+<td>○</td>
+<td>○</td>
+<td>3/4</td>
+</tr>
+<tr>
+<td>MapReduce</td>
+<td>○</td>
+<td>✗</td>
+<td>✗</td>
+<td>○</td>
+<td>2/4</td>
+</tr>
+<tr>
+<td>Google Search</td>
+<td>✗</td>
+<td>○</td>
+<td>○</td>
+<td>○</td>
+<td>3/4</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>18/24 (75%)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Table B3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.</p>
 <p>The manual review (Chapter 5, Section 4) is now done — see Table 11 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.</p>
 
       </div>
