@@ -185,15 +185,15 @@ summary and further work.
 > from computing papers without an annotated corpus. That framing doesn't change
 > just because the extraction method moved from NLI to an LLM.
 
-A: The core review carries over unchanged. Oates [9] and Pilkington &
-Pretorius [10] give the vocabulary and formal structure for research
-methodology. Jain et al. [5] (SciREX) motivate the four-role schema
+A: The core review carries over unchanged. Oates [1] and Pilkington &
+Pretorius [2] give the vocabulary and formal structure for research
+methodology. Jain et al. [4] (SciREX) motivate the four-role schema
 (Dataset, Metric, Task, Method) directly — their 438 annotated papers were
 drawn from a pool of 1,170 ML-conference articles on Papers with Code, which
 quantifies how narrow the ML-benchmark scope of that corpus actually is.
-Ghosh et al. [2, 3] and Färber et al. [1] show narrower, supervised
+Ghosh et al. [5, 6] and Färber et al. [8] show narrower, supervised
 extraction approaches that this project's zero-shot and later LLM-based
-approaches respond to. Yin et al. [11] motivate classification without
+approaches respond to. Yin et al. [9] motivate classification without
 labeled training data. Even with the short-label hypothesis set that worked
 best in proto2, classification errors remained concrete: on the Transformer
 paper, "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German
@@ -219,7 +219,7 @@ NLI with document-level LLM extraction?
 > checklist above).
 
 A: I expand the review with the document-level information extraction (IE)
-argument: Jain et al. [5] argue that "a significant amount of information
+argument: Jain et al. [4] argue that "a significant amount of information
 can only be gleaned from analyzing the full document." My own data supports
 this claim directly — Dataset and EvaluationMetric typically appear only in
 the Experiment section of a paper, not the Abstract, so an extraction
@@ -271,9 +271,19 @@ chapter?
 > how each one is addressed, so the reader (and marker) can see the revision was
 > deliberate, not cosmetic.
 
-A: **FILL IT LATER** — find the actual marker feedback on the preliminary
-report (email, Moodle, or elsewhere; not in this repo) and list each
-comment with how it's addressed.
+A: The preliminary report received marker feedback in `report1/feedback.txt`.
+This revision addresses each written comment directly:
+
+| Rubric | Marker comment | How report3 addresses it |
+|---|---|---|
+| 2 (area of study / previous work) | Relies heavily on the same small group of sources; no need to find similar projects, a literature review can be built around the methods and tools used; use academic language, avoid "I test" style narration | Chapter 2 adds two new sources (Dagdelen et al., Polak and Morgan) on LLM-based structured extraction, the method proto3 itself uses, and cites Khot et al. on decomposed prompting for the Chapter 3 architecture discussion — new material grounded in what this project does, not a search for similar projects. The whole report also moves to a formal academic register (Q1's cross-reference to the updated house style) |
+| 4 (citations and references) | In-text numbering starts from `[7]`, not `[1]`; mixes author names with numbered citations | References renumbered by order of first appearance, starting at `[1]`; every reference-list entry is now cited at least once in the body text (see Chapter 3/4 for the added GROBID citation) |
+| 5 (concept justified by domain/users) | Needs a thorough analysis of the target domain and users | Chapter 3 §1 adds a user-need / system-requirement / evaluation-coverage table connecting each user need to a concrete design decision and how it is measured |
+| 6 (design explanation) | No proper diagram showing data flow, component interaction, failure handling, and the user interface; key technologies and methods section needs more detail | Figure 2 is replaced with a box/failure-path diagram showing GROBID-parse failure, empty-section handling, low-confidence/no-match handling, and where the JSON output reaches the user; Chapter 3 §3 already details the model choice and Chapter 4 §2-3 detail the schema-guided extraction technique |
+| 8 (workplan detail) | Plan should show task durations, dependencies, risks, contingency time | Table 5 (Chapter 3 §6) is extended with duration, dependencies, risk, and contingency columns for the remaining work |
+| 9 (workplan feasibility) | Lacks a comprehensive task breakdown | Same table extension as rubric 8 — the remaining chain is broken into the concrete tasks still ahead rather than broad monthly periods |
+| 10 (evaluation strategy) | Prototype evaluation used only a small number of papers and counted one matching word as a correct result | Chapter 5 now scores gold-label match as classification (Precision/Recall/F1) with Wilson confidence intervals, backed by a 5-run variance study and a consolidated manual review (Q19-Q21) — the corpus stays at six papers, with the reasoning for not growing it stated explicitly in Q19 |
+| Overall assignment feedback | Literature review repeats points and needs a more critical comparison between studies; design is easy to follow, but diagrams, threshold choice, and the sentence-level classification assumption need justification; next evaluation should use fixed gold labels, more papers, precision and recall | Chapter 2 §6's synthesis table and study-vs-study comparisons address the first point; Chapter 3 now states directly that proto3 has no per-sentence threshold to justify (extraction is not per-sentence) and that the sentence-level circularity concern does not apply once extraction is document-level; the evaluation redesign (rubric 10 row above) addresses the last point |
 
 ---
 
@@ -294,6 +304,23 @@ literature reviews; secondary users are early-stage researchers or
 supervisors who want a quick overview of a paper. proto3 changed the output
 quality — one checkable answer per role instead of a list of candidate
 sentences — not the target domain or audience.
+
+The preliminary report's feedback asked for a fuller analysis connecting
+user needs to the system's requirements, not just a list of who the users
+are. The following table makes that connection explicit, including how each
+requirement is evaluated:
+
+| User need | System requirement | Evaluation |
+|---|---|---|
+| Quickly understand a paper | Show the four roles clearly | Output size (one answer per role, Chapter 2 §4) |
+| Check the original paper | Show evidence sentences | Evidence correctness (manual review, Q21) |
+| Avoid missing important information | High recall | Recall (Q19-Q20) |
+| Avoid too much irrelevant information | Reduce noisy output | Precision (Q19-Q20) |
+
+This table also strengthens the evaluation strategy (rubric 10, Q7): each
+row names the metric that measures whether the corresponding user need is
+actually met, rather than treating user analysis and evaluation as separate
+concerns.
 
 **Q9:** What is proto3's design justification for schema-guided document-level
 extraction, and how does it directly answer proto2's known failures?
@@ -446,17 +473,33 @@ specifically invites diagrams here).
 > Compare against proto2's pipeline diagram (`report1/report.md` Figure 3) to show
 > what changed: no sentence splitting, no per-sentence threshold.
 
-A: The pipeline runs in five stages:
+A: The pipeline runs in five stages. The preliminary report's feedback asked
+for a diagram that shows data flow, component interaction, failure handling,
+and where results reach the user, not just a linear list of arrows, so the
+diagram below adds each stage's failure path and the final user-facing step:
 
 ```
-PDF
-  → GROBID (Stage 0: parse sections, same as proto2)
-  → structured TEI document (Abstract + body sections, References/Acknowledgements skipped)
-  → Stage 1: concatenate section texts in reading order, no sentence-level filtering
-  → Stage 2: LLM extraction with a schema-guided prompt
-  → MethodologyProfile JSON (answer + evidence per role)
+PDF input
+  │
+  ▼
+GROBID parse (Stage 0) ──fail──▶ parse error surfaced to user
+  │ ok
+  ▼
+TEI validation ──empty/invalid section──▶ section skipped, logged
+  │ ok
+  ▼
+Stage 1: concatenate sections (reading order)
+  │
+  ▼
+Stage 2: schema-guided LLM extraction ──low-confidence/no match──▶ role = null (not fabricated)
+  │ ok
+  ▼
+MethodologyProfile JSON (answer + evidence per role)
+  │
+  ▼
+User-facing output: role table + quoted evidence (Table 1 / Figure 6)
 ```
-*Figure: proto3 extraction pipeline, five stages from PDF to structured JSON.*
+*Figure: proto3 extraction pipeline with failure paths and the user-facing output step.*
 
 Compared with proto2's pipeline (`report1/report.md` Figure 3: PDF → GROBID
 → TEI XML → section filtering → sentence splitting and cleaning →
@@ -465,6 +508,20 @@ differences: there is no sentence splitting, and there is no per-sentence
 acceptance threshold. The LLM sees the (mostly) whole document and returns
 one decision per role directly, instead of a list of candidate sentences
 each scored independently.
+
+These two differences directly resolve two items from the preliminary
+report's feedback. First, the feedback asked for a clear reason behind
+proto2's NLI acceptance threshold of `0.5`. proto3 has no such value to
+justify, because extraction is no longer a per-sentence accept/reject
+decision — the question does not arise for a single schema-guided call.
+Second, the feedback questioned proto2's sentence-level assumption that a
+sentence describes one role at a time, since single-label sentence
+classification could only ever produce single-label results, whatever the
+underlying text actually contained. That circularity does not apply to
+proto3 either, since extraction is document-level rather than per-sentence;
+the related but distinct question of whether a *role* (not a sentence)
+should allow more than one answer is addressed separately in Chapter 3 §2's
+multi-valued-roles discussion (Q9).
 
 **Q12:** How does the evaluation approach itself need to be (re)designed here,
 versus how results are reported in Chapter 5?
@@ -552,6 +609,21 @@ A:
 | August (P1) | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever P0/P1 items complete in time | Final submission | Not started |
+
+The preliminary report's feedback asked the workplan to show durations,
+dependencies, risks, and contingency time explicitly, not just broad monthly
+periods. The remaining work, broken into that level of detail:
+
+| Task | Duration | Depends on | Risk | Contingency |
+|---|---|---|---|---|
+| Report3 feedback pass (this revision) | 1-1.5 days | Marker feedback on report1 (received) | Scope creep into re-running experiments instead of writing | Fixed time box; defer any experiment-shaped idea to Chapter 6 further work |
+| Report3 final assembly and word-budget trim | 0.5 day | All chapter drafts complete | Total exceeds the 9,500-word cap | Cut from Introduction/Conclusion first, since Literature Review and Evaluation carry the marked criteria |
+| Final Report write-up | Remaining time to deadline | Report3 marker feedback | Underestimating how much the final-report feedback changes | Reserve the last few days as unallocated contingency, not scheduled to any task |
+
+Compared with the monthly-period rows above, this table exists specifically
+to answer the feasibility question (rubric 9): each remaining task has an
+explicit duration and a named risk, rather than being folded into a single
+"in progress" period.
 
 ---
 
