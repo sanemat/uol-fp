@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6047 words, excluding tables, figures, references, and appendices)
+# Report (6091 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -193,7 +193,7 @@ The preliminary report received marker feedback. This revision addresses each wr
 
 ---
 
-## Chapter 3: Design (1112 words)
+## Chapter 3: Design (1144 words)
 
 The system extracts research methodology from computing papers. An input is a PDF, and an output is a role-based profile (Table 1, Chapter 1).
 
@@ -271,16 +271,16 @@ These two differences directly resolve two items from the preliminary report's f
 
 proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I redesigned this: I score gold-label match as a classification problem (true positive, false positive, false negative), report Precision, Recall, and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful; a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
 
-I kept the sample at six papers rather than growing it: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in three weeks with no second annotator, so growing the corpus was a poor use of the remaining time. I planned a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
+I kept the sample at six papers rather than growing it: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in three weeks with no second annotator, so I kept the corpus at six papers given the remaining time and annotation constraints; this limits generalisability and remains a limitation of the evaluation. I planned a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
 
-Once the five-run variance study existed, I also had to decide how to compute its confidence interval. I pooled the true/false positive/negative counts across the five runs (30 trials per role) rather than computing five separate per-run intervals, because the goal was to characterize run-to-run non-determinism using real repeated measurement, not to sharpen a paper-level population estimate. These 30 trials are five repeats of the same six papers, not 30 independent papers, so the interval is narrower than a true 30-paper sample would give.
+Once the five-run variance study existed, I also had to decide how to report it. I chose not to pool the five runs' true/false positive/negative counts into a single Wilson interval (n=30 trials per role): the 30 trials are five repeats of the same six papers, not 30 independent observations, so treating them as independent Bernoulli trials would overstate precision. Instead, I keep the two measures separate: the n=6 baseline Wilson interval (Section 2 above) for paper-level uncertainty, and the five-run F1 mean, minimum, maximum, and range (Chapter 5) for run-to-run non-determinism. Each answers a different question, and neither substitutes for the other.
 
 ### 6. Work Plan
 
 | Period | Main task | Output | Status |
 |---|---|---|---|
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
-| July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run variance study, pooled confidence intervals | Done |
+| July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
 | July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
 | August | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
@@ -446,7 +446,7 @@ Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1606 words)
+## Chapter 5: Evaluation (1614 words)
 
 ### 1. Evaluation Method
 
@@ -492,18 +492,7 @@ Three of four roles were perfectly stable across five real repetitions — stron
 
 An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce" — independent corroboration that this is the strongest role.
 
-Pooling true/false positive/negative counts across the five runs gives a numerically narrower Wilson 95% confidence interval on Precision and Recall (n=30 trials per role):
-
-| Role | P | P 95% CI | R | R 95% CI |
-|---|---|---|---|---|
-| TechnicalMethod | 0.83 | [0.66, 0.93] | 0.83 | [0.66, 0.93] |
-| Task | 0.33 | [0.19, 0.51] | 0.33 | [0.19, 0.51] |
-| Dataset | 1.00 | [0.87, 1.00] | 0.83 | [0.66, 0.93] |
-| EvaluationMetric | 0.57 | [0.39, 0.73] | 0.57 | [0.39, 0.73] |
-
-Table 11: Pooled Wilson 95% confidence intervals, n=30 trials per role (5 runs × 6 papers).
-
-These 30 trials per role are five repeats of the same six papers, not 30 independent papers: the n=6 baseline interval in Section 2 above reflects paper-level uncertainty (how results might vary across a different sample of papers), while this pooled interval instead reflects run-to-run non-determinism (how the same six papers' results vary when the pipeline is simply run again) — the two intervals answer different questions, and the pooled one should not be read as a more precise estimate of paper-level accuracy. Even with that distinction, the pooled result is worth reporting: TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlap, unlike the n=6 baseline intervals in Section 2 above ([0.44, 0.97] vs [0.10, 0.70], which did overlap). Across the five runs, TechnicalMethod consistently outperformed Task.
+I did not pool the five runs' true/false positive/negative counts into a Wilson interval (n=30 trials per role): the 30 trials are five repeats of the same six papers, not 30 independent observations, so an ordinary Wilson interval on them would overstate precision. Paper-level uncertainty (how results might vary across a different sample of papers) is already covered by the n=6 baseline Wilson interval in Section 2 above; the five-run study instead answers a different question — run-to-run non-determinism, how the same six papers' results vary when the pipeline is simply run again — and Table 10's mean/min/max/range already answers that question without a confidence interval on top of it. On that basis, TechnicalMethod's F1 (0.83) exceeded Task's F1 (0.33) in every one of the five runs, a consistent gap that needs no interval to state.
 
 MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct — Task's low F1 is partly a measurement-instrument artifact, not purely a model failure.
 
@@ -522,7 +511,7 @@ All 24 slots are scored. Two are null (Pagerank/EvaluationMetric, MapReduce/Data
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
 
-Table 12: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in `proto3/manual_review.md`, so it is excluded from this count.)
+Table 11: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in `proto3/manual_review.md`, so it is excluded from this count.)
 
 Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the *wrong* evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers this chapter's own open question from Section 2: the quote "cites bracketed prior work `[21, 49, 39]` for the breakthroughs," crediting prior work rather than establishing the paper's own task — the one slot where quote-in-source and authorship fail together, rather than the "verbatim but wrong" pattern above.
 
@@ -544,9 +533,9 @@ Mapping proto2's three named failure modes onto what proto3 actually measured, a
 | No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Addressed by design, but not reliably solved | The authors'-own-work rule targets this directly; the manual review above found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study |
 
-Table 13: proto2 → proto3 synthesis.
+Table 12: proto2 → proto3 synthesis.
 
-Achievements: I moved from proto2's recall-only substring check to proto3's classification-based Precision/Recall/F1 with confidence intervals, now backed by five real repeated runs rather than a single snapshot. Every answer is evidence-backed, and the pooled five-run confidence intervals show TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer overlapping, unlike the single-baseline n=6 intervals in Section 2.
+Achievements: I moved from proto2's recall-only substring check to proto3's classification-based Precision/Recall/F1 with confidence intervals, now backed by five real repeated runs rather than a single snapshot. Every answer is evidence-backed, and the five-run study shows TechnicalMethod's F1 consistently exceeding Task's F1 in every run, strengthening the "TechnicalMethod works, Task doesn't" claim from the single-baseline n=6 evaluation in Section 2, without needing a pooled confidence interval to make the point.
 
 Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly a metric artifact per Section 3). The four-role schema itself is ML-benchmark-shaped, inherited from SciREX's ML-conference corpus (Chapter 2, Section 2); of the six papers, two are systems papers (MapReduce, Google Search), and proto2 already showed these fit the schema worse than the four ML papers, an open generalization question. MapReduce's Dataset slot answered `null` across all five runs (gold `"TeraSort"`), externally corroborated by the NotebookLM cross-check, which confirms the dataset description is present in the source text — a genuine model recall failure, distinct from the gold-label-artifact cases elsewhere in the results.
 
@@ -554,7 +543,7 @@ The decomposed-extraction pilot (variant B) was not run — cut, along with the 
 
 ---
 
-## Chapter 6: Conclusion (625 words)
+## Chapter 6: Conclusion (629 words)
 
 ### Summary
 
@@ -570,7 +559,7 @@ As of this draft, Stages 0-2 are implemented, the gold-label-match evaluation is
 
 ### Further Work
 
-Several items remain for further work. Growing the gold-label corpus remains a poor use of remaining time at any scale reachable in three weeks, for the reasons given in Chapter 3. A formal inter-annotator-agreement study with a second human annotator does not exist on this solo project; the informal NotebookLM cross-check in Chapter 5 narrows this gap but does not close it, since it is one AI tool's single pass with no annotation protocol. A full multi-model comparison (Gemini vs Claude Haiku vs Llama 3.1) and the Related Work ablation, if not reached, are also left for later. Testing on non-ML-benchmark papers — systems, human-computer interaction (HCI) — would show whether the four-role schema and document-level extraction generalize better than proto2's sentence classification did, since proto2 already showed systems papers fit this schema worse.
+Several items remain for further work. Given the remaining time and annotation constraints, the corpus was kept at six papers rather than grown; this limits generalisability and remains a limitation of the evaluation (Chapter 3). A formal inter-annotator-agreement study with a second human annotator does not exist on this solo project; the informal NotebookLM cross-check in Chapter 5 narrows this gap but does not close it, since it is one AI tool's single pass with no annotation protocol. A full multi-model comparison (Gemini vs Claude Haiku vs Llama 3.1) and the Related Work ablation, if not reached, are also left for later. Testing on non-ML-benchmark papers — systems, human-computer interaction (HCI) — would show whether the four-role schema and document-level extraction generalize better than proto2's sentence classification did, since proto2 already showed systems papers fit this schema worse.
 
 The consolidation pass from Chapter 3 (variant C: a fifth call checking the decomposed pilot's four role-specific outputs for mutual consistency against their evidence) and the full three-way comparison of joint (A), decomposed (B), and decomposed-plus-consolidation (C) extraction are the next experiment to run. My hypothesis is that per-role accuracy follows B or C > A, and cross-role consistency follows C > A > B, but no paper directly shows that this four-role methodology-extraction task favours decomposition, so it remains untested. The multi-valued schema for Dataset and EvaluationMetric also remains to be implemented: a new `MultiRoleExtraction` type with per-item evidence and a ranked list capped at three items, gold-label re-annotation for the four cells already identified (BERT/Transformer Dataset, AlexNet/ResNet EvaluationMetric), a parallel `score_role_multi` scoring function, and rerunning and rescoring all six papers.
 
@@ -846,4 +835,4 @@ Table B1: Gold labels used for evaluation (six papers).
 
 Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (`report1/report.md` Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).
 
-The manual review (Chapter 5, Section 4) is now done — see Table 12 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.
+The manual review (Chapter 5, Section 4) is now done — see Table 11 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.

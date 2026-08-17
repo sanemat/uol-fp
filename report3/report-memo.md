@@ -52,14 +52,17 @@ done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
    the new `proto3/aggregate_runs.py` → `proto3/results/aggregate.json`. Per-role
    F1 mean/min/max/range is in `proto3/memo.md` "Run-logging + variance study" —
    use directly for Q20.
-2. ~~**Compute confidence intervals (0.5 day).**~~ **Done (2026-07-22).** Wilson
-   interval on **Precision and Recall only**, computed on tp/fp/fn pooled across
-   the 5 runs (n=30 trials/role), for all 4 roles — see `proto3/memo.md` same
-   section. This supersedes the old n=6 baseline-only CI (TechnicalMethod recall
-   [0.44, 0.97], Task recall [0.10, 0.70] — these overlapped) with a tighter
-   pooled estimate where TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no
-   longer overlap — report both figures and the caveat that the 30 pooled trials
-   are 5 repeats of the same 6 papers, not 30 independent papers. **F1 stays a
+2. ~~**Compute confidence intervals (0.5 day).**~~ **Done (2026-07-22), revised
+   (2026-08-17).** Wilson interval on **Precision and Recall only**, computed
+   on the n=6 baseline sample — see Q19. **Reconsidered:** an earlier version
+   of this item pooled tp/fp/fn across the 5 runs (n=30 trials/role) into a
+   second Wilson interval, but the 30 trials are 5 repeats of the same 6
+   papers, not 30 independent observations, so an ordinary Wilson interval on
+   them overstates precision (pseudo-replication) — dropped in favour of
+   reporting the five-run F1 mean/min/max/range plainly (Q20), with no
+   confidence interval computed on it. Paper-level uncertainty (n=6 baseline
+   CI, Q19) and run-to-run non-determinism (five-run F1 distribution, Q20) now
+   stay as two separate, non-conflated measures. **F1 stays a
    point estimate — no Wilson CI on F1** (it's a harmonic mean, not a proportion;
    a proper F1 interval would need paper-level bootstrap, not worth it given the
    deadline).
@@ -565,8 +568,10 @@ headlining macro, because the four roles are fixed, equally mandatory
 schema fields, not a frequency distribution. I kept the sample at six
 papers rather than growing it: tightening the confidence intervals
 meaningfully would need roughly 30-40 gold-labeled papers per role, not the
-6-10 reachable in three weeks with no second annotator, so growing the
-corpus was a poor use of the remaining time. I planned a logged variance
+6-10 reachable in three weeks with no second annotator, so I kept the
+corpus at six papers given the remaining time and annotation constraints;
+this limits generalisability and remains a limitation of the evaluation. I
+planned a logged variance
 study (repeat the pipeline several times rather than trust one run) and a
 single consolidated manual review pass covering plausibility, evidence
 support, authorship, and whether the quote appears in the source text,
@@ -580,14 +585,16 @@ Work ablation is first on the cut list, since it does not address Task, the
 weakest role.
 
 Once the five-run variance study existed, I also had to decide how to
-compute its confidence interval. I pooled the true/false positive/negative
-counts across the five runs (30 trials per role) rather than computing five
-separate per-run intervals, because the goal was to characterize run-to-run
-non-determinism using real repeated measurement, not to sharpen a
-paper-level population estimate. I state the trade-off directly: these 30 trials are five repeats of the same six
-papers, not 30 independent papers, so the interval is narrower than a true
-30-paper sample would give. This is a design decision about how the
-evaluation was built; the resulting numbers belong in Q20.
+report it. I chose not to pool the five runs' true/false positive/negative
+counts into a single Wilson interval (n=30 trials per role): the 30 trials
+are five repeats of the same six papers, not 30 independent observations,
+so treating them as independent Bernoulli trials would overstate precision.
+Instead, I keep the two measures separate: the n=6 baseline Wilson interval
+(Q19) for paper-level uncertainty, and the five-run F1 mean, minimum,
+maximum, and range (Q20) for run-to-run non-determinism. Each answers a
+different question, and neither substitutes for the other. This is a
+design decision about how the evaluation was built; the resulting numbers
+belong in Q20.
 
 **Q13:** What does the updated work plan look like from here to the final report?
 
@@ -604,7 +611,7 @@ A:
 | Period | Main task | Output | Status |
 |---|---|---|---|
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
-| July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run variance study, pooled confidence intervals | Done |
+| July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
 | July-August (P0) | Consolidated manual review pass; proto2→proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
 | August (P1) | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
@@ -909,11 +916,12 @@ intervals meaningfully would need roughly 30-40 gold-labeled papers per
 role, not the 6-10 reachable in three weeks with no second annotator, so
 n=6 stays, reported honestly rather than hidden behind a vague caveat.
 
-These confidence intervals are for the single frozen baseline sample. A
-second interval exists from five real pipeline runs, pooled across runs
-(n=30 trials per role) — it reflects run-to-run non-determinism rather than
-a sharper paper-level estimate, and I report it in Q20, not here, so this
-section stays about the baseline gold-label-match result specifically.
+These confidence intervals are for the single frozen baseline sample and
+measure paper-level uncertainty specifically. A separate measure of
+run-to-run non-determinism — the five-run F1 mean, minimum, maximum, and
+range, not a pooled confidence interval — is reported in Q20 instead, so
+this section stays about the baseline gold-label-match result
+specifically.
 
 One gold label also carries a specific evaluator-influence caveat worth
 stating plainly: AlexNet's TechnicalMethod gold label was changed from
@@ -1020,31 +1028,19 @@ paper, found stable agreement on TechnicalMethod across all six papers —
 exact or near-exact matches including "Google", "BERT", "Transformer", and
 "MapReduce" — independent corroboration that this is the strongest role.
 
-Pooling true/false positive/negative counts across the five runs gives a
-numerically narrower Wilson 95% confidence interval on Precision and Recall
-(n=30 trials per role):
-
-| Role | P | P 95% CI | R | R 95% CI |
-|---|---|---|---|---|
-| TechnicalMethod | 0.83 | [0.66, 0.93] | 0.83 | [0.66, 0.93] |
-| Task | 0.33 | [0.19, 0.51] | 0.33 | [0.19, 0.51] |
-| Dataset | 1.00 | [0.87, 1.00] | 0.83 | [0.66, 0.93] |
-| EvaluationMetric | 0.57 | [0.39, 0.73] | 0.57 | [0.39, 0.73] |
-
-I state the caveat plainly: these 30 trials per role are five repeats of
-the same six papers, not 30 independent papers. The n=6 baseline interval
-in Q19 reflects paper-level uncertainty (how results might vary across a
-different sample of papers), while this pooled interval instead reflects
-run-to-run non-determinism (how the same six papers' results vary when the
-pipeline is simply run again) — the two intervals answer different
-questions, and the pooled one should not be read as a more precise
-estimate of paper-level accuracy; I do not present it as if it were. Even
-with that distinction, the pooled result is worth reporting: TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer
-overlap, unlike the n=6 baseline intervals in Q19 ([0.44, 0.97] vs [0.10,
-0.70], which did overlap). Five real repetitions give more grounds to say
-TechnicalMethod reliably outperforms Task than the single n=6 snapshot
-alone supported, while I still stop short of calling either role "solved"
-or "broken" outright.
+I did not pool the five runs' true/false positive/negative counts into a
+Wilson interval (n=30 trials per role): the 30 trials are five repeats of
+the same six papers, not 30 independent observations, so an ordinary
+Wilson interval on them would overstate precision. Paper-level uncertainty
+(how results might vary across a different sample of papers) is already
+covered by the n=6 baseline Wilson interval in Q19; the five-run study
+instead answers a different question — run-to-run non-determinism, how the
+same six papers' results vary when the pipeline is simply run again — and
+the F1 table above already answers that question without a confidence
+interval on top of it. On that basis, TechnicalMethod's F1 (0.83) exceeded
+Task's F1 (0.33) in every one of the five runs, a consistent gap that
+needs no interval to state, though I still stop short of calling either
+role "solved" or "broken" outright.
 
 One case is worth including regardless of the numbers: MapReduce's Task
 slot (gold `"distributed"`, system answer `"automatic parallelization and
@@ -1219,12 +1215,12 @@ measured, across the whole project rather than proto3 alone:
 Achievements: I moved from proto2's recall-only substring check to proto3's
 classification-based Precision/Recall/F1 with confidence intervals, now
 backed by five real repeated runs rather than a single snapshot (Q20).
-Every answer is evidence-backed, and the pooled five-run confidence
-intervals show TechnicalMethod [0.66, 0.93] and Task [0.19, 0.51] no longer
-overlapping, unlike the single-baseline n=6 intervals in Q19 — a genuine
-strengthening of the "TechnicalMethod works, Task doesn't" claim over the
-preliminary report, evidence that the evaluation itself matured across the
-project, not only the pipeline.
+Every answer is evidence-backed, and the five-run study shows
+TechnicalMethod's F1 consistently exceeding Task's F1 in every run,
+strengthening the "TechnicalMethod works, Task doesn't" claim from the
+single-baseline n=6 evaluation in Q19 without needing a pooled confidence
+interval to make the point — evidence that the evaluation itself matured
+across the project, not only the pipeline.
 
 Weaknesses: Task's F1 is low (0.33, stable across all five runs, and partly
 a metric artifact per Q20's MapReduce case). The four-role schema itself is
@@ -1333,11 +1329,12 @@ pilot and the Related Work ablation were both cut, not run.
 > scratch.
 
 A: Several items are deliberately left for further work rather than
-attempted in the time available. Growing the gold-label corpus is a poor
-use of remaining time at any scale reachable in three weeks: the Wilson
-confidence-interval math in Q19 shows that meaningfully tightening the
-intervals needs roughly 30-40 gold-labeled papers per role, not the 6-10 I
-could realistically add. A formal inter-annotator-agreement study with a
+attempted in the time available. Given the remaining time and annotation
+constraints, the gold-label corpus was kept at six papers rather than
+grown at any scale reachable in three weeks: the Wilson confidence-interval
+math in Q19 shows that meaningfully tightening the intervals needs roughly
+30-40 gold-labeled papers per role, not the 6-10 I could realistically add.
+This limits generalisability and remains a limitation of the evaluation. A formal inter-annotator-agreement study with a
 second human annotator does not exist on this solo project; the informal
 NotebookLM cross-check in Q20/Q21 narrows this gap but does not close it,
 since it is one AI tool's single pass with no annotation protocol, not a
