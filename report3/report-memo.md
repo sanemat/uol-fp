@@ -747,15 +747,20 @@ second notebook to keep in sync by hand.
 > this section (checklist item 6).
 
 A: I include the Stage 2c cell screenshot showing the raw Gemini call and
-its parsed JSON output (`report2/Screenshot 2026-07-19 180851.png`),
-alongside a screenshot of proto2's sentence-list output on the same paper
-(`report2/Screenshot 2026-07-18 195636.png`), so the before/after contrast
-is visible directly rather than only described. I also reuse the full
-per-paper JSON output tables already drafted in `report2/prototype.md`
-(one figure per paper, all six papers) and the sentence-count comparison
-table (Transformer: 14 TechnicalMethod / 0 Task / 0 Dataset / 160
-EvaluationMetric sentences in proto2, versus one answer per role in proto3)
-as the clearest single illustration of what changed between prototypes.
+its parsed JSON output (`report3/Screenshot 2026-08-17 093143.png`), so the
+extraction is visible running directly rather than only described. The
+proto2/proto3 before/after contrast is already shown numerically by the
+sentence-count comparison table, so it is not repeated as a screenshot. I
+also reuse the full per-paper JSON output tables already drafted in
+`report2/prototype.md` (one figure per paper, all six papers) and the
+sentence-count comparison table (Transformer: 14 TechnicalMethod / 0 Task /
+0 Dataset / 160 EvaluationMetric sentences in proto2, versus one answer per
+role in proto3) as the clearest single illustration of what changed between
+prototypes. I also add two screenshots of the Stage 3 scoring code actually
+running (`report3/Screenshot 2026-08-17 093240.png`, the aggregate baseline
+P/R/F1 table; `report3/Screenshot 2026-08-17 093305.png`, a per-paper
+baseline-vs-pipeline breakdown for Transformer), backing the evaluation
+numbers with real notebook output rather than only transcribed tables.
 
 ---
 

@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6091 words, excluding tables, figures, references, and appendices)
+# Report (6138 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -300,7 +300,7 @@ Table 7: Remaining work broken into duration, dependencies, risk, and contingenc
 
 ---
 
-## Chapter 4: Implementation (728 words)
+## Chapter 4: Implementation (735 words)
 
 proto1 was an AI-drafted reference implementation only, not used directly, per this module's constraint on AI assistance for CM3060 submissions. proto2 was my own sentence-level zero-shot natural language inference (NLI) classifier: it classified every sentence in a paper into one of the four roles, producing a list of candidate sentences per role rather than one answer. proto3 reframes the task as document-level extraction: given a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context LLM. On "Attention Is All You Need" [D6], for example: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU", each backed by its own quote and section.
 
@@ -424,16 +424,11 @@ For "Attention Is All You Need" [D6], the full extraction output is:
 <figcaption>Figure 6: Full extraction output for "Attention Is All You Need" [D6] (`proto3/baseline/transformer.json`).</figcaption>
 </figure>
 
-I include the Stage 2c cell screenshot showing the raw Gemini call and its parsed JSON output, alongside a screenshot of proto2's sentence-list output on the same paper, so the before/after contrast is visible directly rather than only described.
+I include the Stage 2c cell screenshot showing the raw Gemini call and its parsed JSON output, so the extraction is visible running directly rather than only described. Table 8 already shows the proto2/proto3 before/after contrast numerically, so it is not repeated here as a screenshot.
 
 <figure>
-<img src="Screenshot%202026-07-19%20180851.png" alt="proto3 Stage 2c cell and output" style="width:100%;max-width:100%;">
+<img src="Screenshot%202026-08-17%20093143.png" alt="proto3 Stage 2c cell and output" style="width:100%;max-width:100%;">
 <figcaption>Figure 7: proto3 Stage 2c cell and output (screenshot).</figcaption>
-</figure>
-
-<figure>
-<img src="Screenshot%202026-07-18%20195636.png" alt="proto2 sentence-list output" style="width:100%;max-width:100%;">
-<figcaption>Figure 8: proto2 output on the same paper (screenshot).</figcaption>
 </figure>
 
 Table 8 shows the same contrast numerically for the Transformer paper: proto2's accepted-sentence counts per role versus proto3's one answer per role.
@@ -446,7 +441,7 @@ Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1614 words)
+## Chapter 5: Evaluation (1654 words)
 
 ### 1. Evaluation Method
 
@@ -474,6 +469,18 @@ Table 9: Baseline gold-label-match results, all six papers.
 I report macro as the headline "Overall" score, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution — a user needs all four, not just whichever role happens to have the most examples. I show both averages, but note that they are close here (0.65 vs 0.655) only because every role happens to have n=6 in this dataset — a coincidence of this dataset, not a property of the method.
 
 On sample size, Wilson 95% confidence intervals give a clearer picture than a vague "small sample" caveat: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I do not put a Wilson interval on F1: it is the harmonic mean of Precision and Recall, not a proportion, so a Wilson interval on it directly is not statistically meaningful; I report F1 as a point estimate instead. I kept the corpus at n=6 for the reasons given in Chapter 3. One gold label also carries a specific evaluator-influence caveat worth stating plainly: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output is a real limitation on how strongly this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers being checked against them (Section 4 below).
+
+These next two figures show the scoring running directly in the notebook, rather than only as transcribed numbers: Figure 8 gives the aggregate baseline result behind Table 9, and Figure 9 gives a representative single-paper breakdown (Transformer), baseline versus pipeline.
+
+<figure>
+<img src="Screenshot%202026-08-17%20093240.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
+<figcaption>Figure 8: Baseline P/R/F1 scoring output (`proto3/3pipeline.ipynb`, Stage 3).</figcaption>
+</figure>
+
+<figure>
+<img src="Screenshot%202026-08-17%20093305.png" alt="Per-paper gold-label scoring, baseline vs pipeline, Transformer" style="width:100%;max-width:100%;">
+<figcaption>Figure 9: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (`proto3/3pipeline.ipynb`, Stage 3).</figcaption>
+</figure>
 
 ### 3. Variance Study
 
@@ -620,23 +627,18 @@ One broader theme worth raising is the tension between structured-output guarant
 ## Appendix A — Project Roadmap
 
 <figure>
-<img src="Screenshot%202026-06-27%20172256.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
-<figcaption>Figure A1: Project roadmap (rows 1–18). Completed tasks from April 2026, including background research, literature notes, and early prototype work.</figcaption>
+<img src="Screenshot%202026-08-17%20091753.png" alt="GitHub Projects roadmap — part 1" style="width:100%;max-width:100%;">
+<figcaption>Figure A1: Project roadmap (rows 1–17). March–April 2026: Concept Pitch, template decision, background research, the Research Plan item, and early literature-note rewrites (Oates, Pilkington, CSO classifier, GROBID, identifying users).</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-06-27%20172338.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
-<figcaption>Figure A2: Project roadmap (rows 19–26). April–May 2026, including prototype build, note rewriting, and literature acquisition.</figcaption>
+<img src="Screenshot%202026-08-17%20091846.png" alt="GitHub Projects roadmap — part 2" style="width:100%;max-width:100%;">
+<figcaption>Figure A2: Project roadmap (rows 18–33). May–June 2026: SciBERT/SciREX/Yin et al. literature acquisition, proto2 build, Preliminary Report submission, Chapters 1–4 write-up, video recording, and the start of proto3 (LLM decision, Stage 0–1 parsing, Stage 2 schema-guided extraction).</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-06-27%20172411.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
-<figcaption>Figure A3: Project roadmap (rows 27–44). June–July 2026, including Preliminary Report submission (row 27, red line), chapter writing, and proto3 tasks (rows 39–44).</figcaption>
-</figure>
-
-<figure>
-<img src="Screenshot%202026-06-27%20172507.png" alt="GitHub Projects roadmap — part 4" style="width:100%;max-width:100%;">
-<figcaption>Figure A4: Project roadmap (rows 45–50). July–August 2026, including proto3 evaluation, ablation, comparison, and Final Report submission (Iteration 17).</figcaption>
+<img src="Screenshot%202026-08-17%20091926.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 34–51). June–July 2026: proto3 write-up, gold-label P/R/F1 testing, Stage-2 run logging and Wilson CI aggregation, report3 figure and citation collection, the consolidated manual review, the proto2→proto3 synthesis, the roadmap update itself, and Final Report submission. The red line marks the current iteration (17 August).</figcaption>
 </figure>
 
 ---
