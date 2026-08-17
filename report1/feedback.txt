@@ -1,0 +1,283 @@
+## rubric1
+Status: 1/1 point
+Is the chosen template clearly stated, and is the connection with the template evidenced in the rest of the report?
+
+0 points
+No — either the template is not stated, or it is stated but the project being described does not have any strong connection with the template mentioned.
+1 point
+Yes — the template is clearly stated, and the project itself connects with that template.
+
+## rubric 2
+Status: 4/5 points
+Does the report display knowledge of the area of study, previous work and academic literature?
+
+0 points
+No
+
+1 point
+No, but... there are some attempts to refer to other work.
+
+2 points
+Yes, but… the report includes some discussion of the area and a few bits of previous work, but the discussion is only partially correct.
+
+3 points
+Yes, but… the report some includes discussion of the area and a few bits of previous work, but the discussion might be limited, confused or lacks insight.
+
+4 points
+Yes, the report gives an overview of the area and well written discussion of at least 4-6 pieces of previous work, based primarily on a good reading of the suggested work from the template.
+
+5 points
+Yes, and… the report gives and detailed and insightful analysis of the area of study with a detailed description of very well chosen examples of previous work that goes considerably beyond what was suggested in the template.
+
+feedback
+Your discussion relies heavily on the same small group of sources throughout the report. 
+You dont need to find similar works, you can still write a literature review using the methods and tools you will use.
+You also need to use academic language in your lit review and avoid using I test etc
+
+## rubric3
+
+Status: 3/4 points
+Rate the background literature chapter presented in the report. the previous work and/or academic literature?
+
+0 points
+Missing or incoherent.
+
+1 point
+It exists, but is weakly constructed, with some misleading understanding or incorrect/unclear descriptions of the previous work.
+
+2 points
+It is mainly reasonable descriptions of previous work, but does not go beyond what was suggested in the template.
+
+2 points
+It contains reasonable descriptions of previous work, and goes beyond what was suggested in the template, but does not link them together or provide any critical analysis of the work.
+
+2 points
+There are reasonable descriptions of previous work, and there are sources beyond what was suggested in the template, but the choices of additional material are not necessarily appropriate.
+
+3 points
+Good choices of material, beyond what was suggested in the template, well written and with critical evaluation and drawing together of themes.
+
+4 points
+The report gives and detailed and insightful analysis of the area of study with a detailed description of very well chosen examples of previous work that goes considerably beyond what was suggested in the template.
+
+## rubric4
+
+Status: 1/3 points
+Does the report contain appropriate citations and references? 
+
+0 points
+No, there are no citations.
+
+0 points
+No, there are no references.
+
+1 point
+There are  correct citations but incorrect references, or there are correct references but incorrect citations.
+
+2 points
+Most of the citations and references are present, and correctly presented, but not in a consistent style.
+
+2 points
+Most of the citations and references are present, and correctly presented, and in a consistent style.
+
+3 points
+All citations and references are present, correctly presented, and in a consistent style.
+
+feedback
+Your in text citation numbering starts from [7] not [1]. If you are using numbering style then you need to start from [1] and increase
+
+Also, the report mixes author names with numbered citations.
+
+## rubric5
+Status: 2/4 points
+Is the project concept justified based on the domain and/or users?
+
+0 points
+No
+
+1 point
+There are some attempts to justify the concept, but without they are unclear or they lack  evidence.
+
+2 points
+The project concept includes some reference to the domain and/or users but without a full analysis of requirements.
+
+3 points
+The project concept is based on a clear and evidenced argument for the requirements of users and/or the domain.
+
+4 points
+The project concept is strongly based on a detailed, insightful and innovative analysis of the users and/or domain.
+
+feedback
+It is important to provide a thorough analysis of the target domain and users to ensure the project aligns with their needs and expectations.
+work on this sub section more in the following submission, this section can help you improve your evaluation as well
+
+## Rubric 6
+status 2/3 points
+Is the design of the project clearly explained and easy to follow? 
+
+0 points
+No, the explanation of the design is either missing, or incoherent, or too brief.
+
+1 point
+Though the design explanation is hard to follow or incomplete, there are some attempts to present a design from which it is possible to glean the basic ideas.
+
+2 points
+The explanation is reasonably presented, it is possible to understand the ideas reasonably well, and it is possible to understand how it relates to the template.
+
+3 points
+The design is explained very well, in both visuals and writing, and very easy to understand, and clearly relates to the template.
+
+feedback:
+The main pipeline is understandable, but you dont have a proper diagram to show detailed data flow, component interaction, failure handling and the user interface.
+Key technologies and methods section needs to be significantly improved / detailed
+
+## rubric7
+
+status 3/6 points
+Is the design of the project clear and of high quality?
+
+0 points
+No
+
+1 point
+No, but though  the design is incomplete, there are some attempts to present a design which are reasonable.
+
+2 points
+A design corresponding to the 'acceptable'  level of project described in the template, but perhaps with some aspects not described that fully or that well.
+
+3 points
+A design that corresponds the 'acceptable' level of project described in the template, which has been described to a good level of completeness.
+
+3 points
+A design corresponding to the 'good' or 'excellent' level of project described in the template but containing gaps or flaws in concept.
+
+4 points
+A clearly described design (including suitable visual communication) corresponding to the 'good' level of project described in the template. 
+
+5 points
+A design corresponding to an 'excellent' project but with elements lacking or a few flaws.
+
+6 points
+A very clear and coherent design, described well in both visuals and writing that corresponds to the 'excellent' level of project described in the template.
+
+## rubric8
+status 2/4 points
+Is the workplan explained in enough detail?
+
+0 points
+No, there is no plan.
+
+1 point
+Though there is no real plan, there is some attempt to describe when things will be done.
+
+2 points
+There is a plan but there are elements missing, parts of the plan are vague,  tasks have been misjudged in terms of risk or timing, or there are no contingency plans.
+
+2 points
+There is a plan that includes most elements, but the level of detail or granularity is not sufficient to be useful.
+
+3 points
+This is a clearly thought out plan for implementing a project with most steps involved and appropriate timings, but some of the below are still a concern, such as lack of contingency, underestimating time or risk, etc.
+
+4 points
+Yes, this is a clearly thought out plan for implementing a project with all steps involved and appropriate timings.
+
+feedback
+The plan should clearly show task durations, dependencies, risks, contingency time.
+
+## rubric 9
+
+status 2/3points
+Is the workplan feasible?
+
+0 points
+No, there is no plan.
+
+1 point
+No, but... though there is no real plan, there is some attempt to describe when things will be done which may have some use.
+
+2 points
+Yes, but… the scope of the project is not feasible or appropriate. It might need to be scaled down to ensure it is feasible, or it may need to be made more challenging (suggestions below).
+
+3 points
+Yes, there might be elements of the plan that are difficult or challenging, but it is broadly feasible in terms of work proposed, scope, and timings.
+
+feedback
+The workplan lacks a comprehensive task breakdown, which is crucial for assessing the plan’s feasibility.
+
+## rublic 10
+
+status 2/4 points
+Is the evaluation strategy appropriate to the aims of the project?
+
+0 points
+No, there is no evaluation strategy.
+
+1 point
+No, but... there is some attempt at an evaluation plan, but it is very confused or not explained in any detail.
+
+1 point
+Yes, but… the strategy is simply a restatement of the suggested approach from the template. 
+
+1 point
+Yes, but… the strategy does not engage with the suggestions of the template or is otherwise not appropriate.
+
+2 points
+Yes, it is a well thought out strategy that builds on that proposed in the template, but may have some gaps.
+
+3 points
+Yes, it is a well thought out and detailed strategy that goes beyond that proposed in the template.
+
+4 points
+Yes, and… the strategy is very detailed and well thought out, going considerably beyond that described in the template, and includes justification of choices.
+
+feedback
+Your prototype evaluation is too limited because it uses only a small number of papers and counts one matching word as a correct result
+
+## rublic 11
+Status: 2/8 points
+Is the feature prototype technically challenging?
+
+0 points
+No, there is hardly any challenge in the prototype.
+
+2 points
+No, but ... the prototype challenge level is average.
+
+4 points
+Yes, but… this prototype includes some of the more difficult techniques or algorithms taught in this degree.
+
+6 points
+Yes, this prototype includes some difficult techniques or algorithms that go beyond what is taught in this degree.
+
+8 points
+Yes, and… this prototype is extremely advanced, showing significant ability, understanding, or depth.
+
+## rublic 12
+
+Status: 2/3 points
+Does the report successfully evaluate the feature prototype and suggest suitable improvements if appropriate?
+
+0 points
+No
+
+1 point
+Yes, but… there are some attempts at evaluation, but mostly simplistic (e.g. good versus bad) and lacking a full plan to address them.
+
+2 points
+Yes, a clear evaluation that realistically critiques the current level of achievement, identifies key areas for improvement and presents concrete suggestions for improvement.
+
+3 points
+Yes, and… a very insightful analysis with an innovative plan for improvement.
+
+Overall assignment evaluation
+Here is some feedback about what you’ve done well, what you should try to improve, and some suggestions for ways to take your project forward. 
+
+Score:
+0 out of 6 points
+
+the literature review is relevant, but points are repeated and the comparison between previous studies could be more critical.
+
+Your design is easy to follow, but the diagrams, threshold choice and sentence level classification assumptions need justification.
+
+Your proposed improvements are suitable, but the next evaluation should use fixed gold labels, more papers, precision and recall measures
