@@ -637,8 +637,8 @@ One broader theme worth raising is the tension between structured-output guarant
 </figure>
 
 <figure>
-<img src="Screenshot%202026-08-17%20091926.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
-<figcaption>Figure A3: Project roadmap (rows 34–51). June–July 2026: proto3 write-up, gold-label P/R/F1 testing, Stage-2 run logging and Wilson CI aggregation, report3 figure and citation collection, the consolidated manual review, the proto2→proto3 synthesis, the roadmap update itself, and Final Report submission. The red line marks the current iteration (17 August).</figcaption>
+<img src="Screenshot%202026-08-17%20121018.png" alt="GitHub Projects roadmap — part 3" style="width:100%;max-width:100%;">
+<figcaption>Figure A3: Project roadmap (rows 34–49). June–July 2026: proto3 write-up, gold-label P/R/F1 testing, Stage-2 run logging and Wilson CI aggregation, report3 figure and citation collection — all done, alongside the consolidated manual review, the proto2→proto3 synthesis, the preliminary-report feedback re-read, and the roadmap-screenshot update itself, all now marked done. Still open at the bottom: the Related Work ablation and the decomposed-extraction pilot (both cut, not run) and Final Report submission (not yet started). The red line marks the current iteration (17 August).</figcaption>
 </figure>
 
 ---
