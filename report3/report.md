@@ -518,7 +518,7 @@ All 24 slots are scored. Two are null (Pagerank/EvaluationMetric, MapReduce/Data
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
 
-Table 11: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in `proto3/manual_review.md`, so it is excluded from this count.)
+Table 11: Manual review failure counts by check type, 22 scored slots.
 
 Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the *wrong* evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers this chapter's own open question from Section 2: the quote "cites bracketed prior work `[21, 49, 39]` for the breakthroughs," crediting prior work rather than establishing the paper's own task — the one slot where quote-in-source and authorship fail together, rather than the "verbatim but wrong" pattern above.
 

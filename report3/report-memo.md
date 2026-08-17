@@ -1115,10 +1115,6 @@ tallying the four judgment columns across the other 22 scored slots:
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
 
-(Transformer/Dataset's quote-in-source cell is still blank in
-`proto3/manual_review.md` — not filled in yet, so it's excluded from this
-count rather than assumed either way.)
-
 Six slots pass the quote-in-source check but still fail on evidence-support
 or authorship — a real, verbatim quote that is still the *wrong* evidence,
 distinct from a fabricated quote:
