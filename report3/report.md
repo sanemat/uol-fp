@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6138 words, excluding tables, figures, references, and appendices)
+# Report (6122 words, excluding tables, figures, references, and appendices)
 
 ## Chapter 1: Introduction (471 words)
 
@@ -281,7 +281,7 @@ Once the five-run variance study existed, I also had to decide how to report it.
 |---|---|---|---|
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
-| July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
+| July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | Done |
 | August | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever items complete in time | Final submission | Not started |
@@ -441,7 +441,7 @@ Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Tran
 
 ---
 
-## Chapter 5: Evaluation (1654 words)
+## Chapter 5: Evaluation (1638 words)
 
 ### 1. Evaluation Method
 
@@ -518,7 +518,7 @@ All 24 slots are scored. Two are null (Pagerank/EvaluationMetric, MapReduce/Data
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
 
-Table 11: Manual review failure counts by check type, 22 scored slots. (Transformer/Dataset's quote-in-source cell is not yet filled in `proto3/manual_review.md`, so it is excluded from this count.)
+Table 11: Manual review failure counts by check type, 22 scored slots.
 
 Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the *wrong* evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers this chapter's own open question from Section 2: the quote "cites bracketed prior work `[21, 49, 39]` for the breakthroughs," crediting prior work rather than establishing the paper's own task — the one slot where quote-in-source and authorship fail together, rather than the "verbatim but wrong" pattern above.
 
@@ -835,6 +835,18 @@ Table B1: Gold labels used for evaluation (six papers).
 | MapReduce [D2] | 151 | 24 | 3 | 5 | short |
 | Google Search [D1] | 69 | 21 | 8 | 29 | short |
 
-Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (`report1/report.md` Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).
+Table B2: proto2 sentence-count output per role (six papers). See Table B3 for the per-paper pass/fail breakdown.
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Total |
+|---|---|---|---|---|---|
+| Transformer | ○ | ✗ | ○ | ✗ | 2/4 |
+| BERT | ○ | ○ | ○ | ○ | 4/4 |
+| AlexNet | ○ | ○ | ○ | ○ | 4/4 |
+| ResNet | ○ | ✗ | ○ | ○ | 3/4 |
+| MapReduce | ○ | ✗ | ✗ | ○ | 2/4 |
+| Google Search | ✗ | ○ | ○ | ○ | 3/4 |
+| **Total** | | | | | **18/24 (75%)** |
+
+Table B3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
 The manual review (Chapter 5, Section 4) is now done — see Table 11 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.

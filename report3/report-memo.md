@@ -39,12 +39,10 @@ harmonic mean, not a proportion — F1 stays a point estimate). Effort for the
 items below only (not the writing): ~4-4.5 days for P0, ~1-1.5 days for P1 — treat
 "P0 + P1" as the real completion line for experiment work.
 
-**Update 2026-07-22:** P0 items 1 and 2 (run-logging + 5 runs, aggregation + CI)
-are done — see below. Remaining P0 work is items 3-5 (~2-2.5 days), plus P1 item 6
-(~1-1.5 days).
-
-**Update 2026-08-16:** P0 item 3 (consolidated manual review pass) is also
-done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
+**Update 2026-08-17:** All 5 P0 items are done, and P1 item 6 is cut, not run
+(see below for each). Nothing remains outstanding for report3 — the only open
+items are Chapter 6 "Further Work" material, which is intentionally beyond
+report3's scope.
 
 **P0 — mandatory, all 5:**
 1. ~~**Log a real variance study to disk (0.5-1 day).**~~ **Done (2026-07-22).** 5
@@ -80,11 +78,12 @@ done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
    into item 5's 0.5 day) — map proto2's three named failure modes (output
    volume, authorship attribution, recall-only scoring) onto what items 1-3
    actually found. Draft the skeleton now, before 1-3 even finish; fill in real
-   numbers once they do.
+   numbers once they do. **Done (2026-08-17).** Table 12 / Chapter 5 §5 of
+   `report.md` has the synthesis.
 5. **Collect screenshots/graphs (0.5 day, combined with item 4)** for the
    Implementation and Evaluation chapters' required visuals: the Stage 2c JSON
    output, the Stage 3 P/R/F1 table (word limits exclude figures — free space,
-   not a cost).
+   not a cost). **Done (2026-08-17).** Figures 7-9 of `report.md`.
 
 **P1 — one item only, tightly scoped, do not let it re-expand (1-1.5 days):**
 6. ~~**Decomposed-extraction pilot — variant B vs A, nothing more.** 4 independent
@@ -99,10 +98,13 @@ done — see below. Remaining P0 work is items 4-5, plus P1 item 6.
 1. ~~Related Work ablation — doesn't improve Task (the weakest role), so it's first
    to drop.~~ **Cut (2026-08-16).** Not run, deferred to further work.
 2. One unscored non-ML-benchmark paper (e.g. HCI) as a qualitative case study.
+   **Not run (2026-08-17).** Deferred to further work (Chapter 6/Q24, non-ML-
+   benchmark generalisation).
 3. A diagnostic on whether relaxed/stemmed matching would change the Task
-   conclusion.
+   conclusion. **Not run (2026-08-17).** Deferred to further work.
 4. A diagnostic hand-recomputing what EvaluationMetric's P/R/F1 would be for
-   AlexNet/ResNet if scored as multi-valued.
+   AlexNet/ResNet if scored as multi-valued. **Not run (2026-08-17).** Deferred
+   to further work (Chapter 6/Q24, multi-valued schema).
 
 **Correction, not a to-do:** the earlier note about "batch processing across
 `proto3/previouswork/`" was a misunderstanding — that directory holds
@@ -113,10 +115,11 @@ Don't act on it; it's retracted in `proto3/memo.md`.
 7. **Find full bibliographic entries** for any sources named in proto3 material
    but not yet in `report1/report.md`'s reference list — e.g. Dagdelen et al. 2024
    and Polak and Morgan 2024, mentioned in `report2/prototype-memo.md` Q5 without
-   full citations.
+   full citations. **Done** — see "Fill status" at the end of this memo.
 8. **Re-read any feedback you received on the preliminary report submission** and
    note where it should change the Literature Review or Design chapters — the
-   requirement doc explicitly asks you to incorporate it.
+   requirement doc explicitly asks you to incorporate it. **Done (2026-08-17).**
+   See the feedback table in Q7's answer.
 
 ---
 
@@ -612,7 +615,7 @@ A:
 |---|---|---|---|
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
-| July-August (P0) | Consolidated manual review pass; proto2→proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
+| July-August (P0) | Consolidated manual review pass; proto2→proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | Done |
 | August (P1) | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever P0/P1 items complete in time | Final submission | Not started |
@@ -1111,10 +1114,6 @@ tallying the four judgment columns across the other 22 scored slots:
 | Evidence supports? | 5 | Pagerank/TechnicalMethod, Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset |
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
-
-(Transformer/Dataset's quote-in-source cell is still blank in
-`proto3/manual_review.md` — not filled in yet, so it's excluded from this
-count rather than assumed either way.)
 
 Six slots pass the quote-in-source check but still fail on evidence-support
 or authorship — a real, verbatim quote that is still the *wrong* evidence,
