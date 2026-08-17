@@ -835,6 +835,18 @@ Table B1: Gold labels used for evaluation (six papers).
 | MapReduce [D2] | 151 | 24 | 3 | 5 | short |
 | Google Search [D1] | 69 | 21 | 8 | 29 | short |
 
-Table B2: proto2 sentence-count output per role (six papers). proto2's extended evaluation result (`report1/report.md` Appendix B) was 18/24 (75%): ML papers 13/16 (81%), systems papers 5/8 (63%). Failures: ResNet ✗ Task, MapReduce ✗ Task + Dataset, Google Search ✗ TechnicalMethod ("PageRank" never appears in the TechnicalMethod output).
+Table B2: proto2 sentence-count output per role (six papers). See Table B3 for the per-paper pass/fail breakdown.
+
+| Paper | TechnicalMethod | Task | Dataset | EvaluationMetric | Total |
+|---|---|---|---|---|---|
+| Transformer | ○ | ✗ | ○ | ✗ | 2/4 |
+| BERT | ○ | ○ | ○ | ○ | 4/4 |
+| AlexNet | ○ | ○ | ○ | ○ | 4/4 |
+| ResNet | ○ | ✗ | ○ | ○ | 3/4 |
+| MapReduce | ○ | ✗ | ✗ | ○ | 2/4 |
+| Google Search | ✗ | ○ | ○ | ○ | 3/4 |
+| **Total** | | | | | **18/24 (75%)** |
+
+Table B3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
 The manual review (Chapter 5, Section 4) is now done — see Table 11 there for the per-check breakdown. The decomposed-extraction pilot and the Related Work ablation were both cut, not run — no per-paper P/R/F1 breakdown or additional figures to add here.
