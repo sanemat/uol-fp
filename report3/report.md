@@ -281,7 +281,7 @@ Once the five-run variance study existed, I also had to decide how to report it.
 |---|---|---|---|
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
-| July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | In progress, mandatory |
+| July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report 3 material | Done |
 | August | Decomposed-extraction pilot, variant A vs B only | — | Cut, not run |
 | August | Related Work ablation | — | Cut, not run |
 | August (final stage) | Write Final Report, incorporating whichever items complete in time | Final submission | Not started |
