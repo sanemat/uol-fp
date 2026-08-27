@@ -1,0 +1,9 @@
+{
+  "TechnicalMethod": {
+    "answer": "Transformer",
+    "evidence": {
+        "section": "Introduction",
+        "quote": "In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output."
+    }
+  }
+}
