@@ -1,0 +1,9 @@
+{
+  "TechnicalMethod": {
+    "answer": "deep residual learning framework",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
+    }
+  }
+}

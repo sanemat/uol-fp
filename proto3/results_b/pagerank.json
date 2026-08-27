@@ -1,0 +1,9 @@
+{
+  "TechnicalMethod": {
+    "answer": "Google",
+    "evidence": {
+      "section": "Abstract",
+      "quote": "In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext."
+    }
+  }
+}
