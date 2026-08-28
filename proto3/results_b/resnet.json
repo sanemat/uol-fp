@@ -19,5 +19,12 @@
       "section": "ImageNet Classification",
       "quote": "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes."
     }
+  },
+  "EvaluationMetric": {
+    "answer": "top-1 and top-5 error rates",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate both top-1 and top-5 error rates."
+    }
   }
 }

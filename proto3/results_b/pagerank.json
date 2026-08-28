@@ -7,7 +7,7 @@
     }
   },
   "Task": {
-    "answer": "building a practical large-scale system which can exploit the additional information present in hypertext",
+    "answer": "building a practical large-scale Web search engine",
     "evidence": {
       "section": "Abstract",
       "quote": "This paper addresses this question of how to build a practical large-scale system which can exploit the additional information present in hypertext."
@@ -18,6 +18,13 @@
     "evidence": {
       "section": "Anchor-test",
       "quote": "In our current crawl of 24 million pages. we had over 259 million anchors which we indexed."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "query times",
+    "evidence": {
+      "section": "Searching",
+      "quote": "Table 2 has some sample query times from the current version of Google."
     }
   }
 }

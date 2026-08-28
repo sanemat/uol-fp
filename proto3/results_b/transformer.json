@@ -2,8 +2,8 @@
   "TechnicalMethod": {
     "answer": "Transformer",
     "evidence": {
-      "section": "Abstract",
-      "quote": "We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+      "section": "Introduction",
+      "quote": "In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output."
     }
   },
   "Task": {
@@ -18,6 +18,13 @@
     "evidence": {
       "section": "Training Data and Batching",
       "quote": "We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+    }
+  },
+  "EvaluationMetric": {
+    "answer": "BLEU",
+    "evidence": {
+      "section": "Machine Translation",
+      "quote": "On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0 BLEU, establishing a new state-of-the-art BLEU score of 28.4."
     }
   }
 }
