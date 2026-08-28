@@ -12,5 +12,12 @@
       "section": "Introduction",
       "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
     }
+  },
+  "Dataset": {
+    "answer": "ImageNet 2012",
+    "evidence": {
+      "section": "ImageNet Classification",
+      "quote": "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes."
+    }
   }
 }
