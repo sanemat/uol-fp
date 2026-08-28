@@ -155,6 +155,23 @@ under report4's tighter remaining time plus its new requirements (repo link, vid
     `proto3/memo.md` lines 544–548 already argues has weak ROI (Dataset and
     EvaluationMetric are already the second-best roles at F1 0.73; Task, untouched by
     that change, is the actual weak point).
+  - **Result (2026-08-28):** Variant B run for all 6 papers, one run each, scored
+    against `results/run1` (Variant A, also one run) via
+    `proto3/aggregate_variant_b.py`:
+
+    | Role | A F1 | B F1 | ΔF1 |
+    |---|---|---|---|
+    | TechnicalMethod | 0.83 | 0.83 | +0.00 |
+    | Task | 0.33 | 0.33 | +0.00 |
+    | Dataset | 0.91 | 1.00 | +0.09 |
+    | EvaluationMetric | 0.67 | 0.67 | +0.00 |
+
+    Task's F1 did not move — the role-specific failure-pattern prompt made no
+    measurable difference on the one role it targeted. Dataset improved (+0.09),
+    an incidental effect, not the hypothesis under test (its prompt was not
+    written against a known Dataset failure). Per the gate above: **stop here,
+    do not proceed to Variant C.** This is the "B does not help Task" branch —
+    report it as a finding, not a gap.
 - Manual-review spot-check only the changed slots (e.g. Task across all 6 papers
   under B, and under C if run) against `proto3/manual_review.md`'s existing
   four-column format — not a full 24-slot redo.

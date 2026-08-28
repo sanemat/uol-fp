@@ -466,6 +466,34 @@ one `RoleExtraction`, scored the same way as today); the interesting comparison 
 A vs B, especially for Task and Dataset (the two roles most likely to benefit from a role-specific
 failure-pattern instruction).
 
+**Result (2026-08-28) — hypothesis not confirmed for Task.** Variant B implemented: 4 independent
+calls per paper (`3pipeline.ipynb` Stage 2d), each with the role-specific prompt from the table
+above, one run across all 6 papers. Scored against `results/run1` (Variant A, also one run) via
+the new `proto3/aggregate_variant_b.py`:
+
+| Role | A F1 | B F1 | ΔF1 |
+|---|---|---|---|
+| TechnicalMethod | 0.83 | 0.83 | +0.00 |
+| Task | 0.33 | 0.33 | +0.00 |
+| Dataset | 0.91 | 1.00 | +0.09 |
+| EvaluationMetric | 0.67 | 0.67 | +0.00 |
+
+Task — the role B was meant to fix — did not move at all. TechnicalMethod and EvaluationMetric
+also stayed flat, so decomposition alone did not help or hurt the roles it wasn't targeted at,
+either. Dataset improved (+0.09), but that prompt was not written against a known Dataset
+failure (unlike Task's), so this looks incidental rather than confirming the hypothesis.
+Per-paper: the flat roles are identical answers under A and B (e.g. Pagerank/TechnicalMethod
+stays `"Google"` under both — the same known gold-label mismatch, not a new B-specific error).
+
+**Conclusion:** the "role-specific failure-pattern instruction" mechanism, on its own, does not
+fix Task. Whatever is making Task hard (see "Task's F1 is the weakest" discussion above) is not
+solved by isolating the role into its own call with a targeted instruction — it looks more like a
+genuine task-identification difficulty (see the per-paper Task answers, e.g. systems papers) than
+a prompt-crowding problem decomposition was meant to relieve. Per report4's decision gate
+(`report4/report-memo.md`, "3-Week Workplan"), this stops the B/C line here: Variant C
+(consolidation) is not attempted, since it only reconciles B's 4 outputs against each other and
+would not independently fix a wrong Task answer it received unchanged.
+
 ---
 
 ## Multi-valued roles: which fields need more than one answer (2026-07-20)
