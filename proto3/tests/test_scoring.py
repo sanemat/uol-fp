@@ -5,6 +5,7 @@ from uol_fp.scoring import (
     precision_recall_f1,
     score_profile,
     score_role,
+    score_role_multi,
 )
 
 
@@ -43,6 +44,40 @@ def test_score_role_match() -> None:
 
 def test_score_role_mismatch() -> None:
     assert score_role("BERT", "ResNet") == (0, 1, 1, 0)
+
+
+def test_score_role_multi_both_absent() -> None:
+    assert score_role_multi(None, []) == (0, 0, 0, 1)
+
+
+def test_score_role_multi_gold_only() -> None:
+    assert score_role_multi("BERT", []) == (0, 0, 1, 0)
+
+
+def test_score_role_multi_sys_only() -> None:
+    assert score_role_multi(None, ["BERT"]) == (0, 1, 0, 0)
+
+
+def test_score_role_multi_first_answer_matches() -> None:
+    assert score_role_multi("machine translation", ["machine translation"]) == (
+        1,
+        0,
+        0,
+        0,
+    )
+
+
+def test_score_role_multi_second_answer_matches() -> None:
+    # Transformer's Task case: primary answer "sequence transduction" misses
+    # gold "machine translation", but a secondary answer at a different
+    # granularity would hit -- this is the case the pilot targets.
+    assert score_role_multi(
+        "machine translation", ["sequence transduction", "machine translation"]
+    ) == (1, 0, 0, 0)
+
+
+def test_score_role_multi_no_answer_matches() -> None:
+    assert score_role_multi("BERT", ["ResNet", "AlexNet"]) == (0, 1, 1, 0)
 
 
 def test_score_profile_covers_all_roles() -> None:

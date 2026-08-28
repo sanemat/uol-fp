@@ -28,6 +28,26 @@ def score_role(gold: str | None, sys: str | None) -> tuple[int, int, int, int]:
     return (0, 1, 1, 0)
 
 
+def score_role_multi(
+    gold: str | None, sys_answers: list[str]
+) -> tuple[int, int, int, int]:
+    """Return (tp, fp, fn, tn) for one (paper, role) slot, pilot multi-valued
+    variant: sys_answers is a list of candidate answers (e.g. from
+    MultiValuedRoleExtraction); a match against gold at any list position
+    counts as a hit, same semantics as score_role otherwise."""
+    if gold is None:
+        if not sys_answers:
+            return (0, 0, 0, 1)
+        return (0, 1, 0, 0)
+    if not sys_answers:
+        return (0, 0, 1, 0)
+    if any(matches(gold, sys) for sys in sys_answers):
+        return (1, 0, 0, 0)
+    # present but none match: a confident wrong answer costs both precision
+    # and recall, same as score_role
+    return (0, 1, 1, 0)
+
+
 def score_profile(
     gold_answers: dict[str, str | None], sys_answers: dict[str, str | None]
 ) -> dict[str, tuple[int, int, int, int]]:

@@ -478,21 +478,58 @@ the new `proto3/aggregate_variant_b.py`:
 | Dataset | 0.91 | 1.00 | +0.09 |
 | EvaluationMetric | 0.67 | 0.67 | +0.00 |
 
-Task — the role B was meant to fix — did not move at all. TechnicalMethod and EvaluationMetric
-also stayed flat, so decomposition alone did not help or hurt the roles it wasn't targeted at,
-either. Dataset improved (+0.09), but that prompt was not written against a known Dataset
-failure (unlike Task's), so this looks incidental rather than confirming the hypothesis.
-Per-paper: the flat roles are identical answers under A and B (e.g. Pagerank/TechnicalMethod
+Task — the role B was meant to fix — did not move at *net* F1. TechnicalMethod and
+EvaluationMetric stayed flat with *identical* answers under A and B (e.g. Pagerank/TechnicalMethod
 stays `"Google"` under both — the same known gold-label mismatch, not a new B-specific error).
+Dataset improved (+0.09), but that prompt was not written against a known Dataset failure (unlike
+Task's), so this looks incidental rather than confirming the hypothesis. Task's flat *aggregate*
+F1 initially looked like "decomposition did nothing," but per-paper the answers are not identical
+under A and B — see below.
 
-**Conclusion:** the "role-specific failure-pattern instruction" mechanism, on its own, does not
-fix Task. Whatever is making Task hard (see "Task's F1 is the weakest" discussion above) is not
-solved by isolating the role into its own call with a targeted instruction — it looks more like a
-genuine task-identification difficulty (see the per-paper Task answers, e.g. systems papers) than
-a prompt-crowding problem decomposition was meant to relieve. Per report4's decision gate
+**Per-paper mechanism for Task — a swap, not a no-op.** Task's TP count is 2/6 under both A and B,
+but not the same two papers:
+
+| Paper | A answer | B answer | A match? | B match? |
+|---|---|---|---|---|
+| transformer | `machine translation` | `sequence transduction` | ✓ | ✗ |
+| pagerank | `information retrieval` | `web search` | ✗ | ✓ |
+| alexnet, bert, resnet, mapreduce | (unchanged) | (unchanged) | mixed, unaffected | mixed, unaffected |
+
+Looking at the evidence quotes explains both moves:
+
+- **Pagerank — B fixed a real error, as designed.** A's evidence is Introduction, "The Web creates
+  new challenges for information retrieval" — a background/motivation sentence, already flagged in
+  `manual_review.md` as "the broader problem domain, not the task performed by the proposed
+  system." B's Task prompt rule ("identify the problem the paper actually solves, not a problem it
+  only mentions as motivation or attributes to prior work") correctly steered the model off that
+  Introduction sentence onto the Abstract's own claim, "This paper addresses this question of how
+  to build a practical large-scale system..." — B's `web search` substring-matches gold. This is
+  the mechanism B was built for, working as intended, on the one slot `manual_review.md` had
+  already identified as wrong.
+- **Transformer — B introduced a real new error.** A's evidence is the Abstract's concrete
+  evaluated task, "Experiments on two machine translation tasks..." — rated fully correct on all
+  four `manual_review.md` checks. B's evidence instead comes from the Conclusion's self-description
+  of the architecture, "we presented the Transformer, the first sequence transduction model..." —
+  the paper's own claim about what *kind* of model it is, not the specific benchmark task it was
+  evaluated on. The Task rule only discriminates on *authorship* (own work vs. motivation/prior
+  work); it has no way to prefer a specific evaluated task over a broader self-description when
+  both are equally "the paper's own claim." Both readings are defensible — `sequence transduction`
+  is the general class Transformer targets, `machine translation` is the specific benchmark task —
+  which is itself a small counterexample to report3's claim that "Task and TechnicalMethod show no
+  [multi-valued] pattern" (`report3/report.md` line 223): Transformer's Task plausibly has two
+  valid answers at different granularities, same as the already-acknowledged multi-valued Dataset
+  and EvaluationMetric cases.
+
+**Conclusion:** the role-specific instruction *did* change Task's answers, and on the one slot it
+was validated against (Pagerank, previously flagged wrong in manual review) it fixed the error as
+designed. But it also introduced a new error (Transformer) via a failure mode the prompt rule
+doesn't address at all — granularity/specificity ambiguity, not authorship ambiguity — and the two
+effects cancelled in the aggregate F1, which is why the topline number reads as "no effect." A
+prompt rule built for one failure axis (authorship) cannot be expected to fix a different axis
+(granularity) it was never written against. Per report4's decision gate
 (`report4/report-memo.md`, "3-Week Workplan"), this stops the B/C line here: Variant C
 (consolidation) is not attempted, since it only reconciles B's 4 outputs against each other and
-would not independently fix a wrong Task answer it received unchanged.
+would not independently resolve a granularity ambiguity either.
 
 ---
 
@@ -584,6 +621,49 @@ Same tier as the existing Task-substring-matching diagnostic already in the P2 l
 report3** — add to the out-of-scope list above, alongside variant C (consolidation) and the full
 A/B/C comparison: real new scope competing with the ~14-15 days needed to write all 6 chapters,
 not needed to prove report3's core claims.
+
+**Update (2026-08-29) — Task reconsidered; small pilot implemented, not yet run.** The "Task —
+weak, do NOT upgrade" verdict above was written against the evidence available on 2026-07-20 (the
+BERT GLUE/SQuAD case, refined away; MapReduce's case, a substring-match artifact, not genuine
+multiplicity). Comparing Variant A vs B (see "Architecture reconsideration" result note above)
+surfaced a new, different case: Transformer's Task swapped from a correct single answer under A
+(`machine translation`) to an incorrect one under B (`sequence transduction`) — and both answers
+are independently defensible, at different granularities (`sequence transduction` is the paper's
+own broad architecture-class claim; `machine translation` is the specific benchmark it is
+evaluated on). Unlike the BERT/MapReduce cases, this isn't a refined-away or blunt-matching
+artifact — it's a genuine case of one paper legitimately supporting two valid Task descriptions.
+
+This does not overturn the ROI argument above (Dataset/EvaluationMetric's multi-valued upgrade is
+still out of scope for report4; they are already the second-best roles, and this pilot doesn't
+touch them). It's a narrower, cheaper, Task-only test of one specific question: is Task's
+weakness partly a single-valued-schema artifact, the way it already was diagnosed as partly a
+substring-matching artifact (MapReduce, "Evaluation plan" above)?
+
+**What was implemented (small, reversible, Task-only):**
+- `RoleAnswer` (`answer: str`, `evidence: Evidence`, both required) and `MultiValuedRoleExtraction`
+  (`answers: list[RoleAnswer]`, ordered primary/most-specific first, empty list = absent) in
+  `proto3/src/uol_fp/models.py` — a smaller, more direct shape than the `MultiRoleExtraction`
+  design sketched above for Dataset/EvaluationMetric (no `primary` property, no item cap yet: this
+  is a pilot on 6 papers, not a shipped feature).
+- `score_role_multi(gold, sys_answers: list[str])` in `proto3/src/uol_fp/scoring.py` — generalizes
+  `score_role`'s tp/fp/fn/tn semantics exactly as sketched above: a match at any list position
+  counts as a hit, same four-outcome shape otherwise. `score_role`/`score_profile` are untouched.
+- New notebook Stage 2e (`3pipeline.ipynb`): one new Task-only prompt asking for every valid Task
+  description at every granularity the text supports, most specific first, called with
+  `response_json_schema=MultiValuedRoleExtraction.model_json_schema()`, scored with
+  `score_role_multi` against the existing single-valued `GOLD_LABELS` (no gold label changes for
+  this pilot — the multi-valued side is the *system* answer list, gold stays one string per
+  paper, matched if any list item hits it).
+- Tests added for both new pieces (`tests/test_models.py`, `tests/test_scoring.py`); `make lint`
+  and `make test` green; `make sync-generated` run.
+
+**Not yet run.** Hypothesis: if Task's F1 moves above 0.33 once Transformer's slot can credit
+`machine translation` alongside `sequence transduction`, that's evidence the single-valued schema
+was itself suppressing correct answers the model already had available — a structural cause,
+distinct from (and not fixed by) either the joint prompt (Variant A) or the role-specific prompt
+(Variant B). If it doesn't move, the schema-artifact hypothesis for Task is not supported and the
+"genuine task-identification difficulty" reading from the Variant B conclusion above stands
+unrevised.
 
 ---
 

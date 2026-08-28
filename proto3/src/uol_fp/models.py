@@ -40,3 +40,27 @@ class MethodologyProfile(BaseModel):
     Task: RoleExtraction
     Dataset: RoleExtraction
     EvaluationMetric: RoleExtraction
+
+
+class RoleAnswer(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    answer: str = Field(description="Shortest identifying term for this valid answer.")
+    evidence: Evidence = Field(description="Evidence supporting this specific answer.")
+
+
+class MultiValuedRoleExtraction(BaseModel):
+    """Pilot: a role that may legitimately have more than one valid answer at
+    different granularities (e.g. a paper's broad self-description vs. the
+    specific benchmark it evaluates on) -- see proto3/memo.md "Architecture
+    reconsideration" result note (2026-08-29)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    answers: list[RoleAnswer] = Field(
+        description=(
+            "One or more valid answers for this role, ordered primary "
+            "(most specific / directly evaluated) first. Empty list if the "
+            "role is not present in the paper."
+        )
+    )
