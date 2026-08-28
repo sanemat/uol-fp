@@ -19,5 +19,12 @@
       "section": "Sort",
       "quote": "This program is modeled after the TeraSort benchmark [10]."
     }
+  },
+  "EvaluationMetric": {
+    "answer": "elapsed time",
+    "evidence": {
+      "section": "Effect of Backup Tasks",
+      "quote": "The entire computation takes 1283 seconds, an increase of 44% in elapsed time."
+    }
   }
 }
