@@ -5,5 +5,12 @@
       "section": "Introduction",
       "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
     }
+  },
+  "Task": {
+    "answer": "degradation problem",
+    "evidence": {
+      "section": "Introduction",
+      "quote": "In this paper, we address the degradation problem by introducing a deep residual learning framework."
+    }
   }
 }
