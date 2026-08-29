@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper proposes the Transformer architecture and evaluates it primarily on machine translation (specifically, WMT 2014 English-to-German and English-to-French tasks). It also evaluates the model on English constituency parsing to demonstrate generalization. Among these, machine translation is the primary task of the paper's experiments.",
+  "answer": "machine translation",
+  "evidence": {
+    "section": "Abstract",
+    "quote": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train."
+  }
+}

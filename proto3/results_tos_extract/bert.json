@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper evaluates the proposed BERT model across a diverse suite of eleven different tasks rather than a single narrow task. These include sentence-level tasks (such as natural language inference, sentiment classification, and relation prediction) and token-level tasks (such as question answering and named entity recognition). At the specific level, the experiments evaluate on benchmarks like GLUE, SQuAD, SWAG, and CoNLL-2003. At the intermediate level, they evaluate task types like question answering, natural language inference, and named entity recognition. At the broadest level, the experiments evaluate the model's capability on 'natural language understanding' as a whole, demonstrating that a single pre-trained representation can be applied successfully across a wide range of such tasks.",
+  "answer": "natural language understanding",
+  "evidence": {
+    "section": "GLUE",
+    "quote": "The General Language Understanding Evaluation (GLUE) benchmark (Wang et al., 2018a) is a collection of diverse natural language understanding tasks."
+  }
+}

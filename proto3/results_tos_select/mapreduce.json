@@ -1,0 +1,5 @@
+{
+  "reasoning": "Let's evaluate each candidate to see if it represents a named task category at the correct level of granularity:\n- Candidate 1 ('searching through approximately one terabyte of data looking for a particular pattern') is too specific. It describes a single benchmark instance (searching 1TB of data) rather than a general task category like 'pattern matching' or 'string search'.\n- Candidate 2 ('sorting approximately one terabyte of data') is also too specific. It describes a single benchmark instance (sorting 1TB of data) rather than a general task category like 'sorting'.\n- Candidate 3 ('processing and generating large data sets') is too broad. It describes the overall class of applications MapReduce is designed for, rather than a specific task category evaluated in the experiments.\n- Candidate 4 ('automatic parallelization and distribution of large-scale computations') is a description of the system's capability and contribution, not a task category.\n\nSince none of the candidates represent a standard named task category at the correct level of granularity, we set the answer and evidence to null.",
+  "answer": null,
+  "evidence": null
+}

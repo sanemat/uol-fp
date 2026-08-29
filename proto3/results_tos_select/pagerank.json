@@ -1,0 +1,8 @@
+{
+  "reasoning": "We evaluate the three candidates to determine which one best describes the specific task evaluated in the paper's experiments. Candidate 1 ('crawling, indexing, and sorting operations to build an index of a substantial portion of the Web') describes the system's engineering operations and pipeline, which is too specific to the system's implementation details rather than the task evaluated. Candidate 2 ('building a practical large-scale system which can exploit the additional information present in hypertext') describes the broad system-building goal and architecture, which is too broad and does not name the task itself. Candidate 3 ('providing high quality search results over a rapidly growing World Wide Web') describes the core task of Web search / search quality evaluation, which is the primary task evaluated in the paper's search quality experiments. Therefore, Candidate 3 is the most appropriate task description.",
+  "answer": "providing high quality search results over a rapidly growing World Wide Web",
+  "evidence": {
+    "section": "Conclusions",
+    "quote": "The primary goal is to provide high quality search results over a rapidly growing World Wide Web."
+  }
+}
