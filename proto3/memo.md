@@ -771,6 +771,129 @@ retry-on-validation-failure loop, and a projected "F1 could reach 0.50+"). Rejec
   answer, per the triage above), the `reasoning`-first `TaskVerification` model, tests, `make
   sync-generated`, a full 6-paper run, `proto3/results_task_verification/`.
 
+**Step A result (2026-08-29) — not promising; Step B not pursued.** The first prompt version
+leaked answer-key vocabulary (used `"machine translation"`/`"object recognition"` — two of this
+project's own six gold Task labels — as granularity examples) and was rejected before any data
+collection; revised to use out-of-corpus examples (`"speech recognition"`, `"sentiment
+classification"`). Even so, hand-tuning the wording against Transformer's specific failure (the
+one case inspected while revising) is itself a test-set-peeking limitation worth naming plainly,
+same category as this project's existing single-annotator-bias caveat.
+
+Run for all 6 papers, saved to `proto3/results_task_verification/*.json`, scored with `score_role`:
+
+| Paper | Gold | Verification selected | Match? |
+|---|---|---|---|
+| transformer | machine translation | machine translation | ✓ (the tuned-on case) |
+| bert | GLUE | Language model pre-training | **✗ — regression** |
+| alexnet | object recognition | object recognition | ✓ |
+| resnet | image recognition | visual recognition tasks | ✗ |
+| mapreduce | distributed | processing and generating large data sets | ✗ |
+| pagerank | web search | building a practical large-scale system... | ✗ |
+
+**F1 = 0.33 (TP=2, FP=4, FN=4) — tied with A/B, not an improvement**, and worse than Stage 2e's
+own any-match F1 (0.67). More tellingly: **BERT regressed.** Stage 2e's raw candidate list already
+had the correct answer as primary (`"GLUE benchmark"`, position 0, no verification needed) — the
+verification pass overrode that correct primary pick with an incorrect one
+(`"Language model pre-training"`, borrowed from a lower-ranked candidate). A verification step that
+demotes an already-correct answer is actively harmful on that slot, not merely unhelpful.
+
+**Conclusion: Step B is not pursued.** The verification/selection mechanism, at least as designed
+here (present the candidate list, ask for the specific-task-category level), does not solve the
+calibration problem Stage 2e's primary-only F1 exposed — it does not reliably identify which
+candidate is correct, and can be actively counterproductive on slots that were already right. This
+closes out the Stage 2f line for report4's remaining timeline; report the sequence (Stage
+2e's suppression finding on BERT/Pagerank, Stage 2f's inability to fix selection, including the
+BERT regression) as the honest, fuller picture of this pilot's limits, not a partial success story.
+
+**Stage 4: LLM-as-judge rescoring — reframing the problem (2026-08-29).** Three attempts (Variant
+B's role-specific prompt, the multi-valued pilot, Stage 2f's verification pass) all tried to change
+*what the model produces* to match gold's specific wording, and none improved on baseline. Per the
+user's own steer: the more defensible fix may be on the *matching* side, not the model side — this
+project has already informally noted several times (report3, the "metric is blunt" cases above)
+that `matches()`'s substring check produces false negatives for semantically-correct paraphrases.
+
+First checked whether a purely lexical fix would do it: Ateia et al. 2025 (`primary/literature.md`)
+uses a token-Jaccard threshold of 0.8 for their own categorical-target evaluation. Hand-computed it
+against this project's own known mismatches:
+
+| Gold | System answer | Jaccard |
+|---|---|---|
+| distributed | automatic parallelization and distribution of large-scale computations | 0.00 |
+| image recognition | visual recognition tasks | 0.25 |
+| GLUE | Language model pre-training | 0.00 |
+| web search | building a practical large-scale system which can exploit... | 0.00 |
+
+All far below 0.8 — **lexical overlap doesn't help here; these mismatches are paraphrase/synonym
+level, not word-overlap level.** Ruled out.
+
+**Design: `score_role_judged` + LLM-as-judge, retroactive over already-collected answers.** Added
+`score_role_judged(gold, sys, judge)` to `scoring.py` — same null-handling as `score_role`, but the
+both-present match check is delegated to an injected `judge` callable instead of `matches()`, so the
+function itself stays testable without a live API (fake judges in `test_scoring.py`). Added
+`SameTaskVerdict` (`same_task: bool`) to `models.py` as the real judge's structured output. The real
+`judge_same_task(gold, sys)` (`3pipeline.ipynb` Stage 4) asks Gemini whether two phrases refer to
+the same task/concept "even if worded differently or at a different level of specificity."
+
+**Explicit limitation:** the judge is the same model family that produced the answers being judged —
+this risks a leniency bias (grading its own homework), so verdicts need spot-checking by hand, not
+blind trust, before any F1 number from this mechanism is reported as a finding.
+
+**Scope, smallest step first:** Stage 4 judges only Variant A's 4 known Task mismatches (BERT,
+ResNet, MapReduce, Pagerank; Transformer/AlexNet already match, no call needed) — retroactive, no
+per-paper Stage 0-2 re-run, no new extraction. Extending to the other variants (B, multi-valued
+primary, Stage 2f verification) is conditional on these 4 verdicts looking sensible by hand.
+
+**Result (2026-08-29) — one plausible verdict, one that contradicts existing human review; not
+trustworthy as a clean number.** Run on all 4 known mismatches:
+
+| Paper | Gold | Variant A answer | Judge |
+|---|---|---|---|
+| bert | GLUE | language representation | DIFFERENT |
+| resnet | image recognition | classification task | DIFFERENT |
+| mapreduce | distributed | automatic parallelization and distribution of large-scale computations | **SAME** |
+| pagerank | web search | information retrieval | **SAME** |
+
+Naive F1 (trusting both SAME verdicts, plus Transformer/AlexNet's existing matches): 0.67, vs.
+0.33 substring-match. **But the two SAME verdicts are not equally trustworthy:**
+
+- **MapReduce — plausible, matches independent prior reasoning.** report3 (`report3/report.md`
+  line 504) already argued this exact pair is "arguably correct despite substring-match failure."
+  The judge's verdict is consistent with independent, earlier, non-LLM-judge analysis.
+- **Pagerank — implausible, contradicts this project's own manual review.**
+  `proto3/manual_review.md`'s Pagerank/Task row already scored `"information retrieval"` No/No/No
+  on Plausible?/Evidence supports?/Authors' own? (only Quote-in-source passed), with the explicit
+  note "Information retrieval is the broader problem domain, not the task performed by the proposed
+  system." The judge's SAME verdict directly contradicts this project's own prior human judgment on
+  the identical pair — this is the predicted self-grading leniency bias actually manifesting, not a
+  hypothetical caveat.
+
+Discounting the Pagerank verdict, a more defensible reading is 3/6 (MapReduce recovered, Pagerank
+not) — F1 ≈ 0.50, not 0.67. But this "discount" itself required one-by-one manual adjudication of
+a 4-item sample, which defeats most of the point of automating the check: **at n=4 judged pairs (n=6
+papers overall), there isn't enough data to establish whether the judge is trustworthy in general —
+the same small-sample-size limitation already flagged for Wilson confidence intervals elsewhere in
+this project applies here too.** One bad verdict in four is enough to swing the interpretation, and
+there's no way to tell which verdicts are the bad ones without doing the manual check the mechanism
+was meant to replace.
+
+**Conclusion — closing out the Task-line for report4.** Four attempts targeted Task's weak F1
+across this session, each via a different mechanism:
+
+1. **Variant B** (role-specific prompt): no effect (F1 stayed 0.33).
+2. **Multi-valued pilot** (Stage 2e): any-match F1 rose (0.67) but primary-only F1 *fell* (0.17) —
+   the model can produce the right phrasing but not reliably select it.
+3. **Verification pass** (Stage 2f): no net improvement (F1 0.33) and an active regression (BERT).
+4. **LLM-as-judge rescoring** (Stage 4): apparent improvement (F1 0.67) but one of two SAME verdicts
+   contradicts this project's own prior human review — not trustworthy as reported, and too small a
+   sample to calibrate.
+
+This is not four isolated failures — it is a **consistent finding**: post-hoc interventions (better
+prompts, more candidates, a selection pass, a lenient scorer) do not reliably fix Task, and each
+attempt to relax the standard toward "close enough" introduces its own new failure mode (regression,
+leniency bias) rather than cleanly resolving the original one. Report this as the honest, complete
+picture in report4 rather than any single mechanism's number in isolation — the sequence itself
+(what was tried, in what order, and why each one stopped) is the finding.
+
 ---
 
 ## NotebookLM cross-check (2026-07-25)

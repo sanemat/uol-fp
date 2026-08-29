@@ -1,3 +1,5 @@
+from typing import Callable
+
 ROLES = ["TechnicalMethod", "Task", "Dataset", "EvaluationMetric"]
 
 
@@ -45,6 +47,26 @@ def score_role_multi(
         return (1, 0, 0, 0)
     # present but none match: a confident wrong answer costs both precision
     # and recall, same as score_role
+    return (0, 1, 1, 0)
+
+
+def score_role_judged(
+    gold: str | None, sys: str | None, judge: Callable[[str, str], bool]
+) -> tuple[int, int, int, int]:
+    """Like score_role, but the both-present match check is delegated to
+    `judge(gold, sys)` (e.g. an LLM-as-judge semantic-equivalence check)
+    instead of matches(). Null-handling is identical to score_role. `judge`
+    is dependency-injected so this stays testable without a live API."""
+    if gold is None:
+        if sys is None:
+            return (0, 0, 0, 1)
+        return (0, 1, 0, 0)
+    if sys is None:
+        return (0, 0, 1, 0)
+    if judge(gold, sys):
+        return (1, 0, 0, 0)
+    # present but the judge says they don't match: costs both precision and
+    # recall, same as score_role
     return (0, 1, 1, 0)
 
 
