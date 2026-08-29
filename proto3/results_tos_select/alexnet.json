@@ -1,0 +1,8 @@
+{
+  "reasoning": "Candidate 1 ('ImageNet LSVRC-2010 image classification') is too specific because it refers to a specific benchmark and dataset instance rather than a general task category. Candidate 2 ('object recognition') is at the correct level of granularity, representing the general task category that the paper's experiments evaluate, analogous to other task types like speech recognition.",
+  "answer": "object recognition",
+  "evidence": {
+    "section": "Introduction",
+    "quote": "Current approaches to object recognition make essential use of machine learning methods."
+  }
+}

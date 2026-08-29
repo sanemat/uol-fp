@@ -1,0 +1,8 @@
+{
+  "reasoning": "We evaluate each candidate to find the one that represents the specific task category evaluated in the paper, rather than a specific benchmark or a broad problem class. Candidates 1 and 2 ('WMT 2014 English-to-German translation' and 'WMT 2014 English-to-French translation') are too specific as they refer to individual benchmark datasets. Candidate 5 ('sequence transduction') is too broad, representing a general class of problems rather than a specific task. Candidate 3 ('English constituency parsing') is a task evaluated only to test generalization. Candidate 4 ('machine translation') is at the right level of granularity, representing the primary task category that the paper's main experiments evaluate.",
+  "answer": "machine translation",
+  "evidence": {
+    "section": "Abstract",
+    "quote": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train."
+  }
+}

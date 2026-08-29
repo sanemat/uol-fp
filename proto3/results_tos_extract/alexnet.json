@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper describes training a deep convolutional neural network to classify images from the ImageNet dataset. The authors refer to the broader problem class as 'object recognition', but the specific task evaluated in their experiments is classifying high-resolution images into 1000 different classes, which corresponds to the standard task of 'image classification'.",
+  "answer": "image classification",
+  "evidence": {
+    "section": "Abstract",
+    "quote": "We trained a large, deep convolutional neural network to classify the 1.2 million high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes."
+  }
+}

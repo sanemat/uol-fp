@@ -1,0 +1,8 @@
+{
+  "reasoning": "Candidate 1 ('ImageNet 2012 classification') is too specific because it refers to a specific dataset/benchmark instance rather than a general task category. Candidate 2 ('image classification') is at the right level of granularity as it represents the named task type that the paper's experiments primarily evaluate. Candidate 3 ('visual recognition tasks') is too broad as it encompasses many different tasks beyond classification, such as detection and segmentation. Therefore, Candidate 2 is the correct choice.",
+  "answer": "image classification",
+  "evidence": {
+    "section": "Introduction",
+    "quote": "Deep convolutional neural networks [22, 21] have led to a series of breakthroughs for image classification [21, 49, 39]."
+  }
+}

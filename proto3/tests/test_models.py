@@ -4,6 +4,7 @@ from pydantic import ValidationError
 from uol_fp.models import (
     Evidence,
     MultiValuedRoleExtraction,
+    ReasoningFirstRoleExtraction,
     RoleAnswer,
     RoleExtraction,
     SameTaskVerdict,
@@ -67,3 +68,48 @@ def test_same_task_verdict_true() -> None:
 def test_same_task_verdict_false() -> None:
     verdict = SameTaskVerdict(same_task=False)
     assert verdict.same_task is False
+
+
+def test_reasoning_first_both_present() -> None:
+    role = ReasoningFirstRoleExtraction(
+        reasoning="Candidate 2 is the specific evaluated task; 1 is too broad.",
+        answer="machine translation",
+        evidence=_evidence(),
+    )
+    assert role.reasoning.startswith("Candidate 2")
+    assert role.answer == "machine translation"
+    assert role.evidence == _evidence()
+
+
+def test_reasoning_first_null_answer_allowed() -> None:
+    role = ReasoningFirstRoleExtraction(
+        reasoning="No candidate names the task the experiments evaluate.",
+        answer=None,
+        evidence=None,
+    )
+    assert role.answer is None
+    assert role.evidence is None
+
+
+def test_reasoning_first_answer_without_evidence_rejected() -> None:
+    with pytest.raises(ValidationError):
+        ReasoningFirstRoleExtraction(
+            reasoning="...", answer="machine translation", evidence=None
+        )
+
+
+def test_reasoning_first_evidence_without_answer_rejected() -> None:
+    with pytest.raises(ValidationError):
+        ReasoningFirstRoleExtraction(reasoning="...", answer=None, evidence=_evidence())
+
+
+def test_reasoning_first_requires_reasoning() -> None:
+    with pytest.raises(ValidationError):
+        ReasoningFirstRoleExtraction(  # type: ignore[call-arg]
+            answer="machine translation", evidence=_evidence()
+        )
+
+
+def test_reasoning_first_reasoning_field_is_first() -> None:
+    props = list(ReasoningFirstRoleExtraction.model_json_schema()["properties"])
+    assert props[0] == "reasoning"

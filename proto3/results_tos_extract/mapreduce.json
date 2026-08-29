@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper presents MapReduce, a programming model and implementation for distributed computing. The authors evaluate its performance on two specific computations: searching through 1 TB of data for a pattern (grep) and sorting 1 TB of data (sort). At a more general level, these represent pattern matching and sorting tasks. At the broadest level, the experiments evaluate the system's capability for large-scale data processing (or processing and generating large datasets). The single general task type that best encompasses the evaluated applications is large-scale data processing.",
+  "answer": "large-scale data processing",
+  "evidence": {
+    "section": "Abstract",
+    "quote": "MapReduce is a programming model and an associated implementation for processing and generating large data sets."
+  }
+}

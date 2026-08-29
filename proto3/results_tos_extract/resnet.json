@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper evaluates its proposed deep residual learning framework on several computer vision tasks. The primary task evaluated in Section 4 and Section 5 is image classification (specifically on the ImageNet 2012 and CIFAR-10 datasets). The paper also evaluates the representations on object detection in Section 6. Among these, image classification is the primary task of the paper's main experiments.",
+  "answer": "image classification",
+  "evidence": {
+    "section": "ImageNet Classification",
+    "quote": "We evaluate our method on the ImageNet 2012 classification dataset [35] that consists of 1000 classes."
+  }
+}

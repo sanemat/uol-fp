@@ -1,0 +1,8 @@
+{
+  "reasoning": "The paper describes the design and implementation of Google, a prototype of a large-scale Web search engine. The authors discuss the challenges of scaling up traditional information retrieval techniques to the Web. They evaluate their system on the task of Web search (or Web searching), specifically focusing on search quality (relevance and precision of results) and search efficiency (query response times) over a crawl of 24 million Web pages. Thus, the specific task evaluated is Web search.",
+  "answer": "Web search",
+  "evidence": {
+    "section": "Conclusions",
+    "quote": "The primary goal is to provide high quality search results over a rapidly growing World Wide Web."
+  }
+}
