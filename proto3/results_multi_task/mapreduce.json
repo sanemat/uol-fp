@@ -1,0 +1,25 @@
+{
+  "answers": [
+    {
+      "answer": "searching through approximately one terabyte of data looking for a particular pattern",
+      "evidence": {
+        "section": "Performance",
+        "quote": "One computation searches through approximately one terabyte of data looking for a particular pattern."
+      }
+    },
+    {
+      "answer": "sorting approximately one terabyte of data",
+      "evidence": {
+        "section": "Performance",
+        "quote": "The other computation sorts approximately one terabyte of data."
+      }
+    },
+    {
+      "answer": "processing and generating large data sets",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "MapReduce is a programming model and an associated implementation for processing and generating large data sets."
+      }
+    }
+  ]
+}

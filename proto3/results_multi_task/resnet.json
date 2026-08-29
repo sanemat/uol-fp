@@ -1,0 +1,32 @@
+{
+  "answers": [
+    {
+      "answer": "ImageNet 2012 classification",
+      "evidence": {
+        "section": "ImageNet Classification",
+        "quote": "We evaluate our method on the ImageNet 2012 classification dataset  [35]  that consists of 1000 classes."
+      }
+    },
+    {
+      "answer": "CIFAR-10 classification",
+      "evidence": {
+        "section": "CIFAR-10 and Analysis",
+        "quote": "We conducted more studies on the CIFAR-10 dataset  [20] , which consists of 50k training images and 10k testing images in 10 classes."
+      }
+    },
+    {
+      "answer": "object detection",
+      "evidence": {
+        "section": "Object Detection on PASCAL and MS COCO",
+        "quote": "Table  7  and 8 show the object detection baseline results on PASCAL VOC 2007 and 2012  [5]  and COCO  [26] ."
+      }
+    },
+    {
+      "answer": "visual recognition tasks",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "The depth of representations is of central importance for many visual recognition tasks."
+      }
+    }
+  ]
+}

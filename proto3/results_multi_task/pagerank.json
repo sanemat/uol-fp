@@ -1,0 +1,32 @@
+{
+  "answers": [
+    {
+      "answer": "building a practical large-scale system which can exploit the additional information present in hypertext",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "This paper addresses this question of how to build a practical large-scale system which can exploit the additional information present in hypertext."
+      }
+    },
+    {
+      "answer": "effectively dealing with uncontrolled hypertext collections where anyone can publish anything they want",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "Also we look at the problem of how to effectively deal with uncontrolled hypertext collections where anyone can publish anything they want."
+      }
+    },
+    {
+      "answer": "improving the quality of Web search engines",
+      "evidence": {
+        "section": "Introduction",
+        "quote": "Our main goal is to improve the quality of Web search engines."
+      }
+    },
+    {
+      "answer": "addressing problems in quality and scalability introduced by scaling search engine technology",
+      "evidence": {
+        "section": "Introduction",
+        "quote": "The goal of our system is to address many of the problems, both in quality and scalability, introduced by scaling search engine technology to such extraordinary numbers."
+      }
+    }
+  ]
+}
