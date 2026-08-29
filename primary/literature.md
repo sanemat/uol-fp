@@ -70,3 +70,16 @@ Kuofeng Gao, Huanqia Cai, Qingyao Shuai, Dihong Gong, Zhifeng Li
       primaryClass={cs.AI},
       url={https://arxiv.org/abs/2410.10735}, 
 }
+
+Learning to Generate Structured Output with Schema Reinforcement Learning
+Yaxi Lu, Haolun Li, Xin Cong, Zhong Zhang, Yesai Wu, Yankai Lin, Zhiyuan Liu, Fangming Liu, Maosong Sun
+
+@misc{lu2025learninggeneratestructuredoutput,
+      title={Learning to Generate Structured Output with Schema Reinforcement Learning}, 
+      author={Yaxi Lu and Haolun Li and Xin Cong and Zhong Zhang and Yesai Wu and Yankai Lin and Zhiyuan Liu and Fangming Liu and Maosong Sun},
+      year={2025},
+      eprint={2502.18878},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2502.18878}, 
+}
