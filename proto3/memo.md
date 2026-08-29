@@ -657,13 +657,81 @@ substring-matching artifact (MapReduce, "Evaluation plan" above)?
 - Tests added for both new pieces (`tests/test_models.py`, `tests/test_scoring.py`); `make lint`
   and `make test` green; `make sync-generated` run.
 
-**Not yet run.** Hypothesis: if Task's F1 moves above 0.33 once Transformer's slot can credit
-`machine translation` alongside `sequence transduction`, that's evidence the single-valued schema
-was itself suppressing correct answers the model already had available — a structural cause,
-distinct from (and not fixed by) either the joint prompt (Variant A) or the role-specific prompt
-(Variant B). If it doesn't move, the schema-artifact hypothesis for Task is not supported and the
-"genuine task-identification difficulty" reading from the Variant B conclusion above stands
-unrevised.
+**Result (2026-08-29) — mixed: any-match F1 doubles, but primary-only F1 is worse than A/B.**
+Run for all 6 papers, one run each, saved to `proto3/results_multi_task/*.json`. Scored with
+`proto3/aggregate_multi_task.py` two ways: **any-match** (`score_role_multi`: a hit anywhere in
+the candidate list counts) and **primary-only** (scoring just `answers[0]`, i.e. what a
+single-valued schema would have forced the model to commit to):
+
+| Variant | P | R | F1 | TP | FP | FN |
+|---|---|---|---|---|---|---|
+| A (joint) | 0.33 | 0.33 | 0.33 | 2 | 4 | 4 |
+| B (decomposed, single-valued) | 0.33 | 0.33 | 0.33 | 2 | 4 | 4 |
+| Multi-valued pilot, **any-match** | 0.67 | 0.67 | 0.67 | 4 | 2 | 2 |
+| Multi-valued pilot, **primary-only** | 0.17 | 0.17 | 0.17 | 1 | 5 | 5 |
+
+**The any-match number is misleading on its own — flagged by the user before this was written up
+any further, and confirmed by re-reading the already-saved data.** `score_role_multi` has no cap
+on list length and no penalty for extra items, so it is upper-bounded by how wide a net the model
+casts: listing the entire paper as candidates would guarantee a hit without the model resolving
+anything. List lengths here ranged 2-7 items (BERT alone returned 7). Checking *where* each
+any-match hit actually landed:
+
+| Paper | n answers | primary (`answers[0]`) hit? | hit position(s) |
+|---|---|---|---|
+| transformer | 5 | No | [3] |
+| bert | 7 | **Yes** | [0] |
+| alexnet | 2 | No | [1] |
+| resnet | 4 | — | none |
+| mapreduce | 3 | — | none |
+| pagerank | 4 | No | [2] |
+
+Only **BERT**'s hit (`"GLUE benchmark"`) was the model's own top pick. Transformer, AlexNet, and
+Pagerank's hits were buried at positions 1-3 in lists of 2-5 items — the model surfaced the
+gold-matching phrasing *somewhere*, but did not rank or select it as primary. ResNet and MapReduce
+miss under every variant, consistent with the per-paper mechanism analysis above (not the
+granularity/authorship pattern this pilot targets).
+
+**Revised interpretation:** the honest reading is narrower than first written here. Confirmed:
+for BERT, the single-valued schema was suppressing a correct answer the model already ranked
+first — a genuine schema-artifact fix, no caveat needed. Not confirmed: for Transformer, AlexNet,
+and Pagerank, the model has the right phrasing available *somewhere* in its output space, but
+cannot reliably identify it as *the* answer over other equally-worded candidates — this is closer
+to a **calibration/selection problem** than a **suppression problem**, and any-match F1 alone
+overstates how much of Task's weakness this pilot actually resolves. A single-valued schema
+downstream of this pilot would still need to pick one item from the list — the open question isn't
+"can the model produce the right phrase" (yes, mostly) but "can it tell which of its own candidates
+is correct" (mostly no, per primary-only F1 = 0.17, worse than A/B's 0.33).
+
+**Status:** still a pilot — Task-only, one run each, no repeated-run variance study, no gold-label
+changes. If written up in report4 Chapter 5 (Evaluation), lead with the primary-only number and
+the position table, not the any-match F1 alone — the any-match framing without this context would
+overstate the finding.
+
+**Next: a verification/selection pass over the candidate list (not yet implemented).** The user's
+own proposal, independent of this write-up: generate the candidates (already done here), then run
+a second pass that verifies/selects which one is actually correct, rather than relying on
+any-match recall or the model's own (unreliable, per the table above) primary ranking. This is
+structurally the same shape as the already-designed Variant C (this section, above) — a
+consolidation/verification call over already-decomposed outputs — applied within one role's
+candidate list instead of across the 4 roles. Design and implementation deferred pending the
+user's own literature search for the anchor citation; candidate 2024-2026 papers already surfaced
+via a quick search this turn (titles/dates only, not read in full — verify before citing formally):
+
+- Ateia et al. 2025, "LLM-Based Information Extraction to Support Scientific Literature Research
+  and Publication Workflows" (TPDL 2025, arXiv:2510.04749) — LLM extraction of key concepts from
+  scientific papers specifically (same domain as this project), reportedly using multi-LLM
+  aggregation plus a separate verification pass against the source text. Closest domain match
+  found.
+- Shrimal et al. 2025, "PARSE: LLM Driven Schema Optimization for Reliable Entity Extraction"
+  (arXiv:2510.08623, EMNLP 2025 Industry Track) — treats the extraction schema itself as something
+  to refine/interpret rather than a static contract; relevant to the multi-valued-schema question
+  directly.
+- Looser matches, lower priority (self-verification/self-consistency survey and benchmark work,
+  not extraction-specific): "Self-Verification-Based LLMs" (emergentmind survey), "Reasoning
+  Models Know When They're Right: Probing Hidden States for Self-Verification" (arXiv:2504.05419),
+  "Not All Uncertainty Is Equal: How Uncertainty Granularity Shapes Human Verification in
+  LLM-Assisted Decision Making" (arXiv:2605.28571).
 
 ---
 
