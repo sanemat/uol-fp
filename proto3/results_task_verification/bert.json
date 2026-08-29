@@ -1,0 +1,7 @@
+{
+  "answer": "Language model pre-training",
+  "evidence": {
+    "section": "Introduction",
+    "quote": "Language model pre-training has been shown to be effective for improving many natural language processing tasks (Dai and Le, 2015; Peters et al., 2018a; Radford et al., 2018; Howard and Ruder, 2018) ."
+  }
+}
