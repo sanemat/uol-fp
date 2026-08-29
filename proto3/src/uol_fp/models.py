@@ -64,3 +64,20 @@ class MultiValuedRoleExtraction(BaseModel):
             "role is not present in the paper."
         )
     )
+
+
+class SameTaskVerdict(BaseModel):
+    """LLM-as-judge output for `uol_fp.scoring.score_role_judged`'s `judge`
+    argument -- semantic-equivalence check between a gold answer and a system
+    answer, allowing different specificity or wording. See proto3/memo.md
+    "Multi-valued roles" for the design rationale (2026-08-29)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    same_task: bool = Field(
+        description=(
+            "True if the two phrases refer to the same task or concept, "
+            "even if worded differently or at a different level of "
+            "specificity. False if they describe genuinely different tasks."
+        )
+    )

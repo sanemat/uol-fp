@@ -5,6 +5,7 @@ from uol_fp.scoring import (
     precision_recall_f1,
     score_profile,
     score_role,
+    score_role_judged,
     score_role_multi,
 )
 
@@ -78,6 +79,41 @@ def test_score_role_multi_second_answer_matches() -> None:
 
 def test_score_role_multi_no_answer_matches() -> None:
     assert score_role_multi("BERT", ["ResNet", "AlexNet"]) == (0, 1, 1, 0)
+
+
+def test_score_role_judged_both_none() -> None:
+    assert score_role_judged(None, None, judge=lambda g, s: True) == (0, 0, 0, 1)
+
+
+def test_score_role_judged_gold_only() -> None:
+    assert score_role_judged("BERT", None, judge=lambda g, s: True) == (0, 0, 1, 0)
+
+
+def test_score_role_judged_sys_only() -> None:
+    assert score_role_judged(None, "BERT", judge=lambda g, s: True) == (0, 1, 0, 0)
+
+
+def test_score_role_judged_judge_says_match() -> None:
+    # Same pair score_role would call a mismatch (no substring overlap), but
+    # the injected judge says they're semantically the same task.
+    assert score_role_judged(
+        "distributed", "processing large data sets", judge=lambda g, s: True
+    ) == (1, 0, 0, 0)
+
+
+def test_score_role_judged_judge_says_no_match() -> None:
+    assert score_role_judged("BERT", "ResNet", judge=lambda g, s: False) == (
+        0,
+        1,
+        1,
+        0,
+    )
+
+
+def test_score_role_judged_receives_gold_and_sys() -> None:
+    seen = []
+    score_role_judged("gold", "sys", judge=lambda g, s: seen.append((g, s)) or True)
+    assert seen == [("gold", "sys")]
 
 
 def test_score_profile_covers_all_roles() -> None:

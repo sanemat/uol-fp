@@ -6,6 +6,7 @@ from uol_fp.models import (
     MultiValuedRoleExtraction,
     RoleAnswer,
     RoleExtraction,
+    SameTaskVerdict,
 )
 
 
@@ -56,3 +57,13 @@ def test_multi_valued_role_extraction_multiple_answers_ordered() -> None:
 def test_role_answer_requires_evidence() -> None:
     with pytest.raises(ValidationError):
         RoleAnswer(answer="Transformer")  # type: ignore[call-arg]
+
+
+def test_same_task_verdict_true() -> None:
+    verdict = SameTaskVerdict(same_task=True)
+    assert verdict.same_task is True
+
+
+def test_same_task_verdict_false() -> None:
+    verdict = SameTaskVerdict(same_task=False)
+    assert verdict.same_task is False
