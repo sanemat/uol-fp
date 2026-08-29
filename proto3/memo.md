@@ -841,8 +841,58 @@ blind trust, before any F1 number from this mechanism is reported as a finding.
 **Scope, smallest step first:** Stage 4 judges only Variant A's 4 known Task mismatches (BERT,
 ResNet, MapReduce, Pagerank; Transformer/AlexNet already match, no call needed) — retroactive, no
 per-paper Stage 0-2 re-run, no new extraction. Extending to the other variants (B, multi-valued
-primary, Stage 2f verification) is conditional on these 4 verdicts looking sensible by hand. Not yet
-run as of this write-up — results to follow once run in Colab.
+primary, Stage 2f verification) is conditional on these 4 verdicts looking sensible by hand.
+
+**Result (2026-08-29) — one plausible verdict, one that contradicts existing human review; not
+trustworthy as a clean number.** Run on all 4 known mismatches:
+
+| Paper | Gold | Variant A answer | Judge |
+|---|---|---|---|
+| bert | GLUE | language representation | DIFFERENT |
+| resnet | image recognition | classification task | DIFFERENT |
+| mapreduce | distributed | automatic parallelization and distribution of large-scale computations | **SAME** |
+| pagerank | web search | information retrieval | **SAME** |
+
+Naive F1 (trusting both SAME verdicts, plus Transformer/AlexNet's existing matches): 0.67, vs.
+0.33 substring-match. **But the two SAME verdicts are not equally trustworthy:**
+
+- **MapReduce — plausible, matches independent prior reasoning.** report3 (`report3/report.md`
+  line 504) already argued this exact pair is "arguably correct despite substring-match failure."
+  The judge's verdict is consistent with independent, earlier, non-LLM-judge analysis.
+- **Pagerank — implausible, contradicts this project's own manual review.**
+  `proto3/manual_review.md`'s Pagerank/Task row already scored `"information retrieval"` No/No/No
+  on Plausible?/Evidence supports?/Authors' own? (only Quote-in-source passed), with the explicit
+  note "Information retrieval is the broader problem domain, not the task performed by the proposed
+  system." The judge's SAME verdict directly contradicts this project's own prior human judgment on
+  the identical pair — this is the predicted self-grading leniency bias actually manifesting, not a
+  hypothetical caveat.
+
+Discounting the Pagerank verdict, a more defensible reading is 3/6 (MapReduce recovered, Pagerank
+not) — F1 ≈ 0.50, not 0.67. But this "discount" itself required one-by-one manual adjudication of
+a 4-item sample, which defeats most of the point of automating the check: **at n=4 judged pairs (n=6
+papers overall), there isn't enough data to establish whether the judge is trustworthy in general —
+the same small-sample-size limitation already flagged for Wilson confidence intervals elsewhere in
+this project applies here too.** One bad verdict in four is enough to swing the interpretation, and
+there's no way to tell which verdicts are the bad ones without doing the manual check the mechanism
+was meant to replace.
+
+**Conclusion — closing out the Task-line for report4.** Four attempts targeted Task's weak F1
+across this session, each via a different mechanism:
+
+1. **Variant B** (role-specific prompt): no effect (F1 stayed 0.33).
+2. **Multi-valued pilot** (Stage 2e): any-match F1 rose (0.67) but primary-only F1 *fell* (0.17) —
+   the model can produce the right phrasing but not reliably select it.
+3. **Verification pass** (Stage 2f): no net improvement (F1 0.33) and an active regression (BERT).
+4. **LLM-as-judge rescoring** (Stage 4): apparent improvement (F1 0.67) but one of two SAME verdicts
+   contradicts this project's own prior human review — not trustworthy as reported, and too small a
+   sample to calibrate.
+
+This is not four isolated failures — it is a **consistent finding**: post-hoc interventions (better
+prompts, more candidates, a selection pass, a lenient scorer) do not reliably fix Task, and each
+attempt to relax the standard toward "close enough" introduces its own new failure mode (regression,
+leniency bias) rather than cleanly resolving the original one. Report this as the honest, complete
+picture in report4 rather than any single mechanism's number in isolation — the sequence itself
+(what was tried, in what order, and why each one stopped) is the finding.
 
 ---
 
