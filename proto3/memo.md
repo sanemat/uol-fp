@@ -902,17 +902,43 @@ Two framings, both Task-only, one run each on the 6 papers, `temperature=0`, `se
 Prompt examples use out-of-corpus task types only ("speech recognition", "sentiment classification"),
 per the Stage 2f gold-vocab-leak lesson.
 
-**Result (pending run).** Fill both tables after the 6-paper Colab run; also read 2-3 `reasoning`
-traces by hand and note whether they are genuine justifications or post-hoc padding.
+**Result (2026-08-29) — neither framing fixes Task; the one nominal gain is an abstention
+artifact.** One run each on the 6 papers, scored with `score_role` against the same Task gold
+as Stage 2e/2f.
 
 | Paper | Gold | Stage 2g (select) | Match? | Stage 2h (extract) | Match? |
 |---|---|---|---|---|---|
-| transformer | machine translation | | | | |
-| bert | GLUE | | | | |
-| alexnet | object recognition | | | | |
-| resnet | image recognition | | | | |
-| mapreduce | distributed | | | | |
-| pagerank | web search | | | | |
+| transformer | machine translation | machine translation | ✓ | machine translation | ✓ |
+| bert | GLUE | *(null — declined)* | ✗ (FN) | natural language understanding | ✗ |
+| alexnet | object recognition | object recognition | ✓ | image classification | ✗ |
+| resnet | image recognition | image classification | ✗ | image classification | ✗ |
+| mapreduce | distributed | *(null — declined)* | ✗ (FN) | large-scale data processing | ✗ |
+| pagerank | web search | providing high quality search results over a rapidly growing World Wide Web | ✗ | Web search | ✓ |
+
+- **Stage 2h (extract): F1 = 0.33 (TP 2, FP 4, FN 4) — identical to Variant A, Variant B, and
+  Stage 2f.** Reasoning before the answer changed nothing about which phrasing the model
+  commits to. The two hits (Transformer, Pagerank) are the same two that already matched under
+  Variant A; the four misses are the same granularity/synonym gap ("image classification" vs
+  gold "image recognition", "natural language understanding" vs "GLUE", "large-scale data
+  processing" vs "distributed"). No effect.
+- **Stage 2g (select): F1 = 0.40 (P 0.50, R 0.33; TP 2, FP 2, FN 4) — nominally the highest Task
+  number in the session, but not a selection improvement.** The gain over 0.33 comes entirely
+  from **abstention**: `score_role(gold, None)` counts as FN only, no FP, so returning null on
+  BERT and MapReduce lifts precision without a matching penalty. It is the model declining to
+  answer on 2 of 6 papers, not picking better.
+- **BERT regressed, same category as Stage 2f.** Stage 2e's candidate list already had
+  `"GLUE benchmark"` as the primary (position 0). Stage 2g's reasoning-first pass evaluated it
+  against the prompt's "named task type, not a benchmark suite" criterion, concluded (defensibly:
+  GLUE *is* a multi-task suite) that no candidate qualified, and returned null — talking itself
+  out of a candidate Stage 2e already had right. Stage 2f demoted the same slot to a wrong
+  answer; 2g demotes it to null. Either way, a reasoning/selection pass that removes an
+  already-correct answer is harmful on that slot.
+- **The reasoning traces are genuine, not post-hoc padding.** Each 2g trace evaluates every
+  candidate against an explicit granularity test (see `results_tos_select/bert.json`,
+  `mapreduce.json`); the 2h traces name the paper's evaluated tasks correctly. The failure is
+  not that the model reasons badly — it reasons cleanly and still lands on the wrong phrasing
+  (ResNet's "image classification", defensible, scored wrong by the blunt substring metric) or
+  rejects the right one (BERT). Higher-quality reasoning did not move the calibration problem.
 
 **Conclusion — closing out the Task-line for report4.** Six attempts targeted Task's weak F1 across
 this session, each via a different mechanism:
@@ -924,17 +950,22 @@ this session, each via a different mechanism:
 4. **LLM-as-judge rescoring** (Stage 4): apparent improvement (F1 0.67) but one of two SAME verdicts
    contradicts this project's own prior human review — not trustworthy as reported, and too small a
    sample to calibrate.
-5. **ToS reasoning-first selection** (Stage 2g): result pending.
-6. **ToS reasoning-first extraction** (Stage 2h): result pending.
+5. **ToS reasoning-first selection** (Stage 2g): nominal F1 0.40, but the gain over 0.33 is an
+   abstention artifact (null on 2 papers → FN-only), not better selection, and BERT regressed to
+   null.
+6. **ToS reasoning-first extraction** (Stage 2h): no effect (F1 stayed 0.33, identical TP/FP/FN
+   to Variant A/B).
 
-Attempts 1–4 are not four isolated failures — they are a **consistent finding**: post-hoc
-interventions (better prompts, more candidates, a selection pass, a lenient scorer) do not reliably
-fix Task, and each attempt to relax the standard toward "close enough" introduces its own new failure
-mode (regression, leniency bias) rather than cleanly resolving the original one. Attempts 5–6 test
-whether changing the output shape (reason first, then answer) rather than relaxing the standard breaks
-that pattern; update this conclusion once their numbers land. Report the sequence itself (what was
-tried, in what order, and why each one stopped) as the finding, not any single mechanism's number in
-isolation.
+These are not six isolated failures — they are a **consistent finding**: neither relaxing the
+standard toward "close enough" (better prompts, more candidates, a selection pass, a lenient
+scorer) nor changing the output shape so the model reasons before it answers reliably fixes
+Task, and several attempts introduce a new failure mode of their own (Stage 2f and 2g both
+remove an already-correct BERT answer; the LLM-judge shows leniency bias). Stage 2g even
+produces high-quality, internally coherent reasoning and still lands on the wrong phrasing or
+abstains — so the weakness is not "the model reasons badly about Task" but that gold's single
+required phrasing is one defensible choice among several the metric cannot tell apart. Report
+the sequence itself (what was tried, in what order, and why each one stopped) as the finding,
+not any single mechanism's number — least of all Stage 2g's 0.40 — in isolation.
 
 ---
 
