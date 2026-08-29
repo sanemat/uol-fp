@@ -38,6 +38,12 @@ Cell outputs are stripped automatically on commit (`nbwipers` git filter).
 - Do not modify cell outputs in the notebook — `nbwipers` handles this on commit.
 - Notebook cell IDs must be stable — do not remove or rename existing IDs.
 - `dataset/` is gitignored — never commit PDFs or XML files.
+- Any notebook cell whose output is meant to be copy-pasted by hand into a `.json`
+  file (the `results*/` manual-save convention throughout `proto3/`) must `print()`
+  **only** the JSON — no repr/label line before it (e.g. `print(f"Task: {x}")`)
+  that would need stripping before the paste is valid JSON. Getting this wrong has
+  already cost a redo twice — check new extraction/verification cells for this
+  before considering them done.
 
 ## Writing (report1/)
 
