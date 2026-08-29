@@ -708,30 +708,68 @@ changes. If written up in report4 Chapter 5 (Evaluation), lead with the primary-
 the position table, not the any-match F1 alone — the any-match framing without this context would
 overstate the finding.
 
-**Next: a verification/selection pass over the candidate list (not yet implemented).** The user's
-own proposal, independent of this write-up: generate the candidates (already done here), then run
-a second pass that verifies/selects which one is actually correct, rather than relying on
-any-match recall or the model's own (unreliable, per the table above) primary ranking. This is
-structurally the same shape as the already-designed Variant C (this section, above) — a
-consolidation/verification call over already-decomposed outputs — applied within one role's
-candidate list instead of across the 4 roles. Design and implementation deferred pending the
-user's own literature search for the anchor citation; candidate 2024-2026 papers already surfaced
-via a quick search this turn (titles/dates only, not read in full — verify before citing formally):
+**Stage 2f: a verification/selection pass over the candidate list — proof of concept only
+(2026-08-29).** The problem, stated precisely: any-match F1 (0.67) shows the model can usually
+*produce* the gold-matching phrasing somewhere in a candidate list, but primary-only F1 (0.17,
+worse than A/B) shows it cannot reliably *select* that phrasing as primary — a calibration/
+selection failure, not a generation failure. The user proposes a second pass that verifies/selects
+the correct candidate instead of trusting the model's own primary ranking. Structurally the same
+shape as the already-designed Variant C (above) — a consolidation/verification call over
+already-decomposed outputs — applied within one role's candidate list instead of across the 4
+roles.
 
-- Ateia et al. 2025, "LLM-Based Information Extraction to Support Scientific Literature Research
-  and Publication Workflows" (TPDL 2025, arXiv:2510.04749) — LLM extraction of key concepts from
-  scientific papers specifically (same domain as this project), reportedly using multi-LLM
-  aggregation plus a separate verification pass against the source text. Closest domain match
-  found.
+**Literature** (the user's own search; PDFs in `primary/previouswork/`, full BibTeX in
+`primary/literature.md`):
+
+- Kumar et al. 2025, "Improving the Reliability of LLMs: Combining CoT, RAG, Self-Consistency, and
+  Self-Verification" (arXiv:2505.09031)
+- Gao et al. 2024, "Embedding Self-Correction as an Inherent Ability in Large Language Models for
+  Enhanced Mathematical Reasoning" (arXiv:2410.10735)
+- Lu et al. 2025b, "Learning to Generate Structured Output with Schema Reinforcement Learning"
+  (arXiv:2502.18878) — "Thought of Structure": reason about structure before generating it
 - Shrimal et al. 2025, "PARSE: LLM Driven Schema Optimization for Reliable Entity Extraction"
-  (arXiv:2510.08623, EMNLP 2025 Industry Track) — treats the extraction schema itself as something
-  to refine/interpret rather than a static contract; relevant to the multi-valued-schema question
-  directly.
+  (arXiv:2510.08623, EMNLP 2025 Industry Track)
+- Ateia et al. 2025, "LLM-Based Information Extraction to Support Scientific Literature Research
+  and Publication Workflows" (TPDL 2025, arXiv:2510.04749) — LLM extraction from scientific papers
+  specifically (same domain as this project); closest domain match found
 - Looser matches, lower priority (self-verification/self-consistency survey and benchmark work,
   not extraction-specific): "Self-Verification-Based LLMs" (emergentmind survey), "Reasoning
   Models Know When They're Right: Probing Hidden States for Self-Verification" (arXiv:2504.05419),
   "Not All Uncertainty Is Equal: How Uncertainty Granularity Shapes Human Verification in
-  LLM-Assisted Decision Making" (arXiv:2605.28571).
+  LLM-Assisted Decision Making" (arXiv:2605.28571)
+
+**Triage against a more elaborate "hybrid PARSE+CoSC+ToS" design** (pasted from an external tool,
+proposing: schema `minLength`/`maxLength` validation, checking the *answer string* itself for
+verbatim presence in source text, merging generation+selection into one call with a
+retry-on-validation-failure loop, and a projected "F1 could reach 0.50+"). Rejected, with reasons:
+
+- **min/maxLength validation** — unsafe on this project's own data: TechnicalMethod answers range
+  from 4 chars (`"BERT"`) to 70+ chars (MapReduce's correct Task phrasing). An arbitrary length
+  gate would reject already-seen correct answers.
+- **Checking the answer string (not its evidence quote) for verbatim presence in source text** —
+  mismatched with this schema's own design: `answer` is deliberately "the shortest identifying
+  term," not a verbatim quote; only `evidence.quote` is required verbatim.
+- **Merging generation + selection into one call with a retry loop** — would discard the Stage 2e
+  candidate data already collected for all 6 papers, and adds real complexity (retry loop,
+  error-feedback prompt) before even the simple two-call design has been tried once.
+- **The "F1 could jump to 0.50+" projection** — unsourced by any cited paper for this specific
+  task; not a finding, don't repeat it as one.
+
+**Scope, cut down to the smallest testable step:** even the "MVP" design (grounding filter +
+`reasoning`-first `TaskVerification` model + full 6-paper run) was too big a single step. Split:
+
+- **Step A (implemented, `3pipeline.ipynb` Stage 2f, cells `4c1d4427`/`79d85b01`/`77a61644`/
+  `aedc515d`):** one prompt cell + one call cell, reusing the *existing* `RoleExtraction` schema
+  (no new Pydantic model). Given Stage 2e's candidate list, asks the model to select the one
+  candidate describing the specific task/benchmark the paper's own experiments evaluate (not the
+  broadest self-description) — or null if none qualify — reusing that candidate's own answer and
+  evidence rather than re-deriving new evidence. Scored with the existing `score_role`, directly
+  comparable to Stage 2e's primary-only F1 (0.17) and A/B (0.33 each). To run on Transformer first
+  (known primary-position miss) as the concrete pass/fail check before going further.
+- **Step B (not built — only if Step A's spot-check looks promising):** the grounding filter
+  (`quote_in_source(document_text, quote)` in `scoring.py`, checking the evidence quote, not the
+  answer, per the triage above), the `reasoning`-first `TaskVerification` model, tests, `make
+  sync-generated`, a full 6-paper run, `proto3/results_task_verification/`.
 
 ---
 
