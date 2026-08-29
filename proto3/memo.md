@@ -876,8 +876,46 @@ this project applies here too.** One bad verdict in four is enough to swing the 
 there's no way to tell which verdicts are the bad ones without doing the manual check the mechanism
 was meant to replace.
 
-**Conclusion — closing out the Task-line for report4.** Four attempts targeted Task's weak F1
-across this session, each via a different mechanism:
+**Stage 2g / 2h — reasoning-first extraction (Thoughts of Structure, 2026-08-29).** The four
+attempts above all kept the model's output shape fixed (a direct JSON answer) and varied the prompt,
+the candidate set, or the scorer. Thoughts of Structure (ToS; Lu et al. 2025b, "Learning to Generate
+Structured Output with Schema Reinforcement Learning", arXiv:2502.18878; PDF + TEI XML in
+`primary/previouswork/`) instead changes the output shape: the paper's premise is that forcing direct
+JSON output lowers reasoning quality, and its fix is to make the model reason before it emits the
+JSON. In the paper this is a training-time technique (JSON5 with reasoning comments, comments ignored
+at validation). Gemini structured output cannot carry JSON5 comments or a free `<thinking>` block, so
+the prompt-time adaptation is a new Pydantic model, `ReasoningFirstRoleExtraction`, with a `reasoning:
+str` field placed **first** in the schema — the model generates the step-by-step justification before
+`answer`/`evidence`. Scoring is unchanged (`score_role` only ever sees `answer`; `reasoning` is
+discarded). No `min_length`/`max_length` on `answer` (the length-gate triage above still stands).
+
+Two framings, both Task-only, one run each on the 6 papers, `temperature=0`, `seed=0`:
+
+- **Stage 2g — reasoning-first selection.** Same input as Stage 2f (Stage 2e's candidate list); the
+  model must justify, candidate by candidate, why one is the primary evaluated task before selecting
+  it. Directly comparable to Stage 2e primary-only (F1 0.17) and Stage 2f (0.33). Saved to
+  `proto3/results_tos_select/*.json`.
+- **Stage 2h — reasoning-first extraction.** Fresh single-valued Task extraction from the paper text
+  with the same reasoning-first schema; independent of Stage 2e. Closer to the paper's "generate with
+  reasoning". Saved to `proto3/results_tos_extract/*.json`.
+
+Prompt examples use out-of-corpus task types only ("speech recognition", "sentiment classification"),
+per the Stage 2f gold-vocab-leak lesson.
+
+**Result (pending run).** Fill both tables after the 6-paper Colab run; also read 2-3 `reasoning`
+traces by hand and note whether they are genuine justifications or post-hoc padding.
+
+| Paper | Gold | Stage 2g (select) | Match? | Stage 2h (extract) | Match? |
+|---|---|---|---|---|---|
+| transformer | machine translation | | | | |
+| bert | GLUE | | | | |
+| alexnet | object recognition | | | | |
+| resnet | image recognition | | | | |
+| mapreduce | distributed | | | | |
+| pagerank | web search | | | | |
+
+**Conclusion — closing out the Task-line for report4.** Six attempts targeted Task's weak F1 across
+this session, each via a different mechanism:
 
 1. **Variant B** (role-specific prompt): no effect (F1 stayed 0.33).
 2. **Multi-valued pilot** (Stage 2e): any-match F1 rose (0.67) but primary-only F1 *fell* (0.17) —
@@ -886,13 +924,17 @@ across this session, each via a different mechanism:
 4. **LLM-as-judge rescoring** (Stage 4): apparent improvement (F1 0.67) but one of two SAME verdicts
    contradicts this project's own prior human review — not trustworthy as reported, and too small a
    sample to calibrate.
+5. **ToS reasoning-first selection** (Stage 2g): result pending.
+6. **ToS reasoning-first extraction** (Stage 2h): result pending.
 
-This is not four isolated failures — it is a **consistent finding**: post-hoc interventions (better
-prompts, more candidates, a selection pass, a lenient scorer) do not reliably fix Task, and each
-attempt to relax the standard toward "close enough" introduces its own new failure mode (regression,
-leniency bias) rather than cleanly resolving the original one. Report this as the honest, complete
-picture in report4 rather than any single mechanism's number in isolation — the sequence itself
-(what was tried, in what order, and why each one stopped) is the finding.
+Attempts 1–4 are not four isolated failures — they are a **consistent finding**: post-hoc
+interventions (better prompts, more candidates, a selection pass, a lenient scorer) do not reliably
+fix Task, and each attempt to relax the standard toward "close enough" introduces its own new failure
+mode (regression, leniency bias) rather than cleanly resolving the original one. Attempts 5–6 test
+whether changing the output shape (reason first, then answer) rather than relaxing the standard breaks
+that pattern; update this conclusion once their numbers land. Report the sequence itself (what was
+tried, in what order, and why each one stopped) as the finding, not any single mechanism's number in
+isolation.
 
 ---
 

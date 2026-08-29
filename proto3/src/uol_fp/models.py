@@ -81,3 +81,38 @@ class SameTaskVerdict(BaseModel):
             "specificity. False if they describe genuinely different tasks."
         )
     )
+
+
+class ReasoningFirstRoleExtraction(BaseModel):
+    """Pilot: Thoughts of Structure (Lu et al. 2025b, arXiv:2502.18878) applied
+    at prompt time -- the model states its step-by-step reasoning before the
+    answer, so `reasoning` is the first field. Scoring ignores `reasoning` and
+    uses `answer` only. See proto3/memo.md "Stage 2g / 2h" (2026-08-29)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    reasoning: str = Field(
+        description=(
+            "Step-by-step reasoning, written before the answer: the candidate "
+            "task descriptions the paper's own text supports, their "
+            "granularity, and which single one the paper's experiments "
+            "actually evaluate."
+        )
+    )
+    answer: str | None = Field(
+        description=(
+            "Shortest identifying term for the selected task, or null if no "
+            "candidate qualifies."
+        )
+    )
+    evidence: Evidence | None = Field(
+        description="Evidence supporting the answer, or null when answer is null."
+    )
+
+    @model_validator(mode="after")
+    def answer_and_evidence_must_match(self) -> Self:
+        if (self.answer is None) != (self.evidence is None):
+            raise ValueError(
+                "answer and evidence must either both be null or both be present"
+            )
+        return self
