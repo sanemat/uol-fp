@@ -1,0 +1,39 @@
+{
+  "answers": [
+    {
+      "answer": "WMT 2014 English-to-German translation",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "Our model achieves 28.4 BLEU on the WMT 2014 Englishto-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU."
+      }
+    },
+    {
+      "answer": "WMT 2014 English-to-French translation",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature."
+      }
+    },
+    {
+      "answer": "English constituency parsing",
+      "evidence": {
+        "section": "English Constituency Parsing",
+        "quote": "To evaluate if the Transformer can generalize to other tasks we performed experiments on English constituency parsing."
+      }
+    },
+    {
+      "answer": "machine translation",
+      "evidence": {
+        "section": "Abstract",
+        "quote": "Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train."
+      }
+    },
+    {
+      "answer": "sequence transduction",
+      "evidence": {
+        "section": "Conclusion",
+        "quote": "In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention."
+      }
+    }
+  ]
+}

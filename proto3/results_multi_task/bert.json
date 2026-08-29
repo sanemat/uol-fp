@@ -1,0 +1,53 @@
+{
+  "answers": [
+    {
+      "answer": "GLUE benchmark",
+      "evidence": {
+        "section": "GLUE",
+        "quote": "The General Language Understanding Evaluation (GLUE) benchmark  (Wang et al., 2018a ) is a collection of diverse natural language understanding tasks."
+      }
+    },
+    {
+      "answer": "SQuAD v1.1",
+      "evidence": {
+        "section": "SQuAD v1.1",
+        "quote": "The Stanford Question Answering Dataset (SQuAD v1.1) is a collection of 100k crowdsourced question/answer pairs  (Rajpurkar et al., 2016) ."
+      }
+    },
+    {
+      "answer": "SQuAD v2.0",
+      "evidence": {
+        "section": "SQuAD v1.1",
+        "quote": "The SQuAD 2.0 task extends the SQuAD 1.1 problem definition by allowing for the possibility that no short answer exists in the provided paragraph, making the problem more realistic."
+      }
+    },
+    {
+      "answer": "SWAG",
+      "evidence": {
+        "section": "SWAG",
+        "quote": "The Situations With Adversarial Generations (SWAG) dataset contains 113k sentence-pair completion examples that evaluate grounded commonsense inference  (Zellers et al., 2018) ."
+      }
+    },
+    {
+      "answer": "CoNLL-2003 Named Entity Recognition (NER) task",
+      "evidence": {
+        "section": "Feature-based Approach with BERT",
+        "quote": "In this section, we compare the two approaches by applying BERT to the CoNLL-2003 Named Entity Recognition (NER) task  (Tjong Kim Sang and De Meulder, 2003) ."
+      }
+    },
+    {
+      "answer": "sentence-level and token-level tasks",
+      "evidence": {
+        "section": "Introduction",
+        "quote": "BERT is the first finetuning based representation model that achieves state-of-the-art performance on a large suite of sentence-level and token-level tasks, outperforming many task-specific architectures."
+      }
+    },
+    {
+      "answer": "pre-training general language representations",
+      "evidence": {
+        "section": "Related Work",
+        "quote": "There is a long history of pre-training general language representations, and we briefly review the most widely-used approaches in this section."
+      }
+    }
+  ]
+}
