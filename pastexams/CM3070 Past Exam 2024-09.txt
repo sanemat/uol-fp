@@ -1,0 +1,134 @@
+                                                                     CM3070
+
+BSc EXAMINATION
+
+COMPUTER SCIENCE
+
+Final Project
+
+
+Release date: 2 September 2024 at 12:00 midday British Summer Time
+Close date: 3 September 2024 by 12:00 midday British Summer Time
+Time allowed:    4 hours to submit
+
+
+
+INSTRUCTIONS TO CANDIDATES:
+There are fve questions in this examination paper. You should answer no
+more than THREE questions. Each question carries 20 marks. The marks for
+each part of a question are indicated at the end of the part in [.] brackets.
+There are 60 marks available on this paper.
+Calculators are NOT permitted in this examination.
+You may use ONE A4 page of previously prepared notes in this examination.
+Please hold up your notes to the camera at the start of the examination.
+File upload is NOT permitted in this examination.
+
+
+
+
+© University of London 2024
+
+
+
+
+                                 Page 1 of 6
+Question 1    Project management and execution
+    Refect on the planning phase of your project.
+
+    (a) What were the primary objectives for your project that you set out to
+        achieve during this planning phase?                                [5 marks]
+    (b) Describe how you organised the initial stages, including any
+        timelines, resources, and major tasks outlined.                    [6 marks]
+    (c) Analyse the effectiveness of your initial project plan: What went well,
+        and what would you improve next time? Make sure to relate your
+        discussion and analysis to the initial plan you made, and include
+        commentary about whether your objectives changed at all.           [9 marks]
+
+
+
+
+                               Page 2 of 6
+Question 2    Technical challenge and solution
+    Consider the technical work of your project.
+
+    (a) Identify—with justifcation as to this choice—what you consider to be
+        the most signifcant technical challenge of your project. Describe the
+        challenge and how it connects with the overall project goal or goals.
+                                                                           [7 marks]
+    (b) Explain the solution or approach you took to address this technical
+        challenge.                                                        [7 marks]
+    (c) Evaluate the effectiveness of your chosen approach to addressing
+        the challenge. Include in your discussion a consideration of whether
+        it met your expectations or whether you would consider an alternative
+        approach in future.                                               [6 marks]
+
+
+
+
+                               Page 3 of 6
+Question 3     Background literature
+    You will have made use of many references in doing your project. Choose
+    the TWO most signifcant references that you made use of, and for each:
+
+      • describe what the main idea / point / research contribution of the
+        reference is
+      • explain why it was signifcant to your project
+      • discuss how it infuenced the choices you made in undertaking your
+        project
+      • comment on the quality and reliability of the reference.
+
+    For each reference, you should identify it by its title and authors, to the
+    best of your recall. We are not expecting exact referencing here, but
+    need enough information in order to identify the reference work.         [20 marks]
+
+
+
+
+                                 Page 4 of 6
+Question 4     Future directions
+    Consider potential future applications of your project.
+
+    (a) What are the medium and long-term possibilities or impacts of your
+        project? Support your response with justifcation for any claims you
+        make here.                                                        [6 marks]
+    (b) Discuss ways in which your project could be expanded or adapted by
+        future students or professionals. Be as concrete as possible in this
+        response, and include justifcation where appropriate.             [10 marks]
+    (c) What are the main pieces of advice you would give to anyone
+        interested in continuing or building upon your work? Focus on
+        necessary considerations and potential pitfalls.                  [4 marks]
+
+
+
+
+                                   Page 5 of 6
+Question 5    Presentation
+    This question is about presenting the achievements of your project.
+    Imagine you are presenting your work at a public meeting or conference.
+    Think about the most effective way to do this, on the basis that you would
+    be present at the meeting or conference, and are using it to showcase
+    your important achievements. You have a 10-minute slot assigned to you
+    for your presentation, excluding any audience questions.
+
+    (a) What parts of your project work would you include in this
+        presentation? Justify why you would include them, and also address
+        briefy, with justifcation, any aspects you feel would be important to
+        leave out.
+                                                                         [10 marks]
+    (b) Design your presentation. Describe the details of the presentation,
+        including the media used, and how you would present it. You should
+        provide suffcient detail for someone else to be able to construct the
+        basics of your presentation. Discuss any limitations of your approach.
+                                                                           [10 marks]
+
+
+
+                             END OF PAPER
+
+.
+
+
+
+
+                                Page 6 of 6
+
