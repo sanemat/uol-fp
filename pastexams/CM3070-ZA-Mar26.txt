@@ -1,0 +1,197 @@
+                                                                              CM3070 ZA
+
+BSc EXAMINATION
+
+COMPUTER SCIENCE
+
+
+Final Project
+
+
+Release date: Monday 16 March 2026 at 15:00 UK Time
+
+Close date: Monday 16 March 2026 by 19:00 UK Time
+
+Time allowed: 4 hours
+
+INSTRUCTIONS TO CANDIDATES:
+
+There are FOUR questions in the examination paper.
+
+Question 1 is COMPULSORY. If you do not answer Question 1, you will get a mark
+of zero for the entire examination.
+
+You should answer ALL THREE questions from Question 2 to Question 4. Each
+question carries 20 marks.
+
+The marks for each part of a question are indicated at the end of the part in [.]
+brackets.
+
+There are 60 marks available on this paper.
+
+Calculators are NOT permitted in this examination.
+                                            This is not allowed from 2026
+You may use ONE A4 page of previously prepared notes in this examination. Please
+hold up your notes to the camera at the start of the examination.
+
+File upload is NOT permitted in this examination.
+
+
+
+
+© University of London 2026
+
+
+
+                                       Page 1 of 5
+Question 1
+
+This question is COMPULSORY, though it carries no marks. If you do not answer this
+question, you will get a mark of zero for your entire exam.
+
+(a) What was the title of your project?
+
+(b) Which template was your project based on?
+
+(c) Briefly describe what your project was about.
+
+
+
+
+                                          Page 2 of 5
+Question 2
+
+(a) Choosing the template you worked from for your project was an important starting
+    point for progress. What approach to selecting your template did you take, and do
+    you feel you ended up choosing appropriately? Justify your claim (that you chose
+    appropriately, or that you didn’t) and discuss whether you would do things
+    differently in a similar scenario in future.
+                                                                               [4 marks]
+
+(b) Explain ONE advantage of strong constraints in a project template, and ONE
+    advantage of high flexibility in a project template. Where did your choice of
+    template fit in this spectrum, and how did you navigate any absence of advantages
+    inherent in your template in regard to this?
+                                                                                [4 marks]
+
+(c) You had to make a video to showcase your project working, as well as give some
+    context, some explanation of key aspects, and some analysis. Considering the
+    video you submitted for your final report, how did you decide what to include in the
+    video, and what to leave out? Comment on the timing, format, and content
+    restrictions you had to respect as part of the submission. What did you learn from
+    having to respect these?
+                                                                               [4 marks]
+
+(d) Final year projects should be more than just coding up a good idea. What made
+    your project a Computer Science final year degree one, rather than one that was
+    the coding implementation of a good idea? Is there overlap in these two aspects?
+    Discuss these differences in general terms as well as with specific reference to
+    your own project.
+                                                                               [3 marks]
+
+(e) Note ONE significant outcome that you achieved in your project, in terms of the
+    work done, and explain why it is significant. Note that this should not be about
+    personal improvement (for example, we are not looking for answers like ‘I learned
+    how to stick to deadlines’), but should be about the content of the project itself.
+    Based on this significant outcome that you’ve identified, if somebody else wanted
+    to build on the achievements in your project, suggest further work that another
+    student might do in order to continue or further advance the outcome in some way.
+    Be as explicit as possible.
+                                                                                 [5 marks]
+
+
+
+
+                                      Page 3 of 5
+Question 3
+
+(a) Describe inclusive design in software development, with particular reference to the
+    idea of born-accessible design, described in a publication by J Lazar, that was part
+    of your reading.
+                                                                                [2 marks]
+
+(b) In terms of inclusive design, explain the similarities and differences between the
+    radical inclusion approach and the born-accessible approach to inclusive software
+    design.
+                                                                                [4 marks]
+
+(c) Did your project consider and include either (or both) of these paradigms during
+    design and development? If so, describe this and comment on its success or
+    failure in this context. If you did not include this, explain why not, and comment on
+    whether this was appropriate or not.
+                                                                                  [4 marks]
+
+(d) Imagine you are to design a mental health check‑in app. For this app, outline ONE
+    design decision that embodies inclusive design. Justify this choice (i.e. defend the
+    claim that this design decision embodies inclusive design), and explain briefly how
+    you would include this aspect of the design into your development.
+                                                                                 [2 marks]
+
+(e) For the same app as mentioned in (d) above, outline ONE design decision that
+    embodies radical inclusion. Again, justify the choice as being one that does
+    embody radical inclusion, and explain how you would include this into your
+    development.
+                                                                               [2 marks]
+
+(f) Evaluate trade‑offs between inclusivity and other competing priorities (e.g., delivery
+    speed), and relate them to this app, again justifying your choices, and making
+    reference to external benchmarks where appropriate. Include a brief discussion of
+    whether these trade-offs were relevant to your own project.
+                                                                                [4 marks]
+
+(g) Describe ONE accessibility consideration for mobile form inputs, and a distinct
+    accessibility consideration for mobile text content.
+                                                                              [2 marks]
+
+
+
+
+                                       Page 4 of 5
+Question 4
+
+(a) Discuss the difference between testing and evaluation in the context of software
+    design and development. Relate this to your particular project and include insight
+    and commentary as to the success you achieved in both of these aspects (testing
+    and evaluation).
+                                                                              [6 marks]
+
+(b) Briefly describe the outcomes of your evaluation. Include what approach you took
+    to evaluation, and then critically assess what the outcomes were, commenting on
+    any aspects you would do differently if you were to repeat the evaluation in the
+    future.
+                                                                               [4 marks]
+
+(c) Consider the following case study:
+
+   Imagine that your project is a productivity app based on the Pomodoro technique. The app aims to
+   make users more efficient at studying and reduce distraction.
+   Also imagine that full instructions on how to use the app you have developed are given here.
+
+   Your evaluation consists of the following tasks and questions for the users in your evaluation group:
+
+       i. Please use the app for at least two Pomodoros while studying your coursework and answer
+          the following questions:
+          • Is the app easy to use?
+          • Did you enjoy using the app?
+          • Would you use the app again?
+
+
+       ii. Please follow the link provided to the mathematical quiz and use the app for two
+           Pomodoros of 15 minutes while answering the quiz.
+           •   How many questions did you answer?
+           •   How many questions did you answer correctly?
+           •   Were you frequently distracted from the task?
+   Critically discuss the tasks presented, and the questions asked, in the context of
+   the evaluation approach that is being taken. Include suggestions for additional or
+   different approaches to the evaluation.
+                                                                             [10 marks]
+
+
+
+                                         END OF PAPER
+
+
+
+
+                                            Page 5 of 5
+

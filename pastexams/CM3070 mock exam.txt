@@ -1,0 +1,130 @@
+                                                                              CM3070
+BSc EXAMINATION
+
+COMPUTER SCIENCE
+
+
+Final Project
+
+
+This is a mock exam.
+
+This mock exam provides you with examples of the level and style of questions you
+will encounter in the real exam.
+
+Please note that aspects that are about the context and actual writing of the exam are
+subject to change. These could include: date/time; number of questions and choice
+available; permitted materials; exam platform details; use of calculators; marks
+awarded; etc.
+
+Full details of the above for your real exams will be communicated in your admission
+notice, sent out closer to the time of your exams.
+
+
+
+
+© University of London 2025
+
+
+                                     Page 1 of 5
+Question 1 Your project
+
+This question is COMPULSORY, though it carries no marks. If you do not answer this
+question, you will get a mark of zero for your entire exam.
+
+(a) What was the title of your project?
+
+(b) Which template was your project based on?
+
+(c) Briefly describe what your project was about.
+
+                                                                          [0 marks]
+
+
+
+
+                                          Page 2 of 5
+Question 2 Project process
+
+(a) Your project required you to work with one of the given templates. Describe how
+    your project related to the template. Include a discussion of how much inherent
+    flexibility there was in the template you chose, and how you worked with that level
+    of flexibility. Discuss the advantages and disadvantages of flexibility versus
+    constraints in the template, and how that affected what you ended up doing.
+
+                                                                               [8 marks]
+
+(b) Describe the concepts of inclusive design, and radical inclusion, as they pertain to
+    designing and developing computer systems and apps, and doing computing
+    research.
+                                                                               [6 marks]
+
+(c) Discuss how these concepts related to your own project’s design, development
+    and outcomes. Include discussion and justification of any choices you made
+    involving these concepts.
+                                                                             [6 marks]
+
+
+
+
+                                      Page 3 of 5
+Question 3 Aims, outcomes, and lessons learned
+
+(a) Compare your final project outcomes with the initial aims and objectives
+    you set. To what extent were these met, and what were the reasons for
+    any discrepancies?
+                                                                               [8 marks]
+
+(b) This question is about lessons learned through the project process. If you were to
+    do another project of a similar size, in what ways would your approach differ from
+    how you did things this time? Your answer should discuss THREE different
+    aspects of the project. These may be chosen from the following list, although other
+    aspects are acceptable too:
+
+             •   Defining aims and objectives
+             •   Project plan
+             •   Design
+             •   Methodology
+             •   Project development
+             •   Testing and evaluation
+             •   Data analysis
+             •   Writing the project report
+             •   Making the video
+
+   For each of your chosen three aspects, explain what you felt were the weaknesses
+   in your current project with regard to that aspect, and how you would intend to
+   improve them in the new project.
+                                                                             [12 marks]
+
+
+
+
+                                      Page 4 of 5
+Question 4 Background material and planning your project
+(a) Looking back, to what extent do you think your background reading activities in
+    your project were of suitable scope and sufficiently detailed? Were there any parts
+    of your background reading that did not end up being relevant to your project? Are
+    there any topics that you now think you should have researched in more detail?
+    Discuss each of these with justification for any claims or comments.
+                                                                              [12 marks]
+
+(b) What difficulties did you experience at the start of the project in deciding how much
+    time to allocate to each task? How did you come to a decision in these cases?
+    Your answer should be about your planning and decision processes at the start of
+    the project rather than at later stages.
+
+   If you did not experience any difficulties at the start of the project, explain how you
+   decided how much time to allocate to each task, and reflect on whether your
+   planned time allocations worked out as expected.
+                                                                                   [8 marks]
+
+
+
+
+                                    END OF PAPER
+
+
+
+
+                                       Page 5 of 5
+

@@ -1,0 +1,172 @@
+                                                                              CM3070 ZB
+BSc EXAMINATION
+
+COMPUTER SCIENCE
+
+
+Final Project
+
+
+Release date: Monday 16 March 2026 at 08:00 UK Time
+
+Close date: Monday 16 March 2026 by 12:00 UK Time
+
+Time allowed: 4 hours
+
+INSTRUCTIONS TO CANDIDATES:
+
+There are FOUR questions in the examination paper.
+
+Question 1 is COMPULSORY. If you do not answer Question 1, you will get a mark
+of zero for the entire examination.
+
+You should answer ALL THREE questions from Question 2 to Question 4. Each
+question carries 20 marks.
+
+The marks for each part of a question are indicated at the end of the part in [.]
+brackets.
+
+There are 60 marks available on this paper.
+
+Calculators are NOT permitted in this examination.
+
+You may use ONE A4 page of previously prepared notes in this examination. Please
+hold up your notes to the camera at the start of the examination.
+
+File upload is NOT permitted in this examination.
+                                                       This is not allowed
+                                                           from 2026
+
+
+
+© University of London 2026
+
+
+                                       Page 1 of 5
+Question 1
+
+This question is COMPULSORY, though it carries no marks. If you do not answer this
+question, you will get a mark of zero for your entire exam.
+
+(a) What was the title of your project?
+
+(b) Which template was your project based on?
+
+(c) Briefly describe what your project was about.
+
+
+
+
+                                          Page 2 of 5
+Question 2
+
+(a) What is the main difference between the proposal for a project (whether as a video
+    pitch or a written document) and the final report (again, whether considering the
+    written document or the video aspect of this). Using your own project, give
+    examples to illustrate this difference. Also comment on how your proposal related
+    to your final report.
+                                                                                [5 marks]
+
+(b) The consideration of ethics is an important part of a design and development
+    project. What are the most important ethical aspects to consider in software design
+    and development? Which specific ethical considerations did you take into account
+    in your project? Are there other ethical considerations you could or should have
+    taken into account that you decided not to? Explain why.
+                                                                               [7 marks]
+
+(c) Explain the importance of doing background reading and a literature survey in a
+    Computer Science project. Describe the most challenging aspect you faced when
+    writing your literature survey, and how you overcame this.
+                                                                             [4 marks]
+
+(d) Discuss ONE ethical consideration in selecting and reporting background material,
+    and explain your approach to addressing this consideration in your own project.
+
+                                                                               [4 marks]
+
+
+
+
+                                      Page 3 of 5
+Question 3
+
+(a) Consider the following case study:
+
+   Imagine that your project is the development of a learning analytics algorithm to detect students at
+   risk of failure.
+
+   Your evaluation consists of asking reviewers to take a set of inputs to the algorithm and their
+   corresponding outputs, and answering the following sets of questions.
+
+   Set 1 consists of the following questions:
+       • Does the output help me understand which students are at risk?
+       • Would this output help a teacher support students better?
+       • Would this output help you improve your WP student retention?
+
+
+   Set 2 consists of the following questions:
+       • Do you think student A is in need of additional support?
+       • Do you think student B is in need of additional support?
+       • Do you think student C is in need of additional support?
+
+   Critically discuss the tasks presented, and the questions asked, in the context of
+   the evaluation approach that is being taken. Include suggestions for additional or
+   different approaches to the evaluation.
+                                                                             [10 marks]
+
+(b) Imagine you are required to give an in-person presentation, of 20 minutes, to
+    discuss the most significant aspects of your project. Outline, with concrete detail,
+    what this presentation would consist of, and which parts of the project you would
+    highlight. Justify your choices of what you would include. Also comment on what
+    aspects would be most challenging to present.
+                                                                                [6 marks]
+
+(c) Based on the significant aspects of your project identified in part (b) of this
+    question, suggest further work – with justification of why – that another student
+    might do, to continue or further advance the outcome in some way. Be as explicit
+    as possible.
+                                                                                   [4 marks]
+
+
+
+
+                                            Page 4 of 5
+Question 4
+
+(a) Explain what makes a project a Computer Science project rather than an IT
+    deployment. Discuss, with justification, where your project fits within this range,
+    and what implications this has for future work on the same project.
+                                                                                   [4 marks]
+
+(b) In terms of inclusive design, explain the core similarities and differences between
+    the radical inclusion approach and the born-accessible approach to inclusive
+    software design. Include examples to illustrate the distinctions.
+                                                                                 [4 marks]
+
+(c) Identify ONE significant theoretical construct used in your project and explain its
+    role in the project. Discuss why the construct was significant, and whether it was
+    the best or the only option you could have chosen. If it was the best or only option,
+    describe why this was the case; and if it wasn’t, then discuss what other options
+    were available and why you did not choose them.
+                                                                                [5 marks]
+
+(d) Describe ONE algorithm or method you used in the app, program, or system that
+    you designed and developed, and explain your choice process, justifying the
+    decisions you made about using that algorithm or method.
+                                                                             [3 marks]
+
+(e) Reproducibility refers to the extent to which an algorithm, method, or tool can
+    produce the same result when used again under the same, or similar, conditions.
+    Discuss how this concept applies to the algorithm or method you described in Part
+    (d) above.
+                                                                                 [4 marks]
+
+
+
+                                    END OF PAPER
+
+
+
+
+                                       Page 5 of 5
+
