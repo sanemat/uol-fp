@@ -967,6 +967,61 @@ required phrasing is one defensible choice among several the metric cannot tell 
 the sequence itself (what was tried, in what order, and why each one stopped) as the finding,
 not any single mechanism's number — least of all Stage 2g's 0.40 — in isolation.
 
+**Stage 5 (planned, not run) — deterministic semantic match for Task evaluation.** The Task-line
+conclusion is that no model-side or scorer-side change tried so far fixes Task, and Stage 2g
+showed the model's reasoning is sound — so the residual F1 may be substantially a
+single-gold-phrasing / substring-metric artifact (issue #183). Stage 4 already ruled out the two
+easy matching-side fixes: lexical Jaccard (hand-checked, all mismatches far below Ateia's 0.8
+threshold) and an LLM-as-judge (self-grading leniency, untrustworthy at n=4). The unfilled option
+is a **deterministic, non-self-grading semantic similarity** — BERTScore, or a frozen embedding
+model's cosine — thresholded.
+
+Literature (all cited *inside* the `primary/previouswork/` source PDFs; look up proper bib
+details, GROBID mangled some author names):
+
+- **Zhang et al. 2019, "BERTScore: Evaluating Text Generation with BERT"** (ICLR 2020,
+  arXiv:1904.09675) — ref [22] in Ateia et al. 2025 (`2510.04749`), which uses BERTScore F1 for
+  exactly this: "for free-text targets ... we assessed semantic equivalence with the F1-score
+  from BERTScore. BERT_F1 scores near 0.90 indicate strong semantic alignment on free-text
+  fields, whereas ... exact categorical extraction remains limited (ExactAcc < 0.25)." Same
+  domain (LLM extraction from scientific papers), same motivation, a ~0.65 semantic-vs-exact gap
+  to compare a proto3 number against.
+- **Zhi Rui Tam et al. 2024, "Let Me Speak Freely? A Study on the Impact of Format Restrictions
+  on Large Language Model Performance"** (EMNLP 2024 Industry Track) — ref [24] in Lu et al. 2025
+  (`2502.18878`): "generating answers in JSON may hurt the models' performance." Supports the
+  separate point that forcing one primary JSON answer (primary-only) may itself suppress
+  reasoning the model demonstrably has (Stage 2e any-match F1 0.67 vs primary-only 0.17).
+- **Huang et al. 2024a, "Large Language Models Cannot Self-Correct Reasoning Yet"** (ICLR 2024) —
+  cited in Gao et al. 2024 (`2410.10735`). Supports why the Stage 4 LLM-judge was unreliable and
+  why Stage 5 uses a non-LLM metric.
+- Ateia's lexical ExactAcc (Jaccard 0.8; ref Mann et al. 2016, "An empirical evaluation of set
+  similarity join techniques", PVLDB) is the fix Stage 4 already hand-ruled-out for these
+  mismatches — cite only as "lexical overlap, insufficient here". Weng et al. 2023
+  ("self-verification", cited in Kumar `2505.09031`) is a *positive* framing — weak fit for the
+  limits argument, skip unless a contrast is wanted.
+
+**Step A (smallest test — run only this).** Compute BERTScore F1 (or `text-embedding-004` cosine)
+for just the 4 known Variant A Task mismatches — the same `KNOWN_MISMATCHES_VARIANT_A` set Stage
+4 used (BERT, ResNet, MapReduce, Pagerank; Transformer/AlexNet already match). Deterministic,
+retroactive, no Stage 0-2 re-run. Put the similarity scores next to Stage 4's LLM-judge verdicts.
+**Pass/fail gate:** can one threshold *both* accept the MapReduce pair (report3 line 504 already
+argued it is arguably correct) *and* reject the Pagerank `"information retrieval"` pair
+(`proto3/manual_review.md` scored it genuinely wrong — broader domain, not the task performed)?
+If no single threshold separates those two, deterministic semantic match has the same
+over-leniency failure as the LLM-judge, and Step B is not pursued — report that as the result.
+
+**Step B (only if Step A's threshold separates those cases sensibly).** Add
+`score_role_semantic(gold, sys, threshold)` to `scoring.py` (same tp/fp/fn/tn shape as
+`score_role`; similarity function injected so tests stay API-free, mirroring `score_role_judged`),
+tests in `test_scoring.py`, a notebook-only Stage 5 cell (BERTScore/embeddings are a heavy
+dependency — load in the notebook like the Stage 2 genai client, keep it out of `src/` runtime),
+`make sync-generated`, and a full rescore of every Task variant (A, B, Stage 2e primary-only, 2f,
+2g, 2h). Report the semantic-vs-exact F1 gap against Ateia's ~0.65. Lead with the threshold
+justification and the n=6 caveat, never with the headline number.
+
+**Out of scope either way:** re-annotating Task gold with accepted-variant sets, or a set-valued
+metric — stays deferred alongside corpus growth and the formal inter-annotator study.
+
 ---
 
 ## NotebookLM cross-check (2026-07-25)

@@ -481,6 +481,18 @@ still needs improvement, across the whole project?
 > brief asks this chapter specifically to do so). If checklist item 6 promotes new
 > experiments, add their results to this synthesis rather than leaving them only in
 > Q21/Q22 in isolation.
+>
+> Task-line addition (2026-08-29): six mechanisms (Variant B, multi-valued pilot,
+> Stage 2f verification, Stage 4 LLM-judge, ToS selection Stage 2g, ToS extraction
+> Stage 2h) all failed to move Task F1 above 0.33; Stage 2g produced sound reasoning
+> and still scored wrong. Frame the residual Task F1 as partly a
+> single-gold-phrasing / substring-metric artifact, not only a model limitation
+> (issue #183; `proto3/memo.md` "Stage 2g / 2h" and "Stage 5 (planned)"). Supporting
+> literature: Zhang et al. 2019 (BERTScore, via Ateia et al. 2025 — semantic F1 ~0.90
+> vs ExactAcc <0.25 on the same kind of free-text target), Tam et al. 2024 (format
+> restriction hurts LLM performance, via Lu et al. 2025), Huang et al. 2024a (LLM
+> self-correction unreliable, via Gao et al. 2024). Deterministic semantic-match
+> quantification is further work, not run — keep the scope honest.
 
 A:
 
