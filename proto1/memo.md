@@ -14,9 +14,9 @@ Because of this, it is hard to extract methodology automatically.
 
 ## Key Idea
 
-We do NOT try to find the perfect definition.
+I do NOT try to find the perfect definition.
 
-Instead, we define a **simple and practical structure** that can be extracted from text.
+Instead, I define a **simple and practical structure** that can be extracted from text.
 
 Methodology = 3 main parts + optional details:
 
@@ -48,9 +48,9 @@ Build a simple pipeline that:
 
 ## Approach
 
-We do not need a perfect model.
+I do not need a perfect model.
 
-We build a **simple working prototype**, then improve based on error analysis.
+I build a **simple working prototype**, then improve based on error analysis.
 
 ### Step 1: Candidate Extraction
 
