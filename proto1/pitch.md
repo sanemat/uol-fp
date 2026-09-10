@@ -79,7 +79,7 @@ Ma and colleagues, also in 2023, extract metric-driven mechanisms and tasks from
 SciBERT, from Beltagy and colleagues in 2019, is a language model trained on scientific text.
 These give us two useful ideas.
 First, methodology has structure, and it is not just one label.
-Second, papers contain terms we can extract automatically.
+Second, papers contain terms I can extract automatically.
 -->
 
 ---
