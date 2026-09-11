@@ -4,6 +4,169 @@ These are practice answers to the CM3070 Final Project past papers in `pastexams
 
 ---
 
+## 試験対策メモ（何を準備・記憶して臨むか）
+
+過去6回分（Example, 2022-03, 2022-09, 2023-09, 2024-03, 2024-09）を解いた結果、出題は毎回同じ6テーマの組み合わせで、素材(このプロジェクトの事実)を使い回せることが分かった。本番は「どのテーマが出るか」ではなく「覚えている事実をどれだけ具体的に出せるか」で差がつく。
+
+### 1. 出題テーマは実質6種類しかない
+
+| テーマ | 出た回 |
+|---|---|
+| 参考文献の質評価 (高/中/低、または重要な2〜3件) | Example Q1, 2022-03 Q1, 2022-09 Q2, 2024-09 Q3 |
+| 重要な出来事・技術的課題とその解決 | Example Q2, 2022-03 Q2, 2022-09 Q3, 2024-09 Q2 |
+| 自己評価 (良かった点/改善点/やり直すなら) | Example Q3, 2022-03 Q3, 2022-09 Q4, 2023-09 Q3, 2024-03 Q4 |
+| 既存知識 vs 新規習得 | Example Q4, 2022-03 Q4, 2022-09 Q1, 2023-09 Q5 |
+| 選んだアプローチ vs 別ルート比較 | Example Q5, 2022-03 Q5, 2023-09 Q1 |
+| 評価手法・testing・資料管理(バージョン管理/バックアップ) | 2022-09 Q5, 2023-09 Q2, 2024-03 Q3 |
+| 今後の展望・拡張・アドバイス | 2024-03 Q5, 2024-09 Q4 |
+| プレゼン・動画 | 2023-09 Q4, 2024-09 Q5 |
+| リサーチ手法・文献レビューの位置づけ | 2024-03 Q1 |
+| プロジェクト計画・タイムライン | 2024-09 Q1 |
+
+→ どのテーマが来ても、下の「核となる事実」を組み合わせれば書ける。テーマ自体を覚える必要はなく、事実のストックを増やすことに時間を使う。
+
+### 2. 数字は最優先で暗記する（曖昧な記憶は減点に直結）
+
+- **役割別F1 (baseline, n=6):** TechnicalMethod 0.83 / Task 0.33 / Dataset 0.73 / EvaluationMetric 0.73 / Micro 0.65 / Macro 0.655
+- **5-run variance study のF1 (mean/min/max/range):** TechnicalMethod 0.83固定 / Task 0.33固定 / Dataset 0.91固定 / EvaluationMetric 0.57 (0.33–0.67, range 0.33)
+- **Wilson 95% CI:** TechnicalMethod recall 0.83 → [0.44, 0.97]、Task recall 0.33 → [0.10, 0.70]（重なっているので「TechnicalMethodは解決、Taskは失敗」と言い切らない）
+- **manual review (24 slots, 22 scored, 2 null):** plausible失敗2、evidence支持失敗5、authorship失敗6、quote-in-source失敗1
+- **Variant B結果 (2026-08-28):** Task F1 変化なし(0.33→0.33)、Dataset だけ+0.09改善(0.91→1.00)、Cへは進まない判断
+- **サンプルサイズの根拠:** CIを意味あるレベルまで縮めるには論文30〜40件必要 → 現状6件のまま
+- **文献:** 本文 [1]–[14]、データセット論文 [D1]–[D6]、Template 12.1 (NLP module)
+- **タイムライン:** プロジェクト開始 2026-04-18、proto3着手 ~2026-06-20、report3 6122/9500語、report4は6章合計10,500語上限
+
+これらは質問文中の[X marks]の配点判断にも直結する(数字を出す部分ほど配点が高い傾向)。
+
+### 3. すぐ出せる「具体的エピソード」を3〜4個、丸暗記しておく
+
+エピソードは複数のテーマ(重要な出来事、技術的課題、既存知識vs新規習得、良かった点/改善点)で共通して使えるので、話の筋を1つずつ完全に覚えておけば流用できる。
+
+1. **proto2の出力過多**: MapReduceのTechnicalMethodだけで151文抽出 → セクション除外では解決せず(BERTのTechnicalMethodも67→62→54と削れたが正しい文も消えた) → document-level抽出(proto3)へ再設計。
+2. **authorship誤り (ELMo/BERT)**: proto2がBERTの導入部のELMo言及を0.87の確信度でBERT自身のTechnicalMethodと誤判定 → プロンプトに"authors' own work"ルールを追加 → それでも manual review で 22件中6件が authorship で失敗、Taskに集中。
+3. **response_schema の400エラー**: `response_schema=MethodologyProfile` が `400 INVALID_ARGUMENT ... additional_properties` で失敗 → Google Schema protoがadditionalPropertiesを非対応 → `response_json_schema` に切り替えて解決。
+4. **evidence フィールドの形崩れ**: 初期プロンプトでevidenceが `"## Introduction In this work..."` のようにセクション見出しが混ざったフラットな文字列で返ってきた → プロンプト修正で一時対応 → 後にPydanticスキーマで構造自体を保証し、バグの再発が構造的に不可能になった。
+
+### 4. 参考文献の質評価用ストック
+
+- 高: Jain et al. SciREX (ACL 2020, peer-review, 4人のPhD annotator, κ=95%)
+- 中: Oates 2006 (SAGE, 出版済み教科書だが人間の自己分類向けで抽出には非対応)
+- 低: Ghosh et al. 2023a (arXiv preprint、同じ内容が後にCIKMで査読付き再掲されている=[6])
+- 補助: Khot et al. [13] Decomposed Prompting (arXivのみ、Variant Bの根拠だが実験では効果なしと判明済み)
+
+### 5. 本番の進め方
+
+- 3問選択制がほぼ全回のルール（60点満点、各20点、部分点はマークの[.]表示に比例配分で書く）。
+- 配点の大きい部分(例: [10 marks])に紙面の半分以上を割く。小さい部分([2]〜[4] marks)は1〜2文で済ませる。
+- 「重要な出来事」「技術的課題」系の問題が出たら上記エピソード2.のELMo/authorshipの話を優先する。project全体のゴール(Chapter 1の目的)に直結させやすく、Chapter 5のmanual review結果まで一貫して語れるため。
+- 参考文献の質問が出たら3.の文献ストックをそのまま使う。3件必要な場合はGhosh et al.を、2件必要な場合はJain et al.とKhot et al.を選ぶ。
+- 数字を聞かれたら誤差込みで即答できるように2.を暗唱できる状態にしておく。CIが重なっている(TechnicalMethod vs Task)という論点は複数の設問で使えるので必ず入れる。
+- A4ノート持ち込み可の回(2024-03, 2024-09)なら、上の2〜4節をそのまま1ページに収めるのが最も再利用性が高い。
+
+
+準備は、**答案を暗記するのではなく「自分のプロジェクトについて、どの角度から聞かれても再構成できる材料」を頭に入れる**、でまとめるのが一番いいと思う。
+
+過去問を見ると、質問の表現は変わっても、実質は **project approach / technical challenge / evaluation / reflection / literature / further work** の組み合わせです。2024年だけ見ても、project planning、technical challenge、references、future directions、presentation と分かれており、2022〜23年にも同じテーマが別表現で繰り返されています。 
+
+### まず、これを何も見ず説明できるようにする
+
+| 項目                   | 覚える内容                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Project goal**     | computing papers から TechnicalMethod / Task / Dataset / EvaluationMetric を自動抽出し、literature review の first pass を支援する |
+| **proto2**           | sentence-level zero-shot NLI                                                                                        |
+| **proto2の問題**        | output過多、authors' own work と cited prior work の混同                                                                   |
+| **proto3**           | document-level LLM extraction + one answer + evidence per role                                                      |
+| **Pipeline**         | PDF → GROBID/TEI → sections → full document → Gemini → Pydantic/JSON output                                         |
+| **Main achievement** | usable outputにしたこと + evaluationをP/R/F1へ改善                                                                           |
+| **Main weakness**    | Task精度、schemaのML偏り、小さいevaluation corpus                                                                             |
+| **Further work**     | decomposed extraction、multi-valued roles、larger/diverse corpus、second annotator、model comparison                    |
+
+現在のreport自身も、proto2からproto3への変更を中心的なproject progressionとして整理しています。
+
+### 数字はこれだけ暗記
+
+**6 papers / 5 repeated runs**
+
+* TechnicalMethod F1 = **0.83**
+* Task = **0.33**
+* Dataset = **0.73**
+* EvaluationMetric = **0.73**
+* Macro F1 = **0.655**
+
+
+
+さらに具体例を2つ。
+
+**MapReduce → proto2でTechnicalMethod候補が151 sentences**。
+**BERT → ELMoをBERT authors自身のmethodとして誤認**。
+
+この2例だけで technical challenge、failure、design change、reflection の問題にかなり対応できます。
+
+### References は4本程度
+
+**Jain et al., SciREX (2020)**
+Dataset / Metric / Task / Method、document-level extraction。自分の4-role schemaとdocument-level設計に最も直接関係する。
+
+**Färber et al. (2021)**
+used vs mentioned。authors' own work と cited work を分ける問題。
+
+**Yin et al. (2019)**
+zero-shot NLI。proto2の理論的基礎。
+
+**Dagdelen et al. (2024)**
+LLMによるscientific text structured extraction。proto3の方向性を支える文献。
+
+著者名＋大体のtitle/topic＋「自分のprojectに何を与えたか」まで覚えておけば十分。
+
+### Ethics / DEI
+
+これはreportで明示的に深く扱っていないので、**projectから導けるreflection**として準備する。
+
+| Theme                         | 今回の切り口                                                    |
+| ----------------------------- | --------------------------------------------------------- |
+| **Ethics: accuracy**          | wrong extraction が学生をmisleadする                            |
+| **Ethics: attribution**       | cited workをauthors' own workとして誤認する危険                     |
+| **Ethics: transparency**      | answerだけでなくverbatim evidenceを出す                           |
+| **Ethics: over-reliance**     | literature reviewをreplaceせずfirst passをsupport             |
+| **Ethics: privacy/copyright** | 将来unpublished papersを外部LLM APIへ送る場合は問題                    |
+| **Diversity**                 | ML / systems / HCI / algorithmsなど多様なresearch domainsを扱えるか |
+| **Equity**                    | MLだけ精度が高くsystemsでは低いならdomain間でbenefitが不公平                 |
+| **Inclusion**                 | non-expert studentsでもevidenceを確認できる、説明可能なoutput           |
+
+特にDEIは、**Diversity = research-domain diversity / Equity = equal quality across domains / Inclusion = accessible and verifiable output** と3点セットで覚えると楽です。
+
+この話には実データも使えます。現在のreportでは、4-role schemaがML benchmark型であり、MapReduceやGoogle Searchのようなsystems papersでは適合しにくい可能性を明示しています。
+
+### 何も見ず答えられるようにする質問
+
+最終的には以下を英語で2〜3分ずつ話せれば、かなり広く対応できます。
+
+1. What was your project trying to achieve?
+2. What was the main technical challenge?
+3. Why did you move from proto2 to proto3?
+4. How does proto3 work?
+5. How did you evaluate your project?
+6. What was your best achievement?
+7. What was the biggest weakness?
+8. What would you do differently?
+9. Which references influenced your project most?
+10. What ethical issues did you consider?
+11. How are diversity, equity and inclusion relevant?
+12. What should the next student do to improve the project?
+
+この12問を別々の答案として覚える必要はなくて、実際には、
+
+**proto2 problem → design change → proto3 → evaluation → weakness → further work**
+
+という一本のストーリーを覚えておけばいい。
+
+今回のprojectで一番重要な結論もそこにまとまっています。**structured JSONを作ること自体より、4 rolesを異なる種類のcomputing papersで一貫して意味づけることの方が難しかった**、そしてproto3はusabilityを改善したがTask accuracyとgeneralisabilityは残った、という話です。
+
+持ち込み不可になった以上、準備の優先順位は **「12問の答案を書く」ではなく、「8個程度のproject facts＋6個程度の数字＋4 references＋Ethics/DEIの3点セット」をretrieval practiceすること**、でよさそうです。
+
+
+---
+
 ## Example Exam
 
 ### Q1. Rate three references you used as high/medium/low quality and justify each rating.
