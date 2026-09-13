@@ -176,6 +176,24 @@ document-level, schema-guided LLM extraction.
 
 [4] Sarthak Jain, Madeleine Van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
 
+### SciREX — main point (B1 English)
+
+**Problem.** Most older information extraction (IE) work only looks at one sentence or one paragraph. But some facts in a paper only make sense if you read the whole document. No large dataset existed for this "whole document" level.
+
+**What they built.** The authors made SciREX, a new dataset of 438 full scientific papers. Each paper is labelled with four entity types: Dataset, Metric, Task, Method. The goal is to find the paper's main result as one 4-part link between these entities (for example: SQuAD, EM, BiDAF, Machine Comprehension).
+
+**Three sub-tasks in the dataset:**
+1. Find entity mentions and their type (Dataset/Metric/Task/Method).
+2. Decide which entities are salient (important — part of the paper's real result, not just mentioned in Related Work).
+3. Find coreference links (same entity, different mentions) and the final 4-part relation across the whole document.
+
+**How they made the labels (cheap and fast).** They used Papers with Code as distant supervision (it tells you the result tuple exists, but not where in the text). They trained a BERT+CRF model on the smaller SCIERC dataset to guess mention spans automatically. A human annotator then only fixed the mistakes, instead of labelling everything from zero. This made annotation about 1.85x faster.
+
+**The model (baseline).** A neural model: SciBERT + BiLSTM gives token embeddings, a CRF tagger finds mentions, a classifier marks salient mentions, a second model does coreference and clustering, and a final layer predicts the 4-part relation from section- and document-level embeddings.
+
+**Main finding.** The baseline model works, but there is still a big gap to human performance. The hardest sub-task is finding salient entities — the model mostly just counts how often an entity is mentioned, and misses entities that are important but rare in the text.
+
+**Why this matters for my project.** SciREX is my main reference because its four entity types (Dataset, Metric, Task, Method) are almost the same as my own four roles (Dataset, EvaluationMetric, Task, TechnicalMethod), and its document-level argument is why proto3 moved from sentence-level to whole-document extraction.
 
 ---
 
