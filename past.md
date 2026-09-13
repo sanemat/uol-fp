@@ -164,6 +164,18 @@ LLMによるscientific text structured extraction。proto3の方向性を支え�
 
 持ち込み不可になった以上、準備の優先順位は **「12問の答案を書く」ではなく、「8個程度のproject facts＋6個程度の数字＋4 references＋Ethics/DEIの3点セット」をretrieval practiceすること**、でよさそうです。
 
+Extracting  a four-role methodology profile -- TechcnicalMethod, Task, Dataset, and EvaluationMetric from computing papars. To support first pass of literature review.
+
+An NLP pipeline (Template 12.1, identifying research methodology in computing papers).
+
+Proto2:
+Sentence level zero-shot NLI.
+
+Proto3:
+document-level, schema-guided LLM extraction.
+
+[4] Sarthak Jain, Madeleine Van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
+
 
 ---
 
