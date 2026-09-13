@@ -217,6 +217,14 @@ Benchmarking Zero-shot Text Classficication. Yin 2019
 
 **Why this matters for my project.** This is the paper behind proto2: proto2 used a pretrained zero-shot NLI (entailment) model, with hand-written hypotheses, to decide if a sentence entails "this text uses TechnicalMethod X" and similar, for each of the four roles. It gave proto2 its zero-shot method but also its limits — the approach works sentence by sentence, with no document-level context and no authorship rule, which is exactly what proto3 was built to fix.
 
+### Dagdelen et al. — "Structured information extraction from scientific text with large language models" — main point (B1 English)
+
+**Problem.** Most scientific knowledge lives as unstructured text in papers. Named entity recognition (NER) can tag words like "LiCoO2" or "350K", but real scientific facts are usually complex relations between several entities, not just simple pairs. For example, "epitaxial La-doped thin film of HfZrO4" loses its real meaning if you only keep some of the parts. Standard relation extraction (RE) needs a fixed, predefined list of possible relation types, so it cannot handle these open-ended, many-part (n-ary) relations well.
+
+**Idea.** Instead of a separate NER step plus a separate RE step, fine-tune a large language model (GPT-3, Llama-2) to do both jobs at once, in one pass. Give it a text passage (a sentence or a full abstract) and train it, on only about 100–500 labelled examples, to output a precisely formatted "summary" of the facts inside — either plain English sentences or a structured format like a list of JSON objects. The user only needs to define the desired output structure and provide the examples; no deep NLP knowledge is needed.
+
+**Why this matters for my project.** This is my closest real-world analogue for proto3: it is a peer-reviewed (*Nature Communications*, 2024), full end-to-end system that fine-tunes an LLM to do joint, schema-guided extraction from scientific text into JSON, in one call, instead of a multi-step NER+RE pipeline. It supports proto3's core design choice (one schema-guided LLM call over document-level LLM extraction) and its own findings — exact-match scoring underrates real quality, and hallucination/format failures are real risks — closely match what the manual review found in proto3 (authorship errors, evidence mismatches).
+
 ---
 
 ## Example Exam
