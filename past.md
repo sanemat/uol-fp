@@ -202,6 +202,21 @@ Identifying Used Methods and Datasets in Scientific Publications. 2021 Farber.
 
 **Why this matters for my project.** This paper is the direct source for my "authors' own work" rule: it shows, with real data, that separating *used-by-this-paper* from *merely mentioned/cited* is a real, hard sub-problem on its own, distinct from SciREX's saliency idea — which is exactly the authorship confusion proto2 had with ELMo inside BERT's own paper.
 
+
+[9] Wenpeng Yin, Jamaal Hay, and Dan Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
+
+Benchmarking Zero-shot Text Classficication. Yin 2019
+
+### Yin et al. — "Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach" — main point (B1 English)
+
+**Problem.** Zero-shot text classification (0SHOT-TC) means: classify a piece of text into a label, without training data for that label. Before this paper, research on this topic was messy. Almost all prior work only tried one kind of label (topic, like "sports" or "politics"). Also, different papers used different datasets and different evaluation rules, so results could not be compared fairly.
+
+**A broader definition.** The authors say topic labels are only a small part of the problem. A text can also be classified by other "aspects" — for example emotion ("joy", "anger") or situation ("needs water", "needs shelter"). They give a new, wider definition, called Definition-Wild: a true zero-shot classifier must work on any aspect and any label, without ever seeing label-specific training data — not even during model development.
+
+**Main result.** The entailment approach clearly beats older baselines (word2vec, ESA, a plain supervised BERT classifier) on the hardest setup (label-fully-unseen), across all three aspects (topic, emotion, situation). Combining several entailment models together (an ensemble) gives the best score.
+
+**Why this matters for my project.** This is the paper behind proto2: proto2 used a pretrained zero-shot NLI (entailment) model, with hand-written hypotheses, to decide if a sentence entails "this text uses TechnicalMethod X" and similar, for each of the four roles. It gave proto2 its zero-shot method but also its limits — the approach works sentence by sentence, with no document-level context and no authorship rule, which is exactly what proto3 was built to fix.
+
 ---
 
 ## Example Exam
