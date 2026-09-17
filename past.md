@@ -225,8 +225,6 @@ Benchmarking Zero-shot Text Classficication. Yin 2019
 
 **Why this matters for my project.** This is my closest real-world analogue for proto3: it is a peer-reviewed (*Nature Communications*, 2024), full end-to-end system that fine-tunes an LLM to do joint, schema-guided extraction from scientific text into JSON, in one call, instead of a multi-step NER+RE pipeline. It supports proto3's core design choice (one schema-guided LLM call over document-level LLM extraction) and its own findings — exact-match scoring underrates real quality, and hallucination/format failures are real risks — closely match what the manual review found in proto3 (authorship errors, evidence mismatches).
 
-https://claude.ai/code/artifact/c43a8b22-a0ee-41a0-854c-58dc77b7ceb6?via=auto_preview
-
 ---
 
 ## Example Exam
