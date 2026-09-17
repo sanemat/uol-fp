@@ -164,6 +164,66 @@ LLMによるscientific text structured extraction。proto3の方向性を支え�
 
 持ち込み不可になった以上、準備の優先順位は **「12問の答案を書く」ではなく、「8個程度のproject facts＋6個程度の数字＋4 references＋Ethics/DEIの3点セット」をretrieval practiceすること**、でよさそうです。
 
+Extracting  a four-role methodology profile -- TechcnicalMethod, Task, Dataset, and EvaluationMetric from computing papars. To support first pass of literature review.
+
+An NLP pipeline (Template 12.1, identifying research methodology in computing papers).
+
+Proto2:
+Sentence level zero-shot NLI.
+
+Proto3:
+document-level, schema-guided LLM extraction.
+
+[4] Sarthak Jain, Madeleine Van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. https://doi.org/10.18653/v1/2020.acl-main.670
+
+### SciREX: A Challenge Dataset for Document-Level Information Extraction, 2020 Jain — main point
+
+**Problem.** Most older information extraction (IE) work only looks at one sentence or one paragraph. But some facts in a paper only make sense if you read the whole document. No large dataset existed for this "whole document" level.
+
+**What they built.** The authors made SciREX, a new dataset of 438 full scientific papers. Each paper is labelled with four entity types: Dataset, Metric, Task, Method. The goal is to find the paper's main result as one 4-part link between these entities (for example: SQuAD, EM, BiDAF, Machine Comprehension).
+
+**Main finding.** The baseline model works, but there is still a big gap to human performance. The hardest sub-task is finding salient entities — the model mostly just counts how often an entity is mentioned, and misses entities that are important but rare in the text.
+
+**Why this matters for my project.** SciREX is my main reference because its four entity types (Dataset, Metric, Task, Method) are almost the same as my own four roles (Dataset, EvaluationMetric, Task, TechnicalMethod), and its document-level argument is why proto3 moved from sentence-level to whole-document extraction.
+
+[8] Michael Färber, Alexander Albers, and Felix Schüber. 2021. Identifying Used Methods and Datasets in Scientific Publications. In *Proceedings of the Second Workshop on Scholarly Document Understanding (SDU@AAAI 2021)*. https://ceur-ws.org/Vol-2831/paper19.pdf
+
+Identifying Used Methods and Datasets in Scientific Publications. 2021 Farber.
+
+### Färber et al. — "Identifying Used Methods and Datasets in Scientific Publications" — main point
+
+**Problem.** People measure a paper's impact by citation count (like the h-index). But nobody easily measures the impact of a *method* or a *dataset* — for example, how many papers really used SVM, or really used MNIST. This information is hidden inside the paper text, not given as clean metadata.
+
+**Goal.** Build a pipeline that finds METHOD and DATASET mentions in a paper, and for each mention decides: was it actually **used** by the authors, or only **mentioned** (just named, or only proposed, or cited as someone else's work)?
+
+**Important finding — "used" is not the same as "salient".** They compared their "used" label with SciREX's "salient" label on the same entities and found almost no overlap (very low correlation). So deciding "did the authors use this?" and deciding "is this entity important enough to be part of the paper's main result?" are two different questions, not the same one.
+
+**Scale and use.** They ran the full pipeline on about 510,000 computer-science papers, found about 771,000 used-method mentions and 449,000 used-dataset mentions, and added this as new facts into the Microsoft Academic Knowledge Graph. With this data they showed real trends, for example how CNN usage grew fast in computer-vision papers after 2012, while SVM usage slowly declined.
+
+**Why this matters for my project.** This paper is the direct source for my "authors' own work" rule: it shows, with real data, that separating *used-by-this-paper* from *merely mentioned/cited* is a real, hard sub-problem on its own, distinct from SciREX's saliency idea — which is exactly the authorship confusion proto2 had with ELMo inside BERT's own paper.
+
+
+[9] Wenpeng Yin, Jamaal Hay, and Dan Roth. 2019. Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*, Hong Kong, China, November 2019. Association for Computational Linguistics, 3914–3923. https://doi.org/10.18653/v1/D19-1404
+
+Benchmarking Zero-shot Text Classficication. Yin 2019
+
+### Yin et al. — "Benchmarking Zero-shot Text Classification: Datasets, Evaluation and Entailment Approach" — main point (B1 English)
+
+**Problem.** Zero-shot text classification (0SHOT-TC) means: classify a piece of text into a label, without training data for that label. Before this paper, research on this topic was messy. Almost all prior work only tried one kind of label (topic, like "sports" or "politics"). Also, different papers used different datasets and different evaluation rules, so results could not be compared fairly.
+
+**A broader definition.** The authors say topic labels are only a small part of the problem. A text can also be classified by other "aspects" — for example emotion ("joy", "anger") or situation ("needs water", "needs shelter"). They give a new, wider definition, called Definition-Wild: a true zero-shot classifier must work on any aspect and any label, without ever seeing label-specific training data — not even during model development.
+
+**Main result.** The entailment approach clearly beats older baselines (word2vec, ESA, a plain supervised BERT classifier) on the hardest setup (label-fully-unseen), across all three aspects (topic, emotion, situation). Combining several entailment models together (an ensemble) gives the best score.
+
+**Why this matters for my project.** This is the paper behind proto2: proto2 used a pretrained zero-shot NLI (entailment) model, with hand-written hypotheses, to decide if a sentence entails "this text uses TechnicalMethod X" and similar, for each of the four roles. It gave proto2 its zero-shot method but also its limits — the approach works sentence by sentence, with no document-level context and no authorship rule, which is exactly what proto3 was built to fix.
+
+### Dagdelen et al. — "Structured information extraction from scientific text with large language models" — main point (B1 English)
+
+**Problem.** Most scientific knowledge lives as unstructured text in papers. Named entity recognition (NER) can tag words like "LiCoO2" or "350K", but real scientific facts are usually complex relations between several entities, not just simple pairs. For example, "epitaxial La-doped thin film of HfZrO4" loses its real meaning if you only keep some of the parts. Standard relation extraction (RE) needs a fixed, predefined list of possible relation types, so it cannot handle these open-ended, many-part (n-ary) relations well.
+
+**Idea.** Instead of a separate NER step plus a separate RE step, fine-tune a large language model (GPT-3, Llama-2) to do both jobs at once, in one pass. Give it a text passage (a sentence or a full abstract) and train it, on only about 100–500 labelled examples, to output a precisely formatted "summary" of the facts inside — either plain English sentences or a structured format like a list of JSON objects. The user only needs to define the desired output structure and provide the examples; no deep NLP knowledge is needed.
+
+**Why this matters for my project.** This is my closest real-world analogue for proto3: it is a peer-reviewed (*Nature Communications*, 2024), full end-to-end system that fine-tunes an LLM to do joint, schema-guided extraction from scientific text into JSON, in one call, instead of a multi-step NER+RE pipeline. It supports proto3's core design choice (one schema-guided LLM call over document-level LLM extraction) and its own findings — exact-match scoring underrates real quality, and hallucination/format failures are real risks — closely match what the manual review found in proto3 (authorship errors, evidence mismatches).
 
 ---
 
