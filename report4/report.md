@@ -337,7 +337,7 @@ The prototype takes GROBID TEI XML and produces one JSON object containing an an
 
 ### 2. Algorithms and Techniques
 
-The end-to-end input is a PDF. A GROBID 0.8.1 server (Docker image `lfoppiano/grobid:0.8.1`, started with `make grobid-start`) converts it to TEI XML before the notebook runs, because GROBID keeps the section structure that Stages 0-1 need. This step is outside the notebook pipeline (`proto3/3pipeline.ipynb`), which takes the TEI XML as its input.
+The end-to-end input is a PDF. A local GROBID 0.8.1 server converts it to TEI XML before the notebook runs (Appendix B), because GROBID keeps the section structure that Stages 0-1 need. This step is outside the notebook pipeline (`proto3/3pipeline.ipynb`), which takes the TEI XML as its input.
 
 **Stage 0, parse the TEI XML.** `xml.etree.ElementTree` reads the file with the TEI namespace. The Abstract is taken from `tei:abstract`. Body sections are the `tei:div` elements under `tei:body`, with the heading from `tei:head` and the text from the `tei:p` children. Sections headed "references", "acknowledgements", or "acknowledgments" (case-insensitive) are skipped, as are sections with an empty body. The Abstract becomes the first section.
 
@@ -926,3 +926,7 @@ Table A2: proto2 sentence-count output per role (six papers). See Table A3 for t
 Table A3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
 The manual review is summarised in Chapter 5, Section 4 (Table 12). Variant B and the Task pilot outputs are in `proto3/results_b/` and `proto3/results_*/` in the repository.
+
+## Appendix B — PDF to TEI XML Conversion with GROBID
+
+The conversion is a preprocessing step outside the notebook pipeline, which takes TEI XML as its input. I run GROBID 0.8.1 [15] locally in Docker, because a public GROBID server on HuggingFace failed in my test. The server starts with `docker run -d --rm -p 8070:8070 --name grobid lfoppiano/grobid:0.8.1`, and it is ready when `http://localhost:8070/api/isalive` responds. A short Python script posts each PDF to `http://localhost:8070/api/processFulltextDocument` (timeout 120 s) and saves the response as a TEI XML file. `docker stop grobid` stops the server. GROBID keeps the reference list outside the body and assigns section headings, which Stage 0 needs.
