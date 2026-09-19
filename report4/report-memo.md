@@ -346,7 +346,36 @@ extraction, and how does it answer proto2's known failures?
 > Q20–23 results updated to match, not left saying "deferred." See "3-Week Workplan
 > (Variant B/C)" above for the schedule this depends on.
 
-A:
+A: (Justification and status only. Results stay in Chapter 5.)
+
+proto2 classified each sentence independently with zero-shot NLI and a fixed `0.5`
+threshold. Two design assumptions caused its failures: each sentence carries at
+most one role, and a single threshold suits all roles. The output was 14–160
+candidate sentences per role, so a reader still had to find the answer. proto3
+removes both assumptions. It gives the model the whole document and asks for one
+answer per role, with a section heading and a verbatim quote as evidence. The
+quote lets a reader check the answer without reading the paper. It also keeps the
+answer traceable to the source, which the user need requires (Table 4). A
+schema-guided output (`response_json_schema`) fixes the shape, and a `null` is
+allowed, so the model can say a role is absent instead of inventing one.
+
+Joint vs decomposed extraction is now an implemented design choice. Variant A (one
+joint call) is the main pipeline. It is justified by SciREX and Jain et al.:
+one context lets the model link method, dataset and metric that appear together.
+Variant B (four role-specific calls) is implemented as Stage 2d, justified by Khot
+et al. (2022) on decomposed prompting, and by the four roles asking for different
+judgments (primary method vs component, problem actually solved, data actually
+used, metric actually reported). Both variants use the same `RoleExtraction`
+schema and the same scoring code, so the only differences are the number of calls
+and the role-specific prompt line. I state the hypothesis as testable, not
+settled: per-role accuracy of B > A. Variant C (a fifth consistency call) is
+designed but not implemented. Report it as further work (Q25).
+
+Multi-valued roles moved from write-up only to a pilot. Stage 2e implements
+`MultiValuedRoleExtraction` for Task only, followed by verification (2f) and
+reasoning-first (2g, 2h) variants. They are pilots to explain Task's weakness, not
+part of the main design. The main design keeps one answer per role. (The
+multi-valued schema for Dataset and EvaluationMetric stays write-up only.)
 
 **Q11:** What model was chosen, and what were the alternatives?
 
@@ -618,7 +647,22 @@ A: (Keep the four details from report3, and add these from proto3.)
 > (e.g. a decomposed-pilot output comparison), and take them before drafting this
 > section, same as report3's approach.
 
-A:
+A: Keep from report3: Figure 6 (full JSON output for the Transformer paper,
+`proto3/baseline/transformer.json`), Figure 7 (Stage 2c screenshot) and Table 8
+(proto2 sentence counts vs proto3 one answer per role). Add:
+
+1. **A vs B output side by side (Transformer).** A short table of the four role
+   answers from `proto3/baseline/transformer.json` (or `results/run1`) and
+   `proto3/results_b/transformer.json`. It shows the Task change from "machine
+   translation" (A) to "sequence transduction" (B) with its evidence quote, so the
+   reader sees the actual output difference, not only a number.
+2. **A vs B per-role F1 table** (from `proto3/results_b/aggregate.json`, also in
+   the workplan above). Put it in Chapter 5, and refer to it from here.
+3. **Screenshot of the Stage 2d run** (one role cell plus the "Combine results"
+   output). *To do:* I still need to take it, before drafting this section.
+4. **Task pilots table** (Stages 2e–2h, F1 per stage) only in Chapter 5, not here.
+
+No new screenshot is needed for Stages 2e–2h.
 
 ---
 
