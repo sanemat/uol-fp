@@ -302,6 +302,38 @@ A:
 
 A:
 
+**Q9b (new, issue #203 / Rubric 8-1):** What user evidence supports the four roles
+and the output format, and how was it collected?
+
+> Source: issue #203 "Collect user evidence to validate the concept" (from rubric
+> #202). The concept is now justified only by logic (Table 4). Use a short Google
+> Form (about 1 minute, anonymous, no email, tap-only) sent to a few computing
+> students. Show one example profile (Transformer) on the same page. Ask task-based
+> questions, not "are these four roles good?". Report only real responses; state n
+> plainly. Set a response window (2-3 days).
+>
+> Ethics: do not ask sensitive things (such as health), and do not collect personal
+> data (no email, no name).
+>
+> Form intro text (put at the top, 1-2 lines):
+> "I am building a tool that summarises how a computing paper was researched
+> (method, task, dataset, metric) for a university project. This 1-minute survey is
+> anonymous and collects no personal data. Answering is optional."
+>
+> Survey questions (no required text fields, plain words):
+> 1. Do you read computing papers? (student doing literature review / researcher / other)
+> 2. Does this summary help you understand how the research was done? (1-5)
+> 3. Would this help you decide whether to read the full paper? (Yes / Maybe / No)
+> 4. Do the quotes help you check the answers? (Yes / A little / No)
+> 5. Is something missing that you would want? (No / Limitations / Contribution / Other)
+> 6. Optional: any comment?
+>
+> Where it goes: Chapter 3 Section 1 (about 100-150 words + results table, linked to
+> Table 4); limits (small n, friendly participants, one example paper) in Chapter 5
+> Section 5 or Chapter 6.
+
+A:
+
 **Q10:** What is the design justification for schema-guided document-level
 extraction, and how does it answer proto2's known failures?
 
