@@ -338,14 +338,12 @@ identify the single best-performing model, so a general-purpose Gemini model is
 sufficient to answer that question. Its 1M-token context window is necessary and
 sufficient for a single paper: no paper in the corpus exceeds it, so no chunking
 or truncation logic was needed, and it leaves comfortable headroom for the
-longest paper in the corpus. Simple setup from Google Colab (the API key comes
-from Colab's built-in secret manager, with no separate account needed) supported
-this choice but was not the primary justification. A systematic comparison of
-model quality, cost, and reproducibility across alternative models would only
-become relevant once the underlying approach is shown to work, so I treat model
-selection as future work (Q25) rather than part of this report's scope.
-`gemini-3.5-flash` is the current, actively supported Gemini model at the time of
-writing, and is the choice presented here.
+longest paper in the corpus. A systematic comparison of model quality, cost, and
+reproducibility across alternative models would only become relevant once the
+underlying approach is shown to work, so I treat model selection as future work
+(Q25) rather than part of this report's scope. As of 2026-08, `gemini-3.5-flash`
+is the current, actively supported Gemini model, and is the choice presented
+here.
 
 **Q12:** Describe the overall pipeline.
 
