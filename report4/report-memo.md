@@ -440,6 +440,27 @@ A:
 
 ---
 
+**Q9c (new, issue #205 / Rubric 9-1):** How do I describe the end-to-end input the
+same way in Chapter 3 and Chapter 4?
+
+> Source: issue #205 "Fix inconsistent input description between Chapter 3 and
+> Chapter 4". report3 says "An input is a PDF" (Ch. 3) but "The prototype takes
+> GROBID TEI XML" (Ch. 4).
+>
+> Fix: state one flow in both chapters.
+> - The overall flow starts from a PDF.
+> - Before the pipeline, I convert the PDF to TEI XML locally with GROBID (Docker,
+>   `make grobid-start`). This step is **outside the notebook pipeline**.
+> - The notebook pipeline (Stage 0 onward) takes the TEI XML as its input.
+> - In the flow diagram, split "GROBID (preprocessing, outside the notebook)" from
+>   "Stage 0: TEI parse".
+> - Do not write "Stage 0 turns a PDF into TEI XML" (report3, Ch. 4). Stage 0 only
+>   parses the TEI XML (keep Abstract and body, skip References and Acknowledgements).
+> - Use the same wording for the "input" in the Chapter 3 summary sentence, the
+>   diagram, and the Chapter 4 stage list.
+
+A:
+
 ## 4. Implementation (max 2500 words)
 
 report4-requirement.txt asks this chapter to cover "the entire implementation,"
@@ -464,7 +485,9 @@ A:
 > report4's cap at 2500 and "entire implementation" as the instruction, revisit
 > what was condensed and consider restoring more of the original stage-by-stage
 > detail (GROBID parsing specifics, section-concatenation logic, schema-enforcement
-> mechanics) rather than reusing the condensed version unchanged. Also add the
+> mechanics)
+> (see Q9c: GROBID conversion is a local preprocessing step outside the notebook;
+> Stage 0 starts from the TEI XML) rather than reusing the condensed version unchanged. Also add the
 > Variant B decomposed-extraction stage (and Variant C's consolidation call, if run)
 > as a new stage in this walkthrough — see "3-Week Workplan (Variant B/C)," Iteration
 > 1–2, above.
