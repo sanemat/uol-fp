@@ -21,9 +21,12 @@ BASE_CSS = """
 @page { size: A4; margin: 18mm; }
 body { font-family: sans-serif; }
 pre { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 4px;
-      padding: 0.6em 0.8em; white-space: pre-wrap; word-break: break-word; }
-table { border-collapse: collapse; }
-th, td { border: 1px solid #d0d7de; padding: 0.3em 0.6em; }
+      padding: 0.6em 0.8em; white-space: pre-wrap; word-break: break-word;
+      overflow-wrap: anywhere; }
+pre code, pre span { overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #d0d7de; padding: 0.3em 0.6em;
+         overflow-wrap: anywhere; }
 """
 
 
