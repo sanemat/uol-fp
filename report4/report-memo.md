@@ -355,6 +355,34 @@ here.
 
 A:
 
+**Q12b (new, issue #201 / Rubric 6-2):** How does a proto2 vs proto3 comparison
+figure support the design description, and what does it show?
+
+> Source: issue #201 "Add more visual support to the design chapter" (from rubric
+> #199). Place it in Chapter 3 Section 4, after the paragraph that compares proto2
+> and proto3 in text. Figures are not counted in the word limit. Use the same
+> format as Figure 2 (`<figure><pre>` ASCII with a numbered caption). Adding a
+> figure shifts later figure numbers, so renumber them and check references in
+> Chapters 4 and 5.
+
+A: The text in Section 4 already says proto3 has no sentence splitting and no
+per-sentence threshold. A side-by-side figure shows this difference at a glance,
+and it links the design to the two feedback items (the `0.5` threshold and the
+one-role-per-sentence assumption). Draft figure:
+
+```
+proto2 (sentence level)
+PDF → GROBID → TEI XML → section filter → sentence split + clean
+    → zero-shot NLI per sentence → threshold 0.5 → 14-160 candidate sentences per role
+
+proto3 (document level)
+PDF → GROBID → TEI XML → concatenate sections (reading order)
+    → one LLM call + response_json_schema → one answer + evidence per role
+```
+
+Caption draft: "Figure X: proto2 and proto3 pipelines compared. proto3 removes
+sentence splitting and the per-sentence acceptance threshold."
+
 **Q13:** How was the evaluation approach itself designed, versus how results are
 reported in Chapter 5?
 
