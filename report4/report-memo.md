@@ -69,8 +69,7 @@ template statement.
 **5. Video — script, recording, and voiceover, all still to do.**
 `report1/demo-script.md` plus `report1/video/*.mp4` is the precedent pattern from an
 earlier deliverable — reuse the *approach* (a written script before recording), not
-the content, since the project has moved from proto1's prototype to proto3's
-pipeline. Requirements to hold to while planning it: 3–5 minutes, your own spoken
+the content, since the project has moved on to proto3's pipeline. Requirements to hold to while planning it: 3–5 minutes, your own spoken
 explanation (no AI-generated voice), not sped up, must show the project actually
 working. See "Video & Repository" at the end of this memo for a shape to plan
 against.
@@ -385,7 +384,22 @@ here.
 > user-facing output). Reuse the diagram; update only if the pipeline itself changed
 > (e.g. a promoted decomposed-extraction pilot adds a stage).
 
-A:
+A: The pipeline has one preprocessing step outside the notebook and five stages
+inside it. GROBID (Docker image `lfoppiano/grobid:0.8.1`, started with `make
+grobid-start`) converts each PDF to TEI XML locally. The notebook
+(`proto3/3pipeline.ipynb`) takes the TEI XML as its input. Stage 0 parses the XML.
+Stage 1 concatenates the sections. Stage 2 makes the schema-guided Gemini call and
+validates the reply with Pydantic. Stage 3 scores the answers against gold labels.
+The Variant B stage (Stage 2d) replaces the single Stage 2 call with four
+role-specific calls, and its four results are assembled into the same
+`{role: answer}` shape that Stage 3 reads. Failure paths in the diagram: an empty
+or skipped section is dropped at Stage 0; a role with no supported answer is `null`
+(never invented); a reply that breaks the schema or the `answer`/`evidence`
+null-rule raises a Pydantic `ValidationError` instead of producing a partial
+profile. Update Figure 2 to show GROBID as a separate preprocessing box (see Q9c).
+Stages 2e–2h (multi-valued pilot, verification, ToS) and Stage 4 (LLM judge) are
+experiments, not part of the main pipeline; show them in the Chapter 5 synthesis,
+not in Figure 2.
 
 **Q12b (new, issue #201 / Rubric 6-2):** How does a proto2 vs proto3 comparison
 figure support the design description, and what does it show?
@@ -459,7 +473,13 @@ same way in Chapter 3 and Chapter 4?
 > - Use the same wording for the "input" in the Chapter 3 summary sentence, the
 >   diagram, and the Chapter 4 stage list.
 
-A:
+A: The end-to-end input is a PDF. I convert it to TEI XML with a local GROBID
+server (`make grobid-start`, GROBID 0.8.1) before the notebook runs, so this step
+is preprocessing outside the notebook pipeline. The notebook pipeline takes the TEI
+XML as its input (in Colab, uploaded with `files.upload()` in Stage 0). Stage 0
+only parses that XML: it keeps the Abstract and the body sections, and skips
+sections headed "references", "acknowledgements" or "acknowledgments". Chapter 3
+(summary sentence and Figure 2) and Chapter 4 (stage list) use this same wording.
 
 ## 4. Implementation (max 2500 words)
 
@@ -469,14 +489,25 @@ from 2000 to 2500 words and report3 only using 735 of its 2000, there is real ro
 (and an explicit instruction) to go deeper here, not just carry report3's chapter
 forward unchanged.
 
-**Q15:** In one paragraph, what has been implemented across all three prototype
-iterations, and what does proto3 do concretely?
+**Q15:** In one paragraph, what has been implemented across proto2 and proto3,
+and what does proto3 do concretely?
 
 > report3 base: `report3/report-memo.md` Q14 (lines 649–669). Still accurate as a
 > one-paragraph summary; the expansion for report4 belongs in Q16/Q17 below, not
 > here.
 
-A:
+A: proto2 was my own sentence-level zero-shot NLI classifier, which returned a list
+of 14–160 candidate sentences per role. proto3 treats the task as document-level
+extraction. Given the TEI XML of a paper, it returns one answer and one piece of
+evidence (a section heading and a verbatim quote) for each of four roles:
+TechnicalMethod, Task, Dataset and EvaluationMetric. It does this with one
+schema-guided call to `gemini-3.5-flash`. For "Attention Is All You Need" the
+output is TechnicalMethod = "Transformer", Task = "machine translation", Dataset =
+"WMT 2014 English-German" and EvaluationMetric = "BLEU". On top of this I
+implemented the decomposed variant (Variant B, four calls per paper), four smaller
+pilots aimed at the weak Task role (Stages 2e–2h), an LLM-judge rescoring step
+(Stage 4), and an evaluation harness (`scoring.py`, `aggregate_runs.py`,
+`aggregate_variant_b.py`) with pytest tests.
 
 **Q16:** What are the major algorithms/techniques used, stage by stage?
 
@@ -492,7 +523,50 @@ A:
 > as a new stage in this walkthrough — see "3-Week Workplan (Variant B/C)," Iteration
 > 1–2, above.
 
-A:
+A: (Variant C was not run, so it is not listed.)
+
+- **Preprocessing (outside the notebook).** GROBID 0.8.1 runs in Docker and turns
+  each PDF into TEI XML. I use it because it keeps the section structure that
+  Stages 0–1 need.
+- **Stage 0, parse the TEI XML.** `xml.etree.ElementTree` reads the file with the
+  TEI namespace. The Abstract is taken from `tei:abstract`. Body sections are the
+  `tei:div` elements under `tei:body`, with the heading from `tei:head` and the text
+  from the `tei:p` children. Headings that match a skip set (references,
+  acknowledgements, acknowledgments; case-insensitive) are dropped, and so are
+  sections with an empty body. The Abstract is inserted as the first section.
+- **Stage 1, concatenate.** Each section becomes `## {heading}` followed by its
+  text, joined in reading order into one `document_text`. There is no sentence
+  splitting, no chunking and no per-sentence threshold, because a paper fits in the
+  model's context window (Q11).
+- **Stage 2, schema-guided extraction.** The prompt states the four role
+  definitions and three rules: use the authors' own method, return null if the role
+  is absent, and copy evidence verbatim. The output shape is not in the prompt. It
+  is passed as `response_json_schema=MethodologyProfile.model_json_schema()` with
+  `temperature=0` and `seed=0`, and the reply is parsed with
+  `MethodologyProfile.model_validate_json`. `extra="forbid"` rejects unknown
+  fields, and a `model_validator` rejects a role where only one of `answer` and
+  `evidence` is null.
+- **Stage 2d, decomposed extraction (Variant B).** Four independent calls, one per
+  role, each with a role-specific prompt and the smaller `RoleExtraction` schema.
+  Each prompt names the failure that role is prone to: TechnicalMethod must be the
+  primary method, not a component or prior work; Task must be the problem the paper
+  actually solves; Dataset must be used for training or evaluation, not only
+  mentioned; EvaluationMetric must report the paper's own results. A combine cell
+  prints the four results as one JSON object, which I save by hand to
+  `proto3/results_b/{slug}.json`.
+- **Stages 2e–2h, Task pilots.** 2e uses `MultiValuedRoleExtraction` (a list of
+  answers at different granularities, primary first). 2f asks a second call to
+  select one candidate. 2g and 2h use `ReasoningFirstRoleExtraction`, where a
+  `reasoning` field comes before `answer` (after Lu et al. 2025b), for selection and
+  for direct extraction.
+- **Stage 3, evaluation.** `score_role` returns `(tp, fp, fn, tn)` per paper and
+  role. A match is a normalised (lowercase, whitespace-collapsed) substring test in
+  either direction. A both-present mismatch counts as one false positive and one
+  false negative. `score_role_multi` accepts any list position as a hit.
+  `precision_recall_f1` computes the metrics from the sums.
+- **Stage 4, LLM judge.** `score_role_judged` takes the match test as an injected
+  function, so an LLM semantic-equivalence check can replace the substring test and
+  the code stays testable without an API call.
 
 **Q17:** Explain the most important parts of the code.
 
@@ -509,7 +583,33 @@ A:
 > candidate for one of this section's "most interesting details" slots — see the
 > workplan above.
 
-A:
+A: (Keep the four details from report3, and add these from proto3.)
+
+1. **Schema in code, not in the prompt.** `Evidence`, `RoleExtraction` and
+   `MethodologyProfile` live in `proto3/src/uol_fp/models.py` and carry the field
+   descriptions. The notebook block is generated from that file by
+   `sync_generated.py` (`make sync-generated`), so the notebook and the tested
+   module cannot drift apart.
+2. **Null-correlation validator.** `answer_and_evidence_must_match` fails when
+   exactly one of `answer` and `evidence` is null. This enforces "no answer without
+   evidence" in code. A JSON schema alone cannot express this rule, so a prompt
+   instruction would be the only alternative, and that would be unenforced.
+3. **Role-specific prompts (Variant B).** All four prompts share the same
+   skeleton and the same two rules (null when absent, verbatim quotes). Only one
+   rule line changes per role. This keeps the A/B comparison controlled: the
+   difference between A and B is the decomposition plus that one line.
+4. **Scoring semantics.** `matches` is a substring test, so "F1" as a gold label
+   matches "F1 score", and "GLUE" as a gold Task does not match "language
+   representation". `score_role` treats a wrong non-null answer as both FP and FN,
+   and a null answer against a non-null gold as FN only. Precision therefore
+   penalises confident wrong answers, and recall penalises abstention. I chose this
+   because the tool is meant to show evidence users can trust.
+5. **Dependency injection in `score_role_judged`.** The judge is a
+   `Callable[[str, str], bool]`. The tests pass a stub, and the notebook passes a
+   Gemini call that returns a `SameTaskVerdict` (one boolean field).
+6. **Tests and tooling.** `proto3/tests/` has `test_models.py` (validator),
+   `test_scoring.py` and `test_aggregate_runs.py`. `make lint` runs ruff on `src/`
+   and the notebook; `make test` runs pytest.
 
 **Q18:** What visual representation(s) of results will you include?
 
