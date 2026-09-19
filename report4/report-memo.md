@@ -319,11 +319,31 @@ A:
 
 **Q11:** What model was chosen, and what were the alternatives?
 
-> report3 base: `report3/report-memo.md` Q10 (lines 432–466). Re-check the model-ID
-> caveat (`gemini-2.5-flash` 404'd; IDs rotate) is still accurate at time of writing
-> report4 — Gemini model availability may have changed again.
+> report3 base: `report3/report-memo.md` Q10 (lines 432–466). Skip the
+> `gemini-2.5-flash` 404 caveat for report4 — just state that `gemini-3.5-flash` is
+> the current, best-supported choice.
+>
+> Issue #200 (2026-09-19): report3's justification rested mainly on Colab
+> convenience. Reframe it: this project's goal is to confirm whether an LLM-based,
+> schema-guided extraction approach is effective at all, using a general-purpose
+> Gemini model for that confirmation, not to identify the best-performing model.
+> A full comparison of model quality, cost, and reproducibility across providers is
+> out of scope here and belongs in Q25 (Further Work) instead.
 
-A:
+A: A paper's cleaned full text is typically 4,000–20,000 tokens. I selected
+Gemini (`gemini-3.5-flash`, via the `google-genai` SDK) as a general-purpose
+long-context model. The aim of this project is to establish whether an
+LLM-based, schema-guided extraction approach is effective for this task, not to
+identify the single best-performing model, so a general-purpose Gemini model is
+sufficient to answer that question. Its 1M-token context window is necessary and
+sufficient for a single paper: no paper in the corpus exceeds it, so no chunking
+or truncation logic was needed, and it leaves comfortable headroom for the
+longest paper in the corpus. A systematic comparison of model quality, cost, and
+reproducibility across alternative models would only become relevant once the
+underlying approach is shown to work, so I treat model selection as future work
+(Q25) rather than part of this report's scope. As of 2026-08, `gemini-3.5-flash`
+is the current, actively supported Gemini model, and is the choice presented
+here.
 
 **Q12:** Describe the overall pipeline.
 
