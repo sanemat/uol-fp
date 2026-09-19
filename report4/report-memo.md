@@ -302,6 +302,38 @@ A:
 
 A:
 
+**Q9b (new, issue #203 / Rubric 8-1):** What user evidence supports the four roles
+and the output format, and how was it collected?
+
+> Source: issue #203 "Collect user evidence to validate the concept" (from rubric
+> #202). The concept is now justified only by logic (Table 4). Use a short Google
+> Form (about 1 minute, anonymous, no email, tap-only) sent to a few computing
+> students. Show one example profile (Transformer) on the same page. Ask task-based
+> questions, not "are these four roles good?". Report only real responses; state n
+> plainly. Set a response window (2-3 days).
+>
+> Ethics: do not ask sensitive things (such as health), and do not collect personal
+> data (no email, no name).
+>
+> Form intro text (put at the top, 1-2 lines):
+> "I am building a tool that summarises how a computing paper was researched
+> (method, task, dataset, metric) for a university project. This 1-minute survey is
+> anonymous and collects no personal data. Answering is optional."
+>
+> Survey questions (no required text fields, plain words):
+> 1. Do you read computing papers? (student doing literature review / researcher / other)
+> 2. Does this summary help you understand how the research was done? (1-5)
+> 3. Would this help you decide whether to read the full paper? (Yes / Maybe / No)
+> 4. Do the quotes help you check the answers? (Yes / A little / No)
+> 5. Is something missing that you would want? (No / Limitations / Contribution / Other)
+> 6. Optional: any comment?
+>
+> Where it goes: Chapter 3 Section 1 (about 100-150 words + results table, linked to
+> Table 4); limits (small n, friendly participants, one example paper) in Chapter 5
+> Section 5 or Chapter 6.
+
+A:
+
 **Q10:** What is the design justification for schema-guided document-level
 extraction, and how does it answer proto2's known failures?
 
@@ -355,6 +387,34 @@ here.
 
 A:
 
+**Q12b (new, issue #201 / Rubric 6-2):** How does a proto2 vs proto3 comparison
+figure support the design description, and what does it show?
+
+> Source: issue #201 "Add more visual support to the design chapter" (from rubric
+> #199). Place it in Chapter 3 Section 4, after the paragraph that compares proto2
+> and proto3 in text. Figures are not counted in the word limit. Use the same
+> format as Figure 2 (`<figure><pre>` ASCII with a numbered caption). Adding a
+> figure shifts later figure numbers, so renumber them and check references in
+> Chapters 4 and 5.
+
+A: The text in Section 4 already says proto3 has no sentence splitting and no
+per-sentence threshold. A side-by-side figure shows this difference at a glance,
+and it links the design to the two feedback items (the `0.5` threshold and the
+one-role-per-sentence assumption). Draft figure:
+
+```
+proto2 (sentence level)
+PDF → GROBID → TEI XML → section filter → sentence split + clean
+    → zero-shot NLI per sentence → threshold 0.5 → 14-160 candidate sentences per role
+
+proto3 (document level)
+PDF → GROBID → TEI XML → concatenate sections (reading order)
+    → one LLM call + response_json_schema → one answer + evidence per role
+```
+
+Caption draft: "Figure X: proto2 and proto3 pipelines compared. proto3 removes
+sentence splitting and the per-sentence acceptance threshold."
+
 **Q13:** How was the evaluation approach itself designed, versus how results are
 reported in Chapter 5?
 
@@ -380,6 +440,27 @@ A:
 
 ---
 
+**Q9c (new, issue #205 / Rubric 9-1):** How do I describe the end-to-end input the
+same way in Chapter 3 and Chapter 4?
+
+> Source: issue #205 "Fix inconsistent input description between Chapter 3 and
+> Chapter 4". report3 says "An input is a PDF" (Ch. 3) but "The prototype takes
+> GROBID TEI XML" (Ch. 4).
+>
+> Fix: state one flow in both chapters.
+> - The overall flow starts from a PDF.
+> - Before the pipeline, I convert the PDF to TEI XML locally with GROBID (Docker,
+>   `make grobid-start`). This step is **outside the notebook pipeline**.
+> - The notebook pipeline (Stage 0 onward) takes the TEI XML as its input.
+> - In the flow diagram, split "GROBID (preprocessing, outside the notebook)" from
+>   "Stage 0: TEI parse".
+> - Do not write "Stage 0 turns a PDF into TEI XML" (report3, Ch. 4). Stage 0 only
+>   parses the TEI XML (keep Abstract and body, skip References and Acknowledgements).
+> - Use the same wording for the "input" in the Chapter 3 summary sentence, the
+>   diagram, and the Chapter 4 stage list.
+
+A:
+
 ## 4. Implementation (max 2500 words)
 
 report4-requirement.txt asks this chapter to cover "the entire implementation,"
@@ -404,7 +485,9 @@ A:
 > report4's cap at 2500 and "entire implementation" as the instruction, revisit
 > what was condensed and consider restoring more of the original stage-by-stage
 > detail (GROBID parsing specifics, section-concatenation logic, schema-enforcement
-> mechanics) rather than reusing the condensed version unchanged. Also add the
+> mechanics)
+> (see Q9c: GROBID conversion is a local preprocessing step outside the notebook;
+> Stage 0 starts from the TEI XML) rather than reusing the condensed version unchanged. Also add the
 > Variant B decomposed-extraction stage (and Variant C's consolidation call, if run)
 > as a new stage in this walkthrough — see "3-Week Workplan (Variant B/C)," Iteration
 > 1–2, above.
