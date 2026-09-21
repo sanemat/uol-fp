@@ -80,15 +80,7 @@ The primary users are computing students doing literature reviews. Secondary use
 
 ### Report structure
 
-Chapter 2 reviews related work on how research methodology is defined and structured, how methodology-related information can be extracted from scientific papers, and how zero-shot classification assigns labels without labeled training data, then extends this with work on LLM-based structured extraction, and with proto2's own findings as motivation for document-level extraction.
-
-Chapter 3 describes the system design: the four-role schema and its justification, the joint and decomposed extraction variants, the pipeline architecture, the model choice, and the evaluation plan.
-
-Chapter 4 covers the whole implementation: proto2, proto3's document-level extraction (pipeline stages, schema-guided prompt, Gemini call), the decomposed variant, and the Task pilots.
-
-Chapter 5 evaluates the whole project: gold-label matching scored as a classification problem with confidence intervals, a logged five-run variance study, a manual review of the evidence, the decomposed-extraction and Task experiments, and a critical evaluation.
-
-Chapter 6 concludes with a short summary of the project and further work, including one broader theme about structured-output guarantees versus semantic correctness in LLM-based extraction.
+Chapter 2 reviews previous work on methodology extraction and zero-shot classification. Chapter 3 explains the design and evaluation plan, and Chapter 4 describes the implementation of proto2, proto3, and the Task experiments. Chapter 5 presents the results and their limitations. Chapter 6 concludes the report and discusses further work.
 
 ---
 
@@ -108,8 +100,6 @@ Methodology:
 </pre>
 <figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
 </figure>
-
-This review covers four areas: how methodology is defined, how information is extracted from papers, how classification can work without labeled training data, and how large language models (LLMs) extract structured information directly from scientific text. It ends with a synthesis positioning this project.
 
 ### 1. Defining Research Methodology
 
@@ -187,8 +177,6 @@ The system extracts research methodology from computing papers. The end-to-end i
 
 The domain and users are unchanged from the preliminary report. The domain is computing research papers, mainly systems, machine learning (ML), algorithms, and human-computer interaction (HCI). The primary users are computing students doing literature reviews; secondary users are early-stage researchers or supervisors who want a quick overview of a paper. proto3 changed the output quality — one checkable answer per role instead of a list of candidate sentences — not the target domain or audience.
 
-Table 4 connects each user need to a system requirement and the metric that evaluates it, so that each requirement follows from a user need and can be measured.
-
 | User need | System requirement | Evaluation |
 |---|---|---|
 | Quickly understand a paper | Show the four roles clearly | Output size (one answer per role, Chapter 4) |
@@ -222,7 +210,7 @@ I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software developme
 
 ### 4. Overall Pipeline
 
-The pipeline has one preprocessing step outside the notebook and five stages inside it. Figure 2 shows data flow, component interaction, failure handling, and where results reach the user, including each stage's failure path and the final user-facing step:
+The pipeline has one preprocessing step outside the notebook and five stages inside it (Figure 2).
 
 <figure>
 <pre>
@@ -255,7 +243,7 @@ User-facing output: role table + quoted evidence (Table 1 / Figure 7)
 <figcaption>Figure 2: proto3 extraction pipeline with failure paths and the user-facing output step.</figcaption>
 </figure>
 
-Compared with proto2's pipeline, there are two differences: there is no sentence splitting, and there is no per-sentence acceptance threshold. The LLM sees the (mostly) whole document and returns one decision per role directly, instead of a list of candidate sentences each scored independently. Figure 3 shows the two pipelines side by side.
+Compared with proto2's pipeline, there are two differences: there is no sentence splitting, and there is no per-sentence acceptance threshold. The LLM sees the (mostly) whole document and returns one decision per role directly, instead of a list of candidate sentences each scored independently (Figure 3).
 
 <figure>
 <pre>
@@ -283,8 +271,6 @@ I did not pool the five runs' true/false positive/negative counts into a single 
 For Task, the evaluation adds a comparison of Variant A and Variant B (one run each, scored with the unchanged `score_role`), and a sequence of pilots whose F1 is compared against the same gold labels (Chapter 5 §5).
 
 ### 6. Iterations and Results
-
-The project ran in iterations. Table 6 lists what each iteration produced and its status.
 
 | Period | Main task | Output | Status |
 |---|---|---|---|
@@ -496,8 +482,6 @@ Table 10: Baseline gold-label-match results, all six papers.
 I report macro as the headline "Overall" score, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution — a user needs all four, not just whichever role happens to have the most examples. The two averages are close here (0.65 vs 0.655) only because every role happens to have n=6 in this dataset, a property of the dataset and not of the method.
 
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Chapter 3 §5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 4 below).
-
-Figure 9 shows the aggregate baseline scoring running in the notebook, and Figure 10 a single-paper breakdown (Transformer), baseline versus pipeline.
 
 <figure>
 <img src="Screenshot%202026-08-17%20093240.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
