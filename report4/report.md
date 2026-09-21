@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (7444 words, excluding tables, figures, references, and appendices)
+# Report (7377 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (486/1000 words)
 
@@ -92,7 +92,7 @@ Chapter 6 concludes with a short summary of the project and further work, includ
 
 ---
 
-## 2. Literature Review (1531/2500 words)
+## 2. Literature Review (1490/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [1].
 
@@ -109,7 +109,7 @@ Methodology:
 <figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
 </figure>
 
-This review covers four areas: how methodology is defined, how information is extracted from papers, how classification can work without labeled training data, and how large language models (LLMs) extract structured information directly from scientific text. It ends with a synthesis positioning this project, and a note on feedback received on the preliminary report.
+This review covers four areas: how methodology is defined, how information is extracted from papers, how classification can work without labeled training data, and how large language models (LLMs) extract structured information directly from scientific text. It ends with a synthesis positioning this project.
 
 ### 1. Defining Research Methodology
 
@@ -177,25 +177,9 @@ I could not find prior work combining the structured methodology vocabulary from
 
 Table 3: Key sources for this project.
 
-### Feedback on the Preliminary Report
-
-The preliminary report received marker feedback. This revision addresses each written comment directly:
-
-| Marker comment | How this revision addresses it |
-|---|---|
-| Relies heavily on the same small group of sources; a literature review can be built around the methods and tools used, without needing similar projects; avoid casual first-person narration such as "I test", use academic language | This chapter adds three sources on LLM-based structured extraction (Dagdelen et al. [11]; Polak and Morgan [12]; Ateia et al. [13]), the method proto3 itself uses, and Khot et al. [14] on decomposed prompting for Chapter 3's architecture discussion; the whole report also moves to a formal academic register |
-| In-text citation numbering started from `[7]`, not `[1]`; author names were mixed with numbered citations | References are renumbered by order of first appearance, starting at `[1]`; every reference-list entry is cited at least once in the body text |
-| Project concept needs a thorough analysis of the target domain and users | Chapter 3 §1 adds a user-need / system-requirement / evaluation table connecting each user need to a concrete requirement and how it is measured |
-| No proper diagram of data flow, component interaction, failure handling, and the user interface; key technologies section needed more detail | Figure 2 is a box/failure-path diagram showing GROBID failure, empty-section handling, schema violations, the no-supported-answer case, and the user-facing output step; Figure 3 compares the proto2 and proto3 pipelines |
-| Workplan should show task durations, dependencies, risks, and contingency time, with a fuller task breakdown | Table 7 breaks the remaining work into duration, dependencies, risk, and contingency |
-| Prototype evaluation used only a small number of papers and counted one matching word as a correct result | Chapter 5 scores gold-label match as classification (Precision/Recall/F1) with Wilson confidence intervals, backed by a 5-run variance study and a consolidated manual review |
-| The literature review repeats points and needs a more critical comparison between studies; the design is easy to follow, but diagrams, threshold choice, and the sentence-level classification assumption need justification; the next evaluation should use fixed gold labels, more papers, precision and recall | Section 6's synthesis table and the study-vs-study comparisons above address the first point; Chapter 3 §4 states that proto3 has no per-sentence threshold to justify and that the sentence-level circularity concern does not apply once extraction is document-level; fixed gold labels and Precision/Recall are addressed directly (Chapter 5 §1-2); growing the paper count beyond six is not implemented, for the reason given in Chapter 3 §5 |
-
-Feedback on the draft report was not available when this version was written.
-
 ---
 
-## 3. Design (1340/2000 words)
+## 3. Design (1295/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [15] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -203,7 +187,7 @@ The system extracts research methodology from computing papers. The end-to-end i
 
 The domain and users are unchanged from the preliminary report. The domain is computing research papers, mainly systems, machine learning (ML), algorithms, and human-computer interaction (HCI). The primary users are computing students doing literature reviews; secondary users are early-stage researchers or supervisors who want a quick overview of a paper. proto3 changed the output quality — one checkable answer per role instead of a list of candidate sentences — not the target domain or audience.
 
-Table 4 connects each user need to a system requirement and the metric that evaluates it, addressing the preliminary report's feedback that the domain and user analysis needed a fuller, more evidenced connection between users and requirements, not just a list of who the users are.
+Table 4 connects each user need to a system requirement and the metric that evaluates it, so that each requirement follows from a user need and can be measured.
 
 | User need | System requirement | Evaluation |
 |---|---|---|
@@ -238,7 +222,7 @@ I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software developme
 
 ### 4. Overall Pipeline
 
-The pipeline has one preprocessing step outside the notebook and five stages inside it. The preliminary report's feedback asked for a diagram that shows data flow, component interaction, failure handling, and where results reach the user, not only a linear arrow list, so Figure 2 adds each stage's failure path and the final user-facing step:
+The pipeline has one preprocessing step outside the notebook and five stages inside it. Figure 2 shows data flow, component interaction, failure handling, and where results reach the user, including each stage's failure path and the final user-facing step:
 
 <figure>
 <pre>
@@ -286,7 +270,7 @@ PDF → GROBID → TEI XML → concatenate sections (reading order)
 <figcaption>Figure 3: proto2 and proto3 pipelines compared. proto3 removes sentence splitting and the per-sentence acceptance threshold.</figcaption>
 </figure>
 
-These two differences directly resolve two items from the preliminary report's feedback. First, the feedback asked for a clear reason behind proto2's NLI acceptance threshold of `0.5`. proto3 has no such value to justify, because extraction is no longer a per-sentence accept/reject decision. Second, the feedback questioned proto2's sentence-level assumption that a sentence describes one role at a time, since single-label sentence classification could only ever produce single-label results, whatever the underlying text actually contained. That circularity does not apply to proto3, since extraction is document-level; whether a *role* (not a sentence) should allow more than one answer is addressed in Section 2 above.
+These two differences remove two weaknesses of proto2. First, proto2's NLI acceptance threshold of `0.5` needed a justification. proto3 has no such value, because extraction is no longer a per-sentence accept/reject decision. Second, proto2 assumed that a sentence describes one role at a time, and single-label sentence classification could only ever produce single-label results, whatever the underlying text actually contained. That circularity does not apply to proto3, since extraction is document-level; whether a *role* (not a sentence) should allow more than one answer is addressed in Section 2 above.
 
 ### 5. Evaluation Plan
 
@@ -312,7 +296,7 @@ For Task, the evaluation adds a comparison of Variant A and Variant B (one run e
 
 Table 6: Work plan summary.
 
-The preliminary report's feedback asked the workplan to show durations, dependencies, risks, and contingency time explicitly, not just broad monthly periods. Table 7 breaks the remaining work down to that level of detail:
+Table 7 breaks the remaining work down to that level of detail:
 
 | Task | Duration | Depends on | Risk | Contingency |
 |---|---|---|---|---|
@@ -493,7 +477,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2231/2500 words)
+## 5. Evaluation (2234/2500 words)
 
 ### 1. Evaluation Method
 
@@ -639,7 +623,7 @@ Extensions. The next steps are a deterministic semantic-match rescoring of Task,
 
 ---
 
-## 6. Conclusion (664/1000 words)
+## 6. Conclusion (680/1000 words)
 
 ### Summary
 
