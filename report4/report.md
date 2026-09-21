@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (7377 words, excluding tables, figures, references, and appendices)
+# Report (7393 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (486/1000 words)
 
@@ -179,7 +179,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1295/2000 words)
+## 3. Design (1311/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [15] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -282,7 +282,9 @@ I did not pool the five runs' true/false positive/negative counts into a single 
 
 For Task, the evaluation adds a comparison of Variant A and Variant B (one run each, scored with the unchanged `score_role`), and a sequence of pilots whose F1 is compared against the same gold labels (Chapter 5 §5).
 
-### 6. Work Plan
+### 6. Iterations and Results
+
+The project ran in iterations. Table 6 lists what each iteration produced and its status.
 
 | Period | Main task | Output | Status |
 |---|---|---|---|
@@ -294,18 +296,7 @@ For Task, the evaluation adds a comparison of Variant A and Variant B (one run e
 | Late August | Variant C; Related Work ablation | — | Not run |
 | September | Freeze experiments; final report; video | Final submission | In progress |
 
-Table 6: Work plan summary.
-
-Table 7 breaks the remaining work down to that level of detail:
-
-| Task | Duration | Depends on | Risk | Contingency |
-|---|---|---|---|---|
-| Final report assembly and word-budget trim | 2-3 days | Experiments frozen | Total exceeds the 10,500-word cap | Cut from Introduction and Literature Review first, since Implementation and Evaluation carry the marked criteria |
-| Video (3-5 minutes, own voice) | 1-2 days | Stable pipeline run | Video exceeds five minutes or does not show a live run | Written script before recording; re-record single sections only |
-| Repository check | 0.5 day | Final commit | Repository not viewable when marking starts | Check the link while logged out of GitHub |
-| Unallocated buffer | 1-2 days | — | Underestimated polish work | Not scheduled to any task |
-
-Table 7: Remaining work broken into duration, dependencies, risk, and contingency.
+Table 6: Iteration summary.
 
 ---
 
