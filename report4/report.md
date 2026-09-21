@@ -584,7 +584,7 @@ Mapping proto2's three named failure modes, and the Task weakness found later, o
 
 Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
-proto3 reduced the output to one answer per role and replaced proto2's recall-only evaluation with Precision, Recall, and F1. However, the authorship rule did not reliably separate the target paper's own work from prior work: 6 of 22 scored slots failed the authorship check. Task remained at F1 0.33 in all five runs and under Variants A and B, and none of the six mechanisms in Section 5 improved it under a check I could trust. MapReduce's Dataset slot answered `null` in all five runs, a model recall failure confirmed by the NotebookLM cross-check.
+The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate: it stayed at F1 0.33 in all five runs and under every mechanism tested, and the single gold-label phrasing can reject defensible alternatives.
 
 These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
 
