@@ -53,9 +53,9 @@ h3 {
 }
 </style>
 
-# Report (7368 words, excluding tables, figures, references, and appendices)
+# Report (6512 words, excluding tables, figures, references, and appendices)
 
-## 1. Introduction (482/1000 words)
+## 1. Introduction (367/1000 words)
 
 When computing researchers do a literature review, they often need to read many papers and find each paper's method, task, dataset, and evaluation metric. Reading many papers this way is slow and manual. I treat these four items as a methodology profile that a reader can extract automatically, to support the first pass of a literature review, not to replace reading the paper.
 
@@ -84,7 +84,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1490/2500 words)
+## 2. Literature Review (1404/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -167,7 +167,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1311/2000 words)
+## 3. Design (1190/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -452,7 +452,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2234/2500 words)
+## 5. Evaluation (1946/2500 words)
 
 ### 1. Evaluation Method
 
@@ -592,7 +592,7 @@ These findings are limited by the six-paper corpus, single-annotator gold labels
 
 ---
 
-## 6. Conclusion (680/1000 words)
+## 6. Conclusion (434/1000 words)
 
 ### Summary
 
