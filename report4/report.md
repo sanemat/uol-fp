@@ -151,7 +151,7 @@ Structured extraction with LLMs is an established research approach. Dagdelen et
 
 ### 6. Synthesis
 
-I could not find prior work combining the structured methodology vocabulary from Oates [14] and Pilkington & Pretorius [15], the four-role schema from Jain et al. [8], zero-shot or LLM-based extraction without an annotated corpus, and general computing papers rather than only ML benchmarks, which motivated testing the combination directly across two prototype iterations.
+The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data.
 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
