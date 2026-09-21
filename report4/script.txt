@@ -1,0 +1,85 @@
+VIDEO SCRIPT (target 180 sec, about 400 spoken words)
+Demo paper: "Attention Is All You Need" (Transformer)
+
+Files to have open before recording:
+- PDF: proto1/dataset/Attention Is All You Need.pdf
+- XML (GROBID output, already converted): proto1/dataset/Attention Is All You Need.xml
+- Notebook: proto3/3pipeline.ipynb (setup cells already run, XML loaded, Stage 2c ready)
+- Backup output: proto3/baseline/transformer.json, proto3/results_b/transformer.json
+- Report: Table 1, Figure 3, Table 13 (A vs B)
+
+================================================================
+[0:00-0:12]  1. Hook
+DO:  Split screen. PDF on the left, Table 1 (four-role profile) on the right.
+SAY: Hello. This project extracts the research method of a computing paper. It
+     returns four roles: technical method, task, dataset and evaluation metric.
+     It helps students who do a literature review.
+
+[0:12-0:30]  2. Problem and design choice
+DO:  Scroll the PDF a little. Then show Figure 3 (proto2 vs proto3).
+SAY: My first prototype, proto2, worked on single sentences. It gave 14 to 160
+     candidate sentences per role, so the reader still had to search. In proto3
+     I chose a different approach. I give the whole paper to a long-context
+     model and ask for one answer per role.
+
+[0:30-0:50]  3. PDF to XML (already converted)
+DO:  Put the PDF and the XML side by side. Scroll both to the same place
+     (title, then one section heading: <head> and <div> in the XML).
+SAY: This is the PDF of "Attention Is All You Need". This is the XML that GROBID
+     made from it. I ran this conversion before the video. The XML keeps the
+     section headings, and I need them for the evidence.
+
+[0:50-1:10]  4. Stage 0 and Stage 1
+DO:  Notebook. Run the Stage 0 and Stage 1 cells. Show the joined document text.
+SAY: Now the notebook. Stage 0 reads the XML and skips references and
+     acknowledgements. Stage 1 joins the sections in reading order. I do not
+     split sentences and I do not use a threshold, because one paper fits in
+     the model's context.
+
+[1:10-1:40]  5. Stage 2, schema-guided extraction (live run)
+DO:  Show the three prompt rules. Show the Pydantic model and the validator.
+     Run the Stage 2c cell (real Gemini call).
+SAY: Stage 2 is the main step. The prompt has three rules: use the authors' own
+     method, return null if a role is missing, and copy the quote word for
+     word. The output shape is not in the prompt. It is a Pydantic model,
+     passed to the model as a JSON schema. A validator rejects an answer that
+     has no evidence. I chose this because a prompt rule can be ignored, but
+     code cannot. Now I run the call. Temperature is zero and the seed is fixed.
+
+[1:40-2:05]  6. Result and evidence
+DO:  Show the JSON output. Point at "answer", then at the "quote" of each role.
+SAY: Here is the result. Technical method is Transformer. Task is machine
+     translation. Dataset is WMT 2014 English-German. Metric is BLEU. Each
+     answer has a section and a real quote from the paper, so the user can
+     check it in seconds.
+
+[2:05-2:30]  7. Variant B (decomposed extraction)
+DO:  Show the Stage 2d cell (four role prompts). Then show Table 13.
+SAY: Task is my weakest role, so I tried a second design, Variant B. It makes
+     four separate calls, one for each role. This table compares the two.
+     Dataset went from 0.91 to 1.00, but Task stayed at 0.33.
+
+[2:30-3:00]  8. Results, lessons, limits
+DO:  Show the scoring output (Stage 3) or Table 10 / Table 14. End on the
+     GitHub repo page: https://github.com/sanemat/uol-fp
+SAY: I scored the output against my own gold labels on six papers. Technical
+     method reaches 0.83 and dataset 0.91. Task stays at 0.33 after six
+     different mechanisms. The reason is partly the metric: a correct answer
+     with different wording is marked wrong. So a well-formed answer is not
+     always a correct answer. The limits are six papers, one annotator and no
+     user study. Next I want a semantic score and more papers. The code is on
+     GitHub. Thank you.
+
+[Optional spare line, only if your timed read is under 3:00, add after block 6]
+SAY: Everything you see here is real output from my own pipeline.
+
+================================================================
+RECORDING TIPS
+- Use your own voice. Do not use AI voice. Do not speed up the video.
+- Read the SAY text once with a timer. Aim for 3:00 to 3:30. Limit is 3:00 to 5:00.
+  Under 3:00 is penalised, so add the spare line or slow down a little.
+- If the API is slow in block 5, cut to the backup JSON
+  (proto3/baseline/transformer.json) and say "this is the saved output".
+- Keep the numbers as written (checked against report4/report.md):
+  TechnicalMethod F1 0.83, Dataset 0.91, Task 0.33; Variant B Dataset 1.00.
+- Keep the repo link on screen at the end.
