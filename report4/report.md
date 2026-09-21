@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (7389 words, excluding tables, figures, references, and appendices)
+# Report (7368 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (482/1000 words)
 
@@ -300,9 +300,9 @@ Table 6: Iteration summary.
 
 ---
 
-## 4. Implementation (1192/2500 words)
+## 4. Implementation (1171/2500 words)
 
-proto1 was an AI-drafted reference implementation only, not used directly, per this module's constraint on AI assistance for CM3060 submissions. proto2 was my own sentence-level zero-shot natural language inference (NLI) classifier: it classified every sentence in a paper into one of the four roles, producing a list of 14-160 candidate sentences per role rather than one answer. proto3 reframes the task as document-level extraction: given the TEI XML of a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context LLM (`gemini-3.5-flash`). On "Attention Is All You Need" [D6], for example: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU", each backed by its own quote and section.
+proto2 was my sentence-level zero-shot natural language inference (NLI) classifier: it classified every sentence in a paper into one of the four roles, producing a list of 14-160 candidate sentences per role rather than one answer. proto3 reframes the task as document-level extraction: given the TEI XML of a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context LLM (`gemini-3.5-flash`). On "Attention Is All You Need" [D6], for example: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU", each backed by its own quote and section.
 
 Around this core I implemented the decomposed variant (Variant B, four calls per paper), four pilots aimed at the weak Task role (Stages 2e-2h), an LLM-judge rescoring step (Stage 4), and an evaluation harness (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`) with pytest tests. The code is at https://github.com/sanemat/uol-fp.
 
