@@ -61,13 +61,17 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6286 words, excluding tables, figures, references, and appendices)
+Report (6368 words, excluding tables, figures, references, and appendices)
 
-## 1. Introduction (367/1000 words)
+## 1. Introduction (460/1000 words)
 
 When computing researchers do a literature review, they often need to read many papers and find each paper's method, task, dataset, and evaluation metric. Reading many papers this way is slow and manual. I treat these four items as a methodology profile that a reader can extract automatically, to support the first pass of a literature review, not to replace reading the paper.
 
-Consider "Attention Is All You Need" [D6]:
+The aim of this project is to extract a methodology profile from a computing paper automatically, and to show the evidence for each answer so that a reader can check it. I set three objectives. First, I define the profile as four roles: technical method, task, dataset, and evaluation metric. Second, I build a prototype that returns one answer per role, each with a quoted passage from the paper. Third, I evaluate the prototype against gold labels that I assign manually to six papers.
+
+I use Template 12.1 from the Natural Language Processing (NLP) module: identifying research methodologies used in computing research papers. The code repository is publicly available at https://github.com/sanemat/uol-fp.
+
+For example, the intended output for "Attention Is All You Need" [D6] is the following profile:
 
 | Methodology role | Component |
 |---|---|
@@ -79,8 +83,6 @@ Consider "Attention Is All You Need" [D6]:
 Table 1: Role-based methodology profile for "Attention Is All You Need" [D6].
 
 A reader needing this summary currently has to read the paper and construct it themselves. A topic label answers "what is this paper about?"; a role-based profile answers "how was this research conducted?" Two papers on the same topic can use different methods, train on different datasets, and report different metrics, so a topic label alone does not answer that second question.
-
-I use Template 12.1 from the Natural Language Processing (NLP) module: identifying research methodologies used in computing research papers. The code repository is publicly available at https://github.com/sanemat/uol-fp.
 
 This motivation has not changed since the preliminary report. What changed is the extraction approach. proto2, my first working prototype, classified every sentence in a paper into one of the four roles using zero-shot natural language inference (NLI), producing a list of candidate sentences per role rather than one answer. proto3, the current prototype, reframes the task as document-level extraction: given a paper, a long-context large language model (LLM) returns one answer per role, each backed by a section heading and a verbatim quote as evidence. I also implemented a decomposed variant of proto3 (four role-specific calls instead of one joint call) and a series of pilots aimed at Task, the weakest role.
 
