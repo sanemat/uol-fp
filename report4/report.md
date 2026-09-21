@@ -604,13 +604,9 @@ Mapping proto2's three named failure modes, and the Task weakness found later, o
 
 Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
-Successes. The move from proto2's recall-only substring check to Precision/Recall/F1 with confidence intervals, backed by five repeated runs, gives a measurement that a present-but-wrong answer can fail. Every answer carries evidence that a reader can check. TechnicalMethod (F1 0.83) and Dataset (0.91) are stable across five runs, and TechnicalMethod exceeded Task in every run.
+proto3 reduced the output to one answer per role and replaced proto2's recall-only evaluation with Precision, Recall, and F1. However, the authorship rule did not reliably separate the target paper's own work from prior work: 6 of 22 scored slots failed the authorship check. Task remained at F1 0.33 in all five runs and under Variants A and B, and none of the six mechanisms in Section 5 improved it under a check I could trust. MapReduce's Dataset slot answered `null` in all five runs, a model recall failure confirmed by the NotebookLM cross-check.
 
-Failures. Task's F1 is 0.33 in all five runs and under Variants A and B, and none of the six mechanisms in Section 5 improved it. MapReduce's Dataset slot answered `null` in all five runs (gold `"TeraSort"`), a model recall failure confirmed by the NotebookLM cross-check, which is separate from the gold-label problems elsewhere. Six of 22 scored slots fail the authorship check, so the authors'-own-work rule reduces but does not remove the citation problem that motivated it.
-
-Limitations. The corpus has six papers, and one annotator wrote both the gold labels and the review. AlexNet's gold label was changed after seeing the output. The four-role schema comes from SciREX's ML-conference corpus (Chapter 2, Section 2); two of the six papers are systems papers (MapReduce, Google Search), and proto2 already showed that these fit the schema worse than the four ML papers. Variant B and the Task pilots are single runs. I tested one general-purpose top model (Gemini), so the results say nothing about whether another model performs better. The evaluation involved no user study, so the claim that the output supports the first pass of a literature review rests on the evidence checks in Section 4 and not on measured reader behaviour.
-
-Extensions. The next steps are a deterministic semantic-match rescoring of Task, Variant C, a multi-valued schema for Dataset and EvaluationMetric, more papers with a second annotator, and papers outside ML benchmarks (Chapter 6).
+These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
 
 ---
 
