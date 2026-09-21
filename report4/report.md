@@ -53,7 +53,15 @@ h3 {
 }
 </style>
 
-# Report (6286 words, excluding tables, figures, references, and appendices)
+<h1 class="title" style="text-align: center;">Identifying Research Methodologies in Computing Research Papers: Document-Level Extraction with a Long-Context LLM</h1>
+
+<h2 style="text-align: center;">Contents</h2>
+
+[TOC]
+
+<div style="page-break-after: always;"></div>
+
+Report (6286 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (367/1000 words)
 
