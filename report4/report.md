@@ -206,7 +206,7 @@ A paper's cleaned full text is typically 4,000-20,000 tokens, which fits within 
 
 Table 5: Long-context model.
 
-I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit), one of the current general-purpose top models with a long context window. The aim of this project is to establish whether schema-guided LLM extraction is effective for this task, not to identify the best-performing model, so testing one such model is sufficient. Whether a more suitable model exists is left to further work. Its 1M-token context window exceeds the length of every paper in the corpus, so no chunking or truncation logic was needed. The API key comes from Colab's built-in secret manager (`google.colab.userdata`), which requires no account beyond the Google account already used for Colab. A comparison of model quality, cost, and reproducibility across providers is left to further work (Chapter 6).
+I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) for its long context window: 1M tokens exceeds the length of every paper in the corpus, so no chunking was needed. I did not compare other models. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
 
 ### 4. Overall Pipeline
 
@@ -460,9 +460,9 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 I evaluate gold-label match as a classification problem — Precision, Recall, and F1 per role, with Wilson 95% confidence intervals on Precision and Recall — backed by a logged 5-run variance study and a consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text, all in a single read. Variant B and the Task pilots are scored against the same gold labels.
 
-Precision/Recall/F1 (P/R/F1) is more appropriate than proto2's recall-only substring check, because a present-but-wrong answer now costs both precision and recall, instead of being free the way it was when any accepted sentence containing the gold term counted as a hit, regardless of how many other sentences were also returned.
+Unlike proto2's recall-only substring check, Precision/Recall/F1 (P/R/F1) penalises a present-but-wrong answer.
 
-The manual review folds the evidence-verbatim check into the same pass as support and authorship, rather than a separate automated script: a verbatim match only proves the LLM followed the copy-verbatim instruction, not that the evidence is good evidence (a real, verbatim quote from a Related Work sentence could still be the wrong evidence for a paper's own methodology), and the reviewer already has to read the source to judge support and authorship.
+The manual review includes the verbatim-quote check because a verbatim match shows only that the LLM copied text, not that the text is good evidence (a real quote from a Related Work sentence can still be the wrong evidence).
 
 ### 2. Gold-Label-Match Results
 
@@ -479,7 +479,7 @@ Scoring the frozen baseline (`proto3/baseline/*.json`) against gold labels (Appe
 
 Table 10: Baseline gold-label-match results, all six papers.
 
-I report macro as the headline "Overall" score, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution — a user needs all four, not just whichever role happens to have the most examples. The two averages are close here (0.65 vs 0.655) only because every role happens to have n=6 in this dataset, a property of the dataset and not of the method.
+Macro is the headline score (Chapter 3 §5). The two averages are close (0.65 vs 0.655) because every role has n=6 in this dataset.
 
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Chapter 3 §5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 4 below).
 
@@ -510,7 +510,7 @@ Three of four roles were perfectly stable across five real repetitions, which is
 
 An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce". This is independent corroboration that TechnicalMethod is the strongest role.
 
-I did not pool the five runs into a single Wilson interval (Chapter 3 §5). Paper-level uncertainty, meaning how results might vary across a different sample of papers, is covered by the n=6 baseline intervals in Section 2. The five-run study answers a different question: how the same six papers' results vary when the pipeline is simply run again. Table 11 answers it with mean, minimum, maximum, and range, and the consistent gap between TechnicalMethod and Task needs no interval to state.
+The five runs are not pooled into a Wilson interval (Chapter 3 §5). The n=6 intervals in Section 2 cover paper-level uncertainty, and Table 11 covers run-to-run variation on the same papers.
 
 MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct. Task's low F1 is therefore partly an artifact of the measurement instrument and not purely a model failure.
 
