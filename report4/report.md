@@ -147,7 +147,7 @@ Sentence-level NLI classification produced too many candidate sentences to be us
 
 Jain et al. [8] argue that "a significant amount of information can only be gleaned from analyzing the full document" — a document-level information extraction (IE) claim. My own data supports this directly: Dataset and EvaluationMetric typically appear only in a paper's Experiment section, not the Abstract, so an extraction method effectively limited to a small set of sentences, as proto2's Introduction-heavy output tended to be, would miss them.
 
-Structured extraction with LLMs is an established research approach. Dagdelen et al. [2] extract structured information from scientific text with LLMs. Polak and Morgan [16] extract materials data from research papers using conversational LLMs and prompt engineering. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. All three pull structured fields out of scientific documents, similar in spirit to how proto3 pulls a four-role methodology profile from a computing paper. I apply this general approach to this project's specific four-role schema, combined with the authorship rule (Section 4 above) and a document-level context window (Chapter 3).
+Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured scientific information, including materials data. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. I adapt this approach to four methodology roles in computing papers, adding an authorship rule (Section 4 above) to distinguish the target paper's own work from cited methods, and a document-level context window (Chapter 3).
 
 ### 6. Synthesis
 
