@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6512 words, excluding tables, figures, references, and appendices)
+# Report (6307 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (367/1000 words)
 
@@ -84,7 +84,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1404/2500 words)
+## 2. Literature Review (1389/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -284,7 +284,7 @@ Table 6: Iteration summary.
 
 ---
 
-## 4. Implementation (1171/2500 words)
+## 4. Implementation (1012/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at https://github.com/sanemat/uol-fp.
 
@@ -450,7 +450,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (1946/2500 words)
+## 5. Evaluation (1915/2500 words)
 
 ### 1. Evaluation Method
 
