@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6512 words, excluding tables, figures, references, and appendices)
+# Report (6307 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (367/1000 words)
 
@@ -84,7 +84,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1404/2500 words)
+## 2. Literature Review (1389/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -151,7 +151,7 @@ Structured extraction with LLMs is an established research approach. Dagdelen et
 
 ### 6. Synthesis
 
-I could not find prior work combining the structured methodology vocabulary from Oates [14] and Pilkington & Pretorius [15], the four-role schema from Jain et al. [8], zero-shot or LLM-based extraction without an annotated corpus, and general computing papers rather than only ML benchmarks, which motivated testing the combination directly across two prototype iterations.
+The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data.
 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
@@ -284,15 +284,13 @@ Table 6: Iteration summary.
 
 ---
 
-## 4. Implementation (1171/2500 words)
+## 4. Implementation (1012/2500 words)
 
-proto2 was my sentence-level zero-shot natural language inference (NLI) classifier: it classified every sentence in a paper into one of the four roles, producing a list of 14-160 candidate sentences per role rather than one answer. proto3 reframes the task as document-level extraction: given the TEI XML of a computing paper, it extracts one answer per role — TechnicalMethod, Task, Dataset, EvaluationMetric — each with a section heading and a verbatim quote as evidence, using a schema-guided prompt to a long-context LLM (`gemini-3.5-flash`). On "Attention Is All You Need" [D6], for example: TechnicalMethod = "Transformer", Task = "machine translation", Dataset = "WMT 2014 English-German", EvaluationMetric = "BLEU", each backed by its own quote and section.
-
-Around this core I implemented the decomposed variant (Variant B, four calls per paper), four pilots aimed at the weak Task role (Stages 2e-2h), an LLM-judge rescoring step (Stage 4), and an evaluation harness (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`) with pytest tests. The code is at https://github.com/sanemat/uol-fp.
+This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at https://github.com/sanemat/uol-fp.
 
 ### 1. Features Implemented
 
-The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing the XML and extracting section text reuses proto2's approach; the core new feature is extracting one structured answer and its evidence per role, using a schema-guided prompt to a long-context LLM rather than classifying each sentence independently. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence.
+The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence.
 
 ### 2. Algorithms and Techniques
 
@@ -452,7 +450,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (1946/2500 words)
+## 5. Evaluation (1915/2500 words)
 
 ### 1. Evaluation Method
 
@@ -586,7 +584,7 @@ Mapping proto2's three named failure modes, and the Task weakness found later, o
 
 Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
-proto3 reduced the output to one answer per role and replaced proto2's recall-only evaluation with Precision, Recall, and F1. However, the authorship rule did not reliably separate the target paper's own work from prior work: 6 of 22 scored slots failed the authorship check. Task remained at F1 0.33 in all five runs and under Variants A and B, and none of the six mechanisms in Section 5 improved it under a check I could trust. MapReduce's Dataset slot answered `null` in all five runs, a model recall failure confirmed by the NotebookLM cross-check.
+The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate: it stayed at F1 0.33 in all five runs and under every mechanism tested, and the single gold-label phrasing can reject defensible alternatives.
 
 These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
 
