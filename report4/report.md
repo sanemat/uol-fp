@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6307 words, excluding tables, figures, references, and appendices)
+# Report (6286 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (367/1000 words)
 
@@ -84,7 +84,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1389/2500 words)
+## 2. Literature Review (1356/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -450,7 +450,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (1915/2500 words)
+## 5. Evaluation (1930/2500 words)
 
 ### 1. Evaluation Method
 
@@ -590,7 +590,7 @@ These findings are limited by the six-paper corpus, single-annotator gold labels
 
 ---
 
-## 6. Conclusion (434/1000 words)
+## 6. Conclusion (431/1000 words)
 
 ### Summary
 
