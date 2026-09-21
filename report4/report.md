@@ -86,7 +86,7 @@ This motivation has not changed since the preliminary report. What changed is th
 
 The primary users are computing students doing literature reviews. Secondary users are early-stage researchers or supervisors who want a quick overview of a paper. The output is designed to be inspectable: a user can check the quoted evidence against the source paper.
 
-### Report structure
+### 1.1 Report structure
 
 Chapter 2 reviews previous work on methodology extraction and zero-shot classification. Chapter 3 explains the design and evaluation plan, and Chapter 4 describes the implementation of proto2, proto3, and the Task experiments. Chapter 5 presents the results and their limitations. Chapter 6 concludes the report and discusses further work.
 
@@ -109,7 +109,7 @@ Methodology:
 <figcaption>Figure 1: Research Methodology from "Attention Is All You Need" [D6].</figcaption>
 </figure>
 
-### 1. Defining Research Methodology
+### 2.1 Defining Research Methodology
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
@@ -121,7 +121,7 @@ A philosophical worldview is one of the key components in Pilkington & Pretorius
 
 Oates [14] gives concept names. Pilkington & Pretorius [15] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius. Both works are designed for human use; neither provides a system to extract methodology components automatically from text. The four roles used in this project (TechnicalMethod, Task, Dataset, and EvaluationMetric) draw more directly on Jain et al. [8], reviewed next.
 
-### 2. Extracting Methodology from Papers
+### 2.2 Extracting Methodology from Papers
 
 Systems that extract methodology-like entities from papers exist [4, 5, 8], but the closest approaches are supervised and need labeled training data that I do not have.
 
@@ -133,7 +133,7 @@ Ghosh et al. [4, 5] use supervised transformer-based sequence labeling to extrac
 
 Both approaches need labeled training data that I do not have, and neither covers all four roles across general computing research: Ghosh et al. cover only TechnicalMethod, and Färber et al. only Method and Dataset. A zero-shot approach removes the need for annotated data, at the cost of domain adaptation, reviewed next.
 
-### 3. Zero-shot Classification
+### 2.3 Zero-shot Classification
 
 Yin et al. [18] define zero-shot text classification as assigning a label to text without any task-specific training examples. They show that natural language inference (NLI) can classify text into many possible labels by turning the label into a hypothesis (for example, "this text is about sports") and asking a model whether the text entails it. I applied this approach directly in proto2, my first prototype: four methodology-role hypotheses, one per role, classified independently against each sentence in a paper, using a DeBERTa-v3-based zero-shot classification model [6].
 
@@ -147,17 +147,17 @@ Yin et al. [18] define zero-shot text classification as assigning a label to tex
 
 A domain mismatch risk exists: Yin et al. test on Yahoo News articles, emotion tweets, and crisis situation reports, and their NLI model is trained on MNLI (Multi-Genre Natural Language Inference; covers news, fiction, and telephone speech) — none of these are scientific papers, which tend to use dense technical vocabulary, passive constructions, and section-based structure. proto2 tested this risk directly by comparing hypothesis wordings on scientific text: a verbose TechnicalMethod hypothesis sent 244 of 258 BERT sentences to EvaluationMetric, a single poorly chosen hypothesis collapsing the label distribution, while short labels gave the best probe score and the most balanced distribution across four roles. Even with short labels, classification errors remained: on the Transformer paper, "Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task" was classified as Task rather than EvaluationMetric. Hypothesis design is therefore a real cost in zero-shot systems, and it did not fix the design-level problem in proto2's own results, covered next.
 
-### 4. proto2's Own Findings as a Negative Result
+### 2.4 proto2's Own Findings as a Negative Result
 
-Sentence-level NLI classification produced too many candidate sentences to be usable — 151 TechnicalMethod sentences for the MapReduce paper alone — and its recall-only substring evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct. With 100+ accepted sentences in some roles, a substring match is nearly certain to succeed somewhere in the list, which inflates the apparent recall without saying anything about precision. Excluding Related Work by heading, which describes other papers rather than the target paper's own methodology, cut BERT's TechnicalMethod count from 67 to 62 sentences; excluding the whole Introduction cut it further to 54, but also removed sentences that correctly described BERT's own method, so full exclusion traded recall for precision rather than solving the underlying problem. proto2 also had no mechanism to separate a paper's own method from one it cites: a sentence describing ELMo in BERT's Introduction scored 0.87 as TechnicalMethod, even though ELMo is prior work, not BERT's own method. This sharpens Färber et al.'s [3] "used vs. non-used" gap (Section 2 above) with a concrete instance from my own data, and motivates proto3's document-level extraction with an explicit authorship rule (Chapter 3).
+Sentence-level NLI classification produced too many candidate sentences to be usable — 151 TechnicalMethod sentences for the MapReduce paper alone — and its recall-only substring evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct. With 100+ accepted sentences in some roles, a substring match is nearly certain to succeed somewhere in the list, which inflates the apparent recall without saying anything about precision. Excluding Related Work by heading, which describes other papers rather than the target paper's own methodology, cut BERT's TechnicalMethod count from 67 to 62 sentences; excluding the whole Introduction cut it further to 54, but also removed sentences that correctly described BERT's own method, so full exclusion traded recall for precision rather than solving the underlying problem. proto2 also had no mechanism to separate a paper's own method from one it cites: a sentence describing ELMo in BERT's Introduction scored 0.87 as TechnicalMethod, even though ELMo is prior work, not BERT's own method. This sharpens Färber et al.'s [3] "used vs. non-used" gap (Section 2.2) with a concrete instance from my own data, and motivates proto3's document-level extraction with an explicit authorship rule (Chapter 3).
 
-### 5. Document-Level and LLM-Based Structured Extraction
+### 2.5 Document-Level and LLM-Based Structured Extraction
 
 Jain et al. [8] argue that "a significant amount of information can only be gleaned from analyzing the full document" — a document-level information extraction (IE) claim. My own data supports this directly: Dataset and EvaluationMetric typically appear only in a paper's Experiment section, not the Abstract, so an extraction method effectively limited to a small set of sentences, as proto2's Introduction-heavy output tended to be, would miss them.
 
-Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured scientific information, including materials data. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. I adapt this approach to four methodology roles in computing papers, adding an authorship rule (Section 4 above) to distinguish the target paper's own work from cited methods, and a document-level context window (Chapter 3).
+Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured scientific information, including materials data. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. I adapt this approach to four methodology roles in computing papers, adding an authorship rule (Section 2.4) to distinguish the target paper's own work from cited methods, and a document-level context window (Chapter 3).
 
-### 6. Synthesis
+### 2.6 Synthesis
 
 The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data.
 
@@ -179,30 +179,30 @@ Table 3: Key sources for this project.
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
-### 1. Domain and Users
+### 3.1 Domain and Users
 
 The domain and users are unchanged from the preliminary report. The domain is computing research papers, mainly systems, machine learning (ML), algorithms, and human-computer interaction (HCI). The primary users are computing students doing literature reviews; secondary users are early-stage researchers or supervisors who want a quick overview of a paper. proto3 changed the output quality — one checkable answer per role instead of a list of candidate sentences — not the target domain or audience.
 
 | User need | System requirement | Evaluation |
 |---|---|---|
 | Quickly understand a paper | Show the four roles clearly | Output size (one answer per role, Chapter 4) |
-| Check the original paper | Show evidence sentences | Evidence correctness (manual review, Chapter 5 §4) |
-| Avoid missing important information | High recall | Recall (Chapter 5 §2-3) |
-| Avoid too much irrelevant information | Reduce noisy output | Precision (Chapter 5 §2-3) |
+| Check the original paper | Show evidence sentences | Evidence correctness (manual review, Section 5.4) |
+| Avoid missing important information | High recall | Recall (Sections 5.2-5.3) |
+| Avoid too much irrelevant information | Reduce noisy output | Precision (Sections 5.2-5.3) |
 
 Table 4: User needs mapped to system requirements and evaluation.
 
-### 2. Design Justification
+### 3.2 Design Justification
 
-The core feature is Stage 2: one structured, evidence-backed answer per role, not a list of 14-160 candidate sentences (Chapter 2, Section 4). proto2 classified each sentence independently with a fixed `0.5` threshold, which assumed that a sentence carries at most one role and that one threshold suits all roles. proto3 gives the model the whole document and asks for one answer per role, with a section heading and a verbatim quote as evidence, so a reader can check the answer without reading the paper. The authors'-own-work rule in the prompt targets proto2's authorship-attribution failure (the ELMo/BERT case, Chapter 2, Section 4). The four-role JSON shape is enforced by `response_json_schema`, generated from Pydantic models rather than described in the prompt text, which removes an entire class of parsing and output-shape bugs (Chapter 4). A role can be `null`, so the model can report a role as absent instead of inventing one.
+The core feature is Stage 2: one structured, evidence-backed answer per role, not a list of 14-160 candidate sentences (Section 2.4). proto2 classified each sentence independently with a fixed `0.5` threshold, which assumed that a sentence carries at most one role and that one threshold suits all roles. proto3 gives the model the whole document and asks for one answer per role, with a section heading and a verbatim quote as evidence, so a reader can check the answer without reading the paper. The authors'-own-work rule in the prompt targets proto2's authorship-attribution failure (the ELMo/BERT case, Section 2.4). The four-role JSON shape is enforced by `response_json_schema`, generated from Pydantic models rather than described in the prompt text, which removes an entire class of parsing and output-shape bugs (Chapter 4). A role can be `null`, so the model can report a role as absent instead of inventing one.
 
-Extraction can be joint or decomposed. Variant A, the main pipeline, makes one call that returns all four roles; Jain et al.'s [8] document-level argument (Chapter 2) favours this design, since one context lets the model link a method, dataset, and metric that appear together (e.g. "Transformer"/"WMT"/"BLEU"). Variant B makes four independent role-specific calls (Stage 2d). Khot et al. [9] show that decomposing a complex task into independently optimizable subtasks can beat a single joint few-shot prompt on several reasoning tasks, and the four roles ask for different judgments: primary method versus component, the problem actually solved, data actually used, and the metric actually reported. Both variants use the same `RoleExtraction` schema and the same scoring code, so they differ only in the number of calls and in one role-specific rule line. My hypothesis is that per-role accuracy under Variant B exceeds Variant A, which Chapter 5 §5 tests. Variant C, a fifth call checking the four outputs for mutual consistency, is designed but not implemented (Chapter 6).
+Extraction can be joint or decomposed. Variant A, the main pipeline, makes one call that returns all four roles; Jain et al.'s [8] document-level argument (Chapter 2) favours this design, since one context lets the model link a method, dataset, and metric that appear together (e.g. "Transformer"/"WMT"/"BLEU"). Variant B makes four independent role-specific calls (Stage 2d). Khot et al. [9] show that decomposing a complex task into independently optimizable subtasks can beat a single joint few-shot prompt on several reasoning tasks, and the four roles ask for different judgments: primary method versus component, the problem actually solved, data actually used, and the metric actually reported. Both variants use the same `RoleExtraction` schema and the same scoring code, so they differ only in the number of calls and in one role-specific rule line. My hypothesis is that per-role accuracy under Variant B exceeds Variant A, which Section 5.5 tests. Variant C, a fifth call checking the four outputs for mutual consistency, is designed but not implemented (Chapter 6).
 
 The second design question is whether every role should stay single-valued. AlexNet and ResNet both report top-1 and top-5 error rates, which the baseline squashes into one string, and BERT's gold EvaluationMetric label lists both "accuracy" and "F1" (Appendix A, Table A1), since the paper reports both. An informal NotebookLM cross-check, run independently on each paper without being told the schema was single-valued, produced similar multi-valued outputs for BERT, ResNet, and Transformer. BERT's single-valued Dataset answer is "SQuAD v1.1," while NotebookLM listed BooksCorpus, Wikipedia, GLUE, and SQuAD v1.1/v2.0 from the same source text. Forcing Dataset and EvaluationMetric into one string loses information.
 
-Task shows the same pattern in one case: Variant B answered "sequence transduction" for Transformer where Variant A answered "machine translation", two defensible answers at different granularity (Chapter 5 §5). Stage 2e therefore implements a multi-valued pilot for Task only (Chapter 4), followed by verification and reasoning-first variants. The main design keeps one answer per role. A multi-valued schema for Dataset and EvaluationMetric would need per-item evidence rather than one shared quote per list, and a ranked "primary first" order rather than a numeric confidence field, since this project's own measured non-determinism (Chapter 5) argues against a second, uncalibrated confidence axis. That schema remains a design proposal (Chapter 6).
+Task shows the same pattern in one case: Variant B answered "sequence transduction" for Transformer where Variant A answered "machine translation", two defensible answers at different granularity (Section 5.5). Stage 2e therefore implements a multi-valued pilot for Task only (Chapter 4), followed by verification and reasoning-first variants. The main design keeps one answer per role. A multi-valued schema for Dataset and EvaluationMetric would need per-item evidence rather than one shared quote per list, and a ranked "primary first" order rather than a numeric confidence field, since this project's own measured non-determinism (Chapter 5) argues against a second, uncalibrated confidence axis. That schema remains a design proposal (Chapter 6).
 
-### 3. Model Choice
+### 3.3 Model Choice
 
 A paper's cleaned full text is typically 4,000-20,000 tokens, which fits within the context window of several modern long-context LLMs without chunking:
 
@@ -214,7 +214,7 @@ Table 5: Long-context model.
 
 I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) for its long context window: 1M tokens exceeds the length of every paper in the corpus, so no chunking was needed. I did not compare other models. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
 
-### 4. Overall Pipeline
+### 3.4 Overall Pipeline
 
 The pipeline has one preprocessing step outside the notebook and five stages inside it (Figure 2).
 
@@ -264,9 +264,9 @@ PDF → GROBID → TEI XML → concatenate sections (reading order)
 <figcaption>Figure 3: proto2 and proto3 pipelines compared. proto3 removes sentence splitting and the per-sentence acceptance threshold.</figcaption>
 </figure>
 
-These two differences remove two weaknesses of proto2. First, proto2's NLI acceptance threshold of `0.5` needed a justification. proto3 has no such value, because extraction is no longer a per-sentence accept/reject decision. Second, proto2 assumed that a sentence describes one role at a time, and single-label sentence classification could only ever produce single-label results, whatever the underlying text actually contained. That circularity does not apply to proto3, since extraction is document-level; whether a *role* (not a sentence) should allow more than one answer is addressed in Section 2 above.
+These two differences remove two weaknesses of proto2. First, proto2's NLI acceptance threshold of `0.5` needed a justification. proto3 has no such value, because extraction is no longer a per-sentence accept/reject decision. Second, proto2 assumed that a sentence describes one role at a time, and single-label sentence classification could only ever produce single-label results, whatever the underlying text actually contained. That circularity does not apply to proto3, since extraction is document-level; whether a *role* (not a sentence) should allow more than one answer is addressed in Section 3.2.
 
-### 5. Evaluation Plan
+### 3.5 Evaluation Plan
 
 proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I score gold-label match as a classification problem (true positive, false positive, false negative), report Precision, Recall, and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful, and a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
 
@@ -274,9 +274,9 @@ I kept the sample at six papers: tightening the confidence intervals meaningfull
 
 I did not pool the five runs' true/false positive/negative counts into a single Wilson interval (n=30 trials per role): the 30 trials are five repeats of the same six papers, not 30 independent observations, so treating them as independent Bernoulli trials would overstate precision. The two measures stay separate: the n=6 baseline Wilson interval for paper-level uncertainty, and the five-run F1 mean, minimum, maximum, and range for run-to-run non-determinism. Each answers a different question, and neither substitutes for the other.
 
-For Task, the evaluation adds a comparison of Variant A and Variant B (one run each, scored with the unchanged `score_role`), and a sequence of pilots whose F1 is compared against the same gold labels (Chapter 5 §5).
+For Task, the evaluation adds a comparison of Variant A and Variant B (one run each, scored with the unchanged `score_role`), and a sequence of pilots whose F1 is compared against the same gold labels (Section 5.5).
 
-### 6. Iterations and Results
+### 3.6 Iterations and Results
 
 | Period | Main task | Output | Status |
 |---|---|---|---|
@@ -296,11 +296,11 @@ Table 6: Iteration summary.
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at https://github.com/sanemat/uol-fp.
 
-### 1. Features Implemented
+### 4.1 Features Implemented
 
 The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence.
 
-### 2. Algorithms and Techniques
+### 4.2 Algorithms and Techniques
 
 The end-to-end input is a PDF. A local GROBID 0.8.1 server converts it to TEI XML before the notebook runs (Appendix B), because GROBID keeps the section structure that Stages 0-1 need. This step is outside the notebook pipeline (`proto3/3pipeline.ipynb`), which takes the TEI XML as its input.
 
@@ -318,7 +318,7 @@ The end-to-end input is a PDF. A local GROBID 0.8.1 server converts it to TEI XM
 
 **Stage 4, LLM judge.** `score_role_judged` takes the match test as an injected function, so a Gemini semantic-equivalence check (returning a `SameTaskVerdict`, one boolean field) can replace the substring test while the tests use a stub and need no API call.
 
-### 3. Code Explanation
+### 4.3 Code Explanation
 
 Four details are the most technically interesting. First, the prompt states only what the JSON schema itself cannot express, and everything about the output shape lives on the Pydantic models (Figure 4):
 
@@ -388,7 +388,7 @@ Third, the Variant B prompts share one skeleton and the same two rules (null whe
 
 Fourth, the scoring semantics. Because `matches` is a substring test, the gold label "F1" matches "F1 score", while the gold Task "GLUE" does not match "language representation". Treating a wrong non-null answer as both a false positive and a false negative means precision penalises confident wrong answers and recall penalises abstention, which suits a tool whose output users are meant to trust. For code quality, `pyright` in strict mode and `ruff` report zero issues, and a pytest suite in `proto3/tests/` covers `scoring.py`, the run aggregation, and the validator (`make lint`, `make test`). `proto3/baseline.ipynb` used to be a byte-identical duplicate of `3pipeline.ipynb`, kept only because it had produced the six `proto3/baseline/*.json` files; it has since been deleted, so there is no second notebook to keep in sync by hand.
 
-### 4. Visual Representation
+### 4.4 Visual Representation
 
 For "Attention Is All You Need" [D6], the full extraction output is:
 
@@ -460,7 +460,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ## 5. Evaluation (1930/2500 words)
 
-### 1. Evaluation Method
+### 5.1 Evaluation Method
 
 I evaluate gold-label match as a classification problem — Precision, Recall, and F1 per role, with Wilson 95% confidence intervals on Precision and Recall — backed by a logged 5-run variance study and a consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text, all in a single read. Variant B and the Task pilots are scored against the same gold labels.
 
@@ -468,7 +468,7 @@ Unlike proto2's recall-only substring check, Precision/Recall/F1 (P/R/F1) penali
 
 The manual review includes the verbatim-quote check because a verbatim match shows only that the LLM copied text, not that the text is good evidence (a real quote from a Related Work sentence can still be the wrong evidence).
 
-### 2. Gold-Label-Match Results
+### 5.2 Gold-Label-Match Results
 
 Scoring the frozen baseline (`proto3/baseline/*.json`) against gold labels (Appendix A, Table A1) across all six papers gives:
 
@@ -483,9 +483,9 @@ Scoring the frozen baseline (`proto3/baseline/*.json`) against gold labels (Appe
 
 Table 10: Baseline gold-label-match results, all six papers.
 
-Macro is the headline score (Chapter 3 §5). The two averages are close (0.65 vs 0.655) because every role has n=6 in this dataset.
+Macro is the headline score (Section 3.5). The two averages are close (0.65 vs 0.655) because every role has n=6 in this dataset.
 
-Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Chapter 3 §5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 4 below).
+Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Section 3.5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 5.4).
 
 <figure>
 <img src="Screenshot%202026-08-17%20093240.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
@@ -497,7 +497,7 @@ Wilson 95% confidence intervals show the effect of the sample size: TechnicalMet
 <figcaption>Figure 10: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (`proto3/3pipeline.ipynb`, Stage 3).</figcaption>
 </figure>
 
-### 3. Variance Study
+### 5.3 Variance Study
 
 I logged five full pipeline runs to `proto3/results/run{1..5}/*.json` and aggregated them with `proto3/aggregate_runs.py`. Per-role F1 across the five runs:
 
@@ -514,13 +514,13 @@ Three of four roles were perfectly stable across five real repetitions, which is
 
 An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce". This is independent corroboration that TechnicalMethod is the strongest role.
 
-The five runs are not pooled into a Wilson interval (Chapter 3 §5). The n=6 intervals in Section 2 cover paper-level uncertainty, and Table 11 covers run-to-run variation on the same papers.
+The five runs are not pooled into a Wilson interval (Section 3.5). The n=6 intervals in Section 5.2 cover paper-level uncertainty, and Table 11 covers run-to-run variation on the same papers.
 
 MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct. Task's low F1 is therefore partly an artifact of the measurement instrument and not purely a model failure.
 
 MapReduce's Dataset slot (gold `"TeraSort"`) answered `null` in every one of the five runs, a genuine recall miss, since NotebookLM independently found the dataset description (two roughly 1 terabyte grep/sort benchmarks) in the same source text. Pagerank's EvaluationMetric slot (gold `"quality"`) answered `"precision"` in every one of the five runs. It is scored wrong by substring match, but the paper's text supports both terms, and NotebookLM's independent extraction also names precision.
 
-### 4. Manual Review
+### 5.4 Manual Review
 
 The review template stages each paper's answer, section, and quote next to four judgment columns (plausible? evidence supports? authors' own work? quote in source?). The template also staged two open questions before scoring. BERT's Task quote cites prior work by name, so the review had to decide whether pre-training is BERT's own contribution or only motivation. ResNet's Task quote cites bracketed prior work for "a series of breakthroughs," which raises the same question of whether the sentence establishes the paper's own task or credits others. All 24 slots are scored. Two are null (Pagerank/EvaluationMetric, MapReduce/Dataset), judged separately below; across the other 22 scored slots:
 
@@ -539,7 +539,7 @@ On the two null slots: MapReduce's Dataset is a real miss, not a genuine absence
 
 BERT's Dataset and EvaluationMetric failures confirm the multi-valued-roles finding from Chapter 3: choosing only one of several correct answers can be technically correct but still gives an incomplete picture. Some gold answers may also be too simple or use the wrong category, so evaluating against gold labels alone can give a misleading result. The review has the same single-annotator bias as the gold labels it checks against: I wrote both the gold labels and, later, the answers checked against them, so I do not present this review as more objective than the gold labels themselves.
 
-### 5. Decomposed Extraction and the Task Pilots
+### 5.5 Decomposed Extraction and the Task Pilots
 
 Variant B (four role-specific calls) ran once on all six papers and was scored against run 1 of Variant A, so both columns are single runs:
 
@@ -571,7 +571,7 @@ Table 14: Task F1 under each mechanism, six papers, one run each (`proto3/result
 
 The any-match score doubles F1 but is bounded only by the length of the candidate list. Of its four hits, only BERT's was the model's first choice; the others were listed second to fourth in lists of 2-5 items. Stage 2f and Stage 2g both removed BERT's answer "GLUE benchmark" (correct as Stage 2e's first item), replacing it with a wrong answer and with null respectively. Stage 2g's 0.40 comes entirely from abstention, since a null against a non-null gold label counts as a false negative only. The Stage 2g reasoning traces evaluate each candidate against an explicit granularity test, so the model reasons coherently and still lands on a different phrasing from the gold label or declines to answer.
 
-The Stage 4 judge returned SAME for MapReduce's "automatic parallelization and distribution of large-scale computations" against "distributed", which agrees with the earlier reading in Section 3. It also returned SAME for Pagerank's "information retrieval" against "web search", which contradicts the manual review of the same answer (Section 4). The judge and the extractor are the same model family, and with four judged pairs I could not establish whether its verdicts can be trusted in general. A lexical alternative also fails on these pairs: Jaccard similarity between the gold label and the answer is 0.00-0.25, far below the 0.8 threshold that Ateia et al. [1] use.
+The Stage 4 judge returned SAME for MapReduce's "automatic parallelization and distribution of large-scale computations" against "distributed", which agrees with the earlier reading in Section 5.3. It also returned SAME for Pagerank's "information retrieval" against "web search", which contradicts the manual review of the same answer (Section 5.4). The judge and the extractor are the same model family, and with four judged pairs I could not establish whether its verdicts can be trusted in general. A lexical alternative also fails on these pairs: Jaccard similarity between the gold label and the answer is 0.00-0.25, far below the 0.8 threshold that Ateia et al. [1] use.
 
 These results agree with published findings. Tam et al. [17] report that restricting LLM output to a format can lower performance, which is compatible with the gap between Stage 2e's any-match (0.67) and primary-only (0.17) scores. Huang et al. [7] report that LLMs cannot reliably correct their own reasoning without external feedback, which is compatible with the regressions in Stages 2f, 2g, and 4. Ateia et al. [1] score free-text extraction targets with BERTScore F1 [19] and report a semantic F1 near 0.90 on those targets, while exact categorical extraction stays below 0.25. The two scores cover different target types, but they show that a lenient semantic score and a strict match can differ widely. Task's residual F1 may reflect the single-gold-phrasing substring metric as much as the model. A deterministic semantic-similarity rescoring is planned but not run; it would need one threshold that accepts the MapReduce pair and rejects the Pagerank pair.
 
@@ -579,7 +579,7 @@ Two limitations apply to the Task line. The Stage 2f prompt was revised while in
 
 I did not run the Related Work ablation, which would exclude the Related Work section before extraction. It does not address Task, the weakest role, and the core claims do not depend on it, so it stays deferred to further work (Chapter 6).
 
-### 6. Critical Evaluation
+### 5.6 Critical Evaluation
 
 Mapping proto2's three named failure modes, and the Task weakness found later, onto what the evaluation measured across the whole project:
 
@@ -594,13 +594,13 @@ Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
 The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate. It stayed at F1 0.33 across five repeated baseline runs, and none of the additional mechanisms showed a reliable improvement: higher scores depended on lenient matching or on abstention. The single gold-label phrasing can also reject defensible alternatives.
 
-These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
+These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 5.2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
 
 ---
 
 ## 6. Conclusion (431/1000 words)
 
-### Summary
+### 6.1 Summary
 
 This project developed a document-level LLM pipeline to extract four methodology roles (technical method, task, dataset, and evaluation metric) from computing papers. proto3 replaces proto2's sentence-level classification with one evidence-backed answer per role.
 
@@ -608,7 +608,7 @@ TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, bu
 
 The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. Its usefulness for literature reviews has not been tested with users.
 
-### Further Work
+### 6.2 Further Work
 
 The next experiments follow from the results above.
 
@@ -619,7 +619,7 @@ The next experiments follow from the results above.
 - **Larger and broader corpus.** About 30-40 gold-labeled papers per role, a second annotator (allowing an inter-annotator-agreement study), and non-ML papers such as systems and HCI would test whether the four-role schema generalises.
 - **User study.** A study with computing students would measure whether the profiles support the first pass of a literature review.
 
-### Broader Theme
+### 6.3 Broader Theme
 
 `response_json_schema` constrains the output format, and Pydantic validates the returned data. Neither guarantees that the extracted information is correct: an answer can be well-formed and still wrong, as the manual review in Chapter 5 shows. The Task experiments add a third case, where an answer is well-formed, well-reasoned, and marked wrong by the metric because it uses a different phrasing from the gold label. The distinction between schema conformance and semantic correctness applies to LLM-based structured extraction generally.
 
@@ -851,7 +851,7 @@ Chapter 4 shows the full extraction output for the Transformer paper (Figure 7).
 ```
 *Figure A5: Full extraction output for ResNet [D4].*
 
-### Gold labels (six papers)
+### A.1 Gold labels (six papers)
 
 | Paper | Gold TechnicalMethod | Gold Task | Gold Dataset | Gold EvaluationMetric |
 |---|---|---|---|---|
@@ -864,7 +864,7 @@ Chapter 4 shows the full extraction output for the Transformer paper (Figure 7).
 
 Table A1: Gold labels used for evaluation (six papers).
 
-### proto2 background data
+### A.2 proto2 background data
 
 | Paper | TM | Task | Dataset | EM | Hypothesis set |
 |---|---|---|---|---|---|
@@ -889,7 +889,7 @@ Table A2: proto2 sentence-count output per role (six papers). See Table A3 for t
 
 Table A3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
-The manual review is summarised in Chapter 5, Section 4 (Table 12). Variant B and the Task pilot outputs are in `proto3/results_b/` and `proto3/results_*/` in the repository.
+The manual review is summarised in Section 5.4 (Table 12). Variant B and the Task pilot outputs are in `proto3/results_b/` and `proto3/results_*/` in the repository.
 
 ## Appendix B — PDF to TEI XML Conversion with GROBID
 
