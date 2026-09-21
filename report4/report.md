@@ -613,7 +613,7 @@ The next experiments follow from the results above.
 
 ### Broader Theme
 
-`response_json_schema` guarantees that Gemini's reply is syntactically valid and has the right shape. It does not guarantee that the content is correct: an answer can be well-formed and still wrong, as the manual review in Chapter 5 shows. The Task experiments add a third case, where an answer is well-formed, well-reasoned, and marked wrong by the metric because it uses a different phrasing from the gold label. The distinction between schema conformance and semantic correctness applies to LLM-based structured extraction generally.
+`response_json_schema` constrains the output format, and Pydantic validates the returned data. Neither guarantees that the extracted information is correct: an answer can be well-formed and still wrong, as the manual review in Chapter 5 shows. The Task experiments add a third case, where an answer is well-formed, well-reasoned, and marked wrong by the metric because it uses a different phrasing from the gold label. The distinction between schema conformance and semantic correctness applies to LLM-based structured extraction generally.
 
 ---
 
