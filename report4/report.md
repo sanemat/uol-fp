@@ -53,7 +53,7 @@ h3 {
 }
 </style>
 
-# Report (6307 words, excluding tables, figures, references, and appendices)
+# Report (6286 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (367/1000 words)
 
@@ -84,7 +84,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1389/2500 words)
+## 2. Literature Review (1356/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -147,7 +147,7 @@ Sentence-level NLI classification produced too many candidate sentences to be us
 
 Jain et al. [8] argue that "a significant amount of information can only be gleaned from analyzing the full document" — a document-level information extraction (IE) claim. My own data supports this directly: Dataset and EvaluationMetric typically appear only in a paper's Experiment section, not the Abstract, so an extraction method effectively limited to a small set of sentences, as proto2's Introduction-heavy output tended to be, would miss them.
 
-Structured extraction with LLMs is an established research approach. Dagdelen et al. [2] extract structured information from scientific text with LLMs. Polak and Morgan [16] extract materials data from research papers using conversational LLMs and prompt engineering. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. All three pull structured fields out of scientific documents, similar in spirit to how proto3 pulls a four-role methodology profile from a computing paper. I apply this general approach to this project's specific four-role schema, combined with the authorship rule (Section 4 above) and a document-level context window (Chapter 3).
+Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured scientific information, including materials data. Ateia et al. [1] apply LLMs to extract information from scientific papers, the closest match in domain to this project. I adapt this approach to four methodology roles in computing papers, adding an authorship rule (Section 4 above) to distinguish the target paper's own work from cited methods, and a document-level context window (Chapter 3).
 
 ### 6. Synthesis
 
@@ -450,7 +450,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (1915/2500 words)
+## 5. Evaluation (1930/2500 words)
 
 ### 1. Evaluation Method
 
@@ -584,13 +584,13 @@ Mapping proto2's three named failure modes, and the Task weakness found later, o
 
 Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
-The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate: it stayed at F1 0.33 in all five runs and under every mechanism tested, and the single gold-label phrasing can reject defensible alternatives.
+The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate. It stayed at F1 0.33 across five repeated baseline runs, and none of the additional mechanisms showed a reliable improvement: higher scores depended on lenient matching or on abstention. The single gold-label phrasing can also reject defensible alternatives.
 
 These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 2). No user study was conducted, so the practical value of the extracted profiles for a first-pass literature review remains untested.
 
 ---
 
-## 6. Conclusion (434/1000 words)
+## 6. Conclusion (431/1000 words)
 
 ### Summary
 
@@ -613,7 +613,7 @@ The next experiments follow from the results above.
 
 ### Broader Theme
 
-`response_json_schema` guarantees that Gemini's reply is syntactically valid and has the right shape. It does not guarantee that the content is correct: an answer can be well-formed and still wrong, as the manual review in Chapter 5 shows. The Task experiments add a third case, where an answer is well-formed, well-reasoned, and marked wrong by the metric because it uses a different phrasing from the gold label. The distinction between schema conformance and semantic correctness applies to LLM-based structured extraction generally.
+`response_json_schema` constrains the output format, and Pydantic validates the returned data. Neither guarantees that the extracted information is correct: an answer can be well-formed and still wrong, as the manual review in Chapter 5 shows. The Task experiments add a third case, where an answer is well-formed, well-reasoned, and marked wrong by the metric because it uses a different phrasing from the gold label. The distinction between schema conformance and semantic correctness applies to LLM-based structured extraction generally.
 
 ---
 
