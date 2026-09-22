@@ -331,15 +331,30 @@ and the output format, and how was it collected?
 > Table 4); limits (small n, friendly participants, one example paper) in Chapter 5
 > Section 5 or Chapter 6.
 
+Computing Paper Summary
 
-Example profile
+I am building a tool that summarises how a computing paper was researched for a university project.
 
-## Attention Is All You Need
+This 1-minute survey is anonymous and optional. It does not ask for your name or email address.
 
-A sample of the tool's output. The full example should also show the source quote and section for each answer.
+Please look at the example below before answering the questions.
 
-<table class="_6IUVGW_Table" data-d-column-sizing="auto" data-d-dividers="" style="table-layout: auto;"><tbody><tr data-d-component="table-row"><td data-d-component="table-cell" data-d-has-width="" data-d-valign="start" style="width: 34%;"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm" data-d-weight="medium">Method</p></td><td data-d-component="table-cell" data-d-valign="start"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm">Transformer</p></td></tr><tr data-d-component="table-row"><td data-d-component="table-cell" data-d-has-width="" data-d-valign="start" style="width: 34%;"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm" data-d-weight="medium">Task</p></td><td data-d-component="table-cell" data-d-valign="start"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm">Machine translation</p></td></tr><tr data-d-component="table-row"><td data-d-component="table-cell" data-d-has-width="" data-d-valign="start" style="width: 34%;"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm" data-d-weight="medium">Dataset</p></td><td data-d-component="table-cell" data-d-valign="start"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm">WMT 2014 English-German</p></td></tr><tr data-d-component="table-row"><td data-d-component="table-cell" data-d-has-width="" data-d-valign="start" style="width: 34%;"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm" data-d-weight="medium">Metric</p></td><td data-d-component="table-cell" data-d-valign="start"><p class="w6asjq_TextBase _85PZeG_Text" data-d-component="text" data-d-size="sm">BLEU</p></td></tr></tbody></table>
+Example: Attention Is All You Need
 
+This is an example of the tool's output.
+
+Method: Transformer
+Task: Machine translation
+Dataset: WMT 2014 English-German
+Metric: BLEU
+
+Each answer comes with a quote from the original paper.
+
+Example evidence (Dataset):
+
+"We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+
+Section: Training Data and Batching
 
 1. Which best describes you?
 
