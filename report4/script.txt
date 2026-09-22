@@ -11,7 +11,7 @@ Files to have open before recording:
 ================================================================
 [0:00-0:12]  1. Introduction
 DO:  Show the PDF beside report Table 1 (the four-role profile).
-SAY: Hello. This project extracts a methodology profile from a computing
+SAY: Hello. This project extracts research methodologies from a computing
      paper: technical method, task, dataset, and evaluation metric. It is
      designed to support students' first pass of a literature review.
 
