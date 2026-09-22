@@ -1,85 +1,90 @@
-VIDEO SCRIPT (target 180 sec, about 400 spoken words)
+VIDEO SCRIPT (about 3 minutes; spoken text approximately 400 words)
 Demo paper: "Attention Is All You Need" (Transformer)
 
 Files to have open before recording:
-- PDF: proto1/dataset/Attention Is All You Need.pdf
-- XML (GROBID output, already converted): proto1/dataset/Attention Is All You Need.xml
-- Notebook: proto3/3pipeline.ipynb (setup cells already run, XML loaded, Stage 2c ready)
-- Backup output: proto3/baseline/transformer.json, proto3/results_b/transformer.json
-- Report: Table 1, Figure 3, Table 13 (A vs B)
+- PDF and GROBID-generated TEI XML for "Attention Is All You Need"
+- Notebook: proto3/3pipeline.ipynb (setup cells already run)
+- Saved baseline output: proto3/baseline/transformer.json
+- Saved Variant B output: proto3/results_b/transformer.json
+- Report: Table 1, Figure 3, Figure 7, Tables 9, 11, 13 and 14
 
 ================================================================
-[0:00-0:12]  1. Hook
-DO:  Split screen. PDF on the left, Table 1 (four-role profile) on the right.
-SAY: Hello. This project extracts the research method of a computing paper. It
-     returns four roles: technical method, task, dataset and evaluation metric.
-     It helps students who do a literature review.
+[0:00-0:12]  1. Introduction
+DO:  Show the PDF beside report Table 1 (the four-role profile).
+SAY: Hello. This project extracts a methodology profile from a computing
+     paper: technical method, task, dataset, and evaluation metric. It is
+     designed to support students' first pass of a literature review.
 
 [0:12-0:30]  2. Problem and design choice
-DO:  Scroll the PDF a little. Then show Figure 3 (proto2 vs proto3).
-SAY: My first prototype, proto2, worked on single sentences. It gave 14 to 160
-     candidate sentences per role, so the reader still had to search. In proto3
-     I chose a different approach. I give the whole paper to a long-context
-     model and ask for one answer per role.
+DO:  Scroll the PDF. Show report Figure 3 (proto2 versus proto3).
+SAY: My first prototype, proto2, classified sentences one by one. On the
+     Transformer paper, it returned 160 candidate sentences for the metric
+     but none for the task or dataset. Proto3 instead reads the cleaned
+     document and returns one answer with evidence for each role.
 
-[0:30-0:50]  3. PDF to XML (already converted)
-DO:  Put the PDF and the XML side by side. Scroll both to the same place
-     (title, then one section heading: <head> and <div> in the XML).
-SAY: This is the PDF of "Attention Is All You Need". This is the XML that GROBID
-     made from it. I ran this conversion before the video. The XML keeps the
-     section headings, and I need them for the evidence.
+[0:30-0:50]  3. PDF to XML (conversion done before recording)
+DO:  Show the PDF beside its GROBID-generated TEI XML; point to a section
+     heading in the XML.
+SAY: This is "Attention Is All You Need" as a PDF, and this is the XML
+     produced by GROBID. I converted it before recording. The XML keeps
+     the section structure needed for extraction and evidence.
 
 [0:50-1:10]  4. Stage 0 and Stage 1
-DO:  Notebook. Run the Stage 0 and Stage 1 cells. Show the joined document text.
-SAY: Now the notebook. Stage 0 reads the XML and skips references and
-     acknowledgements. Stage 1 joins the sections in reading order. I do not
-     split sentences and I do not use a threshold, because one paper fits in
-     the model's context.
+DO:  In proto3/3pipeline.ipynb, show Stage 0 and Stage 1 and their document
+     text output. Run the cells only if their prerequisites are ready.
+SAY: Stage 0 reads the XML. It skips references, acknowledgements, and
+     empty sections. Stage 1 joins the remaining sections in reading
+     order. Unlike proto2, proto3 does not split the text into sentences
+     or apply a per-sentence acceptance threshold.
 
-[1:10-1:40]  5. Stage 2, schema-guided extraction (live run)
-DO:  Show the three prompt rules. Show the Pydantic model and the validator.
-     Run the Stage 2c cell (real Gemini call).
-SAY: Stage 2 is the main step. The prompt has three rules: use the authors' own
-     method, return null if a role is missing, and copy the quote word for
-     word. The output shape is not in the prompt. It is a Pydantic model,
-     passed to the model as a JSON schema. A validator rejects an answer that
-     has no evidence. I chose this because a prompt rule can be ignored, but
-     code cannot. Now I run the call. Temperature is zero and the seed is fixed.
+[1:10-1:40]  5. Stage 2: schema-guided extraction
+DO:  Show the three prompt rules, the Pydantic model, and its validator.
+     Run Stage 2c if the API is ready. Do not assume this new run will
+     reproduce the saved baseline output.
+SAY: Stage 2 sends the document to Gemini. The prompt says to use the
+     authors' own method, return null for a missing role, and quote the
+     paper word for word. A Pydantic model supplies the JSON schema.
+     Its validator requires the answer and evidence to be present
+     together, or both null. This checks the output structure, not
+     whether an answer is correct. The call uses temperature zero
+     and seed zero, but repeated results can still differ.
 
-[1:40-2:05]  6. Result and evidence
-DO:  Show the JSON output. Point at "answer", then at the "quote" of each role.
-SAY: Here is the result. Technical method is Transformer. Task is machine
-     translation. Dataset is WMT 2014 English-German. Metric is BLEU. Each
-     answer has a section and a real quote from the paper, so the user can
-     check it in seconds.
+[1:40-2:05]  6. Saved result and evidence
+DO:  Open proto3/baseline/transformer.json (report Figure 7). Make it clear
+     this is the SAVED baseline, not necessarily the live run. Point to
+     each answer and its section and quote.
+SAY: This is the saved baseline result in my report. It identifies
+     Transformer as the method, machine translation as the task,
+     WMT 2014 English-German as the dataset, and BLEU as the metric.
+     Each answer includes a section and a quotation that the reader
+     can check against the paper.
 
-[2:05-2:30]  7. Variant B (decomposed extraction)
-DO:  Show the Stage 2d cell (four role prompts). Then show Table 13.
-SAY: Task is my weakest role, so I tried a second design, Variant B. It makes
-     four separate calls, one for each role. This table compares the two.
-     Dataset went from 0.91 to 1.00, but Task stayed at 0.33.
+[2:05-2:30]  7. Variant B: decomposed extraction
+DO:  Show Stage 2d, then report Table 13. Optionally show report Table 9
+     to illustrate that Transformer's Task answer changed.
+SAY: Variant B makes four separate calls, one per role. In this
+     single-run comparison, Dataset F1 rose from 0.91 to 1.00, while
+     Task F1 stayed at 0.33. But the two versions matched different
+     papers for Task, so the score hides a change in answers.
 
-[2:30-3:00]  8. Results, lessons, limits
-DO:  Show the scoring output (Stage 3) or Table 10 / Table 14. End on the
-     GitHub repo page: https://github.com/sanemat/uol-fp
-SAY: I scored the output against my own gold labels on six papers. Technical
-     method reaches 0.83 and dataset 0.91. Task stays at 0.33 after six
-     different mechanisms. The reason is partly the metric: a correct answer
-     with different wording is marked wrong. So a well-formed answer is not
-     always a correct answer. The limits are six papers, one annotator and no
-     user study. Next I want a semantic score and more papers. The code is on
-     GitHub. Thank you.
-
-[Optional spare line, only if your timed read is under 3:00, add after block 6]
-SAY: Everything you see here is real output from my own pipeline.
+[2:30-3:00]  8. Results, limits, and conclusion
+DO:  Show report Table 11, then Table 14 or Section 6. Finish on the
+     repository page: https://github.com/sanemat/uol-fp
+SAY: I evaluated six papers against gold labels I wrote myself.
+     Across five runs, method F1 was 0.83, Dataset F1 was 0.91,
+     and Task F1 was 0.33. The Task pilots did not show a reliable
+     improvement. For example, a reasonable answer can fail a
+     simple substring match because it uses different wording.
+     Also, a valid JSON answer can still have weak evidence.
+     The limits are six papers, one annotator, and no user study.
+     Future work includes semantic rescoring and a larger corpus.
+     The code is on GitHub. Thank you.
 
 ================================================================
-RECORDING TIPS
-- Use your own voice. Do not use AI voice. Do not speed up the video.
-- Read the SAY text once with a timer. Aim for 3:00 to 3:30. Limit is 3:00 to 5:00.
-  Under 3:00 is penalised, so add the spare line or slow down a little.
-- If the API is slow in block 5, cut to the backup JSON
-  (proto3/baseline/transformer.json) and say "this is the saved output".
-- Keep the numbers as written (checked against report4/report.md):
-  TechnicalMethod F1 0.83, Dataset 0.91, Task 0.33; Variant B Dataset 1.00.
-- Keep the repo link on screen at the end.
+RECORDING NOTES
+- The four role values in block 6 belong to the SAVED baseline (Figure 7).
+  Label a live Stage 2c result separately; do not narrate it as the saved result.
+- Dataset F1 0.91 is the mean across five runs in Table 11 and Variant A's
+  one-run value in Table 13. The frozen baseline in Table 10 has Dataset F1 0.73.
+- Variant B's Dataset F1 1.00 and Task F1 0.33 come from Table 13; each variant
+  was run once for that comparison.
