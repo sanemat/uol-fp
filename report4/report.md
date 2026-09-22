@@ -94,7 +94,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1356/2500 words)
+## 2. Literature Review (1354/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -177,7 +177,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1190/2000 words)
+## 3. Design (1182/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -460,7 +460,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (1930/2500 words)
+## 5. Evaluation (1926/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -600,7 +600,7 @@ These findings are limited by the six-paper corpus, single-annotator gold labels
 
 ---
 
-## 6. Conclusion (431/1000 words)
+## 6. Conclusion (434/1000 words)
 
 ### 6.1 Summary
 
