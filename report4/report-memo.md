@@ -331,6 +331,77 @@ and the output format, and how was it collected?
 > Table 4); limits (small n, friendly participants, one example paper) in Chapter 5
 > Section 5 or Chapter 6.
 
+Computing Paper Summary
+
+I am building a tool that summarises how a computing paper was researched for a university project.
+
+This 1-minute survey is anonymous and optional. It does not ask for your name or email address.
+
+Please look at the example below before answering the questions.
+
+Example: Attention Is All You Need
+
+This is an example of the tool's output.
+
+Method: Transformer
+Task: Machine translation
+Dataset: WMT 2014 English-German
+Metric: BLEU
+
+Each answer comes with a quote from the original paper.
+
+Example evidence (Dataset):
+
+"We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+
+Section: Training Data and Batching
+
+1. Which best describes you?
+
+Computing student doing a literature review
+
+Other computing student
+
+Researcher
+
+Other
+
+2. Which part would be MOST useful when deciding whether to read the paper?
+
+Method
+
+Task
+
+Dataset
+
+Metric
+
+None of these
+
+3. Would you use the quotes to check the answers?
+
+Yes
+
+Maybe
+
+No
+
+4. What is the most important thing missing from this summary?
+
+Nothing important
+
+Main contribution
+
+Results
+
+Limitations
+
+Other
+
+Hi everyone! 👋 I’m collecting feedback for my final project. Could you spare 1 minute to answer this anonymous survey? Your help would be much appreciated!
+https://forms.gle/rtpVi794pPEt5VX96
+
+
 A:
 
 **Q10:** What is the design justification for schema-guided document-level
