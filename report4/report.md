@@ -349,7 +349,7 @@ class RoleExtraction(BaseModel):
         return self
 ```
 
-<figcaption>Figure 4: Evidence/RoleExtraction Pydantic models with the null-correlation validator (`proto3/src/uol_fp/models.py`).</figcaption>
+<figcaption>Figure 4: Evidence/RoleExtraction Pydantic models with the null-correlation validator (<code>proto3/src/uol_fp/models.py</code>).</figcaption>
 </figure>
 
 The validator enforces "no answer without evidence" in code. A JSON schema alone cannot express this rule, so a prompt instruction would be the only alternative, and it would be unenforced. The models live in `models.py`, and `sync_generated.py` (`make sync-generated`) generates the notebook block from that file, so the notebook and the tested module cannot drift apart.
@@ -361,7 +361,7 @@ Rules:
 - Return null when a role is not present in the paper.
 - Evidence quotes must be copied verbatim from the paper, not paraphrased.
 </pre>
-<figcaption>Figure 5: Prompt rules excerpt from `proto3/3pipeline.ipynb`, "Stage 2b — Prompt Template".</figcaption>
+<figcaption>Figure 5: Prompt rules excerpt from <code>proto3/3pipeline.ipynb</code>, "Stage 2b — Prompt Template".</figcaption>
 </figure>
 
 Second, the Gemini call uses `response_json_schema` together with `temperature=0` and `seed=0`, and parses the reply directly with `MethodologyProfile.model_validate_json(...)`, with no manual JSON-extraction step:
@@ -383,7 +383,7 @@ response = client.models.generate_content(
 profile = MethodologyProfile.model_validate_json(response.text)
 ```
 
-<figcaption>Figure 6: Gemini call and response parsing (`proto3/3pipeline.ipynb`, "Stage 2c — Call Gemini and Parse Response").</figcaption>
+<figcaption>Figure 6: Gemini call and response parsing (<code>proto3/3pipeline.ipynb</code>, "Stage 2c — Call Gemini and Parse Response").</figcaption>
 </figure>
 
 An earlier prompt version described the `evidence` field inconsistently. On "Attention Is All You Need", Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended, e.g. `"## Introduction In this work we propose..."`, instead of the nested `{section, quote}` object. I first fixed this by rewriting the prompt; the schema now guarantees the nested shape regardless of prompt wording. `response_schema` and `response_json_schema` are not interchangeable. `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`, because it converts to Google's own `Schema` proto, which does not support `additionalProperties`, and Pydantic's `extra="forbid"` produces exactly that field. `response_json_schema` accepts a real JSON Schema dict instead, so `MethodologyProfile.model_json_schema()` is passed there.
@@ -431,7 +431,7 @@ For "Attention Is All You Need" [D6], the full extraction output is:
 }
 ```
 
-<figcaption>Figure 7: Full extraction output for "Attention Is All You Need" [D6] (`proto3/baseline/transformer.json`).</figcaption>
+<figcaption>Figure 7: Full extraction output for "Attention Is All You Need" [D6] (<code>proto3/baseline/transformer.json</code>).</figcaption>
 </figure>
 
 Figure 8 shows the Stage 2c cell with the raw Gemini call and its parsed JSON output, so the extraction is visible running directly.
@@ -493,12 +493,12 @@ Wilson 95% confidence intervals show the effect of the sample size: TechnicalMet
 
 <figure>
 <img src="Screenshot%202026-08-17%20093240.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
-<figcaption>Figure 9: Baseline P/R/F1 scoring output (`proto3/3pipeline.ipynb`, Stage 3).</figcaption>
+<figcaption>Figure 9: Baseline P/R/F1 scoring output (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
 <figure>
 <img src="Screenshot%202026-08-17%20093305.png" alt="Per-paper gold-label scoring, baseline vs pipeline, Transformer" style="width:100%;max-width:100%;">
-<figcaption>Figure 10: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (`proto3/3pipeline.ipynb`, Stage 3).</figcaption>
+<figcaption>Figure 10: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
 ### 5.3 Variance Study
