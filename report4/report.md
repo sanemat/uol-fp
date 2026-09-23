@@ -953,11 +953,11 @@ Section: Training Data and Batching
    - Limitations
    - Other
 
-| Timestamp | Which best describes you? | Which part would be MOST useful when deciding whether to read the paper? | Would you use the quotes to check the answers? | What is the most important thing missing from this summary? |
+| Date | Which best describes you? | Which part would be MOST useful when deciding whether to read the paper? | Would you use the quotes to check the answers? | What is the most important thing missing from this summary? |
 |---|---|---|---|---|
-| 9/22/2026 21:36:43 | Computing student doing a literature review | Task | Yes | Main contribution |
-| 9/22/2026 21:48:00 | Other computing student | Method | Maybe | Other |
-| 9/22/2026 23:53:10 | Other computing student | Task | Maybe | Limitations |
-| 9/23/2026 1:36:44 | Other computing student | Task | Maybe | Results |
+| 9/22/2026 | Computing student doing a literature review | Task | Yes | Main contribution |
+| 9/22/2026 | Other computing student | Method | Maybe | Other |
+| 9/22/2026 | Other computing student | Task | Maybe | Limitations |
+| 9/23/2026 | Other computing student | Task | Maybe | Results |
 
-Table C1: Raw survey responses (n=4).
+Table C1: Survey responses, timestamps rounded to date to preserve anonymity (n=4).
