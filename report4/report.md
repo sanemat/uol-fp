@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6600 words, excluding tables, figures, references, and appendices)
+Report (6577 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (460/1000 words)
 
@@ -462,7 +462,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2027/2500 words)
+## 5. Evaluation (2012/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -598,13 +598,13 @@ Table 15: Failure modes across proto2, proto3, and the Task experiments.
 
 The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate. It stayed at F1 0.33 across five repeated baseline runs, and none of the additional mechanisms showed a reliable improvement: higher scores depended on lenient matching or on abstention. The single gold-label phrasing can also reject defensible alternatives.
 
-The exploratory survey (Appendix C, n=4) provides limited user feedback. Task was selected as the most useful field by three respondents, despite being the weakest role in the technical evaluation (F1 0.33). All respondents indicated that they would or might check the evidence quotes. All four also identified missing information: main contribution, results, limitations, or another unspecified item. The survey therefore highlights the potential importance of improving Task extraction and extending the profile. However, it measured stated preferences after viewing one example, not actual use of the prototype.
+These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 5.2).
 
-These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 5.2). The exploratory survey (Appendix C) provides preliminary user feedback but did not test actual use of the prototype, so the practical value of the extracted profiles for a first-pass literature review remains untested.
+The exploratory survey (Appendix C, n=4) provides limited user feedback. Task was selected as the most useful field by three respondents, despite being the weakest role in the technical evaluation (F1 0.33). All respondents indicated that they would or might check the evidence quotes. All four also identified missing information: main contribution, results, limitations, or another unspecified item. The survey therefore highlights the potential importance of improving Task extraction and extending the profile. However, it measured stated preferences after viewing one example, not actual use of the prototype, so the practical value of the extracted profiles for a first-pass literature review remains untested by real use.
 
 ---
 
-## 6. Conclusion (479/1000 words)
+## 6. Conclusion (471/1000 words)
 
 ### 6.1 Summary
 
@@ -612,7 +612,7 @@ This project developed a document-level LLM pipeline to extract four methodology
 
 TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, but Task remains at 0.33. The Task experiments exposed two related problems: a single answer cannot always represent a paper's task, and substring matching can reject reasonable answers that differ from the gold label. `response_json_schema` solved schema conformance, so the remaining difficulty lies in defining the four roles consistently across paper types. MapReduce and Google Search fit them poorly because the roles derive from ML-benchmark structure.
 
-The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that three of four respondents considered Task the most useful field. This contrasts with Task's low extraction accuracy and suggests that improving it should be a priority. The practical usefulness of the prototype remains untested.
+The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that three of four respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. The practical usefulness of the prototype remains untested.
 
 ### 6.2 Further Work
 
