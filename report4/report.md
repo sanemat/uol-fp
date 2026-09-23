@@ -290,7 +290,7 @@ For Task, the evaluation adds a comparison of Variant A and Variant B (one run e
 | Late August | Variant B (decomposed extraction), scored against Variant A | Table 13 | Done |
 | Late August | Task pilots (Stages 2e-2h) and LLM-judge rescoring (Stage 4) | Table 14 | Done |
 | Late August | Variant C; Related Work ablation | — | Not run |
-| September | Freeze experiments; final report; video | Final submission | In progress |
+| September | Freeze experiments; final report; video | Final submission | Done |
 
 Table 6: Iteration summary.
 
