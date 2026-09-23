@@ -896,3 +896,79 @@ The manual review is summarised in Section 5.4 (Table 12). Variant B and the Tas
 ## Appendix B — PDF to TEI XML Conversion with GROBID
 
 The conversion is a preprocessing step outside the notebook pipeline, which takes TEI XML as its input. I run GROBID 0.8.1 [11] locally in Docker, because a public GROBID server on HuggingFace failed in my test. The server starts with `docker run -d --rm -p 8070:8070 --name grobid lfoppiano/grobid:0.8.1`, and it is ready when `http://localhost:8070/api/isalive` responds. A short Python script posts each PDF to `http://localhost:8070/api/processFulltextDocument` (timeout 120 s) and saves the response as a TEI XML file. `docker stop grobid` stops the server. GROBID keeps the reference list outside the body and assigns section headings, which Stage 0 needs.
+
+## Appendix C - Survey
+
+Computing Paper Summary
+
+I am building a tool that summarises how a computing paper was researched for a university project.
+
+This 1-minute survey is anonymous and optional. It does not ask for your name or email address.
+
+Please look at the example below before answering the questions.
+
+Example: Attention Is All You Need
+
+This is an example of the tool's output.
+
+Method: Transformer
+Task: Machine translation
+Dataset: WMT 2014 English-German
+Metric: BLEU
+
+Each answer comes with a quote from the original paper.
+
+Example evidence (Dataset):
+
+"We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs."
+
+Section: Training Data and Batching
+
+1. Which best describes you?
+
+Computing student doing a literature review
+
+Other computing student
+
+Researcher
+
+Other
+
+2. Which part would be MOST useful when deciding whether to read the paper?
+
+Method
+
+Task
+
+Dataset
+
+Metric
+
+None of these
+
+3. Would you use the quotes to check the answers?
+
+Yes
+
+Maybe
+
+No
+
+4. What is the most important thing missing from this summary?
+
+Nothing important
+
+Main contribution
+
+Results
+
+Limitations
+
+Other
+
+
+Timestamp	Which best describes you?	Which part would be MOST useful when deciding whether to read the paper?	Would you use the quotes to check the answers?	  What is the most important thing missing from this summary?  
+9/22/2026 21:36:43	Computing student doing a literature review	Task	Yes	Main contribution
+9/22/2026 21:48:00	Other computing student	Method	Maybe	Other
+9/22/2026 23:53:10	Other computing student	Task	Maybe	Limitations
+9/23/2026 1:36:44	Other computing student	Task	Maybe	Results
