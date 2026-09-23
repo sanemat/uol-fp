@@ -437,7 +437,7 @@ For "Attention Is All You Need" [D6], the full extraction output is:
 Figure 8 shows the Stage 2c cell with the raw Gemini call and its parsed JSON output, so the extraction is visible running directly.
 
 <figure>
-<img src="Screenshot%202026-08-17%20093143.png" alt="proto3 Stage 2c cell and output" style="width:100%;max-width:100%;">
+<img src="Screenshot%202026-09-23%20204743.png" alt="proto3 Stage 2c cell and output" style="width:100%;max-width:100%;">
 <figcaption>Figure 8: proto3 Stage 2c cell and output (screenshot).</figcaption>
 </figure>
 
@@ -492,12 +492,13 @@ Macro is the headline score (Section 3.5). The two averages are close (0.65 vs 0
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Section 3.5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 5.4).
 
 <figure>
-<img src="Screenshot%202026-08-17%20093240.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
+<img src="Screenshot%202026-09-23%20204922.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
+<img src="Screenshot%202026-09-23%20204941.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
 <figcaption>Figure 9: Baseline P/R/F1 scoring output (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
 <figure>
-<img src="Screenshot%202026-08-17%20093305.png" alt="Per-paper gold-label scoring, baseline vs pipeline, Transformer" style="width:100%;max-width:100%;">
+<img src="Screenshot%202026-09-23%20205012.png" alt="Per-paper gold-label scoring, baseline vs pipeline, Transformer" style="width:100%;max-width:100%;">
 <figcaption>Figure 10: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
