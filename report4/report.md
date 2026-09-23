@@ -897,7 +897,9 @@ The manual review is summarised in Section 5.4 (Table 12). Variant B and the Tas
 
 The conversion is a preprocessing step outside the notebook pipeline, which takes TEI XML as its input. I run GROBID 0.8.1 [11] locally in Docker, because a public GROBID server on HuggingFace failed in my test. The server starts with `docker run -d --rm -p 8070:8070 --name grobid lfoppiano/grobid:0.8.1`, and it is ready when `http://localhost:8070/api/isalive` responds. A short Python script posts each PDF to `http://localhost:8070/api/processFulltextDocument` (timeout 120 s) and saves the response as a TEI XML file. `docker stop grobid` stops the server. GROBID keeps the reference list outside the body and assigns section headings, which Stage 0 needs.
 
-## Appendix C — Survey
+## Appendix C — Reader Evaluation Survey
+
+I recruited respondents from the University of London CM3070 final-project community (`#cm3070-final-project`).
 
 Computing Paper Summary
 
