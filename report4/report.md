@@ -117,11 +117,11 @@ Research methodology in computing papers can be described using a structured voc
 
 Oates [14] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). The book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
 
-Pilkington & Pretorius [15] go further: they formalize the structure using UML (Unified Modeling Language) and ontology engineering, with the goal of "providing clear and unambiguous semantics" [15]. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod: a ResearchScheme is underpinned by one PhilosophicalWorldview and has one or more ResearchDesigns, and each ResearchDesign has one or more ResearchMethods.
+Pilkington and Pretorius [15] go further: they formalize the structure using UML (Unified Modeling Language) and ontology engineering, with the goal of "providing clear and unambiguous semantics" [15]. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod: a ResearchScheme is underpinned by one PhilosophicalWorldview and has one or more ResearchDesigns, and each ResearchDesign has one or more ResearchMethods.
 
-A philosophical worldview is one of the key components in Pilkington & Pretorius [15], but it tends not to appear as an explicit phrase in completed research papers, so I exclude it from extraction. Research design (e.g. experiment vs. survey) [10] is similarly out of scope: it can be subjective, two readers can assign different labels to the same paper, and it is not the focus of this project's four roles.
+A philosophical worldview is one of the key components in Pilkington and Pretorius [15], but it tends not to appear as an explicit phrase in completed research papers, so I exclude it from extraction. Research design (e.g. experiment vs. survey) [10] is similarly out of scope: it can be subjective, two readers can assign different labels to the same paper, and it is not the focus of this project's four roles.
 
-Oates [14] gives concept names. Pilkington & Pretorius [15] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington & Pretorius. Both works are designed for human use; neither provides a system to extract methodology components automatically from text. The four roles used in this project (TechnicalMethod, Task, Dataset, and EvaluationMetric) draw more directly on Jain et al. [8], reviewed next.
+Oates [14] gives concept names. Pilkington and Pretorius [15] give formal relationships between those concepts. My project uses vocabulary from Oates and formal structure from Pilkington and Pretorius. Both works are designed for human use; neither provides a system to extract methodology components automatically from text. The four roles used in this project (TechnicalMethod, Task, Dataset, and EvaluationMetric) draw more directly on Jain et al. [8], reviewed next.
 
 ### 2.2 Extracting Methodology from Papers
 
@@ -166,7 +166,7 @@ The reviewed studies provide the four-role schema and techniques for extracting 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
 | Oates [14] | Methodology vocabulary | Clear concept names for methodology components | Designed for human use; not extraction-oriented | Motivates structured extraction |
-| Pilkington & Pretorius [15] | Formal methodology ontology | Formal relationships between concepts | No extraction system or corpus | Supports treating methodology as a structured domain |
+| Pilkington and Pretorius [15] | Formal methodology ontology | Formal relationships between concepts | No extraction system or corpus | Supports treating methodology as a structured domain |
 | Jain et al. [8] | Document-level extraction of Dataset, Metric, Task, and Method | All four roles; working system; document-level argument | 438 annotated ML papers; expert annotators | Confirms four roles; motivates document-level extraction and both proto2 and proto3's approaches |
 | Ghosh et al. [4, 5] | TechnicalMethod extraction from AI papers | Methodology-specific sequence labeling | One role only; AI papers; supervised | Shows difficulty of extracting method names |
 | Färber et al. [3] | Used vs. non-used methods and datasets | Handles authorship attribution | Method and Dataset only; labeled mentions required | Motivates proto3's authors'-own-work rule |
@@ -666,21 +666,21 @@ The next experiments follow from the results above.
 
 [5] Madhusudan Ghosh, Debasis Ganguly, Partha Basuchowdhuri, and Sudip Kumar Naskar. 2023b. Extracting methodology components from AI research papers: a data-driven factored sequence labeling approach. In *Proceedings of the 32nd ACM International Conference on Information and Knowledge Management (CIKM 2023)*. 3897–3901. <https://doi.org/10.1145/3583780.3615258>
 
-[6] Pengcheng He, Jianfeng Gao, and Weizhu Chen. 2021. DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. arXiv:2111.09543. <https://doi.org/10.48550/arXiv.2111.09543>
+[6] Pengcheng He, Jianfeng Gao, and Weizhu Chen. 2023. DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing. In *The Eleventh International Conference on Learning Representations (ICLR 2023)*. arXiv:2111.09543. <https://doi.org/10.48550/arXiv.2111.09543>
 
 [7] Jie Huang, Xinyun Chen, Swaroop Mishra, Huaixiu Steven Zheng, Adams Wei Yu, Xinying Song, and Denny Zhou. 2024. Large Language Models Cannot Self-Correct Reasoning Yet. In *The Twelfth International Conference on Learning Representations (ICLR 2024)*. arXiv:2310.01798. <https://doi.org/10.48550/arXiv.2310.01798>
 
 [8] Sarthak Jain, Madeleine van Zuylen, Hannaneh Hajishirzi, and Iz Beltagy. 2020. SciREX: A Challenge Dataset for Document-Level Information Extraction. In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics*, Online, July 2020. Association for Computational Linguistics, 7506–7516. <https://doi.org/10.18653/v1/2020.acl-main.670>
 
-[9] Tushar Khot, Harsh Trivedi, Matthew Finlayson, Yao Fu, Kyle Richardson, Peter Clark, and Ashish Sabharwal. 2022. Decomposed Prompting: A Modular Approach for Solving Complex Tasks. arXiv:2210.02406. <https://doi.org/10.48550/arXiv.2210.02406>
+[9] Tushar Khot, Harsh Trivedi, Matthew Finlayson, Yao Fu, Kyle Richardson, Peter Clark, and Ashish Sabharwal. 2023. Decomposed Prompting: A Modular Approach for Solving Complex Tasks. In *The Eleventh International Conference on Learning Representations (ICLR 2023)*. arXiv:2210.02406. <https://doi.org/10.48550/arXiv.2210.02406>
 
-[10] Zsolt T. Kosztyán, Tünde Király, Tibor Csizmadia, Attila Imre Katona, and Ágnes Vathy-Fogarassy. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence* 156 (2025), article 111039. <https://doi.org/10.1016/j.engappai.2025.111039>
+[10] Zsolt T. Kosztyán, Tünde Király, Tibor Csizmadia, Attila Imre Katona, and Ágnes Vathy-Fogarassy. 2025. Automated research methodology classification using machine learning. *Engineering Applications of Artificial Intelligence* 156 (2025), 111039. <https://doi.org/10.1016/j.engappai.2025.111039>
 
 [11] Patrice Lopez. 2009. GROBID: Combining Automatic Bibliographic Data Recognition and Term Extraction for Scholarship Publications. In *Research and Advanced Technology for Digital Libraries: Proceedings of ECDL 2009*. Springer Berlin Heidelberg, Berlin, Heidelberg, 473–474. <https://doi.org/10.1007/978-3-642-04346-8_62>
 
 [12] Yaxi Lu, Haolun Li, Xin Cong, Zhong Zhang, Yesai Wu, Yankai Lin, Zhiyuan Liu, Fangming Liu, and Maosong Sun. 2025. Learning to Generate Structured Output with Schema Reinforcement Learning. arXiv:2502.18878. <https://doi.org/10.48550/arXiv.2502.18878>
 
-[13] Yongqiang Ma, Jiawei Liu, Wei Lu, and Qikai Cheng. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management*, 60(3), article 103315. <https://doi.org/10.1016/j.ipm.2023.103315>
+[13] Yongqiang Ma, Jiawei Liu, Wei Lu, and Qikai Cheng. 2023. From "what" to "how": Extracting the procedural scientific information toward the metric-optimization in AI. *Information Processing & Management* 60, 3 (2023), 103315. <https://doi.org/10.1016/j.ipm.2023.103315>
 
 [14] Briony J. Oates. 2006. *Researching Information Systems and Computing*. SAGE Publications, London.
 
@@ -698,17 +698,17 @@ The next experiments follow from the results above.
 
 ## Dataset Papers
 
-[D1] Sergey Brin and Lawrence Page. 1998. The anatomy of a large-scale hypertextual web search engine. *Computer Networks and ISDN Systems*, 30(1–7), 107–117. <https://doi.org/10.1016/S0169-7552(98)00110-X>
+[D1] Sergey Brin and Lawrence Page. 1998. The anatomy of a large-scale hypertextual web search engine. *Computer Networks and ISDN Systems* 30, 1–7 (1998), 107–117. <https://doi.org/10.1016/S0169-7552(98)00110-X>
 
 [D2] Jeffrey Dean and Sanjay Ghemawat. 2004. MapReduce: Simplified data processing on large clusters. In *Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI '04)*. USENIX Association, 137–150. <https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters>
 
-[D3] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of deep bidirectional transformers for language understanding. In *Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019)*, Volume 1. Minneapolis, Minnesota: Association for Computational Linguistics, 4171–4186. <https://doi.org/10.18653/v1/N19-1423>
+[D3] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of deep bidirectional transformers for language understanding. In *Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2019), Volume 1*. Association for Computational Linguistics, Minneapolis, Minnesota, 4171–4186. <https://doi.org/10.18653/v1/N19-1423>
 
-[D4] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)*, 770–778. <https://doi.org/10.1109/CVPR.2016.90>
+[D4] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2016)*. 770–778. <https://doi.org/10.1109/CVPR.2016.90>
 
-[D5] Alex Krizhevsky, Ilya Sutskever, and Geoffrey E. Hinton. 2012. ImageNet classification with deep convolutional neural networks. In *Advances in Neural Information Processing Systems*, 25, 1097–1105. <https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html>
+[D5] Alex Krizhevsky, Ilya Sutskever, and Geoffrey E. Hinton. 2012. ImageNet classification with deep convolutional neural networks. In *Advances in Neural Information Processing Systems 25 (NIPS 2012)*. 1097–1105. <https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html>
 
-[D6] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In *Advances in Neural Information Processing Systems*, 30, 5998–6008. <https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html>
+[D6] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In *Advances in Neural Information Processing Systems 30 (NIPS 2017)*. 5998–6008. <https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html>
 
 ---
 
