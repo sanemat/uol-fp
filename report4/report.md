@@ -962,29 +962,29 @@ Example evidence (Dataset):
 Section: Training Data and Batching
 
 1. Which best describes you?
-   - Computing student doing a literature review
-   - Other computing student
-   - Researcher
-   - Other
+    - Computing student doing a literature review
+    - Other computing student
+    - Researcher
+    - Other
 
 2. Which part would be MOST useful when deciding whether to read the paper?
-   - Method
-   - Task
-   - Dataset
-   - Metric
-   - None of these
+    - Method
+    - Task
+    - Dataset
+    - Metric
+    - None of these
 
 3. Would you use the quotes to check the answers?
-   - Yes
-   - Maybe
-   - No
+    - Yes
+    - Maybe
+    - No
 
 4. What is the most important thing missing from this summary?
-   - Nothing important
-   - Main contribution
-   - Results
-   - Limitations
-   - Other
+    - Nothing important
+    - Main contribution
+    - Results
+    - Limitations
+    - Other
 
 | Date | Which best describes you? | Which part would be MOST useful when deciding whether to read the paper? | Would you use the quotes to check the answers? | What is the most important thing missing from this summary? |
 |---|---|---|---|---|
