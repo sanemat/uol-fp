@@ -161,7 +161,7 @@ Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured sci
 
 ### 2.6 Synthesis
 
-The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data.
+The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data. The originality of this project lies in its system design and evaluation, since it uses an existing model: it combines full-document schema-guided extraction, an authorship rule, and evidence-backed methodology roles, and tests where this schema breaks across ML and systems papers.
 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
@@ -320,7 +320,7 @@ This chapter describes the implementation of proto3, including TEI parsing, sche
 
 ### 4.1 Features Implemented
 
-The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence.
+The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence. The main technical challenge was to make generative extraction testable and inspectable: the pipeline keeps the document's section structure, enforces the answer-evidence rule in code, and scores free-text output reproducibly across repeated runs.
 
 ### 4.2 Algorithms and Techniques
 
@@ -634,6 +634,8 @@ This project developed a document-level LLM pipeline to extract four methodology
 TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, but Task remains at 0.33. The Task experiments exposed two related problems: a single answer cannot always represent a paper's task, and substring matching can reject reasonable answers that differ from the gold label. `response_json_schema` solved schema conformance, so the remaining difficulty lies in defining the four roles consistently across paper types. MapReduce and Google Search fit them poorly because the roles derive from ML-benchmark structure.
 
 The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that four of five respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. Its usefulness in an actual literature-review task remains untested.
+
+Against the three objectives in Chapter 1, I defined the four-role methodology profile (objective 1). The prototype returns one answer and one verbatim quote per role for every paper (objective 2), although the manual review showed that evidence and authorship attribution were not always reliable. I evaluated it against gold labels for six papers (objective 3), but the small, single-annotator corpus limits how far the results generalise.
 
 ### 6.2 Further Work
 
