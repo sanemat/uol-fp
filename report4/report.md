@@ -115,7 +115,7 @@ Methodology:
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
-Oates [14] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
+Oates [14] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). The book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
 
 Pilkington & Pretorius [15] go further: they formalize the structure using UML (Unified Modeling Language) and ontology engineering, with the goal of "providing clear and unambiguous semantics" [15]. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod: a ResearchScheme is underpinned by one PhilosophicalWorldview and has one or more ResearchDesigns, and each ResearchDesign has one or more ResearchMethods.
 
@@ -614,7 +614,7 @@ I did not run the Related Work ablation, which would exclude the Related Work se
 
 ### 5.6 Critical Evaluation
 
-Mapping proto2's three named failure modes, and the Task weakness found later, onto what the evaluation measured across the whole project:
+Table 15 maps proto2's three failure modes, and the later Task weakness, to the evaluation results.
 
 | Failure mode | Status | Evidence |
 |---|---|---|
