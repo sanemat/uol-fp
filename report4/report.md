@@ -233,15 +233,7 @@ Task shows the same pattern in one case: Variant B answered "sequence transducti
 
 ### 3.3 Model Choice
 
-A paper's cleaned full text is typically 4,000-20,000 tokens, which fits within the context window of several modern long-context LLMs without chunking:
-
-| Model | Context | Cost |
-|---|---|---|
-| Gemini Flash | 1M tokens | cheap API |
-
-Table 5: Long-context model.
-
-I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) for its long context window: 1M tokens exceeds the length of every paper in the corpus, so no chunking was needed. I did not compare other models. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
+The main requirement for the model was that every paper fits in one context without chunking, since document-level extraction depends on it. A paper's cleaned full text is typically 4,000-20,000 tokens. I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) because it meets this requirement with a 1M-token context window, accepts a JSON Schema for structured output, and has a low API cost for repeated runs. Comparing models was outside the scope of this project, so the results describe one model. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
 
 ### 3.4 Overall Pipeline
 
