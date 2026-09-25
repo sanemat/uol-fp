@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6733 words, excluding tables, figures, references, and appendices)
+Report (6901 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (460/1000 words)
 
@@ -94,7 +94,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1354/2500 words)
+## 2. Literature Review (1395/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -177,7 +177,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1277/2000 words)
+## 3. Design (1300/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -314,7 +314,7 @@ Table 5: Iteration summary.
 
 ---
 
-## 4. Implementation (1117/2500 words)
+## 4. Implementation (1150/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at <https://github.com/sanemat/uol-fp>.
 
@@ -480,7 +480,7 @@ Table 7: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2062/2500 words)
+## 5. Evaluation (2057/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -625,7 +625,7 @@ The exploratory survey (Appendix C, n=5) provides limited user feedback. Only tw
 
 ---
 
-## 6. Conclusion (472/1000 words)
+## 6. Conclusion (539/1000 words)
 
 ### 6.1 Summary
 
