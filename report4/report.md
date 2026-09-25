@@ -61,13 +61,13 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6901 words, excluding tables, figures, references, and appendices)
+Report (6916 words, excluding tables, figures, references, and appendices)
 
-## 1. Introduction (460/1000 words)
+## 1. Introduction (466/1000 words)
 
 When computing researchers do a literature review, they often need to read many papers and find each paper's method, task, dataset, and evaluation metric. Reading many papers this way is slow and manual. I treat these four items as a methodology profile that a reader can extract automatically, to support the first pass of a literature review, not to replace reading the paper.
 
-The aim of this project is to extract a methodology profile from a computing paper automatically, and to show the evidence for each answer so that a reader can check it. I set three objectives. First, I define the profile as four roles: technical method, task, dataset, and evaluation metric. Second, I build a prototype that returns one answer per role, each with a quoted passage from the paper. Third, I evaluate the prototype against gold labels that I assign manually to six papers.
+The aim of this project is to extract a methodology profile from a computing paper automatically, and to show the evidence for each answer so that a reader can check it. I set three objectives. First, I define the profile as four roles: technical method, task, dataset, and evaluation metric. Second, I build a prototype that returns at most one answer per role, with a quoted passage from the paper when an answer is present. Third, I evaluate the prototype against gold labels that I assign manually to six papers.
 
 I use Template 12.1 from the Natural Language Processing (NLP) module: identifying research methodologies used in computing research papers. The code repository is publicly available at <https://github.com/sanemat/uol-fp>.
 
@@ -610,7 +610,7 @@ Table 13 maps proto2's three failure modes, and the later Task weakness, to the 
 
 | Failure mode | Status | Evidence |
 |---|---|---|
-| Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One answer per role, every paper, by construction of Stage 2's schema-guided extraction |
+| Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One structured slot per role, every paper, by construction of Stage 2's schema-guided extraction; at most one non-null answer per role |
 | No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Addressed by design, not reliably solved | The authors'-own-work rule targets this directly; the manual review found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study |
 | Task F1 of 0.33 | Not fixed | Six mechanisms (Table 12) did not raise it above 0.33 under a check I could trust |
@@ -625,7 +625,7 @@ The exploratory survey (Appendix C, n=5) provides limited user feedback. Only tw
 
 ---
 
-## 6. Conclusion (539/1000 words)
+## 6. Conclusion (548/1000 words)
 
 ### 6.1 Summary
 
@@ -635,7 +635,7 @@ TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, bu
 
 The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that four of five respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. Its usefulness in an actual literature-review task remains untested.
 
-Against the three objectives in Chapter 1, I defined the four-role methodology profile (objective 1). The prototype returns one answer and one verbatim quote per role for every paper (objective 2), although the manual review showed that evidence and authorship attribution were not always reliable. I evaluated it against gold labels for six papers (objective 3), but the small, single-annotator corpus limits how far the results generalise.
+Against the three objectives in Chapter 1, I defined the four-role methodology profile (objective 1). The prototype returns one structured slot per role for every paper, with an answer and a verbatim quote when the paper supports one (objective 2), although the manual review showed that evidence and authorship attribution were not always reliable. I evaluated it against gold labels for six papers (objective 3), but the small, single-annotator corpus limits how far the results generalise.
 
 ### 6.2 Further Work
 
