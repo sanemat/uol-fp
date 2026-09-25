@@ -245,15 +245,27 @@ flowchart TD
 Compared with proto2's pipeline, there are two differences: there is no sentence splitting, and there is no per-sentence acceptance threshold. The LLM sees the (mostly) whole document and returns one decision per role directly, instead of a list of candidate sentences each scored independently (Figure 3).
 
 <figure>
-<pre>
-proto2 (sentence level)
-PDF → GROBID → TEI XML → section filter → sentence split + clean
-    → zero-shot NLI per sentence → threshold 0.5 → 14-160 candidate sentences per role
 
-proto3 (document level)
-PDF → GROBID → TEI XML → concatenate sections (reading order)
-    → one LLM call + response_json_schema → one answer + evidence per role
-</pre>
+```mermaid
+flowchart LR
+    subgraph P2["proto2 (sentence level)"]
+        direction TB
+        A1[PDF] --> A2[GROBID] --> A3[TEI XML] --> A4[section filter]
+        A4 --> A5[sentence split + clean]
+        A5 --> A6[zero-shot NLI per sentence]
+        A6 --> A7[threshold 0.5]
+        A7 --> A8[14-160 candidate sentences per role]
+    end
+    subgraph P3["proto3 (document level)"]
+        direction TB
+        B1[PDF] --> B2[GROBID] --> B3[TEI XML]
+        B3 --> B4["concatenate sections<br/>(reading order)"]
+        B4 --> B5["one LLM call +<br/>response_json_schema"]
+        B5 --> B6[one answer + evidence per role]
+    end
+    P2 ~~~ P3
+```
+
 <figcaption>Figure 3: proto2 and proto3 pipelines compared. proto3 removes sentence splitting and the per-sentence acceptance threshold.</figcaption>
 </figure>
 
