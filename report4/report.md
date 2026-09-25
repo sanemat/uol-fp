@@ -223,33 +223,22 @@ I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software developme
 The pipeline has one preprocessing step outside the notebook and five stages inside it (Figure 2).
 
 <figure>
-<pre>
-PDF input
-  │
-  ▼
-GROBID 0.8.1 (preprocessing, outside the notebook) ──fail──▶ parse error surfaced to user
-  │ ok (TEI XML)
-  ▼
-Stage 0: TEI parse ──empty/skipped section──▶ section dropped, logged
-  │ ok
-  ▼
-Stage 1: concatenate sections (reading order)
-  │
-  ▼
-Stage 2: schema-guided LLM extraction
-  (Variant A: one joint call; Variant B, Stage 2d: four role calls)
-  │──no supported answer in text──▶ role = null (not fabricated)
-  │──schema or null-rule violation──▶ ValidationError, no partial profile
-  │ ok
-  ▼
-MethodologyProfile JSON (answer + evidence per role)
-  │
-  ▼
-Stage 3: gold-label scoring (evaluation only)
-  │
-  ▼
-User-facing output: role table + quoted evidence (Table 1 / Figure 7)
-</pre>
+
+```mermaid
+flowchart TD
+    IN[PDF input] --> G["GROBID 0.8.1<br/>(preprocessing, outside the notebook)"]
+    G -- fail --> GE[parse error surfaced to user]
+    G -- "ok (TEI XML)" --> S0[Stage 0: TEI parse]
+    S0 -- empty/skipped section --> S0E[section dropped, logged]
+    S0 -- ok --> S1["Stage 1: concatenate sections<br/>(reading order)"]
+    S1 --> S2["Stage 2: schema-guided LLM extraction<br/>(Variant A: one joint call;<br/>Variant B, Stage 2d: four role calls)"]
+    S2 -- no supported answer in text --> N["role = null (not fabricated)"]
+    S2 -- schema or null-rule violation --> VE[ValidationError, no partial profile]
+    S2 -- ok --> MP["MethodologyProfile JSON<br/>(answer + evidence per role)"]
+    MP --> S3["Stage 3: gold-label scoring<br/>(evaluation only)"]
+    S3 --> OUT["User-facing output: role table + quoted evidence<br/>(Table 1 / Figure 7)"]
+```
+
 <figcaption>Figure 2: proto3 extraction pipeline with failure paths and the user-facing output step.</figcaption>
 </figure>
 

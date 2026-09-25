@@ -5,12 +5,21 @@ Uses Python-Markdown for HTML, Pygments for code highlighting (GitHub-like
 style) and WeasyPrint for PDF. Inline <style> blocks in the Markdown
 (e.g. @page rules) are kept and applied.
 
+```mermaid blocks are rendered to SVG with mermaid-cli (run via npx, so
+Node.js is required) and embedded as images, because WeasyPrint does not
+run JavaScript.
+
 Usage:
     python3 report4/md_to_pdf.py [input.md] [output.pdf]
 
 Defaults: report4/report.md -> report4/report.pdf
 """
+import base64
+import json
+import re
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import markdown
@@ -27,12 +36,43 @@ pre code, pre span { overflow-wrap: anywhere; }
 table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #d0d7de; padding: 0.3em 0.6em;
          overflow-wrap: anywhere; }
+img.mermaid { display: block; margin: 0 auto; max-width: 100%;
+              max-height: 200mm; }
+figure:has(img.mermaid) { break-inside: avoid; }
 """
+
+MERMAID_RE = re.compile(r"^```mermaid\n(.*?)^```$", re.DOTALL | re.MULTILINE)
+# WeasyPrint cannot draw <foreignObject>, so labels must be plain SVG text.
+MERMAID_CONFIG = {
+    "htmlLabels": False,
+    "flowchart": {"htmlLabels": False, "wrappingWidth": 260},
+}
+
+
+def render_mermaid(md: str) -> str:
+    """Replace each ```mermaid block with an <img> holding the rendered SVG."""
+    with tempfile.TemporaryDirectory() as tmp:
+        config = Path(tmp) / "config.json"
+        config.write_text(json.dumps(MERMAID_CONFIG))
+
+        def to_img(match: re.Match) -> str:
+            src = Path(tmp) / "diagram.mmd"
+            out = Path(tmp) / "diagram.svg"
+            src.write_text(match.group(1), encoding="utf-8")
+            subprocess.run(
+                ["npx", "-y", "@mermaid-js/mermaid-cli",
+                 "-i", str(src), "-o", str(out), "-c", str(config), "-q"],
+                check=True,
+            )
+            data = base64.b64encode(out.read_bytes()).decode("ascii")
+            return f'<img class="mermaid" src="data:image/svg+xml;base64,{data}">'
+
+        return MERMAID_RE.sub(to_img, md)
 
 
 def convert(src: Path, dst: Path) -> None:
     body = markdown.markdown(
-        src.read_text(encoding="utf-8"),
+        render_mermaid(src.read_text(encoding="utf-8")),
         extensions=["fenced_code", "codehilite", "tables", "md_in_html", "toc"],
         extension_configs={"codehilite": {"guess_lang": False, "css_class": "hl"}},
     )
