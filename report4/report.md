@@ -992,5 +992,6 @@ Section: Training Data and Batching
 | 2026-09-22 | Other computing student | Method | Maybe | Other |
 | 2026-09-22 | Other computing student | Task | Maybe | Limitations |
 | 2026-09-23 | Other computing student | Task | Maybe | Results |
+| 2026-09-24 | Computing student doing a literature review | Task | Maybe | Results |
 
-Table C1: Survey responses, timestamps rounded to date to preserve anonymity (n=4).
+Table C1: Survey responses, timestamps rounded to date to preserve anonymity (n=5).
