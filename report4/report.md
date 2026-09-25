@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6606 words, excluding tables, figures, references, and appendices)
+Report (6733 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (460/1000 words)
 
@@ -177,7 +177,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1275/2000 words)
+## 3. Design (1277/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -200,7 +200,32 @@ After implementing the prototype, I conducted a short exploratory survey with fo
 
 The core feature is Stage 2: one structured, evidence-backed answer per role, not a list of 14-160 candidate sentences (Section 2.4). proto2 classified each sentence independently with a fixed `0.5` threshold, which assumed that a sentence carries at most one role and that one threshold suits all roles. proto3 gives the model the whole document and asks for one answer per role, with a section heading and a verbatim quote as evidence, so a reader can check the answer without reading the paper. The authors'-own-work rule in the prompt targets proto2's authorship-attribution failure (the ELMo/BERT case, Section 2.4). The four-role JSON shape is enforced by `response_json_schema`, generated from Pydantic models rather than described in the prompt text, which removes an entire class of parsing and output-shape bugs (Chapter 4). A role can be `null`, so the model can report a role as absent instead of inventing one.
 
-Extraction can be joint or decomposed. Variant A, the main pipeline, makes one call that returns all four roles; Jain et al.'s [8] document-level argument (Chapter 2) favours this design, since one context lets the model link a method, dataset, and metric that appear together (e.g. "Transformer"/"WMT"/"BLEU"). Variant B makes four independent role-specific calls (Stage 2d). Khot et al. [9] show that decomposing a complex task into independently optimizable subtasks can beat a single joint few-shot prompt on several reasoning tasks, and the four roles ask for different judgments: primary method versus component, the problem actually solved, data actually used, and the metric actually reported. Both variants use the same `RoleExtraction` schema and the same scoring code, so they differ only in the number of calls and in one role-specific rule line. My hypothesis is that per-role accuracy under Variant B exceeds Variant A, which Section 5.5 tests. Variant C, a fifth call checking the four outputs for mutual consistency, is designed but not implemented (Chapter 6).
+Extraction can be joint or decomposed. Variant A, the main pipeline, makes one call that returns all four roles; Jain et al.'s [8] document-level argument (Chapter 2) favours this design, since one context lets the model link a method, dataset, and metric that appear together (e.g. "Transformer"/"WMT"/"BLEU"). Variant B makes four independent role-specific calls (Stage 2d). Khot et al. [9] show that decomposing a complex task into independently optimizable subtasks can beat a single joint few-shot prompt on several reasoning tasks, and the four roles ask for different judgments: primary method versus component, the problem actually solved, data actually used, and the metric actually reported. Both variants (Figure 2) use the same `RoleExtraction` schema and the same scoring code, so they differ only in the number of calls and in one role-specific rule line. My hypothesis is that per-role accuracy under Variant B exceeds Variant A, which Section 5.5 tests. Variant C, a fifth call checking the four outputs for mutual consistency, is designed but not implemented (Chapter 6).
+
+<figure>
+
+```mermaid
+flowchart LR
+    T["paper<br/>full text"]
+    subgraph VA["Variant A: joint (main)"]
+        A1["1 call<br/>(all four roles)"]
+    end
+    subgraph VB["Variant B: decomposed (Stage 2d)"]
+        direction TB
+        B1[Task call]
+        B2[Method call]
+        B3[Dataset call]
+        B4[EvaluationMetric call]
+    end
+    T --> A1
+    T --> B1 & B2 & B3 & B4
+    A1 --> P["4 × RoleExtraction<br/>(same schema)"]
+    B1 & B2 & B3 & B4 --> P
+    P --> S["score_role<br/>(same scoring)"]
+```
+
+<figcaption>Figure 2: Joint (Variant A) and decomposed (Variant B) extraction. Both produce the same schema and use the same scoring. Variant C (a consistency check call) is designed but not implemented.</figcaption>
+</figure>
 
 The second design question is whether every role should stay single-valued. AlexNet and ResNet both report top-1 and top-5 error rates, which the baseline squashes into one string, and BERT's gold EvaluationMetric label lists both "accuracy" and "F1" (Appendix A, Table A1), since the paper reports both. An informal NotebookLM cross-check, run independently on each paper without being told the schema was single-valued, produced similar multi-valued outputs for BERT, ResNet, and Transformer. BERT's single-valued Dataset answer is "SQuAD v1.1," while NotebookLM listed BooksCorpus, Wikipedia, GLUE, and SQuAD v1.1/v2.0 from the same source text. Forcing Dataset and EvaluationMetric into one string loses information.
 
@@ -220,7 +245,7 @@ I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software developme
 
 ### 3.4 Overall Pipeline
 
-The pipeline has one preprocessing step outside the notebook and five stages inside it (Figure 2).
+The pipeline has one preprocessing step outside the notebook and five stages inside it (Figure 3).
 
 <figure>
 
@@ -236,13 +261,13 @@ flowchart TD
     S2 -- schema or null-rule violation --> VE[ValidationError, no partial profile]
     S2 -- ok --> MP["MethodologyProfile JSON<br/>(answer + evidence per role)"]
     MP --> S3["Stage 3: gold-label scoring<br/>(evaluation only)"]
-    S3 --> OUT["User-facing output: role table + quoted evidence<br/>(Table 1 / Figure 7)"]
+    S3 --> OUT["User-facing output: role table + quoted evidence<br/>(Table 1 / Figure 8)"]
 ```
 
-<figcaption>Figure 2: proto3 extraction pipeline with failure paths and the user-facing output step.</figcaption>
+<figcaption>Figure 3: proto3 extraction pipeline with failure paths and the user-facing output step.</figcaption>
 </figure>
 
-Compared with proto2's pipeline, there are two differences: there is no sentence splitting, and there is no per-sentence acceptance threshold. The LLM sees the (mostly) whole document and returns one decision per role directly, instead of a list of candidate sentences each scored independently (Figure 3).
+Compared with proto2's pipeline, there are two differences: there is no sentence splitting, and there is no per-sentence acceptance threshold. The LLM sees the (mostly) whole document and returns one decision per role directly, instead of a list of candidate sentences each scored independently (Figure 4).
 
 <figure>
 
@@ -266,7 +291,7 @@ flowchart LR
     P2 ~~~ P3
 ```
 
-<figcaption>Figure 3: proto2 and proto3 pipelines compared. proto3 removes sentence splitting and the per-sentence acceptance threshold.</figcaption>
+<figcaption>Figure 4: proto2 and proto3 pipelines compared. proto3 removes sentence splitting and the per-sentence acceptance threshold.</figcaption>
 </figure>
 
 These two differences remove two weaknesses of proto2. First, proto2's NLI acceptance threshold of `0.5` needed a justification. proto3 has no such value, because extraction is no longer a per-sentence accept/reject decision. Second, proto2 assumed that a sentence describes one role at a time, and single-label sentence classification could only ever produce single-label results, whatever the underlying text actually contained. That circularity does not apply to proto3, since extraction is document-level; whether a *role* (not a sentence) should allow more than one answer is addressed in Section 3.2.
@@ -297,7 +322,7 @@ Table 6: Iteration summary.
 
 ---
 
-## 4. Implementation (1012/2500 words)
+## 4. Implementation (1117/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at https://github.com/sanemat/uol-fp.
 
@@ -325,7 +350,7 @@ The end-to-end input is a PDF. A local GROBID 0.8.1 server converts it to TEI XM
 
 ### 4.3 Code Explanation
 
-Four details are the most technically interesting. First, the prompt states only what the JSON schema itself cannot express, and everything about the output shape lives on the Pydantic models (Figure 4):
+Four details are the most technically interesting. First, the prompt states only what the JSON schema itself cannot express, and everything about the output shape lives on the Pydantic models (Figure 5):
 
 <figure>
 
@@ -350,10 +375,10 @@ class RoleExtraction(BaseModel):
         return self
 ```
 
-<figcaption>Figure 4: Evidence/RoleExtraction Pydantic models with the null-correlation validator (<code>proto3/src/uol_fp/models.py</code>).</figcaption>
+<figcaption>Figure 5: Evidence/RoleExtraction Pydantic models with the null-correlation validator (<code>proto3/src/uol_fp/models.py</code>).</figcaption>
 </figure>
 
-The validator enforces "no answer without evidence" in code. A JSON schema alone cannot express this rule, so a prompt instruction would be the only alternative, and it would be unenforced. The models live in `models.py`, and `sync_generated.py` (`make sync-generated`) generates the notebook block from that file, so the notebook and the tested module cannot drift apart.
+The validator enforces "no answer without evidence" in code. A JSON schema alone cannot express this rule, so a prompt instruction would be the only alternative, and it would be unenforced. The models live in `models.py`, and `sync_generated.py` (`make sync-generated`) generates the notebook block from that file, so the notebook and the tested module cannot drift apart. The prompt keeps only the rules that the schema cannot express (Figure 6).
 
 <figure>
 <pre>
@@ -362,10 +387,10 @@ Rules:
 - Return null when a role is not present in the paper.
 - Evidence quotes must be copied verbatim from the paper, not paraphrased.
 </pre>
-<figcaption>Figure 5: Prompt rules excerpt from <code>proto3/3pipeline.ipynb</code>, "Stage 2b — Prompt Template".</figcaption>
+<figcaption>Figure 6: Prompt rules excerpt from <code>proto3/3pipeline.ipynb</code>, "Stage 2b — Prompt Template".</figcaption>
 </figure>
 
-Second, the Gemini call uses `response_json_schema` together with `temperature=0` and `seed=0`, and parses the reply directly with `MethodologyProfile.model_validate_json(...)`, with no manual JSON-extraction step:
+Second, the Gemini call uses `response_json_schema` together with `temperature=0` and `seed=0`, and parses the reply directly with `MethodologyProfile.model_validate_json(...)`, with no manual JSON-extraction step (Figure 7):
 
 <figure>
 
@@ -384,7 +409,7 @@ response = client.models.generate_content(
 profile = MethodologyProfile.model_validate_json(response.text)
 ```
 
-<figcaption>Figure 6: Gemini call and response parsing (<code>proto3/3pipeline.ipynb</code>, "Stage 2c — Call Gemini and Parse Response").</figcaption>
+<figcaption>Figure 7: Gemini call and response parsing (<code>proto3/3pipeline.ipynb</code>, "Stage 2c — Call Gemini and Parse Response").</figcaption>
 </figure>
 
 An earlier prompt version described the `evidence` field inconsistently. On "Attention Is All You Need", Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended, e.g. `"## Introduction In this work we propose..."`, instead of the nested `{section, quote}` object. I first fixed this by rewriting the prompt; the schema now guarantees the nested shape regardless of prompt wording. `response_schema` and `response_json_schema` are not interchangeable. `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`, because it converts to Google's own `Schema` proto, which does not support `additionalProperties`, and Pydantic's `extra="forbid"` produces exactly that field. `response_json_schema` accepts a real JSON Schema dict instead, so `MethodologyProfile.model_json_schema()` is passed there.
@@ -395,7 +420,7 @@ Fourth, the scoring semantics. Because `matches` is a substring test, the gold l
 
 ### 4.4 Visual Representation
 
-For "Attention Is All You Need" [D6], the full extraction output is:
+Figure 8 shows the full extraction output for "Attention Is All You Need" [D6].
 
 <figure>
 
@@ -432,14 +457,14 @@ For "Attention Is All You Need" [D6], the full extraction output is:
 }
 ```
 
-<figcaption>Figure 7: Full extraction output for "Attention Is All You Need" [D6] (<code>proto3/baseline/transformer.json</code>).</figcaption>
+<figcaption>Figure 8: Full extraction output for "Attention Is All You Need" [D6] (<code>proto3/baseline/transformer.json</code>).</figcaption>
 </figure>
 
-Figure 8 shows the Stage 2c cell with the raw Gemini call and its parsed JSON output, so the extraction is visible running directly.
+Figure 9 shows the Stage 2c cell with the raw Gemini call and its parsed JSON output, so the extraction is visible running directly.
 
 <figure>
 <img src="Screenshot%202026-09-23%20204743.png" alt="proto3 Stage 2c cell and output" style="width:100%;max-width:100%;">
-<figcaption>Figure 8: proto3 Stage 2c cell and output (screenshot).</figcaption>
+<figcaption>Figure 9: proto3 Stage 2c cell and output (screenshot).</figcaption>
 </figure>
 
 Table 8 shows the contrast with proto2 numerically for the Transformer paper: proto2's accepted-sentence counts per role versus proto3's one answer per role.
@@ -463,7 +488,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2033/2500 words)
+## 5. Evaluation (2053/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -492,15 +517,17 @@ Macro is the headline score (Section 3.5). The two averages are close (0.65 vs 0
 
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Section 3.5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 5.4).
 
+Figure 10 shows the notebook output behind Table 10, and Figure 11 shows the per-paper scoring for the Transformer paper.
+
 <figure>
 <img src="Screenshot%202026-09-23%20204922.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
 <img src="Screenshot%202026-09-23%20204941.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
-<figcaption>Figure 9: Baseline P/R/F1 scoring output (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
+<figcaption>Figure 10: Baseline P/R/F1 scoring output (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
 <figure>
 <img src="Screenshot%202026-09-23%20205012.png" alt="Per-paper gold-label scoring, baseline vs pipeline, Transformer" style="width:100%;max-width:100%;">
-<figcaption>Figure 10: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
+<figcaption>Figure 11: Per-paper gold-label scoring for the Transformer paper, baseline vs. pipeline (<code>proto3/3pipeline.ipynb</code>, Stage 3).</figcaption>
 </figure>
 
 ### 5.3 Variance Study
@@ -693,7 +720,7 @@ The next experiments follow from the results above.
 
 
 ## Appendix A — Extended proto3 Output and Background Data (All 6 Papers)
-Chapter 4 shows the full extraction output for the Transformer paper (Figure 7). This appendix gives the same output for the remaining five papers, all from `proto3/baseline/*.json`, plus the gold labels and proto2 background counts used throughout Chapters 4–5.
+Chapter 4 shows the full extraction output for the Transformer paper (Figure 8). This appendix gives the same output for the remaining five papers, all from `proto3/baseline/*.json`, plus the gold labels and proto2 background counts used throughout Chapters 4–5.
 
 ```json
 {

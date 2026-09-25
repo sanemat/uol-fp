@@ -35,7 +35,13 @@ def count_words(chunk: str) -> int:
     # Remove code fences
     chunk = re.sub(r"```.*?```", "", chunk, flags=re.DOTALL)
     # Remove Table/Figure caption lines (plain or italic, with any label like B1, A3)
-    chunk = re.sub(r"^\s*\*?(Table|Figure)\s+[A-Za-z]?\d+[^\n]*\*?\s*$", "", chunk, flags=re.MULTILINE)
+    # Body sentences like "Figure 9 shows ..." are kept.
+    chunk = re.sub(
+        r"^\s*(\*(Table|Figure)\s+[A-Za-z]?\d+[^\n]*\*|(Table|Figure)\s+[A-Za-z]?\d+:[^\n]*)\s*$",
+        "",
+        chunk,
+        flags=re.MULTILINE,
+    )
     # Remove horizontal rules
     chunk = re.sub(r"^---+$", "", chunk, flags=re.MULTILINE)
     # Remove citation markers like [5], [2, 3], [D6], [D1]
