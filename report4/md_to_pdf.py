@@ -5,9 +5,9 @@ Uses Python-Markdown for HTML, Pygments for code highlighting (GitHub-like
 style) and WeasyPrint for PDF. Inline <style> blocks in the Markdown
 (e.g. @page rules) are kept and applied.
 
-```mermaid blocks are rendered to SVG with mermaid-cli (run via npx, so
-Node.js is required) and embedded as images, because WeasyPrint does not
-run JavaScript.
+```mermaid blocks are rendered to SVG with mermaid-cli (installed from
+package.json with `npm ci`, run as `npm run mmdc`) and embedded as images, because WeasyPrint does
+not run JavaScript.
 
 Usage:
     python3 report4/md_to_pdf.py [input.md] [output.pdf]
@@ -41,6 +41,7 @@ img.mermaid { display: block; margin: 0 auto; max-width: 100%;
 figure:has(img.mermaid) { break-inside: avoid; }
 """
 
+HERE = Path(__file__).parent
 MERMAID_RE = re.compile(r"^```mermaid\n(.*?)^```$", re.DOTALL | re.MULTILINE)
 # WeasyPrint cannot draw <foreignObject>, so labels must be plain SVG text.
 MERMAID_CONFIG = {
@@ -60,8 +61,9 @@ def render_mermaid(md: str) -> str:
             out = Path(tmp) / "diagram.svg"
             src.write_text(match.group(1), encoding="utf-8")
             subprocess.run(
-                ["npx", "-y", "@mermaid-js/mermaid-cli",
+                ["npm", "run", "--silent", "mmdc", "--",
                  "-i", str(src), "-o", str(out), "-c", str(config), "-q"],
+                cwd=HERE,
                 check=True,
             )
             data = base64.b64encode(out.read_bytes()).decode("ascii")
