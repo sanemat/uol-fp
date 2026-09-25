@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6606 words, excluding tables, figures, references, and appendices)
+Report (6733 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (460/1000 words)
 
@@ -177,7 +177,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1275/2000 words)
+## 3. Design (1277/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -322,7 +322,7 @@ Table 6: Iteration summary.
 
 ---
 
-## 4. Implementation (1012/2500 words)
+## 4. Implementation (1117/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at https://github.com/sanemat/uol-fp.
 
@@ -378,7 +378,7 @@ class RoleExtraction(BaseModel):
 <figcaption>Figure 5: Evidence/RoleExtraction Pydantic models with the null-correlation validator (<code>proto3/src/uol_fp/models.py</code>).</figcaption>
 </figure>
 
-The validator enforces "no answer without evidence" in code. A JSON schema alone cannot express this rule, so a prompt instruction would be the only alternative, and it would be unenforced. The models live in `models.py`, and `sync_generated.py` (`make sync-generated`) generates the notebook block from that file, so the notebook and the tested module cannot drift apart.
+The validator enforces "no answer without evidence" in code. A JSON schema alone cannot express this rule, so a prompt instruction would be the only alternative, and it would be unenforced. The models live in `models.py`, and `sync_generated.py` (`make sync-generated`) generates the notebook block from that file, so the notebook and the tested module cannot drift apart. The prompt keeps only the rules that the schema cannot express (Figure 6).
 
 <figure>
 <pre>
@@ -390,7 +390,7 @@ Rules:
 <figcaption>Figure 6: Prompt rules excerpt from <code>proto3/3pipeline.ipynb</code>, "Stage 2b — Prompt Template".</figcaption>
 </figure>
 
-Second, the Gemini call uses `response_json_schema` together with `temperature=0` and `seed=0`, and parses the reply directly with `MethodologyProfile.model_validate_json(...)`, with no manual JSON-extraction step:
+Second, the Gemini call uses `response_json_schema` together with `temperature=0` and `seed=0`, and parses the reply directly with `MethodologyProfile.model_validate_json(...)`, with no manual JSON-extraction step (Figure 7):
 
 <figure>
 
@@ -420,7 +420,7 @@ Fourth, the scoring semantics. Because `matches` is a substring test, the gold l
 
 ### 4.4 Visual Representation
 
-For "Attention Is All You Need" [D6], the full extraction output is:
+Figure 8 shows the full extraction output for "Attention Is All You Need" [D6].
 
 <figure>
 
@@ -488,7 +488,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2033/2500 words)
+## 5. Evaluation (2053/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -516,6 +516,8 @@ Table 10: Baseline gold-label-match results, all six papers.
 Macro is the headline score (Section 3.5). The two averages are close (0.65 vs 0.655) because every role has n=6 in this dataset.
 
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Section 3.5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 5.4).
+
+Figure 10 shows the notebook output behind Table 10, and Figure 11 shows the per-paper scoring for the Transformer paper.
 
 <figure>
 <img src="Screenshot%202026-09-23%20204922.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
