@@ -196,7 +196,7 @@ Table 4: User needs mapped to system requirements and evaluation.
 
 ### 3.2 Design Justification
 
-After implementing the prototype, I conducted a short exploratory survey with four students recruited from the University of London CM3070 final-project community (Appendix C). The survey collected preliminary feedback on the four-role design and quoted evidence. Three selected Task as the most useful field when deciding whether to read a paper, and one selected Method. All four indicated that they would or might use the evidence quotes to check the answers. These responses provide preliminary user input for the design, although the small sample does not establish the usefulness of all four roles.
+After implementing the prototype, I conducted a short exploratory survey with five students recruited from the University of London CM3070 final-project community (Appendix C). The survey collected preliminary feedback on the four-role design and quoted evidence. Four selected Task as the most useful field when deciding whether to read a paper, and one selected Method. All five indicated that they would or might use the evidence quotes to check the answers. These responses provide preliminary user input for the design, although the small sample does not establish the usefulness of all four roles.
 
 The core feature is Stage 2: one structured, evidence-backed answer per role, not a list of 14-160 candidate sentences (Section 2.4). proto2 classified each sentence independently with a fixed `0.5` threshold, which assumed that a sentence carries at most one role and that one threshold suits all roles. proto3 gives the model the whole document and asks for one answer per role, with a section heading and a verbatim quote as evidence, so a reader can check the answer without reading the paper. The authors'-own-work rule in the prompt targets proto2's authorship-attribution failure (the ELMo/BERT case, Section 2.4). The four-role JSON shape is enforced by `response_json_schema`, generated from Pydantic models rather than described in the prompt text, which removes an entire class of parsing and output-shape bugs (Chapter 4). A role can be `null`, so the model can report a role as absent instead of inventing one.
 
@@ -488,7 +488,7 @@ Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2053/2500 words)
+## 5. Evaluation (2062/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -629,7 +629,7 @@ The remaining problems are mainly semantic rather than structural. The authorshi
 
 These findings are limited by the six-paper corpus, single-annotator gold labels and review, and single-run comparisons for Variant B and the Task experiments. AlexNet's gold label was changed after I inspected the output (Section 5.2).
 
-The exploratory survey (Appendix C, n=4) provides limited user feedback. Only one respondent was currently doing a literature review, which further limits how well the findings represent the intended primary users. Task was selected as the most useful field by three respondents, despite being the weakest role in the technical evaluation (F1 0.33). All respondents indicated that they would or might check the evidence quotes. All four also identified missing information: main contribution, results, limitations, or another unspecified item. The survey therefore highlights the potential importance of improving Task extraction and extending the profile. However, it measured stated preferences after viewing one example, not actual use of the prototype, so the practical value of the extracted profiles for a first-pass literature review remains untested by real use.
+The exploratory survey (Appendix C, n=5) provides limited user feedback. Only two respondents were currently doing a literature review, which further limits how well the findings represent the intended primary users. Task was selected as the most useful field by four respondents, despite being the weakest role in the technical evaluation (F1 0.33). All respondents indicated that they would or might check the evidence quotes. All five also identified missing information; results was the most common answer (two respondents), followed by main contribution, limitations, and another unspecified item. The survey therefore highlights the potential importance of improving Task extraction and extending the profile. However, it measured stated preferences after viewing one example, not actual use of the prototype, so the practical value of the extracted profiles for a first-pass literature review remains untested by real use.
 
 ---
 
@@ -641,7 +641,7 @@ This project developed a document-level LLM pipeline to extract four methodology
 
 TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, but Task remains at 0.33. The Task experiments exposed two related problems: a single answer cannot always represent a paper's task, and substring matching can reject reasonable answers that differ from the gold label. `response_json_schema` solved schema conformance, so the remaining difficulty lies in defining the four roles consistently across paper types. MapReduce and Google Search fit them poorly because the roles derive from ML-benchmark structure.
 
-The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that three of four respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. Its usefulness in an actual literature-review task remains untested.
+The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that four of five respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. Its usefulness in an actual literature-review task remains untested.
 
 ### 6.2 Further Work
 
@@ -992,5 +992,6 @@ Section: Training Data and Batching
 | 2026-09-22 | Other computing student | Method | Maybe | Other |
 | 2026-09-22 | Other computing student | Task | Maybe | Limitations |
 | 2026-09-23 | Other computing student | Task | Maybe | Results |
+| 2026-09-24 | Computing student doing a literature review | Task | Maybe | Results |
 
-Table C1: Survey responses, timestamps rounded to date to preserve anonymity (n=4).
+Table C1: Survey responses, timestamps rounded to date to preserve anonymity (n=5).
