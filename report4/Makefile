@@ -3,6 +3,7 @@
 setup:
 	python3 -m venv .venv
 	.venv/bin/pip install -e .
+	npm ci
 
 pdf:
 	.venv/bin/python md_to_pdf.py
