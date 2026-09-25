@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6733 words, excluding tables, figures, references, and appendices)
+Report (6901 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (460/1000 words)
 
@@ -94,7 +94,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1354/2500 words)
+## 2. Literature Review (1395/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -115,7 +115,7 @@ Methodology:
 
 Research methodology in computing papers can be described using a structured vocabulary, but defining it is not the same as extracting it.
 
-Oates [14] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). His book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
+Oates [14] provides six research strategies (experiment, design and creation, survey, case study, action research, and ethnography) and four data generation methods (interviews, observations, questionnaires, and documents). The book defines the vocabulary that researchers use to describe their methodology in papers, so my project needs these concept names to identify what to extract. However, the six strategies were designed for human researchers to self-classify their own work — papers rarely contain the explicit phrase "this is an experiment". The vocabulary can be used to name what to look for, but it may not transfer directly to automatic extraction from text.
 
 Pilkington & Pretorius [15] go further: they formalize the structure using UML (Unified Modeling Language) and ontology engineering, with the goal of "providing clear and unambiguous semantics" [15]. Key concepts are ResearchScheme, PhilosophicalWorldview, ResearchDesign, and ResearchMethod: a ResearchScheme is underpinned by one PhilosophicalWorldview and has one or more ResearchDesigns, and each ResearchDesign has one or more ResearchMethods.
 
@@ -161,7 +161,7 @@ Dagdelen et al. [2] and Polak and Morgan [16] use LLMs to extract structured sci
 
 ### 2.6 Synthesis
 
-The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data.
+The reviewed studies provide the four-role schema and techniques for extracting information from scientific papers. However, their datasets and task definitions do not directly cover general computing research. I therefore tested schema-guided extraction without task-specific annotated training data. The originality of this project lies in its system design and evaluation, since it uses an existing model: it combines full-document schema-guided extraction, an authorship rule, and evidence-backed methodology roles, and tests where this schema breaks across ML and systems papers.
 
 | Source | Contribution | Strength | Limitation | Relevance to this project |
 |---|---|---|---|---|
@@ -177,7 +177,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1277/2000 words)
+## 3. Design (1300/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -233,15 +233,7 @@ Task shows the same pattern in one case: Variant B answered "sequence transducti
 
 ### 3.3 Model Choice
 
-A paper's cleaned full text is typically 4,000-20,000 tokens, which fits within the context window of several modern long-context LLMs without chunking:
-
-| Model | Context | Cost |
-|---|---|---|
-| Gemini Flash | 1M tokens | cheap API |
-
-Table 5: Long-context model.
-
-I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) for its long context window: 1M tokens exceeds the length of every paper in the corpus, so no chunking was needed. I did not compare other models. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
+The main requirement for the model was that every paper fits in one context without chunking, since document-level extraction depends on it. A paper's cleaned full text is typically 4,000-20,000 tokens. I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) because it meets this requirement with a 1M-token context window, accepts a JSON Schema for structured output, and has a low API cost for repeated runs. Comparing models was outside the scope of this project, so the results describe one model. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
 
 ### 3.4 Overall Pipeline
 
@@ -313,22 +305,22 @@ For Task, the evaluation adds a comparison of Variant A and Variant B (one run e
 | Before 29 June | Literature review, design, proto2 (sentence-level NLI) | Preliminary Report | Done |
 | July | proto3 Stages 0-2 (document-level extraction); gold-label-match evaluation with Wilson confidence intervals on Precision/Recall | Baseline P/R/F1 table, 5-run F1 variance table (mean/min/max/range) | Done |
 | July-August | Consolidated manual review pass; proto2 → proto3 fixed/not-fixed synthesis; figures for Implementation/Evaluation chapters | Draft Report | Done |
-| Late August | Variant B (decomposed extraction), scored against Variant A | Table 13 | Done |
-| Late August | Task pilots (Stages 2e-2h) and LLM-judge rescoring (Stage 4) | Table 14 | Done |
+| Late August | Variant B (decomposed extraction), scored against Variant A | Table 11 | Done |
+| Late August | Task pilots (Stages 2e-2h) and LLM-judge rescoring (Stage 4) | Table 12 | Done |
 | Late August | Variant C; Related Work ablation | — | Not run |
 | September | Freeze experiments; final report; video | Final submission | Done |
 
-Table 6: Iteration summary.
+Table 5: Iteration summary.
 
 ---
 
-## 4. Implementation (1117/2500 words)
+## 4. Implementation (1150/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at <https://github.com/sanemat/uol-fp>.
 
 ### 4.1 Features Implemented
 
-The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence.
+The prototype takes GROBID TEI XML and produces one JSON object containing an answer and evidence for each of the four roles (full example below). Parsing reuses proto2's approach. Every run can be scored against gold labels (Stage 3), and every answer can be checked against its quoted evidence. The main technical challenge was to make generative extraction testable and inspectable: the pipeline keeps the document's section structure, enforces the answer-evidence rule in code, and scores free-text output reproducibly across repeated runs.
 
 ### 4.2 Algorithms and Techniques
 
@@ -467,15 +459,15 @@ Figure 9 shows the Stage 2c cell with the raw Gemini call and its parsed JSON ou
 <figcaption>Figure 9: proto3 Stage 2c cell and output (screenshot).</figcaption>
 </figure>
 
-Table 8 shows the contrast with proto2 numerically for the Transformer paper: proto2's accepted-sentence counts per role versus proto3's one answer per role.
+Table 6 shows the contrast with proto2 numerically for the Transformer paper: proto2's accepted-sentence counts per role versus proto3's one answer per role.
 
 | Paper | proto2 TechnicalMethod | proto2 Task | proto2 Dataset | proto2 EvaluationMetric | proto3 |
 |---|---|---|---|---|---|
 | Transformer [D6] | 14 sentences | 0 sentences | 0 sentences | 160 sentences | 1 answer + evidence per role |
 
-Table 8: proto2 sentence-count output vs proto3 answer-and-evidence output, Transformer paper.
+Table 6: proto2 sentence-count output vs proto3 answer-and-evidence output, Transformer paper.
 
-Table 9 compares the Transformer output of Variant A and Variant B. Only Task differs, and the Variant B answer comes from a Conclusion sentence: "In this work, we presented the Transformer, the first sequence transduction model based entirely on attention..."
+Table 7 compares the Transformer output of Variant A and Variant B. Only Task differs, and the Variant B answer comes from a Conclusion sentence: "In this work, we presented the Transformer, the first sequence transduction model based entirely on attention..."
 
 | Role | Variant A | Variant B |
 |---|---|---|
@@ -484,11 +476,11 @@ Table 9 compares the Transformer output of Variant A and Variant B. Only Task di
 | Dataset | WMT 2014 English-German dataset | WMT 2014 English-German dataset |
 | EvaluationMetric | BLEU | BLEU |
 
-Table 9: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) answers for the Transformer paper.
+Table 7: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) answers for the Transformer paper.
 
 ---
 
-## 5. Evaluation (2062/2500 words)
+## 5. Evaluation (2057/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -511,13 +503,13 @@ Scoring the frozen baseline (`proto3/baseline/*.json`) against gold labels (Appe
 | Micro | 0.68 | 0.62 | 0.65 |
 | Macro | — | — | 0.655 |
 
-Table 10: Baseline gold-label-match results, all six papers.
+Table 8: Baseline gold-label-match results, all six papers.
 
 Macro is the headline score (Section 3.5). The two averages are close (0.65 vs 0.655) because every role has n=6 in this dataset.
 
 Wilson 95% confidence intervals show the effect of the sample size: TechnicalMethod recall 0.83 gives a confidence interval of [0.44, 0.97]; Task recall 0.33 gives [0.10, 0.70]. These substantially overlap, so I do not claim TechnicalMethod is reliably "solved" while Task is reliably "broken" at this sample size. I report F1 as a point estimate, without a Wilson interval (Section 3.5). One gold label carries a specific evaluator-influence caveat: AlexNet's TechnicalMethod gold label was changed from "AlexNet" to "convolutional" after running the pipeline and inspecting its output, since the 2012 paper predates the name "AlexNet" and never uses it. Adjusting a gold label after seeing model output limits how far this result generalises, and it is one instance of a broader single-annotator problem: I wrote both the gold labels and, later, the answers checked against them (Section 5.4).
 
-Figure 10 shows the notebook output behind Table 10, and Figure 11 shows the per-paper scoring for the Transformer paper.
+Figure 10 shows the notebook output behind Table 8, and Figure 11 shows the per-paper scoring for the Transformer paper.
 
 <figure>
 <img src="Screenshot%202026-09-23%20204922.png" alt="Baseline P/R/F1 scoring output" style="width:100%;max-width:100%;">
@@ -541,13 +533,13 @@ I logged five full pipeline runs to `proto3/results/run{1..5}/*.json` and aggreg
 | Dataset | 0.91 | 0.91 | 0.91 | 0.00 |
 | EvaluationMetric | 0.57 | 0.33 | 0.67 | 0.33 |
 
-Table 11: Per-role F1 across 5 real pipeline runs (`proto3/results/aggregate.json`).
+Table 9: Per-role F1 across 5 real pipeline runs (`proto3/results/aggregate.json`).
 
-Three of four roles were perfectly stable across five real repetitions, which is stronger evidence than an earlier two-run anecdote in which both Dataset and EvaluationMetric had moved. At n=5, only EvaluationMetric varied (F1 ranged 0.33-0.67 across runs, with unchanged code, `temperature=0`, and `seed=0`), which narrows the non-determinism finding. The frozen baseline behind Table 10 is not a like-for-like sixth run alongside these five: it was generated before `temperature=0` and `seed=0` were added to the Gemini call, so only the five logged runs share identical settings. Across the five runs, TechnicalMethod's F1 (0.83) exceeded Task's F1 (0.33) every time.
+Three of four roles were perfectly stable across five real repetitions, which is stronger evidence than an earlier two-run anecdote in which both Dataset and EvaluationMetric had moved. At n=5, only EvaluationMetric varied (F1 ranged 0.33-0.67 across runs, with unchanged code, `temperature=0`, and `seed=0`), which narrows the non-determinism finding. The frozen baseline behind Table 8 is not a like-for-like sixth run alongside these five: it was generated before `temperature=0` and `seed=0` were added to the Gemini call, so only the five logged runs share identical settings. Across the five runs, TechnicalMethod's F1 (0.83) exceeded Task's F1 (0.33) every time.
 
 An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce". This is independent corroboration that TechnicalMethod is the strongest role.
 
-The five runs are not pooled into a Wilson interval (Section 3.5). The n=6 intervals in Section 5.2 cover paper-level uncertainty, and Table 11 covers run-to-run variation on the same papers.
+The five runs are not pooled into a Wilson interval (Section 3.5). The n=6 intervals in Section 5.2 cover paper-level uncertainty, and Table 9 covers run-to-run variation on the same papers.
 
 MapReduce's Task slot (gold `"distributed"`, system answer `"automatic parallelization and distribution of large-scale computations"`) fails the substring-match rule despite being arguably correct. Task's low F1 is therefore partly an artifact of the measurement instrument and not purely a model failure.
 
@@ -564,7 +556,7 @@ The review template stages each paper's answer, section, and quote next to four 
 | Authors' own work? | 6 | Pagerank/Task, AlexNet/Task, BERT/Task, BERT/Dataset, BERT/EvaluationMetric, ResNet/Task |
 | Quote in source? | 1 | ResNet/Task |
 
-Table 12: Manual review failure counts by check type, 22 scored slots.
+Table 10: Manual review failure counts by check type, 22 scored slots.
 
 Six slots pass the quote-in-source check but still fail on evidence-support or authorship — a real, verbatim quote that is still the *wrong* evidence, distinct from a fabricated quote: Pagerank/TechnicalMethod ("Google is the proposed system, not the technical method"), Pagerank/Task ("information retrieval is the broader problem domain, not the task performed by the proposed system"), AlexNet/Task ("the quote does not directly prove that this is AlexNet's own task"), BERT/Task (the quoted sentence "describes prior work rather than BERT's own contribution"), BERT/Dataset ("valid dataset, but one of several"), and BERT/EvaluationMetric ("F1 is one of several evaluation metrics used across BERT's downstream tasks"). ResNet's Task answers the second open question above and is the one slot where quote-in-source and authorship fail together: the quote "cites bracketed prior work `[21, 49, 39]` for the breakthroughs," crediting prior work rather than establishing the paper's own task.
 
@@ -583,11 +575,11 @@ Variant B (four role-specific calls) ran once on all six papers and was scored a
 | Dataset | 0.91 | 1.00 | +0.09 |
 | EvaluationMetric | 0.67 | 0.67 | +0.00 |
 
-Table 13: Variant A (`results/run1`) vs Variant B (`results_b`), F1 per role, one run each.
+Table 11: Variant A (`results/run1`) vs Variant B (`results_b`), F1 per role, one run each.
 
-Only Dataset moved (+0.09), and its prompt was not written against a known Dataset failure. Task's F1 stayed at 0.33, but the two matching papers differ. For Pagerank, Variant B replaced an Introduction sentence about the Web's challenges for information retrieval (rated wrong in the manual review) with "web search", taken from the Abstract's statement of what the paper addresses, and the substring test now matches. For Transformer, Variant B answered "sequence transduction" from a Conclusion sentence describing the architecture, where Variant A had answered "machine translation" from the Abstract's evaluated task (Table 9). The role-specific rule separates the paper's own claim from prior work, but it cannot prefer the evaluated benchmark over a broader self-description, and the two changes cancel. Variant C only reconciles Variant B's four outputs with each other, so it could not resolve this ambiguity, and I did not run it.
+Only Dataset moved (+0.09), and its prompt was not written against a known Dataset failure. Task's F1 stayed at 0.33, but the two matching papers differ. For Pagerank, Variant B replaced an Introduction sentence about the Web's challenges for information retrieval (rated wrong in the manual review) with "web search", taken from the Abstract's statement of what the paper addresses, and the substring test now matches. For Transformer, Variant B answered "sequence transduction" from a Conclusion sentence describing the architecture, where Variant A had answered "machine translation" from the Abstract's evaluated task (Table 7). The role-specific rule separates the paper's own claim from prior work, but it cannot prefer the evaluated benchmark over a broader self-description, and the two changes cancel. Variant C only reconciles Variant B's four outputs with each other, so it could not resolve this ambiguity, and I did not run it.
 
-Five further mechanisms targeted Task on the same six papers, each run once (Table 14). Stage 2e asked for every valid Task description, most specific first. Stage 2f asked a second call to select one candidate. Stage 4 replaced the substring match with a Gemini judge on Variant A's four mismatches. Stages 2g and 2h asked the model to write its reasoning before its answer, either to select from Stage 2e's candidates (2g) or to extract directly (2h), adapting Lu et al. [12].
+Five further mechanisms targeted Task on the same six papers, each run once (Table 12). Stage 2e asked for every valid Task description, most specific first. Stage 2f asked a second call to select one candidate. Stage 4 replaced the substring match with a Gemini judge on Variant A's four mismatches. Stages 2g and 2h asked the model to write its reasoning before its answer, either to select from Stage 2e's candidates (2g) or to extract directly (2h), adapting Lu et al. [12].
 
 | Mechanism | P | R | F1 | Note |
 |---|---|---|---|---|
@@ -600,7 +592,7 @@ Five further mechanisms targeted Task on the same six papers, each run once (Tab
 | Stage 2g, reasoning-first selection | 0.50 | 0.33 | 0.40 | gain from returning null on BERT and MapReduce |
 | Stage 2h, reasoning-first extraction | 0.33 | 0.33 | 0.33 | same hits as Variant A |
 
-Table 14: Task F1 under each mechanism, six papers, one run each (`proto3/results_*`).
+Table 12: Task F1 under each mechanism, six papers, one run each (`proto3/results_*`).
 
 The any-match score doubles F1 but is bounded only by the length of the candidate list. Of its four hits, only BERT's was the model's first choice; the others were listed second to fourth in lists of 2-5 items. Stage 2f and Stage 2g both removed BERT's answer "GLUE benchmark" (correct as Stage 2e's first item), replacing it with a wrong answer and with null respectively. Stage 2g's 0.40 comes entirely from abstention, since a null against a non-null gold label counts as a false negative only. The Stage 2g reasoning traces evaluate each candidate against an explicit granularity test, so the model reasons coherently and still lands on a different phrasing from the gold label or declines to answer.
 
@@ -608,22 +600,22 @@ The Stage 4 judge returned SAME for MapReduce's "automatic parallelization and d
 
 These results agree with published findings. Tam et al. [17] report that restricting LLM output to a format can lower performance, which is compatible with the gap between Stage 2e's any-match (0.67) and primary-only (0.17) scores. Huang et al. [7] report that LLMs cannot reliably correct their own reasoning without external feedback, which is compatible with the regressions in Stages 2f, 2g, and 4. Ateia et al. [1] score free-text extraction targets with BERTScore F1 [19] and report a semantic F1 near 0.90 on those targets, while exact categorical extraction stays below 0.25. The two scores cover different target types, but they show that a lenient semantic score and a strict match can differ widely. Task's residual F1 may reflect the single-gold-phrasing substring metric as much as the model. A deterministic semantic-similarity rescoring is planned but not run; it would need one threshold that accepts the MapReduce pair and rejects the Pagerank pair.
 
-Two limitations apply to the Task line. The Stage 2f prompt was revised while inspecting the Transformer failure, and its first version used two of the project's own gold Task labels as examples and was discarded before any data collection. Every mechanism is a single run on six papers, so differences of one paper (0.17 in F1) are within the run-to-run variation seen for EvaluationMetric in Table 11.
+Two limitations apply to the Task line. The Stage 2f prompt was revised while inspecting the Transformer failure, and its first version used two of the project's own gold Task labels as examples and was discarded before any data collection. Every mechanism is a single run on six papers, so differences of one paper (0.17 in F1) are within the run-to-run variation seen for EvaluationMetric in Table 9.
 
 I did not run the Related Work ablation, which would exclude the Related Work section before extraction. It does not address Task, the weakest role, and the core claims do not depend on it, so it stays deferred to further work (Chapter 6).
 
 ### 5.6 Critical Evaluation
 
-Mapping proto2's three named failure modes, and the Task weakness found later, onto what the evaluation measured across the whole project:
+Table 13 maps proto2's three failure modes, and the later Task weakness, to the evaluation results.
 
 | Failure mode | Status | Evidence |
 |---|---|---|
 | Output volume (151 TechnicalMethod sentences for MapReduce) | Fixed by design | One answer per role, every paper, by construction of Stage 2's schema-guided extraction |
 | No authorship-attribution mechanism (ELMo scored 0.87 as BERT's TechnicalMethod) | Addressed by design, not reliably solved | The authors'-own-work rule targets this directly; the manual review found 6 of 22 scored slots still fail authorship, concentrated in Task (4 of 6 papers) |
 | Recall-only evaluation (10/12, then 18/24 substring match) | Fixed | Precision/Recall/F1 per role, Wilson confidence intervals on Precision/Recall, a 5-run variance study |
-| Task F1 of 0.33 | Not fixed | Six mechanisms (Table 14) did not raise it above 0.33 under a check I could trust |
+| Task F1 of 0.33 | Not fixed | Six mechanisms (Table 12) did not raise it above 0.33 under a check I could trust |
 
-Table 15: Failure modes across proto2, proto3, and the Task experiments.
+Table 13: Failure modes across proto2, proto3, and the Task experiments.
 
 The remaining problems are mainly semantic rather than structural. The authorship failures (6 of 22 scored slots) show that an explicit prompt rule cannot reliably distinguish a paper's own contribution from prior work. Task extraction also remains hard to evaluate. It stayed at F1 0.33 across five repeated baseline runs, and none of the additional mechanisms showed a reliable improvement: higher scores depended on lenient matching or on abstention. The single gold-label phrasing can also reject defensible alternatives.
 
@@ -633,7 +625,7 @@ The exploratory survey (Appendix C, n=5) provides limited user feedback. Only tw
 
 ---
 
-## 6. Conclusion (472/1000 words)
+## 6. Conclusion (539/1000 words)
 
 ### 6.1 Summary
 
@@ -642,6 +634,8 @@ This project developed a document-level LLM pipeline to extract four methodology
 TechnicalMethod and Dataset reach F1 0.83 and 0.91 across five repeated runs, but Task remains at 0.33. The Task experiments exposed two related problems: a single answer cannot always represent a paper's task, and substring matching can reject reasonable answers that differ from the gold label. `response_json_schema` solved schema conformance, so the remaining difficulty lies in defining the four roles consistently across paper types. MapReduce and Google Search fit them poorly because the roles derive from ML-benchmark structure.
 
 The prototype produces more concise and inspectable output than proto2, but the manual review found continuing problems with evidence and authorship attribution. A small exploratory survey found that four of five respondents considered Task the most useful field. This contrast makes Task extraction improvement a priority. Its usefulness in an actual literature-review task remains untested.
+
+Against the three objectives in Chapter 1, I defined the four-role methodology profile (objective 1). The prototype returns one answer and one verbatim quote per role for every paper (objective 2), although the manual review showed that evidence and authorship attribution were not always reliable. I evaluated it against gold labels for six papers (objective 3), but the small, single-annotator corpus limits how far the results generalise.
 
 ### 6.2 Further Work
 
@@ -924,7 +918,7 @@ Table A2: proto2 sentence-count output per role (six papers). See Table A3 for t
 
 Table A3: proto2 extended gold-label evaluation results (substring match, six papers). ML papers (Transformer, BERT, AlexNet, ResNet) scored 13/16 (81%); systems papers (MapReduce, Google Search) scored 5/8 (63%). ResNet scored ✗ on Task because "image recognition" does not appear in the 6 accepted Task sentences, likely because the paper frames the task as a competition result rather than an explicit label. MapReduce scored ✗ on Task and Dataset because "distributed" and "TeraSort" are absent from accepted sentences, consistent with the lack of standard ML benchmark structure. Google Search scored ✗ on TechnicalMethod because "PageRank" does not appear in any of the 69 accepted TechnicalMethod sentences, suggesting the algorithm name is mentioned in sentences classified as other roles.
 
-The manual review is summarised in Section 5.4 (Table 12). Variant B and the Task pilot outputs are in `proto3/results_b/` and `proto3/results_*/` in the repository.
+The manual review is summarised in Section 5.4 (Table 10). Variant B and the Task pilot outputs are in `proto3/results_b/` and `proto3/results_*/` in the repository.
 
 ## Appendix B — PDF to TEI XML Conversion with GROBID
 
