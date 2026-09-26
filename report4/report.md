@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (7213 words, excluding tables, figures, references, and appendices)
+Report (7219 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (490/1000 words)
 
@@ -185,7 +185,7 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1312/2000 words)
+## 3. Design (1315/2000 words)
 
 The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI (Text Encoding Initiative) XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
@@ -241,7 +241,7 @@ Task shows the same pattern in one case: Variant B answered "sequence transducti
 
 ### 3.3 Model Choice
 
-The main requirement for the model was that every paper fits in one context without chunking, since document-level extraction depends on it. A paper's cleaned full text is typically 4,000-20,000 tokens. I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) because it meets this requirement with a 1M-token context window, accepts a JSON Schema for structured output, and has a low API cost for repeated runs. Comparing models was outside the scope of this project, so the results describe one model. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
+The main requirement for the model was that every paper fits in one context without chunking, since document-level extraction depends on it. A paper's cleaned full text is typically 4,000-20,000 tokens. I selected Gemini (`gemini-3.5-flash`, via the `google-genai` software development kit) because its context window holds each full paper, it accepts a JSON Schema for structured output, and it was inexpensive enough for the repeated runs used in this project. Comparing models was outside the scope of this project, so the results describe one model. The API key comes from Colab's built-in secret manager (`google.colab.userdata`).
 
 ### 3.4 Overall Pipeline
 
@@ -300,7 +300,7 @@ These two differences remove two weaknesses of proto2. First, proto2's NLI accep
 
 proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I score gold-label match as a classification problem (true positive (TP), false positive (FP), false negative (FN)), report Precision (P), Recall (R), and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful, and a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
 
-I kept the sample at six papers: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in the available time with no second annotator. This limits generalisability and remains a limitation of the evaluation. The plan also includes a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
+I kept the sample at six papers: tightening the confidence intervals meaningfully would require a substantially larger gold-labeled corpus than the 6-10 papers reachable in the available time with no second annotator. This limits generalisability and remains a limitation of the evaluation. The plan also includes a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
 
 I did not pool the five runs' true/false positive/negative counts into a single Wilson interval (n=30 trials per role): the 30 trials are five repeats of the same six papers, not 30 independent observations, so treating them as independent Bernoulli trials would overstate precision. The two measures stay separate: the n=6 baseline Wilson interval for paper-level uncertainty, and the five-run F1 mean, minimum, maximum, and range for run-to-run non-determinism. Each answers a different question, and neither substitutes for the other.
 
@@ -316,13 +316,13 @@ For Task, the evaluation adds a comparison of Variant A and Variant B (one run e
 | Late August | Variant B (decomposed extraction), scored against Variant A | Table 11 | Done |
 | Late August | Task pilots (Stages 2e-2h) and LLM-judge rescoring (Stage 4) | Table 12 | Done |
 | Late August | Variant C; Related Work ablation | — | Not run |
-| September | Freeze experiments; final report; video | Final submission | Done |
+| September | Freeze experiments; final report; video | Final submission | In progress |
 
 Table 5: Iteration summary.
 
 ---
 
-## 4. Implementation (1150/2500 words)
+## 4. Implementation (1152/2500 words)
 
 This chapter describes the implementation of proto3, including TEI parsing, schema-guided extraction, the decomposed variant, and the Task experiments. The source code and evaluation tools (`scoring.py`, `aggregate_runs.py`, `aggregate_variant_b.py`, with pytest tests) are available at <https://github.com/sanemat/uol-fp>.
 
@@ -412,7 +412,7 @@ profile = MethodologyProfile.model_validate_json(response.text)
 <figcaption>Figure 7: Gemini call and response parsing (<code>proto3/3pipeline.ipynb</code>, "Stage 2c — Call Gemini and Parse Response").</figcaption>
 </figure>
 
-An earlier prompt version described the `evidence` field inconsistently. On "Attention Is All You Need", Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended, e.g. `"## Introduction In this work we propose..."`, instead of the nested `{section, quote}` object. I first fixed this by rewriting the prompt; the schema now guarantees the nested shape regardless of prompt wording. `response_schema` and `response_json_schema` are not interchangeable. `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`, because it converts to Google's own `Schema` proto, which does not support `additionalProperties`, and Pydantic's `extra="forbid"` produces exactly that field. `response_json_schema` accepts a real JSON Schema dict instead, so `MethodologyProfile.model_json_schema()` is passed there.
+An earlier prompt version described the `evidence` field inconsistently. On "Attention Is All You Need", Gemini resolved the ambiguity by returning `evidence` as one flat string with the heading prepended, e.g. `"## Introduction In this work we propose..."`, instead of the nested `{section, quote}` object. I first fixed this by rewriting the prompt; the structured-output schema now guarantees the nested JSON shape regardless of prompt wording. `response_schema` and `response_json_schema` are not interchangeable. `response_schema=MethodologyProfile` fails with `400 INVALID_ARGUMENT ... Unknown name "additional_properties"`, because it converts to Google's own `Schema` proto, which does not support `additionalProperties`, and Pydantic's `extra="forbid"` produces exactly that field. `response_json_schema` accepts a real JSON Schema dict instead, so `MethodologyProfile.model_json_schema()` is passed there.
 
 Third, the Variant B prompts share one skeleton and the same two rules (null when absent, verbatim quotes), and only one rule line changes per role. The difference between Variant A and Variant B is therefore the decomposition plus that one line, which keeps the comparison controlled.
 
@@ -488,7 +488,7 @@ Table 7: Variant A (`proto3/results/run1`) and Variant B (`proto3/results_b`) an
 
 ---
 
-## 5. Evaluation (2057/2500 words)
+## 5. Evaluation (2059/2500 words)
 
 ### 5.1 Evaluation Method
 
@@ -545,7 +545,7 @@ Table 9: Per-role F1 across 5 real pipeline runs (`proto3/results/aggregate.json
 
 Three of four roles were perfectly stable across five real repetitions, which is stronger evidence than an earlier two-run anecdote in which both Dataset and EvaluationMetric had moved. At n=5, only EvaluationMetric varied (F1 ranged 0.33-0.67 across runs, with unchanged code, `temperature=0`, and `seed=0`), which narrows the non-determinism finding. The frozen baseline behind Table 8 is not a like-for-like sixth run alongside these five: it was generated before `temperature=0` and `seed=0` were added to the Gemini call, so only the five logged runs share identical settings. Across the five runs, TechnicalMethod's F1 (0.83) exceeded Task's F1 (0.33) every time.
 
-An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce". This is independent corroboration that TechnicalMethod is the strongest role.
+An informal cross-check with Google NotebookLM, run independently on each paper, found stable agreement on TechnicalMethod across all six papers — exact or near-exact matches including "Google", "BERT", "Transformer", and "MapReduce". This provides an informal qualitative cross-check that TechnicalMethod is the strongest role.
 
 The five runs are not pooled into a Wilson interval (Section 3.5). The n=6 intervals in Section 5.2 cover paper-level uncertainty, and Table 9 covers run-to-run variation on the same papers.
 
@@ -633,7 +633,7 @@ The exploratory survey (Appendix C, n=5) provides limited user feedback. Only tw
 
 ---
 
-## 6. Conclusion (548/1000 words)
+## 6. Conclusion (547/1000 words)
 
 ### 6.1 Summary
 
@@ -653,7 +653,7 @@ The next experiments follow from the results above.
 - **Variant C.** A fifth call would check Variant B's four outputs against their evidence. Variant B's result gives little reason to expect a gain on Task.
 - **Multi-valued roles.** A `MultiRoleExtraction` type with per-item evidence and a ranked list capped at three items would allow several Dataset and EvaluationMetric answers. It requires re-annotating four gold cells (BERT and Transformer Dataset, AlexNet and ResNet EvaluationMetric) and a parallel `score_role_multi` function.
 - **Related Work ablation.** Excluding Related Work before extraction would test whether it reduces the authorship failures found in the manual review.
-- **Larger and broader corpus.** About 30-40 gold-labeled papers per role, a second annotator (allowing an inter-annotator-agreement study), and non-ML papers such as systems and HCI would test whether the four-role schema generalises.
+- **Larger and broader corpus.** A substantially larger gold-labeled corpus, a second annotator (allowing an inter-annotator-agreement study), and non-ML papers such as systems and HCI would test whether the four-role schema generalises.
 - **Usability evaluation.** A study with a larger group of computing students using the prototype directly, rather than reviewing a single example, would measure whether the profiles support the first pass of a literature review in practice.
 
 ### 6.3 Broader Theme
