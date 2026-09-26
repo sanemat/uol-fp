@@ -61,9 +61,9 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (6916 words, excluding tables, figures, references, and appendices)
+Report (6955 words, excluding tables, figures, references, and appendices)
 
-## 1. Introduction (466/1000 words)
+## 1. Introduction (490/1000 words)
 
 When computing researchers do a literature review, they often need to read many papers and find each paper's method, task, dataset, and evaluation metric. Reading many papers this way is slow and manual. I treat these four items as a methodology profile that a reader can extract automatically, to support the first pass of a literature review, not to replace reading the paper.
 
@@ -82,6 +82,8 @@ For example, the intended output for "Attention Is All You Need" [D6] is the fol
 
 Table 1: Role-based methodology profile for "Attention Is All You Need" [D6].
 
+In this profile, WMT refers to the Workshop on Machine Translation, and BLEU (Bilingual Evaluation Understudy) is a standard evaluation metric for machine translation.
+
 A reader needing this summary currently has to read the paper and construct it themselves. A topic label answers "what is this paper about?"; a role-based profile answers "how was this research conducted?" Two papers on the same topic can use different methods, train on different datasets, and report different metrics, so a topic label alone does not answer that second question.
 
 This motivation has not changed since the preliminary report. What changed is the extraction approach. proto2, my first working prototype, classified every sentence in a paper into one of the four roles using zero-shot natural language inference (NLI), producing a list of candidate sentences per role rather than one answer. proto3, the current prototype, reframes the task as document-level extraction: given a paper, a long-context large language model (LLM) returns one answer per role, each backed by a section heading and a verbatim quote as evidence. I also implemented a decomposed variant of proto3 (four role-specific calls instead of one joint call) and a series of pilots aimed at Task, the weakest role.
@@ -94,7 +96,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1395/2500 words)
+## 2. Literature Review (1398/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -127,7 +129,7 @@ Oates [14] gives concept names. Pilkington and Pretorius [15] give formal relati
 
 Systems that extract methodology-like entities from papers exist [4, 5, 8], but the closest approaches are supervised and need labeled training data that I do not have.
 
-Jain et al. [8] (SciREX) extract four entity types — Dataset, Metric, Task, and Method — that closely match the four roles in this project. They operate at the document level, arguing that "a significant amount of information can only be gleaned from analyzing the full document" [8] — relations may span sections, not just sentences. However, Jain et al. annotated 438 papers with a main annotator, and four PhD-level experts checked agreement on five documents (Cohen's κ 95% for mention classification). The annotation builds on the Papers with Code corpus of 1,170 ML-conference articles, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, human-computer interaction (HCI), and ML research) where no comparable annotated dataset is available, so neither the corpus scope nor the annotation effort behind SciREX transfers directly.
+Jain et al. [8] (SciREX) extract four entity types — Dataset, Metric, Task, and Method — that closely match the four roles in this project. They operate at the document level, arguing that "a significant amount of information can only be gleaned from analyzing the full document" [8] — relations may span sections, not just sentences. However, Jain et al. annotated 438 papers with a main annotator, and four PhD-level experts checked agreement on five documents (Cohen's κ 95% for mention classification). The annotation builds on the Papers with Code corpus of 1,170 machine learning (ML) conference articles, which covers only ML benchmarks. My project targets general computing papers (systems, algorithms, human-computer interaction (HCI), and ML research) where no comparable annotated dataset is available, so neither the corpus scope nor the annotation effort behind SciREX transfers directly.
 
 Ma et al. [13] propose a metric-driven mechanism schema in which a mechanism is an (operation, effect, direction) triple linked to a task, and extract it from ACL abstracts using a query-guided sequence-to-sequence model, but their work is limited to the NLP domain and does not extend to general computing research.
 
@@ -177,13 +179,13 @@ Table 3: Key sources for this project.
 
 ---
 
-## 3. Design (1300/2000 words)
+## 3. Design (1312/2000 words)
 
-The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
+The system extracts research methodology from computing papers. The end-to-end input is a PDF, which a local GROBID [11] server converts to TEI (Text Encoding Initiative) XML before the notebook pipeline starts. The output is a role-based profile (Table 1, Chapter 1).
 
 ### 3.1 Domain and Users
 
-The domain and users are unchanged from the preliminary report. The domain is computing research papers, mainly systems, machine learning (ML), algorithms, and human-computer interaction (HCI). The primary users are computing students doing literature reviews; secondary users are early-stage researchers or supervisors who want a quick overview of a paper. proto3 changed the output quality — one checkable answer per role instead of a list of candidate sentences — not the target domain or audience.
+The domain and users are unchanged from the preliminary report. The domain is computing research papers, mainly systems, ML, algorithms, and HCI. The primary users are computing students doing literature reviews; secondary users are early-stage researchers or supervisors who want a quick overview of a paper. proto3 changed the output quality — one checkable answer per role instead of a list of candidate sentences — not the target domain or audience.
 
 | User need | System requirement | Evaluation |
 |---|---|---|
@@ -227,7 +229,7 @@ flowchart LR
 <figcaption>Figure 2: Joint (Variant A) and decomposed (Variant B) extraction. Both produce the same schema and use the same scoring. Variant C (a consistency check call) is designed but not implemented.</figcaption>
 </figure>
 
-The second design question is whether every role should stay single-valued. AlexNet and ResNet both report top-1 and top-5 error rates, which the baseline squashes into one string, and BERT's gold EvaluationMetric label lists both "accuracy" and "F1" (Appendix A, Table A1), since the paper reports both. An informal NotebookLM cross-check, run independently on each paper without being told the schema was single-valued, produced similar multi-valued outputs for BERT, ResNet, and Transformer. BERT's single-valued Dataset answer is "SQuAD v1.1," while NotebookLM listed BooksCorpus, Wikipedia, GLUE, and SQuAD v1.1/v2.0 from the same source text. Forcing Dataset and EvaluationMetric into one string loses information.
+The second design question is whether every role should stay single-valued. AlexNet and ResNet both report top-1 and top-5 error rates, which the baseline squashes into one string, and BERT's gold EvaluationMetric label lists both "accuracy" and "F1" (Appendix A, Table A1), since the paper reports both. An informal NotebookLM cross-check, run independently on each paper without being told the schema was single-valued, produced similar multi-valued outputs for BERT, ResNet, and Transformer. BERT's single-valued Dataset answer is "SQuAD v1.1," while NotebookLM listed BooksCorpus, Wikipedia, GLUE (General Language Understanding Evaluation), and SQuAD (Stanford Question Answering Dataset) v1.1/v2.0 from the same source text. Forcing Dataset and EvaluationMetric into one string loses information.
 
 Task shows the same pattern in one case: Variant B answered "sequence transduction" for Transformer where Variant A answered "machine translation", two defensible answers at different granularity (Section 5.5). Stage 2e therefore implements a multi-valued pilot for Task only (Chapter 4), followed by verification and reasoning-first variants. The main design keeps one answer per role. A multi-valued schema for Dataset and EvaluationMetric would need per-item evidence rather than one shared quote per list, and a ranked "primary first" order rather than a numeric confidence field, since this project's own measured non-determinism (Chapter 5) argues against a second, uncalibrated confidence axis. That schema remains a design proposal (Chapter 6).
 
@@ -290,7 +292,7 @@ These two differences remove two weaknesses of proto2. First, proto2's NLI accep
 
 ### 3.5 Evaluation Plan
 
-proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I score gold-label match as a classification problem (true positive, false positive, false negative), report Precision, Recall, and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful, and a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
+proto2's plan treated a substring gold-label match with a 10-out-of-12 success threshold as sufficient, but a present-but-wrong answer cost nothing there. For proto3 I score gold-label match as a classification problem (true positive (TP), false positive (FP), false negative (FN)), report Precision (P), Recall (R), and F1 per role, and add Wilson 95% confidence intervals on Precision and Recall only — F1 is a harmonic mean, not a proportion, so a Wilson interval on it directly is not statistically meaningful, and a point-estimate F1 is appropriate at this sample size. I report both micro and macro averages, headlining macro, because the four roles are fixed, equally mandatory schema fields, not a frequency distribution.
 
 I kept the sample at six papers: tightening the confidence intervals meaningfully would need roughly 30-40 gold-labeled papers per role, not the 6-10 reachable in the available time with no second annotator. This limits generalisability and remains a limitation of the evaluation. The plan also includes a logged variance study (repeat the pipeline several times rather than trust one run) and a single consolidated manual review pass covering plausibility, evidence support, authorship, and whether the quote appears in the source text.
 
