@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (7225 words, excluding tables, figures, references, and appendices)
+Report (7213 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (490/1000 words)
 
@@ -96,7 +96,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1668/2500 words)
+## 2. Literature Review (1656/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -159,11 +159,11 @@ Sentence-level NLI classification produced too many candidate sentences to be us
 
 Jain et al. [8] argue that "a significant amount of information can only be gleaned from analyzing the full document" — a document-level information extraction (IE) claim. My own data supports this directly: Dataset and EvaluationMetric typically appear only in a paper's Experiment section, not the Abstract, so an extraction method effectively limited to a small set of sentences, as proto2's Introduction-heavy output tended to be, would miss them.
 
-Dagdelen et al. [2] fine-tune GPT-3 and Llama-2 to extract entities and their relations from materials chemistry text, and return each record as a JSON object that follows a per-task schema. The approach still needs annotated examples for every task, and the authors treat exact word-match F1 as an approximate lower bound, since a correct paraphrase counts as an error. Polak and Morgan [16] remove the training step: their ChatExtract method prompts a conversational LLM zero-shot to find sentences with data, extract (Material, Value, Unit) triplets, and then answer follow-up questions that introduce doubt, which reduces invented values. With GPT-4 they report precision and recall close to 90%. In both studies, the target is a specific value or entity stated in one sentence or paragraph.
+Dagdelen et al. [2] fine-tune GPT-3 and Llama-2 to extract entities and their relations from materials chemistry text, and return each record as a JSON object that follows a per-task schema. The approach still needs annotated examples for every task, and the authors treat exact word-match F1 as an approximate lower bound, since a correct paraphrase counts as an error. Polak and Morgan [16] remove the training step: their ChatExtract method prompts a conversational LLM zero-shot to find sentences with data, extract (Material, Value, Unit) triplets, and then answer follow-up verification questions, which reduce invented values. With GPT-4 they report precision and recall close to 90%. In both studies, the target is a specific value or entity stated in one sentence or paragraph.
 
 Ateia et al. [1] are closest to this project. They give LLMs the full text of 122 Business Process Management conference papers and extract 32 targets, such as the research question, as categorical, binary, or free-text fields. Exact accuracy on categorical targets, scored with a token-Jaccard threshold of 0.8, stayed below 0.25, while BERTScore on free-text fields was near 0.90. Their users also asked to see the source passages behind each extracted item, which the system did not yet provide.
 
-proto3 takes three elements from these studies: schema-shaped output [2], zero-shot prompting on the full document without a training corpus [1, 16], and a check of the answer against the source [16]. Its targets differ. A methodology role is often a phrase whose correct granularity is open (Transformer's Task can be "machine translation" or "sequence transduction", Section 5.5), so the gap between exact and semantic scores seen in [1] and [2] is likely to appear here too. None of the three studies separates a paper's own method from a cited one, so I add the authorship rule (Section 2.4). A valid JSON shape also says nothing about whether the content is correct, so proto3 asks for a verbatim evidence quote per role, which meets the traceability need reported by Ateia et al. and lets a reader check each answer (Chapter 3).
+proto3 takes three elements from these studies: schema-shaped output [2], full-document extraction [1], and zero-shot prompting without a training corpus [16]. Its targets differ. A methodology role is often a phrase whose correct granularity is open (Transformer's Task can be "machine translation" or "sequence transduction", Section 5.5), so the gap between exact and semantic scores seen in [1] and [2] is likely to appear here too. None of the three studies separates a paper's own method from a cited one, so I add the authorship rule (Section 2.4). A valid JSON shape also says nothing about whether the content is correct, so proto3 asks for a verbatim evidence quote per role, which meets the traceability need reported by Ateia et al. and lets a reader check each answer (Chapter 3).
 
 ### 2.6 Synthesis
 
