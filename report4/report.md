@@ -61,7 +61,7 @@ h3 {
 
 <div style="page-break-after: always;"></div>
 
-Report (7219 words, excluding tables, figures, references, and appendices)
+Report (7223 words, excluding tables, figures, references, and appendices)
 
 ## 1. Introduction (490/1000 words)
 
@@ -96,7 +96,7 @@ Chapter 2 reviews previous work on methodology extraction and zero-shot classifi
 
 ---
 
-## 2. Literature Review (1656/2500 words)
+## 2. Literature Review (1660/2500 words)
 
 Chapter 1 showed a four-role profile for "Attention Is All You Need" [D6]. Figure 1 shows a fuller view of the same paper, including the design strategy and data generation method defined by Oates [14].
 
@@ -153,7 +153,7 @@ A domain mismatch risk exists: Yin et al. test on Yahoo News articles, emotion t
 
 ### 2.4 proto2's Own Findings as a Negative Result
 
-Sentence-level NLI classification produced too many candidate sentences to be usable — 151 TechnicalMethod sentences for the MapReduce paper alone — and its recall-only substring evaluation (18/24 across six papers) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct. With 100+ accepted sentences in some roles, a substring match is nearly certain to succeed somewhere in the list, which inflates the apparent recall without saying anything about precision. Excluding Related Work by heading, which describes other papers rather than the target paper's own methodology, cut BERT's TechnicalMethod count from 67 to 62 sentences; excluding the whole Introduction cut it further to 54, but also removed sentences that correctly described BERT's own method, so full exclusion traded recall for precision rather than solving the underlying problem. proto2 also had no mechanism to separate a paper's own method from one it cites: a sentence describing ELMo in BERT's Introduction scored 0.87 as TechnicalMethod, even though ELMo is prior work, not BERT's own method. This sharpens Färber et al.'s [3] "used vs. non-used" gap (Section 2.2) with a concrete instance from my own data, and motivates proto3's document-level extraction with an explicit authorship rule (Chapter 3).
+Sentence-level NLI classification produced too many candidate sentences to be usable — 151 TechnicalMethod sentences for the MapReduce paper alone — and its recall-only substring evaluation (18/24 across six papers; Appendix A, Tables A2–A3) only checked whether a gold term appeared somewhere in the output, not whether the output itself was correct. With 100+ accepted sentences in some roles, a substring match is nearly certain to succeed somewhere in the list, which inflates the apparent recall without saying anything about precision. Excluding Related Work by heading, which describes other papers rather than the target paper's own methodology, cut BERT's TechnicalMethod count from 67 to 62 sentences; excluding the whole Introduction cut it further to 54, but also removed sentences that correctly described BERT's own method, so full exclusion traded recall for precision rather than solving the underlying problem. proto2 also had no mechanism to separate a paper's own method from one it cites: a sentence describing ELMo in BERT's Introduction scored 0.87 as TechnicalMethod, even though ELMo is prior work, not BERT's own method. This sharpens Färber et al.'s [3] "used vs. non-used" gap (Section 2.2) with a concrete instance from my own data, and motivates proto3's document-level extraction with an explicit authorship rule (Chapter 3).
 
 ### 2.5 Document-Level and LLM-Based Structured Extraction
 
